@@ -1,3 +1,4 @@
+import os
 import dspy
 import argparse
 from datasets import load_dataset
@@ -12,6 +13,9 @@ parser = argparse.ArgumentParser(description='Run PEZ finetuning with Llama mode
 parser.add_argument('--llama-model-path', type=str, required=True, help='Path to the Llama model weights')
 args = parser.parse_args()
 
+# Expand the tilde (~) to the full path if it is used
+llama_model_path = os.path.expanduser(args.llama_model_path)
+
 # Load the HotPotQA dataset
 dataset = load_dataset("hotpot_qa", "fullwiki")
 trainset = dataset['train']
@@ -24,7 +28,6 @@ def pez_metric(gold, prediction):
 
 
 # Load the Llama 2 model using HFModel from DSPy
-llama_model_path = args.llama_model_path
 teacher_model = dspy.HFModel(model=llama_model_path)
 
 
