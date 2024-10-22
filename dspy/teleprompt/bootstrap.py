@@ -96,7 +96,12 @@ class BootstrapFewShot(Teleprompter):
 
     def _prepare_student_and_teacher(self, student, teacher):
         self.student = student.reset_copy()
-        self.teacher = copy.deepcopy(teacher) if teacher is not None else student.reset_copy()
+
+        # Check if the teacher model is a DSPy module with `reset_copy`
+        if isinstance(teacher, dspy.Module):
+            self.teacher = teacher.reset_copy()
+        else:
+            self.teacher = teacher  # If teacher is a Hugging Face model, use it directly
 
         assert getattr(self.student, "_compiled", False) is False, "Student must be uncompiled."
 

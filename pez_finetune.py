@@ -43,13 +43,6 @@ class HotPotQAProgram(dspy.Module):
 
         return self.generate_answer(context=context, question=question).copy(context=context)
 
-    def reset_copy(self):
-        """
-        Creates and returns a fresh instance of HotPotQAProgram with the same settings.
-        This ensures a clean slate for each optimization iteration.
-        """
-        return HotPotQAProgram(passages_per_hop=3)
-
 
 # Instantiate the HotPotQA program
 hotpotqa_program = HotPotQAProgram()
