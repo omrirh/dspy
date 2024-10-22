@@ -1,4 +1,5 @@
 import dspy
+import argparse
 from datasets import load_dataset
 from dspy.teleprompt.pez import BootstrapFewShotWithPEZ
 from dspy.teleprompt.finetune import BootstrapFinetune
@@ -6,25 +7,28 @@ from dspy.predict.chain_of_thought import ChainOfThought
 from dspy.retrieve import Retrieve
 from dsp.utils.utils import deduplicate
 
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description='Run PEZ finetuning with Llama model')
+parser.add_argument('--llama-model-path', type=str, required=True, help='Path to the Llama model weights')
+args = parser.parse_args()
+
 # Load the HotPotQA dataset
 dataset = load_dataset("hotpot_qa", "fullwiki")
 trainset = dataset['train']
 
 
+# Define evaluation metric for PEZ optimization
 def pez_metric(gold, prediction):
-    """
-    Evaluates the performance of the model given the optimized prompt and prediction.
-    """
     is_correct = gold['answer'] == prediction['answer']
     return 1.0 if is_correct else 0.0
 
 
-# Load teacher model using DSPy HFModel (meta-llama/Llama-2-7b-hf for prompt optimization and finetuning)
-teacher_model_name = "meta-llama/Llama-2-7b-hf"
-teacher_model = dspy.HFModel(model=teacher_model_name)
+# Load the Llama 2 model using HFModel from DSPy
+llama_model_path = args.model_path  # Use the path passed via command line
+teacher_model = dspy.HFModel(model=llama_model_path)
 
 
-# Define a DSPy program for multi-hop reasoning
+# Define the HotPotQA program for multi-hop reasoning
 class HotPotQAProgram(dspy.Module):
     def __init__(self, passages_per_hop=3):
         super().__init__()
@@ -38,7 +42,6 @@ class HotPotQAProgram(dspy.Module):
             search_query = self.generate_query[hop](context=context, question=question).search_query
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
-
         return self.generate_answer(context=context, question=question).copy(context=context)
 
 
@@ -62,30 +65,26 @@ fewshot_optimizer = BootstrapFewShotWithPEZ(
     loss_weight=1.0
 )
 
-# Step 1: Compile the HotPotQA program with few-shot optimization via PEZ
+# Compile the HotPotQA program with PEZ optimization
 compiled_program = fewshot_optimizer.compile(
-    student=hotpotqa_program,  # Pass the HotPotQA program instance for prompt optimization
-    teacher=teacher_model,  # Teacher model (e.g., meta-llama/Llama-2-7b-hf via HFModel)
-    trainset=trainset,  # HotPotQA dataset
+    student=hotpotqa_program,
+    teacher=teacher_model,  # Use Llama 2 model loaded via HFModel
+    trainset=trainset,
     restrict=[seed for seed in range(0, num_candidate_programs)]
 )
 
-# Step 2: Finetune the student model after prompt optimization
-finetune_optimizer = BootstrapFinetune(
-    metric=pez_metric,  # Same evaluation metric
-)
-
-# Fine-tune using the optimized prompts from PEZ step
+# Fine-tune the student model after PEZ optimization
+finetune_optimizer = BootstrapFinetune(metric=pez_metric)
 finetuned_program = finetune_optimizer.compile(
-    student=compiled_program,  # Use the optimized program from Step 1
-    teacher=teacher_model,  # Same teacher model (meta-llama/Llama-2-7b-hf)
-    trainset=trainset,  # Use the same training set
-    valset=None,  # Validation set (can be added separately if available)
-    target=teacher_model_name,  # Model name for finetuning
-    bsize=16,  # Batch size for finetuning
-    accumsteps=2,  # Accumulation steps
-    lr=5e-5,  # Learning rate for finetuning
-    epochs=3  # Number of finetuning epochs
+    student=compiled_program,
+    teacher=teacher_model,
+    trainset=trainset,
+    valset=None,
+    target=llama_model_path,
+    bsize=16,
+    accumsteps=2,
+    lr=5e-5,
+    epochs=3
 )
 
 print("Few-shot optimization and finetuning completed.")
