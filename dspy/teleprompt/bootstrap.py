@@ -1,6 +1,8 @@
+import copy
 import random
 import threading
 from typing import Dict, Optional
+from transformers import PreTrainedModel
 
 import tqdm
 
@@ -94,7 +96,7 @@ class BootstrapFewShot(Teleprompter):
 
     def _prepare_student_and_teacher(self, student, teacher):
         self.student = student.reset_copy()
-        self.teacher = teacher.deepcopy() if teacher is not None else student.reset_copy()
+        self.teacher = copy.deepcopy(teacher) if teacher is not None else student.reset_copy()
 
         assert getattr(self.student, "_compiled", False) is False, "Student must be uncompiled."
 
