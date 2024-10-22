@@ -24,7 +24,7 @@ def pez_metric(gold, prediction):
 
 
 # Load the Llama 2 model using HFModel from DSPy
-llama_model_path = args.model_path  # Use the path passed via command line
+llama_model_path = args.llama_model_path
 teacher_model = dspy.HFModel(model=llama_model_path)
 
 
