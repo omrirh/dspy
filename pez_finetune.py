@@ -2,7 +2,6 @@ import dspy
 from datasets import load_dataset
 from dspy.teleprompt.pez import BootstrapFewShotWithPEZ
 from dspy.teleprompt.finetune import BootstrapFinetune
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from dspy.predict.chain_of_thought import ChainOfThought
 from dspy.retrieve import Retrieve
 from dsp.utils.utils import deduplicate
@@ -20,10 +19,8 @@ def pez_metric(gold, prediction):
     return 1.0 if is_correct else 0.0
 
 
-# Load teacher model (RoBERTa-large for prompt optimization and finetuning)
-teacher_model_name = "roberta-large"
-tokenizer = AutoTokenizer.from_pretrained(teacher_model_name)
-teacher_model = AutoModelForSequenceClassification.from_pretrained(teacher_model_name, num_labels=2)
+# Load teacher model using DSPy HFModel (RoBERTa-large for prompt optimization and finetuning)
+teacher_model = dspy.HFModel(model="roberta-large")
 
 
 # Define a DSPy program for multi-hop reasoning
@@ -67,7 +64,7 @@ fewshot_optimizer = BootstrapFewShotWithPEZ(
 # Step 1: Compile the HotPotQA program with few-shot optimization via PEZ
 compiled_program = fewshot_optimizer.compile(
     student=hotpotqa_program,  # Pass the HotPotQA program instance for prompt optimization
-    teacher=teacher_model,  # Teacher model (e.g., RoBERTa-large)
+    teacher=teacher_model,  # Teacher model (e.g., RoBERTa-large via HFModel)
     trainset=trainset,  # HotPotQA dataset
     restrict=[seed for seed in range(0, num_candidate_programs)]
 )
@@ -80,10 +77,10 @@ finetune_optimizer = BootstrapFinetune(
 # Fine-tune using the optimized prompts from PEZ step
 finetuned_program = finetune_optimizer.compile(
     student=compiled_program,  # Use the optimized program from Step 1
-    teacher=teacher_model,  # Same teacher model
+    teacher=teacher_model,  # Same teacher model (RoBERTa-large)
     trainset=trainset,  # Use the same training set
     valset=None,  # Validation set (can be added separately if available)
-    target=teacher_model_name,  # Model name for finetuning
+    target="roberta-large",  # Model name for finetuning
     bsize=16,  # Batch size for finetuning
     accumsteps=2,  # Accumulation steps
     lr=5e-5,  # Learning rate for finetuning
