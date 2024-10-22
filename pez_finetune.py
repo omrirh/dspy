@@ -1,3 +1,4 @@
+import dspy
 from datasets import load_dataset
 from dspy.teleprompt.pez import BootstrapFewShotWithPEZ
 from dspy.teleprompt.finetune import BootstrapFinetune
@@ -26,8 +27,9 @@ teacher_model = AutoModelForSequenceClassification.from_pretrained(teacher_model
 
 
 # Define a DSPy program for multi-hop reasoning
-class HotPotQAProgram:
+class HotPotQAProgram(dspy.Module):
     def __init__(self, passages_per_hop=3):
+        super().__init__()
         self.retrieve = Retrieve(k=passages_per_hop)
         self.generate_query = [ChainOfThought("context, question -> search_query") for _ in range(2)]
         self.generate_answer = ChainOfThought("context, question -> answer")
@@ -38,7 +40,15 @@ class HotPotQAProgram:
             search_query = self.generate_query[hop](context=context, question=question).search_query
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
+
         return self.generate_answer(context=context, question=question).copy(context=context)
+
+    def reset_copy(self):
+        """
+        Creates and returns a fresh instance of HotPotQAProgram with the same settings.
+        This ensures a clean slate for each optimization iteration.
+        """
+        return HotPotQAProgram(passages_per_hop=3)
 
 
 # Instantiate the HotPotQA program
