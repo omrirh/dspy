@@ -9,7 +9,7 @@ from dspy.retrieve import Retrieve
 from dsp.utils.utils import deduplicate
 
 # Parse command-line arguments
-parser = argparse.ArgumentParser(description='Run PEZ finetuning with Llama model')
+parser = argparse.ArgumentParser(description='Run experiment with Llama model')
 parser.add_argument('--llama-model-path', type=str, required=True, help='Path to the Llama model weights')
 args = parser.parse_args()
 
@@ -71,7 +71,7 @@ fewshot_optimizer = BootstrapFewShotWithPEZ(
 # Compile the HotPotQA program with PEZ optimization
 compiled_program = fewshot_optimizer.compile(
     student=hotpotqa_program,
-    teacher=teacher_model,  # Use Llama 2 model loaded via HFModel
+    teacher=teacher_model,
     trainset=trainset,
     restrict=[seed for seed in range(0, num_candidate_programs)]
 )
