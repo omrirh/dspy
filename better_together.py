@@ -1,12 +1,17 @@
+import argparse
 import dspy
 from dspy.evaluate import Evaluate
 from dspy.datasets.hotpotqa import HotPotQA
 from dspy.teleprompt import BootstrapFewShotWithRandomSearch, BootstrapFinetune
 from dsp.utils.utils import deduplicate
 
-# Step 1: Configure the LM and Retriever
-ports = [7140, 7141, 7142, 7143, 7144, 7145]
-llamaChat = dspy.HFClientTGI(model="meta-llama/Llama-2-13b-chat-hf", port=ports, max_tokens=150)
+# Parse command-line arguments (local Llama model path)
+parser = argparse.ArgumentParser(description="Run BetterTogether experiment with specified Llama model path.")
+parser.add_argument('--llama-model-path', type=str, required=True, help="Path to the Llama model weights")
+args = parser.parse_args()
+
+# Step 1: Configure the LM and Retriever with specified Llama model path
+llamaChat = dspy.HFModel(model=args.llama_model_path, hf_device_map="auto")
 colbertv2 = dspy.ColBERTv2(url='http://20.102.90.50:2017/wiki17_abstracts')
 
 dspy.settings.configure(rm=colbertv2, lm=llamaChat)
