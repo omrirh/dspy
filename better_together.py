@@ -28,7 +28,7 @@ class BasicMH(dspy.Module):
         self.generate_query = [dspy.ChainOfThought("context, question -> search_query") for _ in range(2)]
         self.generate_answer = dspy.ChainOfThought("context, question -> answer")
 
-    def forward(self, question):
+    def forward(self, question, answer):
         context = []
         for hop in range(2):
             search_query = self.generate_query[hop](context=context, question=question).search_query
