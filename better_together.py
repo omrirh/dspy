@@ -5,8 +5,7 @@ import dspy
 from dspy.evaluate import Evaluate
 from dspy.datasets.hotpotqa import HotPotQA
 from dspy.teleprompt import BootstrapFewShotWithRandomSearch, BootstrapFinetune
-from dspy.utils.utils import deduplicate
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from dsp.utils.utils import deduplicate
 
 # Parse command-line arguments (local Llama model path)
 parser = argparse.ArgumentParser(description="Run BetterTogether experiment with specified Llama model path.")
