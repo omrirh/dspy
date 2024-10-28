@@ -1,9 +1,12 @@
 import argparse
+import os
+import torch
 import dspy
 from dspy.evaluate import Evaluate
 from dspy.datasets.hotpotqa import HotPotQA
 from dspy.teleprompt import BootstrapFewShotWithRandomSearch, BootstrapFinetune
-from dsp.utils.utils import deduplicate
+from dspy.utils.utils import deduplicate
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Parse command-line arguments (local Llama model path)
 parser = argparse.ArgumentParser(description="Run BetterTogether experiment with specified Llama model path.")
@@ -11,9 +14,17 @@ parser.add_argument('--llama-model-path', type=str, required=True, help="Path to
 args = parser.parse_args()
 
 # Step 1: Configure the LM and Retriever with specified Llama model path
-llamaChat = dspy.HFModel(model=args.llama_model_path, hf_device_map="auto")
+print(f"CUDA_VISIBLE_DEVICES: {os.environ.get('CUDA_VISIBLE_DEVICES')}")
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+# Explicit device map for the model
+device_map = {"": device}
+
+# Load Llama model and tokenizer on specified device
+llamaChat = dspy.HFModel(model=args.llama_model_path, hf_device_map=device_map)
 colbertv2 = dspy.ColBERTv2(url='http://20.102.90.50:2017/wiki17_abstracts')
 
+# Configure the settings
 dspy.settings.configure(rm=colbertv2, lm=llamaChat)
 
 # Step 2: Load a sample of labeled HotPotQA data for BetterTogether fine-tuning
@@ -23,7 +34,6 @@ devset = [x.with_inputs('question', 'answer') for x in dataset.dev]
 testset = [x.with_inputs('question', 'answer') for x in dataset.test]
 
 print("Dataset sizes:", len(trainset), len(devset), len(testset))
-
 
 # Step 3: Define the multi-hop reasoning program
 class BasicMH(dspy.Module):
@@ -40,7 +50,6 @@ class BasicMH(dspy.Module):
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
         return self.generate_answer(context=context, question=question).copy(context=context)
-
 
 # Step 4: Compile the program using Llama2-13b-chat and apply BFRS optimization
 RECOMPILE_INTO_LLAMA_FROM_SCRATCH = True
