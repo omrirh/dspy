@@ -80,7 +80,7 @@ print(f"Llama Program Average Metric: {score_llama * 100:.2f}%")
 RECOMPILE_INTO_T5_FROM_SCRATCH = True
 
 if RECOMPILE_INTO_T5_FROM_SCRATCH:
-    config = dict(target='t5-large', epochs=2, bf16=True, bsize=6, accumsteps=2, lr=5e-5)
+    config = dict(target='t5-large', epochs=2, bf16=True, bsize=4, accumsteps=2, lr=5e-5)
     tp = BootstrapFinetune(metric=metric_EM)
     t5_program = tp.compile(BasicMH(), teacher=ensemble, trainset=trainset[:200], **config)
 
