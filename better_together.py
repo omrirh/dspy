@@ -34,6 +34,7 @@ testset = [x.with_inputs('question', 'answer') for x in dataset.test]
 
 print("Dataset sizes:", len(trainset), len(devset), len(testset))
 
+
 # Step 3: Define the multi-hop reasoning program
 class BasicMH(dspy.Module):
     def __init__(self, passages_per_hop=3):
@@ -49,6 +50,7 @@ class BasicMH(dspy.Module):
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
         return self.generate_answer(context=context, question=question).copy(context=context)
+
 
 # Step 4: Compile the program using Llama2-13b-chat and apply BFRS optimization
 RECOMPILE_INTO_LLAMA_FROM_SCRATCH = True
@@ -80,7 +82,7 @@ print(f"Llama Program Average Metric: {score_llama * 100:.2f}%")
 RECOMPILE_INTO_T5_FROM_SCRATCH = True
 
 if RECOMPILE_INTO_T5_FROM_SCRATCH:
-    config = dict(target='t5-large', epochs=2, bf16=True, bsize=4, accumsteps=2, lr=5e-5)
+    config = dict(target='t5-large', epochs=2, bf16=True, bsize=4, accumsteps=1, lr=5e-5)
     tp = BootstrapFinetune(metric=metric_EM)
     t5_program = tp.compile(BasicMH(), teacher=ensemble, trainset=trainset[:200], **config)
 
