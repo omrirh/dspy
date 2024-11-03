@@ -79,9 +79,11 @@ better_together = BetterTogether(
     seed=2023
 )
 
-# Sample a smaller dataset for testing
-lm = dspy.LM('llama-2-7b-chat')
-small_trainset = trainset[:50]  # Sample 50 examples for quick testing
+# Initialize the LM with the local Llama model path
+lm = dspy.LM(model=os.environ["LLAMA_MODEL_PATH"], provider="huggingface", model_type="chat")
+
+# Sample a smaller dataset for quick testing
+small_trainset = trainset[:50]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
