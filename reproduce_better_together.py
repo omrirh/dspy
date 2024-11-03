@@ -1,6 +1,4 @@
-# Import necessary libraries and set environment variables
 import os
-import time
 import dspy
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
@@ -9,12 +7,14 @@ from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dsp.utils.utils import deduplicate
 
-# Set environment variables (Update these with actual paths/keys if needed)
-# os.environ["DSPY_CACHEDIR"] = "<your-cache-dir>"
-# os.environ["OPENAI_API_KEY"] = "<your-api-key>"
-
-# Experimental feature flag
 dspy.settings.experimental = True
+
+# Ensure LLAMA_MODEL_PATH is correctly set to your model path in the environment.
+llama_model_path = os.getenv("LLAMA_MODEL_PATH")
+if llama_model_path is None:
+    raise ValueError("Please set LLAMA_MODEL_PATH to your Llama model's local path.")
+
+lm = dspy.LM(model=llama_model_path, model_type="chat")
 
 
 # Define the program for multi-hop QA
@@ -79,9 +79,6 @@ better_together = BetterTogether(
     seed=2023
 )
 
-# Initialize the LM with the local Llama model path
-lm = dspy.LM(model=os.environ["LLAMA_MODEL_PATH"], provider="huggingface", model_type="chat")
-
 # Sample a smaller dataset for quick testing
 small_trainset = trainset[:50]
 
@@ -94,7 +91,7 @@ with dspy.context(lm=lm, rm=retriever):
         valset_ratio=0.1
     )
 
-# Evaluate accuracy on devset and output the results
+# Evaluate accuracy on validation (dev) set and output the results
 accuracy = evaluate(optimized_program, devset=devset, metric=metric)
 print(f"Experiment Accuracy: {accuracy}%")
 
