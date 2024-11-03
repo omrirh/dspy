@@ -9,12 +9,8 @@ from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
-# Ensure LLAMA_MODEL_PATH is correctly set to your model path in the environment.
-llama_model_path = os.getenv("LLAMA_MODEL_PATH")
-if llama_model_path is None:
-    raise ValueError("Please set LLAMA_MODEL_PATH to your Llama model's local path.")
-
-lm = dspy.LM(model="meta/llama-2-7b-chat", model_type="chat")
+LLAMA_MODEL_API_BASE = os.getenv("LLAMA_MODEL_API_BASE")
+lm = dspy.LM(model=f"huggingface/llama-2-7b-chat", api_base=LLAMA_MODEL_API_BASE)
 
 
 # Define the program for multi-hop QA
