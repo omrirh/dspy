@@ -4,10 +4,10 @@ import time
 import dspy
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
-from dspy.teleprompt.better_together import BetterTogether
+from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
-from dspy.utils.utils import deduplicate
+from dsp.utils.utils import deduplicate
 
 # Set environment variables (Update these with actual paths/keys if needed)
 # os.environ["DSPY_CACHEDIR"] = "<your-cache-dir>"
