@@ -14,7 +14,7 @@ llama_model_path = os.getenv("LLAMA_MODEL_PATH")
 if llama_model_path is None:
     raise ValueError("Please set LLAMA_MODEL_PATH to your Llama model's local path.")
 
-lm = dspy.LM(model=llama_model_path, model_type="chat")
+lm = dspy.LM(model="meta/llama-2-7b-chat", model_type="chat")
 
 
 # Define the program for multi-hop QA
