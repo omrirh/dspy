@@ -60,6 +60,8 @@ weight_optimizer = BootstrapFinetune(
     num_threads=1
 )
 
+
+# TODO: replace this with BootstrapFewShotWithPEZ once reproduction is done
 prompt_optimizer = BootstrapFewShotWithRandomSearch(
     metric=metric,
     max_bootstrapped_demos=3,
