@@ -9,8 +9,7 @@ from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
-LLAMA_MODEL_API_BASE = os.getenv("LLAMA_MODEL_API_BASE")
-lm = dspy.LM(model=f"huggingface/llama-2-7b-chat", api_base=LLAMA_MODEL_API_BASE)
+lm = dspy.LM(model=f"huggingface/meta-llama/Llama-2-70b")
 
 
 # Define the program for multi-hop QA
