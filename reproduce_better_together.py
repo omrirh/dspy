@@ -9,9 +9,9 @@ from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
-lm = dspy.LM(model="openai/gpt-4o-mini")
+# lm = dspy.LM(model="openai/gpt-4o-mini")
+lm = dspy.LM(model="meta-llama/Meta-Llama-Guard-2-8B")
 dspy.configure(lm=lm)
-
 
 # Define the program for multi-hop QA
 class BasicMH(dspy.Module):
