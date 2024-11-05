@@ -9,7 +9,7 @@ from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
-lm = dspy.LM(model=f"huggingface/meta-llama/Llama-2-70b")
+lm = dspy.LM(model="openai/gpt-4o-mini")
 
 
 # Define the program for multi-hop QA
@@ -84,7 +84,7 @@ with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=BasicMH(),
         trainset=small_trainset,
-        strategy="p -> w -> p",
+        strategy="p -> w",
         valset_ratio=0.1
     )
 
