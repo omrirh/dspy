@@ -40,7 +40,7 @@ devset = [x.with_inputs('question') for x in dataset.dev][:DEV_SIZE]
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
 metric = dspy.evaluate.answer_exact_match
-evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True)
+evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True, provide_traceback=True)
 
 # Retrieve model endpoint (Update with actual ColBERT endpoint URL)
 COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
