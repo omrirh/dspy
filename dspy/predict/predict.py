@@ -136,8 +136,7 @@ class Predict(Module, Parameter):
 
         # If temperature is 0.0 but its n > 1, set temperature to 0.7.
         temperature = config.get("temperature")
-        print(lm.kwargs)
-        sys.exit(1)
+        print(f"Listing attributes of given LM (exists): {dir(lm)}")
         temperature = lm.kwargs["temperature"] if temperature is None else temperature
         num_generations = config.get("n") or lm.kwargs.get("n") or lm.kwargs.get("num_generations") or 1
 
