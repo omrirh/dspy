@@ -10,6 +10,7 @@ from dsp.utils.utils import deduplicate
 dspy.settings.experimental = True
 
 lm = dspy.LM(model="openai/gpt-4o-mini")
+dspy.configure(lm=lm)
 
 
 # Define the program for multi-hop QA
@@ -94,4 +95,4 @@ with dspy.context(lm=lm, rm=retriever):
 
 # Output the fine-tuned models
 for predictor in optimized_program.predictors():
-    print(predictor.lm.model)
+    print(predictor.lm)
