@@ -89,8 +89,8 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy on validation (dev) set and output the results
-accuracy = evaluate(optimized_program)
-print(f"Experiment Accuracy: {accuracy}%")
+# accuracy = evaluate(optimized_program)
+# print(f"Experiment Accuracy: {accuracy}%")
 
 # Output the fine-tuned models
 for predictor in optimized_program.predictors():
