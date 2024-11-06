@@ -9,9 +9,10 @@ from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
-# lm = dspy.LM(model="openai/gpt-4o-mini")
-lm = dspy.LM(model="meta-llama/Meta-Llama-Guard-2-8B")
+lm = dspy.LM(model="openai/gpt-4o-mini")
+# lm = dspy.LM(model="meta-llama/Meta-Llama-Guard-2-8B")
 dspy.configure(lm=lm)
+
 
 # Define the program for multi-hop QA
 class BasicMH(dspy.Module):
@@ -41,7 +42,8 @@ devset = [x.with_inputs('question') for x in dataset.dev][:DEV_SIZE]
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
 metric = dspy.evaluate.answer_exact_match
-evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True, provide_traceback=True)
+evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True,
+                    provide_traceback=True)
 
 # Retrieve model endpoint (Update with actual ColBERT endpoint URL)
 COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
@@ -59,7 +61,6 @@ weight_optimizer = BootstrapFinetune(
     exclude_demos=True,
     num_threads=1
 )
-
 
 # TODO: replace this with BootstrapFewShotWithPEZ once reproduction is done
 prompt_optimizer = BootstrapFewShotWithRandomSearch(
