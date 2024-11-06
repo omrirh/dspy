@@ -6,15 +6,13 @@ from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dsp.utils.utils import deduplicate
-import argparse
-
-parser = argparse.ArgumentParser(description="Model path to perform BetterTogether training")
-parser.add_argument('--model-path', type=str, required=True, help="Model path/identifier")
-args = parser.parse_args()
 
 dspy.settings.experimental = True
 
-lm = dspy.LM(model=args.model_path)
+# Define local Llama model endpoint for training
+sglang_port = 7501
+sglang_url = f"http://localhost:{sglang_port}/v1"
+lm = dspy.LM("openai/meta-llama/Meta-Llama-3-8B-Instruct", api_base=sglang_url, api_key="")
 dspy.configure(lm=lm)
 
 
