@@ -6,11 +6,15 @@ from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dsp.utils.utils import deduplicate
+import argparse
+
+parser = argparse.ArgumentParser(description="Model path to perform BetterTogether training")
+parser.add_argument('--model-path', type=str, required=True, help="Model path/identifier")
+args = parser.parse_args()
 
 dspy.settings.experimental = True
 
-lm = dspy.LM(model="openai/gpt-4o-mini")
-# lm = dspy.LM(model="meta-llama/Meta-Llama-Guard-2-8B")
+lm = dspy.LM(model=args.model_path)
 dspy.configure(lm=lm)
 
 
