@@ -4,6 +4,7 @@ from dspy.evaluate import Evaluate
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
+from dspy.clients.huggingface import HFProvider
 from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
@@ -11,7 +12,12 @@ dspy.settings.experimental = True
 # Define local Llama model endpoint for training
 sglang_port = 7501
 sglang_url = f"http://localhost:{sglang_port}/v1"
-lm = dspy.LM("openai/meta-llama/Meta-Llama-3-8B-Instruct", api_base=sglang_url, api_key="")
+lm = dspy.LM(
+    "openai/meta-llama/Meta-Llama-3-8B-Instruct",
+    api_base=sglang_url,
+    api_key="",
+    provider=HFProvider()
+)
 dspy.configure(lm=lm)
 
 
