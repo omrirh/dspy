@@ -1,4 +1,3 @@
-import os
 import dspy
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
@@ -81,6 +80,7 @@ better_together = BetterTogether(
 )
 
 # Sample a smaller dataset for quick testing
+# TODO: scale up dataset size to original experiment?
 small_trainset = trainset[:50]
 
 # Run the BetterTogether optimization
@@ -93,8 +93,8 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy on validation (dev) set and output the results
-# accuracy = evaluate(optimized_program)
-# print(f"Experiment Accuracy: {accuracy}%")
+accuracy = evaluate(optimized_program)
+print(f"Experiment Accuracy: {accuracy}%")
 
 # Output the fine-tuned models
 for predictor in optimized_program.predictors():
