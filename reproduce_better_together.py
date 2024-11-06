@@ -6,14 +6,16 @@ from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dspy.clients.huggingface import HFProvider
 from dsp.utils.utils import deduplicate
+import litellm
 
 dspy.settings.experimental = True
+litellm.set_verbose = True
 
 # Define local Llama model endpoint for training
 sglang_port = 7501
-sglang_url = f"http://localhost:{sglang_port}/v1"
+sglang_url = f"http://localhost:{sglang_port}/generate"
 lm = dspy.LM(
-    "openai/meta-llama/Meta-Llama-3-8B-Instruct",
+    "meta-llama/Meta-Llama-3-8B-Instruct",
     api_base=sglang_url,
     api_key="",
     provider=HFProvider()
@@ -99,8 +101,8 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy on validation (dev) set and output the results
-accuracy = evaluate(optimized_program)
-print(f"Experiment Accuracy: {accuracy}%")
+# accuracy = evaluate(optimized_program)
+# print(f"Experiment Accuracy: {accuracy}%")
 
 # Output the fine-tuned models
 for predictor in optimized_program.predictors():
