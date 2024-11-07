@@ -73,15 +73,24 @@ class LM:
         messages = messages or [{"role": "user", "content": prompt}]
         kwargs = {**self.kwargs, **kwargs}
 
+        # Ensure the `text` field is populated if not present
+        if 'text' not in kwargs and 'input_ids' not in kwargs:
+            user_input = [msg["content"] for msg in messages if msg["role"] == "user"]
+            if user_input:
+                kwargs['text'] = user_input[
+                    0]  # Set `text` to the first user message content if `text` or `input_ids` is absent
+            else:
+                raise ValueError("No valid `user` content found in messages to set as `text` or `input_ids`.")
+
         # Make the request and handle LRU & disk caching.
         if self.model_type == "chat":
             completion = cached_litellm_completion if cache else litellm_completion
         else:
             completion = cached_litellm_text_completion if cache else litellm_text_completion
 
-        self.model = f"huggingface/{self.model}"
+        model_with_provider = f"huggingface/{self.model}"
 
-        response = completion(ujson.dumps(dict(model=self.model, messages=messages, **kwargs)))
+        response = completion(ujson.dumps(dict(model=model_with_provider, messages=messages, **kwargs)))
         outputs = [c.message.content if hasattr(c, "message") else c["text"] for c in response["choices"]]
 
         # Logging, with removed api key & where `cost` is None on cache hit.
@@ -98,9 +107,9 @@ class LM:
         )
         self.history.append(entry)
         GLOBAL_HISTORY.append(entry)
-        
+
         return outputs
-    
+
     def inspect_history(self, n: int = 1):
         _inspect_history(self.history, n)
 
