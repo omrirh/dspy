@@ -91,8 +91,10 @@ class LM(BaseLM):
         else:
             completion = cached_litellm_text_completion if cache else litellm_text_completion
 
+        model_with_provider = f"huggingface/{self.model}"
+
         response = completion(
-            request=ujson.dumps(dict(model=self.model, messages=messages, **kwargs)),
+            request=ujson.dumps(dict(model=model_with_provider, messages=messages, **kwargs)),
             num_retries=self.num_retries,
         )
         outputs = [c.message.content if hasattr(c, "message") else c["text"] for c in response["choices"]]
