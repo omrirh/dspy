@@ -83,18 +83,18 @@ class LM:
 
         inputs = "\n".join([message["content"] for message in messages])
 
-        response = completion({
-            "model": model_with_provider,
-            "parameters": {
-                "inputs": inputs,  # Text to be processed
+        response = completion(ujson.dumps(dict(
+            model=model_with_provider,
+            parameters={
+                "inputs": inputs,
                 "temperature": kwargs.get("temperature", 0.0),
                 "max_new_tokens": kwargs.get("max_tokens", 1000),
                 "return_full_text": False,
                 "details": True
             },
-            "api_base": "http://localhost:7501/generate",
-            "api_key": ""
-        })
+            api_base="http://localhost:7501/generate",
+            api_key=""
+        )))
         outputs = [c.message.content if hasattr(c, "message") else c["text"] for c in response["choices"]]
 
         # Logging, with removed api key & where `cost` is None on cache hit.
