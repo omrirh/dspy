@@ -81,9 +81,7 @@ class LM:
 
         model_with_provider = f"huggingface/{self.model}"
 
-        inputs = "\n".join([message["content"] for message in messages])
-
-        response = completion(ujson.dumps(dict(model=model_with_provider, messages=inputs, **kwargs)))
+        response = completion(ujson.dumps(dict(model=model_with_provider, messages=messages, stream=True, **kwargs)))
         outputs = [c.message.content if hasattr(c, "message") else c["text"] for c in response["choices"]]
 
         # Logging, with removed api key & where `cost` is None on cache hit.
@@ -210,7 +208,6 @@ def cached_litellm_completion(request):
 
 def litellm_completion(request, cache={"no-cache": True, "no-store": True}):
     kwargs = ujson.loads(request)
-    print(f"new litellm.completion kwargs:\n{kwargs}")
 
     return litellm.completion(cache=cache, **kwargs)
 
