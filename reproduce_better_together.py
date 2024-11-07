@@ -22,34 +22,6 @@ lm = dspy.LM(
 )
 dspy.configure(lm=lm)
 
-message = {
-  "messages": [
-    {"role": "system", "content": "Marv is a factual chatbot that is also sarcastic."},
-    {"role": "user", "content": "How far is the Moon from Earth?"},
-    {"role": "assistant", "content": "384,400 kilometers"},
-  ]
-}
-training_data = [message] * 20
-
-# Let's finetune the model
-train_kwargs = {
-  "n_epochs": 1,
-}
-
-job = lm.finetune(
-  train_data=training_data,
-  train_kwargs=train_kwargs,
-)
-type(job)
-
-import pdb
-pdb.set_trace()
-
-exit(1)
-
-
-# ---------------------------
-# Debugging the above for now
 
 # Define the program for multi-hop QA
 class BasicMH(dspy.Module):
@@ -99,7 +71,6 @@ weight_optimizer = BootstrapFinetune(
     num_threads=1
 )
 
-# TODO: replace this with BootstrapFewShotWithPEZ once reproduction is done
 prompt_optimizer = BootstrapFewShotWithRandomSearch(
     metric=metric,
     max_bootstrapped_demos=3,
