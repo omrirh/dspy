@@ -211,8 +211,6 @@ def cached_litellm_completion(request):
 
 def litellm_completion(request, cache={"no-cache": True, "no-store": True}):
     kwargs = ujson.loads(request)
-    # Rename 'inputs' to 'text' to match endpoint expectations
-    kwargs["text"] = kwargs.pop("inputs", "")
     print(f"new litellm.completion kwargs:\n{kwargs}")
 
     return litellm.completion(cache=cache, **kwargs)
