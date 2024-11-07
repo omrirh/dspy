@@ -81,11 +81,10 @@ class LM:
 
         model_with_provider = f"huggingface/{self.model}"
 
-        # Set the 'text' field in the kwargs for the request.
+        # Set the 'text' for the request.
         input_text = "\n".join([message["content"] for message in messages])
-        kwargs["text"] = input_text
 
-        response = completion(ujson.dumps(dict(model=model_with_provider, messages=messages, **kwargs)))
+        response = completion(ujson.dumps(dict(model=model_with_provider, text=input_text, **kwargs)))
         outputs = [c.message.content if hasattr(c, "message") else c["text"] for c in response["choices"]]
 
         # Logging, with removed api key & where `cost` is None on cache hit.
