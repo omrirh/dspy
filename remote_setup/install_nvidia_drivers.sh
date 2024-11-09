@@ -16,8 +16,12 @@ else
   echo "Non-free repository already enabled."
 fi
 
+# enabling graphics driver
+sudo add-apt-repository ppa:graphics-drivers/ppa
+sudo apt update
+
 echo "Installing NVIDIA driver..."
-sudo apt install -y nvidia-driver
+sudo apt install -y nvidia-driver-535
 
 echo "Rebooting system to apply changes..."
 sudo reboot
