@@ -9,7 +9,7 @@ from dsp.utils.utils import deduplicate
 import litellm
 
 dspy.settings.experimental = True
-litellm.set_verbose = True
+# litellm.set_verbose = True
 
 # Define local Llama model endpoint for training
 sglang_port = 7501
