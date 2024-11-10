@@ -12,9 +12,11 @@ from dspy.signatures.signature import ensure_signature, signature_to_template
 from dspy.utils.callback import with_callbacks
 from dspy.adapters.image_utils import Image
 
+
 @lru_cache(maxsize=None)
 def warn_once(msg: str):
     logging.warning(msg)
+
 
 class Predict(Module, Parameter):
     def __init__(self, signature, _parse_values=True, callbacks=None, **config):
@@ -74,7 +76,7 @@ class Predict(Module, Parameter):
         if use_legacy_loading:
             self._load_state_legacy(state)
             return self
-            
+
         if "signature" not in state:
             # Check if the state is from a version of DSPy prior to v2.5.3.
             raise ValueError(
@@ -87,7 +89,7 @@ class Predict(Module, Parameter):
             # `excluded_keys` are fields that go through special handling.
             if name not in excluded_keys:
                 setattr(self, name, value)
-        
+
         # FIXME: Images are getting special treatment, but all basemodels initialized from json should be converted back to objects
         for demo in self.demos:
             for field in demo:
@@ -96,7 +98,7 @@ class Predict(Module, Parameter):
                     if not isinstance(url, str):
                         raise ValueError(f"Image URL must be a string, got {type(url)}")
                     demo[field] = Image(url=url)
-                    
+
         self.signature = self.signature.load_state(state["signature"])
 
         if "extended_signature" in state:
@@ -138,11 +140,11 @@ class Predict(Module, Parameter):
 
     def load(self, path, return_self=False):
         """Load a saved state from a file.
-        
+
         Args:
             path (str): Path to the saved state file
             return_self (bool): If True, returns self to allow method chaining. Default is False for backwards compatibility.
-        
+
         Returns:
             Union[None, Predict]: Returns None if return_self is False (default), returns self if return_self is True
         """
@@ -168,6 +170,8 @@ class Predict(Module, Parameter):
 
         # If temperature is 0.0 but its n > 1, set temperature to 0.7.
         temperature = config.get("temperature")
+        if not hasattr(lm, 'kwargs'):
+            print("--DEBUG LM FROM HERE--")
         temperature = lm.kwargs["temperature"] if temperature is None else temperature
         num_generations = config.get("n") or lm.kwargs.get("n") or lm.kwargs.get("num_generations") or 1
 
