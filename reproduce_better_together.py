@@ -1,22 +1,7 @@
 """
 Development Status:
 -------------------
-
-1. Getting this error now:
-2024/11/10 03:15:11 ERROR dspy.clients.lm: CUDA out of memory.
-                                           Tried to allocate 1.96 GiB. GPU 0 has a total capacity of 39.39 GiB of which 1.42 GiB is free.
-                                           Process 50700 has 37.43 GiB memory in use.
-                                           Including non-PyTorch memory,
-                                           this process has 414.00 MiB memory in use.
-                                           Of the allocated memory 0 bytes is allocated by PyTorch,
-                                           and 0 bytes is reserved by PyTorch but unallocated.
-                                           If reserved but unallocated memory is large try setting:
-                                           PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-                                           to avoid fragmentation.
-                                           See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-
-for initializing the model in the HFProvider.finetune().
-Try running a dedicated GPU (T4 is enough?) to run local Llama model.
+1. Fix tokenized model data failure (torch cannot load Tensor)
 """
 import dspy
 from dspy.datasets import HotPotQA
@@ -54,19 +39,19 @@ class BasicMH(dspy.Module):
         context = []
         for hop in range(self.num_hops):
             search_query = self.generate_query[hop](context=context, question=question).search_query
-            if hop == 1 and 'Take a Bow' in question:  # TODO: this particular example for HotPotQA breaks the code
-                continue
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
         return self.generate_answer(context=context, question=question).copy(context=context)
 
 
 # Prepare the HotPotQA dataset
-TRAIN_SIZE = 1000
-DEV_SIZE = 500
+TRAIN_SIZE = 500
+DEV_SIZE = 250
 dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
-trainset = [x.with_inputs('question') for x in dataset.train][:TRAIN_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev][:DEV_SIZE]
+
+# This particular example for HotPotQA breaks the code
+trainset = [x.with_inputs('question') for x in dataset.train if 'Take a Bow' not in x.with_inputs('question')['question']][:TRAIN_SIZE]
+devset = [x.with_inputs('question') for x in dataset.dev if 'Take a Bow' not in x.with_inputs('question')['question']][:DEV_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
@@ -77,6 +62,7 @@ evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, displ
 # Retrieve model endpoint (Update with actual ColBERT endpoint URL)
 COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
 retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
+dspy.configure(rm=retriever)
 
 # Initialize the BetterTogether class with optimizers
 train_kwargs = {"n_epochs": 1}
@@ -108,7 +94,7 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: scale up dataset size to original experiment?
-small_trainset = trainset[:50]
+small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):

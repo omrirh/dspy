@@ -11,26 +11,20 @@ from transformers import (
     TrainingArguments,
     DataCollatorForLanguageModeling,
 )
-from datasets import Dataset
+from datasets import Dataset, DatasetDict
 
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
 
-# Static list of supported Llama models for HFProvider, using correct Hugging Face naming convention
 _HF_MODELS = [
     "meta-llama/Meta-Llama-2-7B-Chat",
     "meta-llama/Meta-Llama-2-13B-Chat",
-    "meta-llama/Meta-Llama-2-70B-Chat",
-    "meta-llama/Meta-Llama-2-7B",
-    "meta-llama/Meta-Llama-2-13B",
-    "meta-llama/Meta-Llama-2-70B",
+    "meta-llama/Meta-Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
-    "meta-llama/Meta-Llama-3-13B-Instruct",
-    "meta-llama/Meta-Llama-3-70B-Instruct",
-    "meta-llama/Meta-Llama-3-8B",
-    "meta-llama/Meta-Llama-3-13B",
-    "meta-llama/Meta-Llama-3-70B",
 ]
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 class TrainingJobHF(TrainingJob):
     def __init__(self, *args, **kwargs):
@@ -64,7 +58,7 @@ class HFProvider(Provider):
     @staticmethod
     def is_provider_model(model: str) -> bool:
         if model in _HF_MODELS:
-            print(f"[HF Provider] '{model}' is a supported Hugging Face Llama model.")
+            print(f"[HF Provider] '{model}' is a supported Hugging Face model.")
             return True
         print(f"[HF Provider] '{model}' is not in the list of supported models.")
         return False
@@ -95,55 +89,45 @@ class HFProvider(Provider):
 
         print(f"[HF Provider] Loading model and tokenizer for '{model}'")
         tokenizer = AutoTokenizer.from_pretrained(model)
-        model = AutoModelForCausalLM.from_pretrained(model)
 
-        # Set pad_token to eos_token or add a new '[PAD]' token if no eos_token is available
+        # Corrected model initialization (removed comma)
+        model = AutoModelForCausalLM.from_pretrained(model,
+                                                     device_map="auto")  # load_in_8bit=True can be added if quantization is desired
+
+        # Check and set pad_token if missing
         if tokenizer.pad_token is None:
-            if tokenizer.eos_token:
-                tokenizer.pad_token = tokenizer.eos_token
-            else:
-                tokenizer.add_special_tokens({'pad_token': '[PAD]'})
-                model.resize_token_embeddings(len(tokenizer))
+            tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
+            model.resize_token_embeddings(len(tokenizer))  # Ensure tokenizer and model are in sync
 
-        # Convert train_data to Dataset format using 'messages' as input text
-        if "messages" in train_data[0]:
-            # Extract 'content' from each message, ignoring 'role'
-            def extract_text(messages):
-                return " ".join(msg["content"] for msg in messages if "content" in msg)
+        print("[HF Provider] Preparing training dataset")
+        train_texts = HFProvider.prepare_training_texts(train_data)
+        train_dataset = Dataset.from_dict({"text": train_texts})
 
-            train_texts = [extract_text(item["messages"]) for item in train_data]
-            train_dataset = Dataset.from_dict({"text": train_texts})
-        else:
-            raise ValueError("Expected 'messages' key in train_data items.")
-
-        def tokenize_function(examples):
-            # Set explicit padding and truncation with max_length for tokenizer
-            return tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512)
-
-        print("[HF Provider] Tokenizing training data")
-        tokenized_datasets = train_dataset.map(tokenize_function, batched=True)
+        tokenized_datasets = train_dataset.map(
+            lambda examples: tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512),
+            batched=True
+        )
 
         data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
-
-        output_dir = "/llama-3-8b-instruct/results"
+        output_dir = "/llama-8-8b-chat/results"
         os.makedirs(output_dir, exist_ok=True)
 
         training_args = TrainingArguments(
             output_dir=output_dir,
             overwrite_output_dir=True,
             num_train_epochs=train_kwargs.get("num_train_epochs", 3),
-            per_device_train_batch_size=train_kwargs.get("per_device_train_batch_size", 4),
+            per_device_train_batch_size=1,
             save_steps=train_kwargs.get("save_steps", 10_000),
             save_total_limit=2,
         )
 
+        print("[HF Provider] Initializing the Trainer")
         trainer = Trainer(
             model=model,
             args=training_args,
             train_dataset=tokenized_datasets,
             data_collator=data_collator,
         )
-        job.trainer = trainer
 
         def train():
             print("[HF Provider] Starting fine-tuning")
@@ -151,6 +135,7 @@ class HFProvider(Provider):
             trainer.save_model()
             print("[HF Provider] Fine-tuning complete and model saved")
 
+        print("[HF Provider] Launching training thread")
         training_thread = Thread(target=train)
         training_thread.start()
         job.thread = training_thread
@@ -159,7 +144,73 @@ class HFProvider(Provider):
 
     @staticmethod
     def validate_data_format(data_format: DataFormat):
-        supported_data_formats = [DataFormat.completion, DataFormat.chat]
-        if data_format not in supported_data_formats:
-            raise ValueError(f"[HF Provider] Unsupported data format {data_format}. Supported formats: {supported_data_formats}")
+        if data_format not in [DataFormat.completion, DataFormat.chat]:
+            raise ValueError(f"[HF Provider] Unsupported data format {data_format}.")
         print(f"[HF Provider] Data format {data_format} validated")
+
+    @staticmethod
+    def does_job_exist(job_id: str) -> bool:
+        # Placeholder logic: Check if the trainer instance exists
+        return job_id is not None
+
+    @staticmethod
+    def is_terminal_training_status(status: TrainingStatus) -> bool:
+        return status in [
+            TrainingStatus.succeeded,
+            TrainingStatus.failed,
+            TrainingStatus.cancelled,
+        ]
+
+    @staticmethod
+    def get_training_status(job_id: str) -> TrainingStatus:
+        # For illustration, assume job status is being fetched through a check on trainer state
+        print(f"[HF Provider] Retrieving training status for job ID {job_id}")
+        if job_id is None:
+            return TrainingStatus.not_started
+
+        # Assuming this interacts with a method to fetch the current status
+        return TrainingStatus.running  # Example status
+
+    @staticmethod
+    def wait_for_job(job: TrainingJobHF, poll_frequency: int = 20):
+        print("[HF Provider] Waiting for training job to complete")
+        done = False
+        while not done:
+            done = HFProvider.is_terminal_training_status(job.status())
+            time.sleep(poll_frequency)
+
+    @staticmethod
+    def prepare_training_texts(train_data: List[Dict[str, Any]]) -> List[str]:
+        print("[HF Provider] Preparing training texts")
+        if "messages" in train_data[0]:
+            return [" ".join(msg["content"] for msg in item["messages"] if "content" in msg) for item in train_data]
+        else:
+            raise ValueError("Expected 'messages' key in train_data items.")
+
+    @staticmethod
+    def start_remote_training(
+            model: str,
+            train_kwargs: Optional[Dict[str, Any]] = None
+    ) -> Trainer:
+        print("[HF Provider] Starting remote training (simulated for local Trainer)")
+        tokenizer = AutoTokenizer.from_pretrained(model)
+        model = AutoModelForCausalLM.from_pretrained(model)
+
+        train_dataset = DatasetDict({"train": HFProvider.prepare_training_texts()})
+        tokenized_datasets = train_dataset["train"].map(
+            lambda examples: tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512),
+            batched=True
+        )
+
+        training_args = TrainingArguments(
+            output_dir="./results",
+            per_device_train_batch_size=1,
+            num_train_epochs=train_kwargs.get("num_train_epochs", 3),
+        )
+
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=tokenized_datasets,
+        )
+        return trainer
