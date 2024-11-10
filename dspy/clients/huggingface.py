@@ -1,4 +1,5 @@
 import os
+import time
 from threading import Thread
 from typing import Any, Dict, List, Optional
 
@@ -15,6 +16,21 @@ from datasets import Dataset
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
 
+# Static list of supported Llama models for HFProvider, using correct Hugging Face naming convention
+_HF_MODELS = [
+    "meta-llama/Meta-Llama-2-7B-Chat",
+    "meta-llama/Meta-Llama-2-13B-Chat",
+    "meta-llama/Meta-Llama-2-70B-Chat",
+    "meta-llama/Meta-Llama-2-7B",
+    "meta-llama/Meta-Llama-2-13B",
+    "meta-llama/Meta-Llama-2-70B",
+    "meta-llama/Meta-Llama-3-8B-Instruct",
+    "meta-llama/Meta-Llama-3-13B-Instruct",
+    "meta-llama/Meta-Llama-3-70B-Instruct",
+    "meta-llama/Meta-Llama-3-8B",
+    "meta-llama/Meta-Llama-3-13B",
+    "meta-llama/Meta-Llama-3-70B",
+]
 
 class TrainingJobHF(TrainingJob):
     def __init__(self, *args, **kwargs):
@@ -23,6 +39,7 @@ class TrainingJobHF(TrainingJob):
 
     def cancel(self):
         if self.trainer is not None:
+            print("[HF Provider] Cancelling training job")
             self.trainer.state.interrupted = True
             self.trainer = None
         super().cancel()
@@ -46,48 +63,69 @@ class HFProvider(Provider):
 
     @staticmethod
     def is_provider_model(model: str) -> bool:
-        try:
-            AutoModelForCausalLM.from_pretrained(model)
+        if model in _HF_MODELS:
+            print(f"[HF Provider] '{model}' is a supported Hugging Face Llama model.")
             return True
-        except Exception:
-            return False
+        print(f"[HF Provider] '{model}' is not in the list of supported models.")
+        return False
 
     @staticmethod
     def launch(model: str, launch_kwargs: Optional[Dict[str, Any]] = None):
+        print(f"[HF Provider] Launching model '{model}'")
         tokenizer = AutoTokenizer.from_pretrained(model)
         model = AutoModelForCausalLM.from_pretrained(model)
         return model, tokenizer
 
     @staticmethod
     def kill(model: str, launch_kwargs: Optional[Dict[str, Any]] = None):
+        print(f"[HF Provider] Killing model '{model}' and clearing cache")
         del model
         torch.cuda.empty_cache()
 
     @staticmethod
     def finetune(
             job: TrainingJobHF,
-            model_name: str,
+            model: str,
             train_data: List[Dict[str, Any]],
             train_kwargs: Optional[Dict[str, Any]] = None,
             data_format: Optional[DataFormat] = None,
     ) -> str:
+        print("[HF Provider] Validating the data format")
         HFProvider.validate_data_format(data_format)
 
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModelForCausalLM.from_pretrained(model_name)
+        print(f"[HF Provider] Loading model and tokenizer for '{model}'")
+        tokenizer = AutoTokenizer.from_pretrained(model)
+        model = AutoModelForCausalLM.from_pretrained(model)
+
+        # Set pad_token to eos_token or add a new '[PAD]' token if no eos_token is available
+        if tokenizer.pad_token is None:
+            if tokenizer.eos_token:
+                tokenizer.pad_token = tokenizer.eos_token
+            else:
+                tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+                model.resize_token_embeddings(len(tokenizer))
+
+        # Convert train_data to Dataset format using 'messages' as input text
+        if "messages" in train_data[0]:
+            # Extract 'content' from each message, ignoring 'role'
+            def extract_text(messages):
+                return " ".join(msg["content"] for msg in messages if "content" in msg)
+
+            train_texts = [extract_text(item["messages"]) for item in train_data]
+            train_dataset = Dataset.from_dict({"text": train_texts})
+        else:
+            raise ValueError("Expected 'messages' key in train_data items.")
 
         def tokenize_function(examples):
-            return tokenizer(examples["text"], truncation=True, padding="max_length")
+            # Set explicit padding and truncation with max_length for tokenizer
+            return tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512)
 
-        # Convert train_data to a Dataset object
-        train_dataset = Dataset.from_dict({"text": [item["text"] for item in train_data]})
+        print("[HF Provider] Tokenizing training data")
         tokenized_datasets = train_dataset.map(tokenize_function, batched=True)
 
-        data_collator = DataCollatorForLanguageModeling(
-            tokenizer=tokenizer, mlm=False
-        )
+        data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
-        output_dir = "/mnt/disk1/results"
+        output_dir = "/llama-3-8b-instruct/results"
         os.makedirs(output_dir, exist_ok=True)
 
         training_args = TrainingArguments(
@@ -105,20 +143,23 @@ class HFProvider(Provider):
             train_dataset=tokenized_datasets,
             data_collator=data_collator,
         )
-
         job.trainer = trainer
 
         def train():
+            print("[HF Provider] Starting fine-tuning")
             trainer.train()
             trainer.save_model()
+            print("[HF Provider] Fine-tuning complete and model saved")
 
         training_thread = Thread(target=train)
         training_thread.start()
         job.thread = training_thread
 
-        return model_name
+        return model
 
     @staticmethod
     def validate_data_format(data_format: DataFormat):
-        if data_format != DataFormat.completion:
-            raise ValueError(f"HFProvider supports only 'completion' data format, got {data_format}.")
+        supported_data_formats = [DataFormat.completion, DataFormat.chat]
+        if data_format not in supported_data_formats:
+            raise ValueError(f"[HF Provider] Unsupported data format {data_format}. Supported formats: {supported_data_formats}")
+        print(f"[HF Provider] Data format {data_format} validated")

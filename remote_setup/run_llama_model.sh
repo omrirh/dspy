@@ -3,6 +3,7 @@
 # Setup SGLang
 pip install "sglang[all]"
 pip install flashinfer -i https://flashinfer.ai/whl/cu121/torch2.4/
+pip install python3.11-dev
 
 # make sure Nvidia driver is present on machine
 command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are missing."; exit 1; }
@@ -14,4 +15,4 @@ source vm_vars.env
 huggingface-cli login --token $HF_TOKEN
 
 # Spin up the local llama model
-CUDA_VISIBLE_DEVICES=0 python -m sglang.launch_server   --model-path meta-llama/Meta-Llama-3-8B-Instruct   --port 7501
+CUDA_VISIBLE_DEVICES=1 python -m sglang.launch_server   --model-path meta-llama/Meta-Llama-3-8B-Instruct   --port 7501
