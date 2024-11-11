@@ -1,7 +1,12 @@
 """
 Development Status:
 -------------------
-1. Fix tokenized model data failure (torch cannot load Tensor)
+1. Experiencing spike cuda OOM error on torch.nn.modules.linear.Linear:
+
+    def forward(self, input: Tensor) -> Tensor:
+        F.linear(input, self.weight, self.bias)  --> input.shape = (1, 18, 4096)
+
+   find ways to solve this.
 """
 import dspy
 from dspy.datasets import HotPotQA
@@ -45,8 +50,8 @@ class BasicMH(dspy.Module):
 
 
 # Prepare the HotPotQA dataset
-TRAIN_SIZE = 500
-DEV_SIZE = 250
+TRAIN_SIZE = 6 #100
+DEV_SIZE = 2 #50
 dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
 
 # This particular example for HotPotQA breaks the code
@@ -94,7 +99,7 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: scale up dataset size to original experiment?
-small_trainset = trainset[:10]
+small_trainset = trainset[:2]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):

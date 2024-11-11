@@ -9,7 +9,7 @@ from transformers import (
     AutoTokenizer,
     Trainer,
     TrainingArguments,
-    DataCollatorForLanguageModeling,
+    DataCollatorWithPadding,
 )
 from datasets import Dataset, DatasetDict
 
@@ -25,6 +25,7 @@ _HF_MODELS = [
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 
 class TrainingJobHF(TrainingJob):
     def __init__(self, *args, **kwargs):
@@ -84,41 +85,47 @@ class HFProvider(Provider):
             train_kwargs: Optional[Dict[str, Any]] = None,
             data_format: Optional[DataFormat] = None,
     ) -> str:
-        print("[HF Provider] Validating the data format")
+        print("[HF Provider] Clearing cache and validating data format")
+        torch.cuda.empty_cache()
         HFProvider.validate_data_format(data_format)
 
         print(f"[HF Provider] Loading model and tokenizer for '{model}'")
         tokenizer = AutoTokenizer.from_pretrained(model)
 
-        # Corrected model initialization (removed comma)
-        model = AutoModelForCausalLM.from_pretrained(model,
-                                                     device_map="auto")  # load_in_8bit=True can be added if quantization is desired
+        # Load model with device_map for efficient distribution
+        model = AutoModelForCausalLM.from_pretrained(
+            model,
+            device_map="auto"  # Automatically distributes model across available GPUs
+        )
 
-        # Check and set pad_token if missing
+        # Set pad_token if missing
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
-            model.resize_token_embeddings(len(tokenizer))  # Ensure tokenizer and model are in sync
+            model.resize_token_embeddings(len(tokenizer))
 
         print("[HF Provider] Preparing training dataset")
         train_texts = HFProvider.prepare_training_texts(train_data)
         train_dataset = Dataset.from_dict({"text": train_texts})
 
+        # Tokenize with a reduced max_length to minimize memory usage
         tokenized_datasets = train_dataset.map(
-            lambda examples: tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512),
+            lambda examples: tokenizer(examples["text"], truncation=True, max_length=18),
             batched=True
         )
 
-        data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
-        output_dir = "/llama-8-8b-chat/results"
+        # Use DataCollatorWithPadding for dynamic padding
+        data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+
+        # Use original output_dir and training_args
+        output_dir = "/llama-3-8b-chat/results"
         os.makedirs(output_dir, exist_ok=True)
 
         training_args = TrainingArguments(
             output_dir=output_dir,
             overwrite_output_dir=True,
-            num_train_epochs=train_kwargs.get("num_train_epochs", 3),
+            num_train_epochs=train_kwargs.get("num_train_epochs", 1),
+            bf16=True,
             per_device_train_batch_size=1,
-            save_steps=train_kwargs.get("save_steps", 10_000),
-            save_total_limit=2,
         )
 
         print("[HF Provider] Initializing the Trainer")
@@ -131,6 +138,7 @@ class HFProvider(Provider):
 
         def train():
             print("[HF Provider] Starting fine-tuning")
+            torch.cuda.empty_cache()  # Clear cache before starting training
             trainer.train()
             trainer.save_model()
             print("[HF Provider] Fine-tuning complete and model saved")
@@ -186,31 +194,3 @@ class HFProvider(Provider):
             return [" ".join(msg["content"] for msg in item["messages"] if "content" in msg) for item in train_data]
         else:
             raise ValueError("Expected 'messages' key in train_data items.")
-
-    @staticmethod
-    def start_remote_training(
-            model: str,
-            train_kwargs: Optional[Dict[str, Any]] = None
-    ) -> Trainer:
-        print("[HF Provider] Starting remote training (simulated for local Trainer)")
-        tokenizer = AutoTokenizer.from_pretrained(model)
-        model = AutoModelForCausalLM.from_pretrained(model)
-
-        train_dataset = DatasetDict({"train": HFProvider.prepare_training_texts()})
-        tokenized_datasets = train_dataset["train"].map(
-            lambda examples: tokenizer(examples["text"], truncation=True, padding="max_length", max_length=512),
-            batched=True
-        )
-
-        training_args = TrainingArguments(
-            output_dir="./results",
-            per_device_train_batch_size=1,
-            num_train_epochs=train_kwargs.get("num_train_epochs", 3),
-        )
-
-        trainer = Trainer(
-            model=model,
-            args=training_args,
-            train_dataset=tokenized_datasets,
-        )
-        return trainer
