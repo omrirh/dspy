@@ -3,7 +3,7 @@
 # Setup SGLang
 pip install "sglang[all]"
 pip install flashinfer -i https://flashinfer.ai/whl/cu121/torch2.4/
-pip install python3.11-dev
+pip install python3.11-dev huggingface_hub
 
 # make sure Nvidia driver is present on machine
 command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are missing."; exit 1; }
