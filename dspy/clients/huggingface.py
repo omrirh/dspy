@@ -109,7 +109,7 @@ class HFProvider(Provider):
 
         # Tokenize with a reduced max_length to minimize memory usage
         tokenized_datasets = train_dataset.map(
-            lambda examples: tokenizer(examples["text"], truncation=True, max_length=18),
+            lambda examples: tokenizer(examples["text"], truncation=True, max_length=64),
             batched=True
         )
 

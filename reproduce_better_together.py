@@ -50,8 +50,8 @@ class BasicMH(dspy.Module):
 
 
 # Prepare the HotPotQA dataset
-TRAIN_SIZE = 6 #100
-DEV_SIZE = 2 #50
+TRAIN_SIZE = 100
+DEV_SIZE = 50
 dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
 
 # This particular example for HotPotQA breaks the code
@@ -99,7 +99,7 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: scale up dataset size to original experiment?
-small_trainset = trainset[:2]
+small_trainset = trainset[:20]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
