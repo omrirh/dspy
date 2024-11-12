@@ -24,7 +24,7 @@ _HF_MODELS = [
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+# os.environ['CUDA_LAUNCH_BLOCKING'] = 1  # Use this in case of CUDA device-side assert trigger error
 
 
 class TrainingJobHF(TrainingJob):
@@ -85,19 +85,18 @@ class HFProvider(Provider):
             train_kwargs: Optional[Dict[str, Any]] = None,
             data_format: Optional[DataFormat] = None,
     ) -> str:
-        print("[HF Provider] Clearing cache and validating data format")
-        torch.cuda.empty_cache()
+        print("[HF Provider] Validating data format")
         HFProvider.validate_data_format(data_format)
 
         print(f"[HF Provider] Loading model and tokenizer for '{model}'")
         tokenizer = AutoTokenizer.from_pretrained(model)
 
-        # Load model with device_map for efficient distribution
         model = AutoModelForCausalLM.from_pretrained(
             model, device_map="auto"
         )
 
-        # Set pad_token if missing
+        model.gradient_checkpointing_enable()  # Enables memory-efficient backpropagation
+
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
             model.resize_token_embeddings(len(tokenizer))
@@ -106,10 +105,9 @@ class HFProvider(Provider):
         train_texts = HFProvider.prepare_training_texts(train_data)
         train_dataset = Dataset.from_dict({"text": train_texts})
 
-        # Tokenize dataset and add 'labels' key to allow loss computation
         def tokenize_function(examples):
-            tokens = tokenizer(examples["text"], truncation=True, max_length=18)
-            tokens["labels"] = tokens["input_ids"].copy()  # Duplicate input_ids for labels
+            tokens = tokenizer(examples["text"], truncation=True, padding="longest")
+            tokens["labels"] = tokens["input_ids"].copy()
             return tokens
 
         tokenized_datasets = train_dataset.map(tokenize_function, batched=True)
@@ -118,15 +116,17 @@ class HFProvider(Provider):
         data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
         # Use original output_dir and training_args
-        output_dir = "/llama-3-8b-chat/results"
+        output_dir = "/llama-3-8b-instruct/results"
         os.makedirs(output_dir, exist_ok=True)
 
         training_args = TrainingArguments(
             output_dir=output_dir,
             overwrite_output_dir=True,
             num_train_epochs=train_kwargs.get("num_train_epochs", 1),
-            bf16=True,
-            per_device_train_batch_size=1,
+            fp16=True,
+            per_device_train_batch_size=4,
+            per_device_eval_batch_size=4,
+            gradient_accumulation_steps=1
         )
 
         print("[HF Provider] Initializing the Trainer")
@@ -139,8 +139,8 @@ class HFProvider(Provider):
 
         def train():
             print("[HF Provider] Starting fine-tuning")
-            torch.cuda.empty_cache()  # Clear cache before starting training
-            trainer.train()
+            torch.cuda.empty_cache()
+            trainer.train()  # Should add torch.no_grad inside at outputs = model(**inputs)
             trainer.save_model()
             print("[HF Provider] Fine-tuning complete and model saved")
 
