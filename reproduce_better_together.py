@@ -46,7 +46,8 @@ class BasicMH(dspy.Module):
             search_query = self.generate_query[hop](context=context, question=question).search_query
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
-        return self.generate_answer(context=context, question=question).copy(context=context)
+        answer = self.generate_answer(context=context, question=question).copy(context=context)
+        return answer
 
 
 # Prepare the HotPotQA dataset
@@ -54,14 +55,27 @@ TRAIN_SIZE = 50
 DEV_SIZE = 25
 dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
 
-# These particular examples for HotPotQA breaks the code
-trainset = [x.with_inputs('question') for x in dataset.train
-            if 'Take a Bow' not in x.with_inputs('question')['question']
-            and 'Iron Maidens' not in x.with_inputs('question')['question']][:TRAIN_SIZE]
+exclusion_keywords = [
+    'Take a Bow',
+    'Iron Maidens',
+    'Cangzhou and Qionghai',
+    '(a few hundred kilometers from Moscow)',
+    'Candace Kita',
+    'Ophelia in a Royal Shakespeare',
+    'Which is taller, the Empire State Building or the Bank of America Tower?',
+    'Samantha Cristoforetti and Mark Shuttleworth are both best known for being first in their field to go where?',
+    'Which of these publications was most recently published, Who Put the Bomp or Self?',
+]
 
-devset = [x.with_inputs('question') for x in dataset.dev
-          if 'Take a Bow' not in x.with_inputs('question')['question']
-          and 'Iron Maidens' not in x.with_inputs('question')['question']][:DEV_SIZE]
+
+def is_valid_example(example, keywords):
+    question = example.with_inputs('question')['question']
+    return not any(keyword in question for keyword in keywords)
+
+
+# Filter the train and dev sets from examples producing corrupted completions.
+trainset = [x.with_inputs('question') for x in dataset.train if is_valid_example(x, exclusion_keywords)][:TRAIN_SIZE]
+devset = [x.with_inputs('question') for x in dataset.dev if is_valid_example(x, exclusion_keywords)][:DEV_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12

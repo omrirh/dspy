@@ -1,18 +1,15 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Python: Current File",
-      "type": "python",
-      "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal",
-      "justMyCode": false,
-      "env": {
-        "PYTHONUNBUFFERED": "1"
-      },
-      "envFile": "${workspaceFolder}/.env",
-      "cwd": "${workspaceFolder}"
-    }
-  ]
-}
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Python: Current File",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "justMyCode": false,
+        "envFile": "${workspaceFolder}/.env",
+        "cwd": "${workspaceFolder}"
+      }
+    ]
+  }

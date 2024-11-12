@@ -12,6 +12,8 @@ from transformers import (
     DataCollatorWithPadding,
 )
 from datasets import Dataset
+import numpy as np
+import evaluate
 
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
@@ -119,6 +121,15 @@ class HFProvider(Provider):
         output_dir = "/llama-3-8b-instruct/results"
         os.makedirs(output_dir, exist_ok=True)
 
+        # Load the accuracy metric from the evaluate library
+        accuracy = evaluate.load("accuracy")
+
+        # Define compute_metrics function using evaluate library
+        def compute_metrics(eval_pred):
+            predictions, labels = eval_pred
+            predictions = np.argmax(predictions, axis=1)
+            return accuracy.compute(predictions=predictions, references=labels)
+
         training_args = TrainingArguments(
             output_dir=output_dir,
             overwrite_output_dir=True,
@@ -126,7 +137,8 @@ class HFProvider(Provider):
             fp16=True,
             per_device_train_batch_size=4,
             per_device_eval_batch_size=4,
-            gradient_accumulation_steps=1
+            gradient_accumulation_steps=1,
+            logging_steps=10,
         )
 
         print("[HF Provider] Initializing the Trainer")
@@ -135,6 +147,7 @@ class HFProvider(Provider):
             args=training_args,
             train_dataset=tokenized_datasets,
             data_collator=data_collator,
+            compute_metrics=compute_metrics,
         )
 
         def train():
