@@ -11,7 +11,7 @@ from transformers import (
     TrainingArguments,
     DataCollatorWithPadding,
 )
-from datasets import Dataset, DatasetDict
+from datasets import Dataset
 
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
@@ -23,7 +23,7 @@ _HF_MODELS = [
     "meta-llama/Meta-Llama-3-8B-Instruct",
 ]
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 
@@ -94,8 +94,7 @@ class HFProvider(Provider):
 
         # Load model with device_map for efficient distribution
         model = AutoModelForCausalLM.from_pretrained(
-            model,
-            device_map="auto"  # Automatically distributes model across available GPUs
+            model, device_map="auto"
         )
 
         # Set pad_token if missing
@@ -107,11 +106,13 @@ class HFProvider(Provider):
         train_texts = HFProvider.prepare_training_texts(train_data)
         train_dataset = Dataset.from_dict({"text": train_texts})
 
-        # Tokenize with a reduced max_length to minimize memory usage
-        tokenized_datasets = train_dataset.map(
-            lambda examples: tokenizer(examples["text"], truncation=True, max_length=64),
-            batched=True
-        )
+        # Tokenize dataset and add 'labels' key to allow loss computation
+        def tokenize_function(examples):
+            tokens = tokenizer(examples["text"], truncation=True, max_length=18)
+            tokens["labels"] = tokens["input_ids"].copy()  # Duplicate input_ids for labels
+            return tokens
+
+        tokenized_datasets = train_dataset.map(tokenize_function, batched=True)
 
         # Use DataCollatorWithPadding for dynamic padding
         data_collator = DataCollatorWithPadding(tokenizer=tokenizer)

@@ -50,13 +50,18 @@ class BasicMH(dspy.Module):
 
 
 # Prepare the HotPotQA dataset
-TRAIN_SIZE = 100
-DEV_SIZE = 50
+TRAIN_SIZE = 50
+DEV_SIZE = 25
 dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
 
-# This particular example for HotPotQA breaks the code
-trainset = [x.with_inputs('question') for x in dataset.train if 'Take a Bow' not in x.with_inputs('question')['question']][:TRAIN_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev if 'Take a Bow' not in x.with_inputs('question')['question']][:DEV_SIZE]
+# These particular examples for HotPotQA breaks the code
+trainset = [x.with_inputs('question') for x in dataset.train
+            if 'Take a Bow' not in x.with_inputs('question')['question']
+            and 'Iron Maidens' not in x.with_inputs('question')['question']][:TRAIN_SIZE]
+
+devset = [x.with_inputs('question') for x in dataset.dev
+          if 'Take a Bow' not in x.with_inputs('question')['question']
+          and 'Iron Maidens' not in x.with_inputs('question')['question']][:DEV_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
@@ -99,7 +104,7 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: scale up dataset size to original experiment?
-small_trainset = trainset[:20]
+small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
