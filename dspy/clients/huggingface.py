@@ -19,14 +19,11 @@ from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
 
 _HF_MODELS = [
-    "meta-llama/Meta-Llama-2-7B-Chat",
-    "meta-llama/Meta-Llama-2-13B-Chat",
     "meta-llama/Meta-Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# os.environ['CUDA_LAUNCH_BLOCKING'] = 1  # Use this in case of CUDA device-side assert trigger error
 
 
 class TrainingJobHF(TrainingJob):
@@ -92,10 +89,7 @@ class HFProvider(Provider):
 
         print(f"[HF Provider] Loading model and tokenizer for '{model}'")
         tokenizer = AutoTokenizer.from_pretrained(model)
-
-        model = AutoModelForCausalLM.from_pretrained(
-            model, device_map="auto"
-        )
+        model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
 
         model.gradient_checkpointing_enable()  # Enables memory-efficient backpropagation
 
@@ -118,7 +112,7 @@ class HFProvider(Provider):
         data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
         # Use original output_dir and training_args
-        output_dir = "/llama-3-8b-instruct/results"
+        output_dir = f"/{model}/results"
         os.makedirs(output_dir, exist_ok=True)
 
         # Load the accuracy metric from the evaluate library
@@ -133,11 +127,12 @@ class HFProvider(Provider):
         training_args = TrainingArguments(
             output_dir=output_dir,
             overwrite_output_dir=True,
-            num_train_epochs=train_kwargs.get("num_train_epochs", 1),
+            num_train_epochs=train_kwargs.get("num_train_epochs", 5),
+            learning_rate=float("1e−5"),
             fp16=True,
-            per_device_train_batch_size=4,
-            per_device_eval_batch_size=4,
-            gradient_accumulation_steps=1,
+            per_device_train_batch_size=8,
+            per_device_eval_batch_size=8,
+            gradient_accumulation_steps=4,
             logging_steps=10,
         )
 

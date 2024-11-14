@@ -23,7 +23,4 @@ sudo apt update
 echo "Installing NVIDIA driver..."
 sudo apt install -y nvidia-driver-535
 
-
 echo "Finished installing NVIDIA driver."
-# TODO: verify nvidia-smi is present after reboot
-

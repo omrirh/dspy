@@ -1,12 +1,9 @@
 """
-Development Status:
+Development Issues:
 -------------------
-1. Experiencing spike cuda OOM error on torch.nn.modules.linear.Linear:
-
-    def forward(self, input: Tensor) -> Tensor:
-        F.linear(input, self.weight, self.bias)  --> input.shape = (1, 18, 4096)
-
-   find ways to solve this.
+1. Getting error with ChatAdapter.preprocess_completion due to completion fields corrupted by model
+2. Not seeing accuracy results coming during HFProvider.finetune() - re-visit trainer.compute_metrics
+3. Verify accuracy = evaluate(better_together.compile(...)) is the right way to get overall training results.
 """
 import dspy
 from dspy.datasets import HotPotQA
@@ -14,19 +11,17 @@ from dspy.evaluate import Evaluate
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
-from dspy.clients.huggingface import HFProvider
 from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
 # Define local Llama model endpoint for training
 sglang_port = 7501
-sglang_url = f"http://localhost:{sglang_port}/generate"
+sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    "meta-llama/Meta-Llama-3-8B-Instruct",
+    "openai/meta-llama/Meta-Llama-3-8B-Instruct",
     api_base=sglang_url,
-    api_key="",
-    provider=HFProvider()
+    api_key=""
 )
 dspy.configure(lm=lm)
 
@@ -51,31 +46,11 @@ class BasicMH(dspy.Module):
 
 
 # Prepare the HotPotQA dataset
-TRAIN_SIZE = 50
-DEV_SIZE = 25
+TRAIN_SIZE = 1000
+DEV_SIZE = 500
 dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
-
-exclusion_keywords = [
-    'Take a Bow',
-    'Iron Maidens',
-    'Cangzhou and Qionghai',
-    '(a few hundred kilometers from Moscow)',
-    'Candace Kita',
-    'Ophelia in a Royal Shakespeare',
-    'Which is taller, the Empire State Building or the Bank of America Tower?',
-    'Samantha Cristoforetti and Mark Shuttleworth are both best known for being first in their field to go where?',
-    'Which of these publications was most recently published, Who Put the Bomp or Self?',
-]
-
-
-def is_valid_example(example, keywords):
-    question = example.with_inputs('question')['question']
-    return not any(keyword in question for keyword in keywords)
-
-
-# Filter the train and dev sets from examples producing corrupted completions.
-trainset = [x.with_inputs('question') for x in dataset.train if is_valid_example(x, exclusion_keywords)][:TRAIN_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev if is_valid_example(x, exclusion_keywords)][:DEV_SIZE]
+trainset = [x.with_inputs('question') for x in dataset.train][:TRAIN_SIZE]
+devset = [x.with_inputs('question') for x in dataset.dev][:DEV_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
@@ -83,7 +58,7 @@ metric = dspy.evaluate.answer_exact_match
 evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True,
                     provide_traceback=True)
 
-# Retrieve model endpoint (Update with actual ColBERT endpoint URL)
+# Retriever model as ColBERTv2
 COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
 retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
 dspy.configure(rm=retriever)
@@ -117,8 +92,8 @@ better_together = BetterTogether(
 )
 
 # Sample a smaller dataset for quick testing
-# TODO: scale up dataset size to original experiment?
-small_trainset = trainset[:10]
+# TODO: Use full trainset after getting a stable run with results.
+small_trainset = trainset[:50]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
