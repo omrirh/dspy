@@ -5,6 +5,7 @@ Development Issues:
     although getting the following error:
     "Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning"
     see the error trace at:
+    https://github.com/omrirh/dspy/blob/bt-experiment/failing-on-finetune-phase.log
 
     also Llama-3-8b-instruct (or any other Llama variant) is not among the supported openai provided models:
     https://github.com/stanfordnlp/dspy/blob/8ae82545e9a117411854c2f4c45aea8fb38ec238/dspy/clients/openai.py#L11
