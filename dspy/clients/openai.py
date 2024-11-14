@@ -48,7 +48,8 @@ _OPENAI_MODELS = [
   'gpt-4-turbo-preview',
   'gpt-4-0125-preview',
   'gpt-4',
-  'gpt-3.5-turbo-instruct-0914'
+  'gpt-3.5-turbo-instruct-0914',
+  'meta-llama/Meta-Llama-3-8B-Instruct'
 ]
 
 
@@ -84,7 +85,7 @@ class TrainingJobOpenAI(TrainingJob):
 
 
 class OpenAIProvider(Provider):
-    
+
     def __init__(self):
         super().__init__()
         self.finetunable = True
@@ -184,7 +185,7 @@ class OpenAIProvider(Provider):
             TrainingStatus.failed,
             TrainingStatus.cancelled,
         ]
-    
+
     @staticmethod
     def get_training_status(job_id: str) -> TrainingStatus:
         provider_status_to_training_status = {

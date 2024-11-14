@@ -13,6 +13,7 @@ command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are m
 source vm_vars.env
 
 # login with huggingface-cli
+export HF_TOKEN=$HUGGINGFACEHUB_API_TOKEN
 huggingface-cli login --token $HF_TOKEN
 
 # Spin up the local llama model

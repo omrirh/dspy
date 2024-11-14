@@ -1,0 +1,101 @@
+Going to sample between 1 and 3 traces per predictor.
+Will attempt to bootstrap 6 candidate sets.
+[BetterTogether] Validating the strategy
+[BetterTogether] Preparing the student program...
+Ensuring that the student is not compiled
+[BetterTogether] Compiling the student program...
+[BetterTogether] Step 1 of 2 - Strategy `p`
+[BetterTogether] Shuffling the trainset...
+[BetterTogether] Preparing for prompt optimization...
+[BetterTogether] Launching the program LMs for sampling...
+`launch()` is called for the auto-launched model `openai/meta-llama/Meta-Llama-3-8B-Instruct` -- no action is taken!
+[BetterTogether] Compiling the prompt optimizer...
+Average Metric: 3 / 5  (60.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:05<00:00,  1.17s/it]
+2024/11/14 14:16:20 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+New best score: 60.0 for seed -3
+Scores so far: [60.0]
+Best score so far: 60.0
+Average Metric: 4 / 5  (80.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  2.73it/s]
+2024/11/14 14:16:22 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+New best score: 80.0 for seed -2
+Scores so far: [60.0, 80.0]
+Best score so far: 80.0
+ 18%|██████████████████████▏                                                                                                      | 8/45 [00:27<02:07,  3.45s/it]
+Bootstrapped 3 full traces after 8 examples for up to 1 rounds, amounting to 8 attempts.
+Average Metric: 4 / 5  (80.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:05<00:00,  1.01s/it]
+2024/11/14 14:16:54 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+Scores so far: [60.0, 80.0, 80.0]
+Best score so far: 80.0
+  4%|█████▌                                                                                                                       | 2/45 [00:04<01:42,  2.39s/it]
+Bootstrapped 2 full traces after 2 examples for up to 1 rounds, amounting to 2 attempts.
+Average Metric: 5 / 5  (100.0): 100%|██████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.03it/s]
+2024/11/14 14:17:04 INFO dspy.evaluate.evaluate: Average Metric: 5 / 5 (100.0%)
+New best score: 100.0 for seed 0
+Scores so far: [60.0, 80.0, 80.0, 100.0]
+Best score so far: 100.0
+ 13%|████████████████▋                                                                                                            | 6/45 [00:15<01:43,  2.65s/it]
+Bootstrapped 1 full traces after 6 examples for up to 1 rounds, amounting to 6 attempts.
+Average Metric: 3 / 5  (60.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.05it/s]
+2024/11/14 14:17:25 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [60.0, 80.0, 80.0, 100.0, 60.0]
+Best score so far: 100.0
+  7%|████████▎                                                                                                                    | 3/45 [00:08<02:01,  2.89s/it]
+Bootstrapped 1 full traces after 3 examples for up to 1 rounds, amounting to 3 attempts.
+Average Metric: 3 / 5  (60.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.05it/s]
+2024/11/14 14:17:38 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [60.0, 80.0, 80.0, 100.0, 60.0, 60.0]
+Best score so far: 100.0
+  2%|██▊                                                                                                                          | 1/45 [00:04<03:00,  4.10s/it]
+Bootstrapped 1 full traces after 1 examples for up to 1 rounds, amounting to 1 attempts.
+Average Metric: 3 / 5  (60.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.08it/s]
+2024/11/14 14:17:47 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [60.0, 80.0, 80.0, 100.0, 60.0, 60.0, 60.0]
+Best score so far: 100.0
+ 11%|█████████████▉                                                                                                               | 5/45 [00:13<01:45,  2.64s/it]
+Bootstrapped 1 full traces after 5 examples for up to 1 rounds, amounting to 5 attempts.
+Average Metric: 1 / 5  (20.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:04<00:00,  1.05it/s]
+2024/11/14 14:18:05 INFO dspy.evaluate.evaluate: Average Metric: 1 / 5 (20.0%)
+Scores so far: [60.0, 80.0, 80.0, 100.0, 60.0, 60.0, 60.0, 20.0]
+Best score so far: 100.0
+  9%|███████████                                                                                                                  | 4/45 [00:10<01:50,  2.70s/it]
+Bootstrapped 3 full traces after 4 examples for up to 1 rounds, amounting to 4 attempts.
+Average Metric: 3 / 5  (60.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:05<00:00,  1.01s/it]
+2024/11/14 14:18:21 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [60.0, 80.0, 80.0, 100.0, 60.0, 60.0, 60.0, 20.0, 60.0]
+Best score so far: 100.0
+9 candidate programs found.
+[BetterTogether] Killing the LMs used for sampling...
+`kill()` is called for the auto-launched model `openai/meta-llama/Meta-Llama-3-8B-Instruct` -- no action is taken!
+[BetterTogether] Step 2 of 2 - Strategy `p -> w`
+[BetterTogether] Shuffling the trainset...
+[BetterTogether] Preparing for weight optimization...
+[BetterTogether] Compiling the weight optimizer...
+[BootstrapFinetune] Preparing the student and teacher programs...
+Ensuring that the student is not compiled
+No teacher provided. Using a copy of the student program as the teacher.
+[BootstrapFinetune] Bootstrapping data...
+Average Metric: 29 / 50  (58.0): 100%|███████████████████████████████████████████████████████████████████████████████████████████| 50/50 [02:56<00:00,  3.53s/it]
+2024/11/14 14:21:17 INFO dspy.evaluate.evaluate: Average Metric: 29 / 50 (58.0%)
+[BootstrapFinetune] Preparing the train data...
+[BootstrapFinetune] Collected data for 50 examples
+[BootstrapFinetune] After filtering for score, 29 examples remain
+Using 87 data points for fine-tuning the model: openai/meta-llama/Meta-Llama-3-8B-Instruct
+[BootstrapFinetune] Starting LM fine-tuning...
+[BootstrapFinetune] 1 fine-tuning job(s) to start
+[BootstrapFinetune] Starting 1 fine-tuning jobs...
+[OpenAI Provider] Validating the data format
+[OpenAI Provider] Saving the data to a file
+[OpenAI Provider] Data saved to /root/.dspy_cache/finetune/1dd341d5f453aaa9.jsonl
+[OpenAI Provider] Uploading the data to the provider
+[OpenAI Provider] Starting remote training
+2024/11/14 14:21:19 ERROR dspy.clients.lm: Error code: 400 - {'error': {'message': 'Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning or does not exist.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_available'}}
+Job 1/1 completed.
+[BootstrapFinetune] Updating the student program with the fine-tuned LMs...
+[BootstrapFinetune] BootstrapFinetune has finished compiling the student program
+[BetterTogether] BetterTogether has finished compiling the student program.
+Average Metric: 187 / 500  (37.4): 100%|███████████████████████████████████████████████████████████████████████████████████████| 500/500 [03:33<00:00,  2.35it/s]
+2024/11/14 14:24:52 INFO dspy.evaluate.evaluate: Average Metric: 187 / 500 (37.4%)
+Experiment Accuracy: 37.4%
+Error code: 400 - {'error': {'message': 'Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning or does not exist.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_available'}}
+Error code: 400 - {'error': {'message': 'Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning or does not exist.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_available'}}
+Error code: 400 - {'error': {'message': 'Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning or does not exist.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_available'}}

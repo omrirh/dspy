@@ -165,13 +165,11 @@ class Predict(Module, Parameter):
         config = dict(**self.config, **kwargs.pop("config", {}))
 
         # Get the right LM to use.
-        lm = kwargs.pop("lm", self.lm) or dsp.settings.lm
+        lm = dsp.settings.lm or kwargs.pop("lm", self.lm)
         assert lm is not None, "No LM is loaded."
 
         # If temperature is 0.0 but its n > 1, set temperature to 0.7.
         temperature = config.get("temperature")
-        if not hasattr(lm, 'kwargs'):
-            print("--DEBUG LM FROM HERE--")
         temperature = lm.kwargs["temperature"] if temperature is None else temperature
         num_generations = config.get("n") or lm.kwargs.get("n") or lm.kwargs.get("num_generations") or 1
 

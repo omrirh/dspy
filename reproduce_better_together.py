@@ -1,9 +1,13 @@
 """
 Development Issues:
 -------------------
-1. Getting error with ChatAdapter.preprocess_completion due to completion fields corrupted by model
-2. Not seeing accuracy results coming during HFProvider.finetune() - re-visit trainer.compute_metrics
-3. Verify accuracy = evaluate(better_together.compile(...)) is the right way to get overall training results.
+1. DSPy docs show that openai/meta-llama/Meta-Llama-3-8B-Instruct is supported for fine-tuning,
+    although getting the following error:
+    "Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning"
+    see the error trace at:
+
+    also Llama-3-8b-instruct (or any other Llama variant) is not among the supported openai provided models:
+    https://github.com/stanfordnlp/dspy/blob/8ae82545e9a117411854c2f4c45aea8fb38ec238/dspy/clients/openai.py#L11
 """
 import dspy
 from dspy.datasets import HotPotQA
@@ -21,7 +25,8 @@ sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
     "openai/meta-llama/Meta-Llama-3-8B-Instruct",
     api_base=sglang_url,
-    api_key=""
+    api_key="local",
+    model_type="chat",
 )
 dspy.configure(lm=lm)
 
