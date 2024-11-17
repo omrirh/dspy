@@ -4,7 +4,7 @@ Development Issues:
 1. DSPy docs show that openai/meta-llama/Meta-Llama-3-8B-Instruct is supported for fine-tuning,
     although getting the following error:
     "Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning"
-    see the error trace at:
+    see the failing run logs at:
     https://github.com/omrirh/dspy/blob/bt-experiment/failing-on-finetune-phase.log
 
     also Llama-3-8b-instruct (or any other Llama variant) is not among the supported openai provided models:
@@ -24,7 +24,7 @@ dspy.settings.experimental = True
 sglang_port = 7501
 sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    "openai/meta-llama/Meta-Llama-3-8B-Instruct",
+    "meta-llama/Meta-Llama-3-8B-Instruct",
     api_base=sglang_url,
     api_key="local",
     model_type="chat",

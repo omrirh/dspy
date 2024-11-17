@@ -49,7 +49,6 @@ _OPENAI_MODELS = [
   'gpt-4-0125-preview',
   'gpt-4',
   'gpt-3.5-turbo-instruct-0914',
-  'meta-llama/Meta-Llama-3-8B-Instruct'
 ]
 
 
