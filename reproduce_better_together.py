@@ -24,7 +24,7 @@ dspy.settings.experimental = True
 sglang_port = 7501
 sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    "huggingface/meta-llama/Meta-Llama-3-8B-Instruct",
+    "meta-llama/Meta-Llama-3-8B-Instruct",
     api_base=sglang_url,
     api_key="local",
     model_type="chat",
