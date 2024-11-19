@@ -1,33 +1,23 @@
-"""
-Development Issues:
--------------------
-1. DSPy docs show that openai/meta-llama/Meta-Llama-3-8B-Instruct is supported for fine-tuning,
-    although getting the following error:
-    "Model openai/meta-llama/Meta-Llama-3-8B-Instruct is not available for fine-tuning"
-    see the failing run logs at:
-    https://github.com/omrirh/dspy/blob/bt-experiment/failing-on-finetune-phase.log
-
-    also Llama-3-8b-instruct (or any other Llama variant) is not among the supported openai provided models:
-    https://github.com/stanfordnlp/dspy/blob/8ae82545e9a117411854c2f4c45aea8fb38ec238/dspy/clients/openai.py#L11
-"""
+import os
 import dspy
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
+from dspy.clients.databricks import DatabricksProvider
 from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
 # Define local Llama model endpoint for training
-sglang_port = 7501
-sglang_url = f"http://localhost:{sglang_port}/v1"
+# sglang_port = 7501
+# sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    "meta-llama/Meta-Llama-3-8B-Instruct",
-    api_base=sglang_url,
-    api_key="local",
-    model_type="chat",
+    'databricks/databricks-meta-llama-3-8b-instruct',
+    api_base=os.environ["DATABRICKS_API_BASE"],
+    api_key=os.environ["DATABRICKS_API_KEY"],
+    provider=DatabricksProvider()
 )
 dspy.configure(lm=lm)
 
