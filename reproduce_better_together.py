@@ -59,7 +59,7 @@ retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
 dspy.configure(rm=retriever)
 
 # Initialize the BetterTogether class with optimizers
-train_kwargs = {"n_epochs": 1}
+train_kwargs = {}
 adapter = dspy.ChatAdapter()
 
 weight_optimizer = BootstrapFinetune(

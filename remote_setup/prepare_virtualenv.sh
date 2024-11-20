@@ -25,5 +25,5 @@ poetry install
 
 # PATCH: install additional missing pip packages
 pip install backoff ujson regex tqdm openai joblib datasets litellm json_repair diskcache
-pip install magicattr optuna torch transformers[torch] evaluate
+pip install magicattr optuna torch transformers[torch] evaluate asyncer
 
