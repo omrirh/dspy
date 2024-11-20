@@ -1,23 +1,22 @@
-import os
 import dspy
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
-from dspy.clients.databricks import DatabricksProvider
+from dspy.clients.huggingface import HFProvider
 from dsp.utils.utils import deduplicate
 
 dspy.settings.experimental = True
 
 # Define local Llama model endpoint for training
-# sglang_port = 7501
-# sglang_url = f"http://localhost:{sglang_port}/v1"
+sglang_port = 7501
+sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    'databricks/databricks-meta-llama-3-8b-instruct',
-    api_base=os.environ["DATABRICKS_API_BASE"],
-    api_key=os.environ["DATABRICKS_API_KEY"],
-    provider=DatabricksProvider()
+    'meta-llama/Llama-3.1-8B-Instruct',
+    api_base=sglang_url,
+    api_key="local",
+    provider=HFProvider(),
 )
 dspy.configure(lm=lm)
 

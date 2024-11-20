@@ -93,7 +93,7 @@ class LM(BaseLM):
             completion = cached_litellm_text_completion if cache else litellm_text_completion
 
         response = completion(
-            request=ujson.dumps(dict(model=self.model, messages=messages, **kwargs)),
+            request=ujson.dumps(dict(model=f"openai/{self.model}", messages=messages, **kwargs)),
             num_retries=self.num_retries,
         )
         outputs = [c.message.content if hasattr(c, "message") else c["text"] for c in response["choices"]]

@@ -91,8 +91,6 @@ class HFProvider(Provider):
         tokenizer = AutoTokenizer.from_pretrained(model)
         model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
 
-        model.gradient_checkpointing_enable()  # Enables memory-efficient backpropagation
-
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
             model.resize_token_embeddings(len(tokenizer))
