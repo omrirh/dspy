@@ -8,7 +8,7 @@ from transformers import (
     AutoTokenizer,
     Trainer,
     TrainingArguments,
-    DataCollatorWithPadding,
+    DataCollatorForLanguageModeling,
 )
 from datasets import Dataset
 import numpy as np
@@ -99,26 +99,31 @@ class HFProvider(Provider):
         train_dataset = Dataset.from_dict({"text": train_texts})
 
         def tokenize_function(examples):
-            tokens = tokenizer(examples["text"], truncation=True, padding="longest")
-            tokens["labels"] = tokens["input_ids"].copy()
+            tokens = tokenizer(examples["text"], truncation=True, padding="longest", return_tensors="pt")
+            tokens["labels"] = tokens["input_ids"]
             return tokens
 
+        print("[HF Provider] Tokenizing dataset")
         tokenized_datasets = train_dataset.map(tokenize_function, batched=True)
 
-        # Use DataCollatorWithPadding for dynamic padding
-        data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+        # Use DataCollatorForLanguageModeling for padding and truncation
+        data_collator = DataCollatorForLanguageModeling(
+            tokenizer=tokenizer,
+            mlm=False,
+            pad_to_multiple_of=8,
+        )
 
-        # Use original output_dir and training_args
+        # Init results output directory
+        # TODO: Set output dir name with model specific name?
         output_dir = f"/training_results"
         os.makedirs(output_dir, exist_ok=True)
 
-        # Load the accuracy metric from the evaluate library
+        # Define compute metrics with accuracy
         accuracy = evaluate.load("accuracy")
 
-        # Define compute_metrics function using evaluate library
         def compute_metrics(eval_pred):
             predictions, labels = eval_pred
-            predictions = np.argmax(predictions, axis=1)
+            predictions = np.argmax(predictions, axis=-1)
             return accuracy.compute(predictions=predictions, references=labels)
 
         training_args = TrainingArguments(
@@ -145,7 +150,7 @@ class HFProvider(Provider):
         def train():
             print("[HF Provider] Starting fine-tuning")
             torch.cuda.empty_cache()
-            trainer.train()  # Should add torch.no_grad inside at outputs = model(**inputs)
+            trainer.train()  # Start the training process
             trainer.save_model()
             print("[HF Provider] Fine-tuning complete and model saved")
 
