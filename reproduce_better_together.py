@@ -5,7 +5,7 @@ from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dspy.clients.huggingface import HFProvider
-from dsp.utils.utils import deduplicate
+from programs import BasicMH
 
 dspy.settings.experimental = True
 
@@ -19,26 +19,6 @@ lm = dspy.LM(
     provider=HFProvider(),
 )
 dspy.configure(lm=lm)
-
-
-# Define the program for multi-hop QA
-class BasicMH(dspy.Module):
-    def __init__(self, passages_per_hop=3, num_hops=2):
-        super().__init__()
-        self.num_hops = num_hops
-        self.retrieve = dspy.Retrieve(k=passages_per_hop)
-        self.generate_query = [dspy.ChainOfThought("context, question -> search_query") for _ in range(self.num_hops)]
-        self.generate_answer = dspy.ChainOfThought("context, question -> answer")
-
-    def forward(self, question):
-        context = []
-        for hop in range(self.num_hops):
-            search_query = self.generate_query[hop](context=context, question=question).search_query
-            passages = self.retrieve(search_query).passages
-            context = deduplicate(context + passages)
-        answer = self.generate_answer(context=context, question=question).copy(context=context)
-        return answer
-
 
 # Prepare the HotPotQA dataset
 TRAIN_SIZE = 1000
