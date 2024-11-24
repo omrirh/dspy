@@ -116,7 +116,7 @@ class HFProvider(Provider):
         train_dataset = Dataset.from_dict({"text": train_texts})
 
         def tokenize_function(examples):
-            tokens = tokenizer(examples["text"], truncation=True, padding="longest", return_tensors="pt")
+            tokens = tokenizer(examples["text"], truncation=True, padding=True, return_tensors="pt")
             tokens["labels"] = tokens["input_ids"]
             return tokens
 
