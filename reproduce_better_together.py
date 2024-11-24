@@ -13,7 +13,7 @@ dspy.settings.experimental = True
 sglang_port = 7501
 sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    'meta-llama/Llama-3.1-8B-Instruct',
+    'meta-llama/Meta-Llama-3-8B-Instruct',
     api_base=sglang_url,
     api_key="local",
     provider=HFProvider(),
@@ -68,13 +68,13 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: Use full trainset after getting a stable run with results.
-small_trainset = trainset[:50]
+# small_trainset = trainset[:50]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=BasicMH(),
-        trainset=small_trainset,
+        trainset=trainset,
         strategy="p -> w",
         valset_ratio=0.1
     )
