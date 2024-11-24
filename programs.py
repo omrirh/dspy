@@ -19,5 +19,12 @@ class BasicMH(dspy.Module):
         answer = self.generate_answer(context=context, question=question).copy(context=context)
         return answer
 
-# TODO: add programs for GSM8K and Iris datasets.
+
+class CoT(dspy.Module):
+    def __init__(self):
+        super().__init__()
+        self.prog = dspy.ChainOfThought("question -> answer")
+
+    def forward(self, question):
+        return self.prog(question=question)
 

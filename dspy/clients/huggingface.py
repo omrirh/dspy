@@ -14,6 +14,7 @@ from datasets import Dataset
 import numpy as np
 import evaluate
 
+from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
 
@@ -94,6 +95,22 @@ class HFProvider(Provider):
             tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
             model.resize_token_embeddings(len(tokenizer))
 
+        print("[HF Provider] Preparing model for LoRA fine-tuning")
+        # LoRA Configuration
+        lora_config = LoraConfig(
+            r=32,
+            lora_alpha=64,
+            target_modules=["q_proj", "v_proj"],
+            lora_dropout=0.0,
+            bias="none",
+            task_type="CAUSAL_LM",
+        )
+
+        # Prepare model for int8 training and apply LoRA
+        model = prepare_model_for_int8_training(model)
+        model = get_peft_model(model, lora_config)
+        model.print_trainable_parameters()
+
         print("[HF Provider] Preparing training dataset")
         train_texts = HFProvider.prepare_training_texts(train_data)
         train_dataset = Dataset.from_dict({"text": train_texts})
@@ -114,7 +131,6 @@ class HFProvider(Provider):
         )
 
         # Init results output directory
-        # TODO: Set output dir name with model specific name?
         output_dir = f"/training_results"
         os.makedirs(output_dir, exist_ok=True)
 
@@ -148,11 +164,11 @@ class HFProvider(Provider):
         )
 
         def train():
-            print("[HF Provider] Starting fine-tuning")
+            print("[HF Provider] Starting LoRA fine-tuning")
             torch.cuda.empty_cache()
             trainer.train()  # Start the training process
             trainer.save_model()
-            print("[HF Provider] Fine-tuning complete and model saved")
+            print("[HF Provider] LoRA Fine-tuning complete and model saved")
 
         print("[HF Provider] Launching training thread")
         training_thread = Thread(target=train)

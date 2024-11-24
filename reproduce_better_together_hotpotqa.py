@@ -79,6 +79,6 @@ with dspy.context(lm=lm, rm=retriever):
         valset_ratio=0.1
     )
 
-# Evaluate accuracy on validation (dev) set and output the results
+# Evaluate accuracy on validation (dev) set and output the results (expecting 42.8%)
 accuracy = evaluate(optimized_program)
 print(f"Experiment Accuracy: {accuracy}%")
