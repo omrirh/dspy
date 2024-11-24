@@ -16,5 +16,7 @@ source vm_vars.env
 export HF_TOKEN=$HUGGINGFACEHUB_API_TOKEN
 huggingface-cli login --token $HF_TOKEN
 
-# Spin up the local llama model
-CUDA_VISIBLE_DEVICES=1 python -m sglang.launch_server   --model-path meta-llama/Meta-Llama-3-8B-Instruct   --port 7501
+# Spin up the local llama model persistently
+nohup env CUDA_VISIBLE_DEVICES=1 python -m sglang.launch_server \
+  --model-path meta-llama/Meta-Llama-3-8B-Instruct \
+  --port 7501 > llama_run.log 2>&1 &
