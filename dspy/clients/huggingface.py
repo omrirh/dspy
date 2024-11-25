@@ -14,7 +14,7 @@ from datasets import Dataset
 import numpy as np
 import evaluate
 
-from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
+from peft import LoraConfig, get_peft_model
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
 
@@ -107,7 +107,6 @@ class HFProvider(Provider):
         )
 
         # Prepare model for int8 training and apply LoRA
-        model = prepare_model_for_int8_training(model)
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 

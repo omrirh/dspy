@@ -20,12 +20,10 @@ lm = dspy.LM(
 )
 dspy.configure(lm=lm)
 
-# Prepare the HotPotQA dataset
-TRAIN_SIZE = 1000
-DEV_SIZE = 500
+# Prepare the HotPotQA dataset (devset max size = 300, trainset max size = 200)
 dataset = GSM8K()
-trainset = [x.with_inputs('question') for x in dataset.train][:TRAIN_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev][:DEV_SIZE]
+trainset = [x.with_inputs('question') for x in dataset.train]
+devset = [x.with_inputs('question') for x in dataset.dev]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
@@ -73,14 +71,14 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: Use full trainset after getting a stable run with results.
-small_trainset = trainset[:50]
+# small_trainset = trainset[:50]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
         trainset=trainset,
-        strategy="w -> p",
+        strategy="p -> w",
         valset_ratio=0.1
     )
 
