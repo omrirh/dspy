@@ -88,6 +88,7 @@ class HFProvider(Provider):
         HFProvider.validate_data_format(data_format)
 
         print(f"[HF Provider] Loading model and tokenizer for '{model}'")
+        model_name = model
         tokenizer = AutoTokenizer.from_pretrained(model)
         model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
 
@@ -106,7 +107,7 @@ class HFProvider(Provider):
             task_type="CAUSAL_LM",
         )
 
-        # Prepare model for int8 training and apply LoRA
+        # Prepare model for training and apply LoRA
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
@@ -130,7 +131,7 @@ class HFProvider(Provider):
         )
 
         # Init results output directory
-        output_dir = f"/training_results"
+        output_dir = f"/{model_name}-results"
         os.makedirs(output_dir, exist_ok=True)
 
         # Define compute metrics with accuracy

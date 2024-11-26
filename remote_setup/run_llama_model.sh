@@ -1,19 +1,18 @@
 #!/bin/bash
 
+# Enable session variables and env
+source vm_vars.env
+source dspy_venv/bin/activate
+
 # Setup SGLang
 pip install "sglang[all]"
 pip install flashinfer -i https://flashinfer.ai/whl/cu121/torch2.4/
 pip install huggingface_hub
-pip install python3.11-dev
 
 # make sure Nvidia driver is present on machine
 command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are missing."; exit 1; }
 
-# Get session variables
-source vm_vars.env
-
 # login with huggingface-cli
-export HF_TOKEN=$HUGGINGFACEHUB_API_TOKEN
 huggingface-cli login --token $HF_TOKEN
 
 # Spin up the local llama model persistently

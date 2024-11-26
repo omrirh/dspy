@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Enable session variables and env
+source ../vm_vars.env
+source ../dspy_venv/bin/activate
+
 # Default program
 PROGRAM="hotpotqa"
 
