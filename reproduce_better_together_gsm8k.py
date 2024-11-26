@@ -24,12 +24,13 @@ dspy.configure(lm=lm)
 dataset = GSM8K()
 trainset = [x.with_inputs('question') for x in dataset.train]
 devset = [x.with_inputs('question') for x in dataset.dev]
+testset = [x.with_inputs('question') for x in dataset.dev][:500]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
 metric = gsm8k_metric
 evaluate = Evaluate(
-    devset=devset[:],
+    devset=testset[:],  # devset[:],
     metric=metric,
     num_threads=NUM_THREADS,
     display_progress=True,
