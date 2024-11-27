@@ -22,9 +22,12 @@ dspy.configure(lm=lm)
 
 # Prepare the HotPotQA dataset (devset max size = 300, trainset max size = 200)
 dataset = GSM8K()
-trainset = [x.with_inputs('question') for x in dataset.train]
-devset = [x.with_inputs('question') for x in dataset.dev]
-testset = [x.with_inputs('question') for x in dataset.dev][:500]
+TRAINSET_SIZE = 1000
+DEVSET_SIZE = 500
+TESTSET_SIZE = 1319
+trainset = [x.with_inputs('question') for x in dataset.train if 'Jack is mad at his neighbors' not in x.question][:TRAINSET_SIZE]
+devset = [x.with_inputs('question') for x in dataset.dev if 'Jack is mad at his neighbors' not in x.question][:DEVSET_SIZE]
+testset = [x.with_inputs('question') for x in dataset.test if 'Jack is mad at his neighbors' not in x.question][:TESTSET_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
@@ -91,6 +94,7 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy on validation (dev) set and output the results
+print("[BetterTogether x GSM8K x p -> w] Calculating experiment program results...")
 accuracy_dev = evaluate_dev(optimized_program)
 accuracy_test = evaluate_test(optimized_program)
 print(f"Experiment Accuracy:\nValidation set:\t{accuracy_dev}\nTest set:\t{accuracy_test}")

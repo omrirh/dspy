@@ -18,22 +18,22 @@ class GSM8K:
         for example in tqdm.tqdm(hf_official_train):
             question = example["question"]
 
-            answer = example["answer"].strip().split()
-            assert answer[-2] == "####"
+            answer = example['answer'].strip().split()
+            assert answer[-2] == '####'
 
-            gold_reasoning = " ".join(answer[:-2])
-            answer = str(int(answer[-1].replace(",", "")))
+            gold_reasoning = ' '.join(answer[:-2])
+            answer = str(int(answer[-1].replace(',', '')))
 
             official_train.append(dict(question=question, gold_reasoning=gold_reasoning, answer=answer))
 
         for example in tqdm.tqdm(hf_official_test):
             question = example["question"]
 
-            answer = example["answer"].strip().split()
-            assert answer[-2] == "####"
+            answer = example['answer'].strip().split()
+            assert answer[-2] == '####'
 
-            gold_reasoning = " ".join(answer[:-2])
-            answer = str(int(answer[-1].replace(",", "")))
+            gold_reasoning = ' '.join(answer[:-2])
+            answer = str(int(answer[-1].replace(',', '')))
 
             official_test.append(dict(question=question, gold_reasoning=gold_reasoning, answer=answer))
 
@@ -43,8 +43,8 @@ class GSM8K:
         rng = random.Random(0)
         rng.shuffle(official_test)
 
-        trainset = official_train[:200]
-        devset = official_train[200:500]
+        trainset = official_train[:]
+        devset = official_train[:]
         testset = official_test[:]
 
         import dspy
