@@ -29,8 +29,15 @@ testset = [x.with_inputs('question') for x in dataset.dev][:500]
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
 metric = gsm8k_metric
-evaluate = Evaluate(
-    devset=testset[:],  # devset[:],
+evaluate_dev = Evaluate(
+    devset=devset[:],
+    metric=metric,
+    num_threads=NUM_THREADS,
+    display_progress=True,
+    display_table=False
+)
+evaluate_test = Evaluate(
+    devset=testset[:],
     metric=metric,
     num_threads=NUM_THREADS,
     display_progress=True,
@@ -84,5 +91,6 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy on validation (dev) set and output the results
-accuracy = evaluate(optimized_program)
-print(f"Experiment Accuracy: {accuracy}%")
+accuracy_dev = evaluate_dev(optimized_program)
+accuracy_test = evaluate_test(optimized_program)
+print(f"Experiment Accuracy:\nValidation set:\t{accuracy_dev}\nTest set:\t{accuracy_test}")
