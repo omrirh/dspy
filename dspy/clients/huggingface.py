@@ -15,6 +15,7 @@ import numpy as np
 import evaluate
 
 from peft import LoraConfig, get_peft_model
+from remote_setup.utils import redeploy_sglang_model
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
 
@@ -174,6 +175,9 @@ class HFProvider(Provider):
         training_thread = Thread(target=train)
         training_thread.start()
         job.thread = training_thread
+
+        print(f"[HF Provider] Re-deploying {model_name} model after LoRA fine-tuning")
+        redeploy_sglang_model(model_path=output_dir)
 
         return model
 

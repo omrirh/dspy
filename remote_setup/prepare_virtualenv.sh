@@ -23,7 +23,5 @@ pip install poetry
 poetry env use python3.11
 poetry install
 
-# PATCH: install additional missing pip packages
-pip install backoff ujson regex tqdm openai joblib datasets litellm json_repair diskcache
-pip install magicattr optuna torch transformers[torch] evaluate asyncer tenacity scikit-learn peft
-
+# Install pip dependencies
+pip install -r dspy/remote_setup/requirements.txt

@@ -13,7 +13,7 @@ dspy.settings.experimental = True
 sglang_port = 7501
 sglang_url = f"http://localhost:{sglang_port}/v1"
 lm = dspy.LM(
-    'meta-llama/Meta-Llama-3-8B-Instruct',
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
     api_base=sglang_url,
     api_key="local",
     provider=HFProvider(),
@@ -26,7 +26,7 @@ TRAINSET_SIZE = 1000
 DEVSET_SIZE = 500
 TESTSET_SIZE = 1319
 trainset = [x.with_inputs('question') for x in dataset.train if 'Jack is mad at his neighbors' not in x.question][:TRAINSET_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev if 'Jack is mad at his neighbors' not in x.question][:DEVSET_SIZE]
+devset = [x.with_inputs('question')for x in dataset.dev if 'Jack is mad at his neighbors' not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
 testset = [x.with_inputs('question') for x in dataset.test if 'Jack is mad at his neighbors' not in x.question][:TESTSET_SIZE]
 
 # Set up the metric and evaluation tool
