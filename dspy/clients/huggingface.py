@@ -14,7 +14,7 @@ from datasets import Dataset
 import numpy as np
 import evaluate
 
-from peft import LoraConfig, get_peft_model
+from peft import LoraConfig, get_peft_model, PeftModel
 from remote_setup.utils import redeploy_sglang_model
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import DataFormat, TrainingStatus
@@ -91,11 +91,11 @@ class HFProvider(Provider):
         print(f"[HF Provider] Loading model and tokenizer for '{model}'")
         model_name = model
         tokenizer = AutoTokenizer.from_pretrained(model)
-        model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
+        base_model = AutoModelForCausalLM.from_pretrained(model, device_map="auto")
 
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
-            model.resize_token_embeddings(len(tokenizer))
+            base_model.resize_token_embeddings(len(tokenizer))
 
         print("[HF Provider] Preparing model for LoRA fine-tuning")
         # LoRA Configuration
@@ -109,8 +109,8 @@ class HFProvider(Provider):
         )
 
         # Prepare model for training and apply LoRA
-        model = get_peft_model(model, lora_config)
-        model.print_trainable_parameters()
+        peft_model = get_peft_model(model, lora_config)
+        peft_model.print_trainable_parameters()
 
         print("[HF Provider] Preparing training dataset")
         train_texts = HFProvider.prepare_training_texts(train_data)
@@ -132,7 +132,7 @@ class HFProvider(Provider):
         )
 
         # Init results output directory
-        output_dir = f"/{model_name}-results"
+        output_dir = f"/results"
         os.makedirs(output_dir, exist_ok=True)
 
         # Define compute metrics with accuracy
@@ -157,7 +157,7 @@ class HFProvider(Provider):
 
         print("[HF Provider] Initializing the Trainer")
         trainer = Trainer(
-            model=model,
+            model=peft_model,
             args=training_args,
             train_dataset=tokenized_datasets,
             data_collator=data_collator,
@@ -169,12 +169,14 @@ class HFProvider(Provider):
             torch.cuda.empty_cache()
             trainer.train()  # Start the training process
             trainer.save_model()
-            print("[HF Provider] LoRA Fine-tuning complete and model saved")
+            print("[HF Provider] LoRA Fine-tuning complete and trained weights saved.")
 
         print("[HF Provider] Launching training thread")
         training_thread = Thread(target=train)
         training_thread.start()
         job.thread = training_thread
+
+        HFProvider.merge_lora_weights_to_base_model(base_model=base_model, output_dir=output_dir, tokenizer=tokenizer)
 
         print(f"[HF Provider] Re-deploying {model_name} model after LoRA fine-tuning")
         redeploy_sglang_model(model_path=output_dir)
@@ -194,3 +196,23 @@ class HFProvider(Provider):
             return [" ".join(msg["content"] for msg in item["messages"] if "content" in msg) for item in train_data]
         else:
             raise ValueError("Expected 'messages' key in train_data items.")
+
+    @staticmethod
+    def merge_lora_weights_to_base_model(
+            base_model: AutoModelForCausalLM.from_pretrained,
+            tokenizer: AutoTokenizer.from_pretrained,
+            output_dir: str
+    ) -> None:
+        print("[HF Provider] Merging LoRA trained weights to base model")
+        # Load the fine-tuned PEFT model from the output directory
+        lora_model = PeftModel.from_pretrained(
+            model=base_model,
+            model_id=output_dir
+        )
+        merged_model = lora_model.merge_and_unload()
+
+        print(f"[HF Provider] Saving merged model to {output_dir}")
+        merged_model.save_pretrained(output_dir)
+        tokenizer.save_pretrained(output_dir)
+
+        print(f"[HF Provider] Model successfully merged and saved to {output_dir}.")
