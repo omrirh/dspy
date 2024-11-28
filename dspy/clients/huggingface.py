@@ -2,6 +2,7 @@ import os
 from threading import Thread
 from typing import Any, Dict, List, Optional
 
+import dspy
 import torch
 from transformers import (
     AutoModelForCausalLM,
@@ -109,7 +110,7 @@ class HFProvider(Provider):
         )
 
         # Prepare model for training and apply LoRA
-        peft_model = get_peft_model(model, lora_config)
+        peft_model = get_peft_model(base_model, lora_config)
         peft_model.print_trainable_parameters()
 
         print("[HF Provider] Preparing training dataset")
@@ -176,10 +177,22 @@ class HFProvider(Provider):
         training_thread.start()
         job.thread = training_thread
 
+        # Wait for the training thread to complete
+        print("[HF Provider] Waiting for training thread to finish")
+        training_thread.join()
+
         HFProvider.merge_lora_weights_to_base_model(base_model=base_model, output_dir=output_dir, tokenizer=tokenizer)
 
         print(f"[HF Provider] Re-deploying {model_name} model after LoRA fine-tuning")
         redeploy_sglang_model(model_path=output_dir)
+
+        lm = dspy.LM(
+            model=model_name,
+            api_base="http://localhost:7501/v1",
+            api_key="local",
+            provider=HFProvider(),
+        )
+        dspy.configure(lm=lm)
 
         return model
 
