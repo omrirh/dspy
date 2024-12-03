@@ -25,9 +25,11 @@ dataset = GSM8K()
 TRAINSET_SIZE = 1000
 DEVSET_SIZE = 500
 TESTSET_SIZE = 1319
-trainset = [x.with_inputs('question') for x in dataset.train if 'Jack is mad at his neighbors' not in x.question][:TRAINSET_SIZE]
-devset = [x.with_inputs('question')for x in dataset.dev if 'Jack is mad at his neighbors' not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
-testset = [x.with_inputs('question') for x in dataset.test if 'Jack is mad at his neighbors' not in x.question][:TESTSET_SIZE]
+AVOID_INPUT_TRAIN = 'Jack is mad at his neighbors'
+AVOID_INPUT_TEST = 'Michael is racing his horse'
+trainset = [x.with_inputs('question') for x in dataset.train if AVOID_INPUT_TRAIN not in x.question][:TRAINSET_SIZE]
+devset = [x.with_inputs('question')for x in dataset.dev if AVOID_INPUT_TRAIN not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
+testset = [x.with_inputs('question') for x in dataset.test if AVOID_INPUT_TEST not in x.question][:TESTSET_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12

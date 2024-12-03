@@ -118,8 +118,7 @@ class HFProvider(Provider):
         train_dataset = Dataset.from_dict({"text": train_texts})
 
         def tokenize_function(examples):
-            tokens = tokenizer(examples["text"], truncation=True, padding=True, return_tensors="pt")
-            tokens["labels"] = tokens["input_ids"]
+            tokens = tokenizer(examples["text"], truncation=True)
             return tokens
 
         print("[HF Provider] Tokenizing dataset")
@@ -129,20 +128,11 @@ class HFProvider(Provider):
         data_collator = DataCollatorForLanguageModeling(
             tokenizer=tokenizer,
             mlm=False,
-            pad_to_multiple_of=8,
         )
 
         # Init results output directory
         output_dir = f"/results"
         os.makedirs(output_dir, exist_ok=True)
-
-        # Define compute metrics with accuracy
-        accuracy = evaluate.load("accuracy")
-
-        def compute_metrics(eval_pred):
-            predictions, labels = eval_pred
-            predictions = np.argmax(predictions, axis=-1)
-            return accuracy.compute(predictions=predictions, references=labels)
 
         training_args = TrainingArguments(
             output_dir=output_dir,
@@ -162,7 +152,6 @@ class HFProvider(Provider):
             args=training_args,
             train_dataset=tokenized_datasets,
             data_collator=data_collator,
-            compute_metrics=compute_metrics,
         )
 
         def train():
@@ -194,7 +183,7 @@ class HFProvider(Provider):
         )
         dspy.configure(lm=lm)
 
-        return model
+        return peft_model
 
     @staticmethod
     def validate_data_format(data_format: DataFormat):
