@@ -12,8 +12,6 @@ from transformers import (
     DataCollatorForLanguageModeling,
 )
 from datasets import Dataset
-import numpy as np
-import evaluate
 
 from peft import LoraConfig, get_peft_model, PeftModel
 from remote_setup.utils import redeploy_sglang_model
@@ -131,11 +129,11 @@ class HFProvider(Provider):
         )
 
         # Init results output directory
-        output_dir = f"/results"
-        os.makedirs(output_dir, exist_ok=True)
+        trained_model_path = "/results"
+        os.makedirs(trained_model_path, exist_ok=True)
 
         training_args = TrainingArguments(
-            output_dir=output_dir,
+            output_dir=trained_model_path,
             overwrite_output_dir=True,
             num_train_epochs=train_kwargs.get("num_train_epochs", 5),
             learning_rate=float("1e-5"),
@@ -170,10 +168,10 @@ class HFProvider(Provider):
         print("[HF Provider] Waiting for training thread to finish")
         training_thread.join()
 
-        HFProvider.merge_lora_weights_to_base_model(base_model=base_model, output_dir=output_dir, tokenizer=tokenizer)
+        HFProvider.merge_lora_weights_to_base_model(base_model=base_model, trained_model_path=trained_model_path, tokenizer=tokenizer)
 
         print(f"[HF Provider] Re-deploying {model_name} model after LoRA fine-tuning")
-        redeploy_sglang_model(model_path=output_dir)
+        redeploy_sglang_model(model_path=trained_model_path)
 
         lm = dspy.LM(
             model=model_name,
@@ -183,7 +181,7 @@ class HFProvider(Provider):
         )
         dspy.configure(lm=lm)
 
-        return peft_model
+        return trained_model_path
 
     @staticmethod
     def validate_data_format(data_format: DataFormat):
@@ -203,18 +201,18 @@ class HFProvider(Provider):
     def merge_lora_weights_to_base_model(
             base_model: AutoModelForCausalLM.from_pretrained,
             tokenizer: AutoTokenizer.from_pretrained,
-            output_dir: str
+            trained_model_path: str
     ) -> None:
         print("[HF Provider] Merging LoRA trained weights to base model")
         # Load the fine-tuned PEFT model from the output directory
         lora_model = PeftModel.from_pretrained(
             model=base_model,
-            model_id=output_dir
+            model_id=trained_model_path
         )
         merged_model = lora_model.merge_and_unload()
 
-        print(f"[HF Provider] Saving merged model to {output_dir}")
-        merged_model.save_pretrained(output_dir)
-        tokenizer.save_pretrained(output_dir)
+        print(f"[HF Provider] Saving merged model to {trained_model_path}")
+        merged_model.save_pretrained(trained_model_path)
+        tokenizer.save_pretrained(trained_model_path)
 
-        print(f"[HF Provider] Model successfully merged and saved to {output_dir}.")
+        print(f"[HF Provider] Model successfully merged and saved to {trained_model_path}.")
