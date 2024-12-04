@@ -5,7 +5,7 @@ source ../vm_vars.env
 source ../dspy_venv/bin/activate
 
 # Default program
-PROGRAM="hotpotqa"
+PROGRAM="gsm8k"
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
