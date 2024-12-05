@@ -32,12 +32,11 @@ class JSONAdapter(Adapter):
         inputs = self.format(signature, demos, inputs)
         inputs = dict(prompt=inputs) if isinstance(inputs, str) else dict(messages=inputs)
 
-
         try:
             provider = "huggingface"
-            # provider = lm.model.split('/', 1)[0] or "openai"
-            if 'response_format' in litellm.get_supported_openai_params(model=lm.model, custom_llm_provider=provider):
-                outputs = lm(**inputs, **lm_kwargs, response_format={ "type": "json_object" })
+            # provider = lm.model.split("/", 1)[0] or "openai"
+            if "response_format" in litellm.get_supported_openai_params(model=lm.model, custom_llm_provider=provider):
+                outputs = lm(**inputs, **lm_kwargs, response_format={"type": "json_object"})
             else:
                 outputs = lm(**inputs, **lm_kwargs)
 
@@ -54,7 +53,6 @@ class JSONAdapter(Adapter):
             values.append(value)
 
         return values
-
 
     def format(self, signature, demos, inputs):
         messages = []
@@ -216,8 +214,11 @@ def format_turn(signature: SignatureMeta, values: Dict[str, Any], role, incomple
     if role == "user":
 
         def type_info(v):
-            return f" (must be formatted as a valid Python {get_annotation_name(v.annotation)})" \
-                if v.annotation is not str else ""
+            return (
+                f" (must be formatted as a valid Python {get_annotation_name(v.annotation)})"
+                if v.annotation is not str
+                else ""
+            )
 
         # TODO: Consider if not incomplete:
         content.append(
