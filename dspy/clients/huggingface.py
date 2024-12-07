@@ -138,9 +138,8 @@ class HFProvider(Provider):
             num_train_epochs=train_kwargs.get("num_train_epochs", 5),
             learning_rate=float("1e-5"),
             fp16=True,
-            per_device_train_batch_size=8,
-            per_device_eval_batch_size=8,
-            gradient_accumulation_steps=4,
+            per_device_train_batch_size=4,
+            gradient_accumulation_steps=8,
             logging_steps=10,
         )
 
