@@ -1,11 +1,13 @@
 import random
 
+from typing import List
 from dspy.evaluate.evaluate import Evaluate
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.utils.pez import optimize_prompt
 
 from .bootstrap import BootstrapFewShot
 from .vanilla import LabeledFewShot
+
 
 # TODO: Don't forget dealing with the raw demos.
 # TODO: Deal with the (pretty common) case of having a metric for filtering and a separate metric for eval.
@@ -26,17 +28,17 @@ from .vanilla import LabeledFewShot
 
 class BootstrapFewShotWithRandomSearch(Teleprompter):
     def __init__(
-        self,
-        metric,
-        teacher_settings={},
-        max_bootstrapped_demos=4,
-        max_labeled_demos=16,
-        max_rounds=1,
-        num_candidate_programs=16,
-        num_threads=6,
-        max_errors=10,
-        stop_at_score=None,
-        metric_threshold=None,
+            self,
+            metric,
+            teacher_settings={},
+            max_bootstrapped_demos=4,
+            max_labeled_demos=16,
+            max_rounds=1,
+            num_candidate_programs=16,
+            num_threads=6,
+            max_errors=10,
+            stop_at_score=None,
+            metric_threshold=None,
     ):
         self.metric = metric
         self.teacher_settings = teacher_settings
@@ -108,17 +110,10 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
                 program = optimizer.compile(student, teacher=teacher, trainset=trainset_copy)
 
-            # # Integrate PEZ to optimize the prompts in the program
-            # print(f"Optimizing prompts using PEZ for program from seed {seed}")
-            # learned_prompt = optimize_prompt(
-            #     model=student.model,  # TODO: get model correctly
-            #     preprocess=student.preprocess,  # TODO: understand what this controls
-            #     args=student.args,  # TODO: check in pez-finetune branch how args should be passed
-            #     device=0,
-            #     target_prompts=trainset_copy  # TODO: Pass program's selected prompts (demos?)
-            # )
-            # # Replace program prompts with the optimized ones
-            # program.prompts = learned_prompt
+                # Optimize bootstrapped demos using PEZ
+                demos = self._get_predictor_demos(program)
+                pez_optimized_demos = self._optimize_demos_with_pez(program, demos)
+                program = self._update_predictor_demos(program, pez_optimized_demos)
 
             # Evaluate the program
             evaluate = Evaluate(
@@ -163,6 +158,52 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
         return best_program
 
+    def _get_predictor_demos(self, program) -> List[str]:
+        demos = []
+
+        for name, predictor in program.named_predictors():
+            for demo in predictor.demos:
+                demos.append(demo.question)
+
+        return demos
+
+    def _optimize_demos_with_pez(self, program, demos: List[str]) -> List[str]:
+        import dspy
+
+        # TODO: optimize params
+        train_args = {
+            "prompt_len": max(len(demo) for demo in demos),
+            "iter": 3000,
+            "lr": 0.1,
+            "weight_decay": 0.1,
+            "prompt_bs": 1,
+            "loss_weight": 1.0,
+            "print_step": 100,
+            "batch_size": 1
+        }
+
+        # Optimize the bootstrapped demos using PEZ
+        # TODO: check how model & tokenizer should be inferred from LM
+        # TODO: (i.e which LM was updated with model_instance and tokenizer_instance)
+        optimized_prompts = optimize_prompt(
+            model=dspy.settings.lm.model_instance,
+            tokenizer=dspy.settings.lm.tokenizer_instance,
+            args=train_args,
+            device=0,
+            target_prompts=demos
+        )
+
+        return optimized_prompts
+
+    def _update_predictor_demos(self, program, demos: List[str]):
+        demo_index = 0
+
+        for name, predictor in program.named_predictors():
+            for demo in predictor.demos:
+                demo.question = demos[demo_index]
+                demo_index += 1
+
+        return demos
 
 # sample between 4 and 10 examples from traces
 # TODO: FIXME: The max number of demos should be determined in part by the LM's tokenizer + max_length.

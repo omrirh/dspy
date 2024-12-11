@@ -215,16 +215,13 @@ def optimize_prompt_loop(model, tokenizer, token_embedding, all_target_features,
     return best_text
 
 
-def optimize_prompt(model, preprocess, args, device, target_images=None, target_prompts=None):
-    token_embedding = model.token_embedding
-    tokenizer = open_clip.tokenizer._tokenizer
-    tokenizer_funct = open_clip.get_tokenizer(args.clip_model)
+def optimize_prompt(model, tokenizer, args, device, target_prompts=None):
+    token_embedding = model.get_input_embeddings()
 
-    # get target features
-    all_target_features = get_target_feature(model, preprocess, tokenizer_funct, device, target_images=target_images,
-                                             target_prompts=target_prompts)
+    all_target_features = get_target_feature(
+        model=model, device=device, tokenizer_funct=token_embedding, target_prompts=target_prompts, preprocess=None,
+    )
 
-    # optimize prompt
     learned_prompt = optimize_prompt_loop(model, tokenizer, token_embedding, all_target_features, args, device)
 
     return learned_prompt
@@ -245,3 +242,33 @@ def measure_similarity(orig_images, images, ref_model, ref_clip_preprocess, devi
         gen_feat = gen_feat / gen_feat.norm(dim=1, keepdim=True)
 
         return (ori_feat @ gen_feat.t()).mean().item()
+
+"""
+The following section includes a sample from the BootstrapFewShot
+demos bootstrapped from GSM8K during compilation.
+Understanding the structure of these demos is essential
+for optimizing them with PEZ optimizer.
+
+Original example:
+-----------------
+Amaya scored 20 marks fewer in Maths than she scored in Arts.
+She also got 10 marks more in Social Studies than she got in Music.
+If she scored 70 in Music and scored 1/10 less in Maths,
+what's the total number of marks she scored in all the subjects?
+
+Augmented example:
+------------------
+* Question:
+Nancy bought a pie sliced it into 8 pieces.
+She gave 1/2 to Joe and Darcy, and she gave 1/4 to Carl.
+How many slices were left?
+
+* Reasoning:
+Nancy gave 1/2 of the pie to Joe and Darcy,
+which is 4 slices (1/2 of 8 is 4).
+She also gave 1/4 of the pie to Carl,
+which is 2 slices (1/4 of 8 is 2).
+So, in total, she gave away 4 + 2 = 6 slices.
+To find out how many slices are left,
+we subtract 6 from the original 8 slices: 8 - 6 = 2.
+"""

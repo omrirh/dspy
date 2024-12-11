@@ -72,6 +72,9 @@ class LM(BaseLM):
         self.finetuning_model = finetuning_model
         self.launch_kwargs = launch_kwargs
 
+        self.model_instance = None
+        self.tokenizer_instance = None
+
         # TODO(bug): Arbitrary model strings could include the substring "o1-".
         # We should find a more robust way to check for the "o1-" family models.
         if "o1-" in model:
@@ -117,11 +120,13 @@ class LM(BaseLM):
 
     def launch(self, launch_kwargs: Optional[Dict[str, Any]] = None):
         launch_kwargs = launch_kwargs or self.launch_kwargs
-        self.provider.launch(self.model, launch_kwargs)
+        self.model_instance, self.tokenizer_instance = self.provider.launch(self.model, launch_kwargs)
 
     def kill(self, launch_kwargs: Optional[Dict[str, Any]] = None):
         launch_kwargs = launch_kwargs or self.launch_kwargs
         self.provider.kill(self.model, launch_kwargs)
+        # self.model_instance = None
+        # self.tokenizer_instance = None
 
     def finetune(
         self,

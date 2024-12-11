@@ -84,14 +84,14 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: Use full trainset after getting a stable run with results.
-# small_trainset = trainset[:50]
+small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
-        trainset=trainset,
-        strategy="w -> p",
+        trainset=small_trainset,
+        strategy="p",
         valset_ratio=0.1
     )
 
