@@ -2,6 +2,7 @@ import random
 
 from dspy.evaluate.evaluate import Evaluate
 from dspy.teleprompt.teleprompt import Teleprompter
+from dspy.utils.pez import optimize_prompt
 
 from .bootstrap import BootstrapFewShot
 from .vanilla import LabeledFewShot
@@ -107,6 +108,19 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
                 program = optimizer.compile(student, teacher=teacher, trainset=trainset_copy)
 
+            # # Integrate PEZ to optimize the prompts in the program
+            # print(f"Optimizing prompts using PEZ for program from seed {seed}")
+            # learned_prompt = optimize_prompt(
+            #     model=student.model,  # TODO: get model correctly
+            #     preprocess=student.preprocess,  # TODO: understand what this controls
+            #     args=student.args,  # TODO: check in pez-finetune branch how args should be passed
+            #     device=0,
+            #     target_prompts=trainset_copy  # TODO: Pass program's selected prompts (demos?)
+            # )
+            # # Replace program prompts with the optimized ones
+            # program.prompts = learned_prompt
+
+            # Evaluate the program
             evaluate = Evaluate(
                 devset=self.valset,
                 metric=self.metric,

@@ -96,7 +96,7 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy on validation (dev) set and output the results
-print("[BetterTogether x GSM8K x p -> w] Calculating experiment program results...")
+print("[BetterTogether x GSM8K x w -> p] Calculating experiment program results...")
 accuracy_dev = evaluate_dev(optimized_program)
 accuracy_test = evaluate_test(optimized_program)
 print(f"Experiment Accuracy:\nValidation set:\t{accuracy_dev}\nTest set:\t{accuracy_test}")
