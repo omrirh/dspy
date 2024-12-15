@@ -110,10 +110,10 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
                 program = optimizer.compile(student, teacher=teacher, trainset=trainset_copy)
 
-                # Optimize bootstrapped demos using PEZ
-                demos = self._get_predictor_demos(program)
-                pez_optimized_demos = self._optimize_demos_with_pez(program, demos)
-                program = self._update_predictor_demos(program, pez_optimized_demos)
+            # Optimize bootstrapped demos using PEZ
+            demos = self._get_predictor_demos(program)
+            pez_optimized_demos = self._optimize_demos_with_pez(program, demos)
+            program = self._update_predictor_demos(program, pez_optimized_demos)
 
             # Evaluate the program
             evaluate = Evaluate(
@@ -158,7 +158,8 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
         return best_program
 
-    def _get_predictor_demos(self, program) -> List[str]:
+    @staticmethod
+    def _get_predictor_demos(program) -> List[str]:
         demos = []
 
         for name, predictor in program.named_predictors():
@@ -167,7 +168,8 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
         return demos
 
-    def _optimize_demos_with_pez(self, program, demos: List[str]) -> List[str]:
+    @staticmethod
+    def _optimize_demos_with_pez(program, demos: List[str]) -> List[str]:
         import dspy
 
         # TODO: optimize params
@@ -195,7 +197,8 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
         return optimized_prompts
 
-    def _update_predictor_demos(self, program, demos: List[str]):
+    @staticmethod
+    def _update_predictor_demos(program, demos: List[str]):
         demo_index = 0
 
         for name, predictor in program.named_predictors():
