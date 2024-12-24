@@ -3,7 +3,6 @@ import random
 from typing import List
 from dspy.evaluate.evaluate import Evaluate
 from dspy.teleprompt.teleprompt import Teleprompter
-from dspy.utils.pez import optimize_prompt
 
 from .bootstrap import BootstrapFewShot
 from .vanilla import LabeledFewShot
@@ -110,11 +109,6 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
 
                 program = optimizer.compile(student, teacher=teacher, trainset=trainset_copy)
 
-            # Optimize bootstrapped demos using PEZ
-            demos = self._get_predictor_demos(program)
-            pez_optimized_demos = self._optimize_demos_with_pez(program, demos)
-            program = self._update_predictor_demos(program, pez_optimized_demos)
-
             # Evaluate the program
             evaluate = Evaluate(
                 devset=self.valset,
@@ -157,56 +151,6 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
         print(f"{len(best_program.candidate_programs)} candidate programs found.")
 
         return best_program
-
-    @staticmethod
-    def _get_predictor_demos(program) -> List[str]:
-        demos = []
-
-        for name, predictor in program.named_predictors():
-            for demo in predictor.demos:
-                demos.append(demo.question)
-
-        return demos
-
-    @staticmethod
-    def _optimize_demos_with_pez(program, demos: List[str]) -> List[str]:
-        import dspy
-
-        # TODO: optimize params
-        train_args = {
-            "prompt_len": max(len(demo) for demo in demos),
-            "iter": 3000,
-            "lr": 0.1,
-            "weight_decay": 0.1,
-            "prompt_bs": 1,
-            "loss_weight": 1.0,
-            "print_step": 100,
-            "batch_size": 1
-        }
-
-        # Optimize the bootstrapped demos using PEZ
-        # TODO: check how model & tokenizer should be inferred from LM
-        # TODO: (i.e which LM was updated with model_instance and tokenizer_instance)
-        optimized_prompts = optimize_prompt(
-            model=dspy.settings.lm.model_instance,
-            tokenizer=dspy.settings.lm.tokenizer_instance,
-            args=train_args,
-            device=0,
-            target_prompts=demos
-        )
-
-        return optimized_prompts
-
-    @staticmethod
-    def _update_predictor_demos(program, demos: List[str]):
-        demo_index = 0
-
-        for name, predictor in program.named_predictors():
-            for demo in predictor.demos:
-                demo.question = demos[demo_index]
-                demo_index += 1
-
-        return demos
 
 # sample between 4 and 10 examples from traces
 # TODO: FIXME: The max number of demos should be determined in part by the LM's tokenizer + max_length.
