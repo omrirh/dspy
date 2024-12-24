@@ -91,7 +91,7 @@ with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
         trainset=small_trainset,
-        strategy="p",
+        strategy="w -> p",
         valset_ratio=0.1
     )
 
