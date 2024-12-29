@@ -18,6 +18,7 @@ from litellm import RetryPolicy
 import dspy
 from dspy.adapters.base import Adapter
 from dspy.clients.openai import OpenAIProvider
+from dspy.clients.huggingface import HFProvider
 from dspy.clients.provider import Provider, TrainingJob
 from dspy.clients.utils_finetune import DataFormat, infer_data_format, validate_data_format
 from dspy.utils.callback import BaseCallback, with_callbacks
@@ -99,7 +100,7 @@ class LM(BaseLM):
             completion = cached_litellm_text_completion if cache else litellm_text_completion
 
         response = completion(
-            request=dict(model=self.model, messages=messages, **kwargs),
+            request=dict(model=f"openai/{self.model}", messages=messages, **kwargs),
             num_retries=self.num_retries,
         )
         if kwargs.get("logprobs"):
@@ -200,6 +201,8 @@ class LM(BaseLM):
     def infer_provider(self) -> Provider:
         if OpenAIProvider.is_provider_model(self.model):
             return OpenAIProvider()
+        if HFProvider.is_provider_model(self.model):
+            return HFProvider()
         # TODO(PR): Keeping this function here will require us to import all
         # providers in this file. Is this okay?
         return Provider()
