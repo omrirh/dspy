@@ -36,7 +36,8 @@ class JSONAdapter(Adapter):
         inputs = dict(prompt=inputs) if isinstance(inputs, str) else dict(messages=inputs)
 
         try:
-            provider = lm.model.split("/", 1)[0] or "openai"
+            provider = "huggingface"
+            # provider = lm.model.split("/", 1)[0] or "openai"
             if "response_format" in litellm.get_supported_openai_params(model=lm.model, custom_llm_provider=provider):
                 try:
                     response_format = _get_structured_outputs_response_format(signature)
