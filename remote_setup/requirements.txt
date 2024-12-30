@@ -19,3 +19,4 @@ transformers[torch]
 ujson
 openai
 sentence-transformers
+cachetools

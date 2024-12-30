@@ -100,7 +100,7 @@ class LM(BaseLM):
             completion = cached_litellm_text_completion if cache else litellm_text_completion
 
         response = completion(
-            request=dict(model=f"openai/{self.model}", messages=messages, **kwargs),
+            request=dict(model=f"openai/{self.model}", messages=messages, **kwargs),  # TODO: understand this change
             num_retries=self.num_retries,
         )
         if kwargs.get("logprobs"):
