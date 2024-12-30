@@ -1,5 +1,5 @@
 import dspy
-from dsp.utils.utils import deduplicate
+from dspy.dsp.utils.utils import deduplicate
 
 
 class BasicMH(dspy.Module):
@@ -28,3 +28,26 @@ class CoT(dspy.Module):
     def forward(self, question):
         return self.prog(question=question)
 
+
+class IrisSignature(dspy.Signature):
+    """
+    Given the petal and sepal dimensions in cm, predict the iris species.
+    """
+    petal_length = dspy.InputField()
+    petal_width = dspy.InputField()
+    sepal_length = dspy.InputField()
+    sepal_width = dspy.InputField()
+    answer = dspy.OutputField(desc='setosa, versicolor, or virginica')
+
+
+class IrisProgram(dspy.Module):
+    def __init__(self):
+        self.generate_answer = dspy.ChainOfThought(IrisSignature)
+
+    def forward(self, petal_length, petal_width, sepal_length, sepal_width):
+        return self.generate_answer(
+            petal_length=petal_length,
+            petal_width=petal_width,
+            sepal_length=sepal_length,
+            sepal_width=sepal_width
+        )

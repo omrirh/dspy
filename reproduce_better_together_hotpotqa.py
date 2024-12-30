@@ -21,17 +21,21 @@ lm = dspy.LM(
 dspy.configure(lm=lm)
 
 # Prepare the HotPotQA dataset
+dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
 TRAIN_SIZE = 1000
 DEV_SIZE = 500
-dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
+TESTSET_SIZE = 1319
 trainset = [x.with_inputs('question') for x in dataset.train][:TRAIN_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev][:DEV_SIZE]
+devset = [x.with_inputs('question') for x in dataset.dev][TRAIN_SIZE:DEV_SIZE+TRAIN_SIZE]
+testset = [x.with_inputs('question') for x in dataset.dev][:TESTSET_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
 metric = dspy.evaluate.answer_exact_match
-evaluate = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True,
-                    provide_traceback=True)
+evaluate_dev = Evaluate(devset=devset, metric=metric, num_threads=NUM_THREADS, display_progress=True,
+                        provide_traceback=True)
+evaluate_test = Evaluate(devset=testset, metric=metric, num_threads=NUM_THREADS, display_progress=True,
+                         provide_traceback=True)
 
 # Retriever model as ColBERTv2
 COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
@@ -68,17 +72,19 @@ better_together = BetterTogether(
 
 # Sample a smaller dataset for quick testing
 # TODO: Use full trainset after getting a stable run with results.
-# small_trainset = trainset[:50]
+small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=BasicMH(),
-        trainset=trainset,
-        strategy="p -> w",
+        trainset=small_trainset,
+        strategy="w -> p",
         valset_ratio=0.1
     )
 
-# Evaluate accuracy on validation (dev) set and output the results (expecting 42.8%)
-accuracy = evaluate(optimized_program)
-print(f"Experiment Accuracy: {accuracy}%")
+# Evaluate accuracy and output the results
+print("[BetterTogether x HotPotQA x w -> p] Calculating experiment program results...")
+accuracy_dev = evaluate_dev(optimized_program)
+accuracy_test = evaluate_test(optimized_program)
+print(f"Experiment Accuracy:\nValidation set:\t{accuracy_dev}\nTest set:\t{accuracy_test}")
