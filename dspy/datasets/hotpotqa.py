@@ -1,3 +1,4 @@
+import time
 import random
 
 from datasets import load_dataset
@@ -41,7 +42,8 @@ class HotPotQA(Dataset):
 
                 official_train.append(example)
 
-        rng = random.Random(0)
+        seed = int(time.time())
+        rng = random.Random(seed)
         rng.shuffle(official_train)
 
         self._train = official_train[: len(official_train) * 75 // 100]
