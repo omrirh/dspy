@@ -1,3 +1,4 @@
+import time
 import dspy
 from dspy.evaluate import Evaluate
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
@@ -8,6 +9,7 @@ from dspy.clients.huggingface import HFProvider
 from programs import CoT
 
 dspy.settings.experimental = True
+RANDOM_SEED = int(time.time())
 
 # Define local Llama model endpoint for training
 sglang_port = 7501
@@ -79,12 +81,12 @@ better_together = BetterTogether(
     metric=metric,
     weight_optimizer=weight_optimizer,
     prompt_optimizer=prompt_optimizer,
-    seed=2023
+    seed=RANDOM_SEED
 )
 
 # Sample a smaller dataset for quick testing
 # TODO: Use full trainset after getting a stable run with results.
-small_trainset = trainset[:500]
+small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
 with dspy.context(lm=lm, rm=retriever):

@@ -1,3 +1,4 @@
+import time
 import dspy
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
@@ -21,13 +22,14 @@ lm = dspy.LM(
 dspy.configure(lm=lm)
 
 # Prepare the HotPotQA dataset
-dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
 TRAIN_SIZE = 1000
 DEV_SIZE = 500
-TESTSET_SIZE = 1319
+TESTSET_SIZE = 1500
+dataset = HotPotQA(test_size=TESTSET_SIZE, only_hard_examples=True)
+AVOID_INPUT_TEST = "The Gay Nigger Association of America"  # Intercepted as inappropriate example
 trainset = [x.with_inputs('question') for x in dataset.train][:TRAIN_SIZE]
 devset = [x.with_inputs('question') for x in dataset.dev][TRAIN_SIZE:DEV_SIZE+TRAIN_SIZE]
-testset = [x.with_inputs('question') for x in dataset.dev][:TESTSET_SIZE]
+testset = [x.with_inputs('question') for x in dataset.test if AVOID_INPUT_TEST not in x.question][:TESTSET_SIZE]
 
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
@@ -67,7 +69,7 @@ better_together = BetterTogether(
     metric=metric,
     weight_optimizer=weight_optimizer,
     prompt_optimizer=prompt_optimizer,
-    seed=2023
+    seed=RANDOM_SEED
 )
 
 # Sample a smaller dataset for quick testing
