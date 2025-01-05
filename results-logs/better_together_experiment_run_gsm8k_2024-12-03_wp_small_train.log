@@ -1,0 +1,134 @@
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7473/7473 [00:00<00:00, 17016.29it/s]
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1319/1319 [00:00<00:00, 16904.71it/s]
+Going to sample between 1 and 3 traces per predictor.
+Will attempt to bootstrap 6 candidate sets.
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether: [BetterTogether] Validating the strategy
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether: [BetterTogether] Preparing the student program...
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether: [BetterTogether] Compiling the student program...
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether:
+[BetterTogether] ########## Step 1 of 2 - Strategy 'w' ##########
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether: [BetterTogether] Shuffling the trainset...
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether: [BetterTogether] Preparing for weight optimization...
+2024/12/03 23:06:22 INFO dspy.teleprompt.bettertogether: [BetterTogether] Compiling the weight optimizer...
+[BootstrapFinetune] Preparing the student and teacher programs...
+[BootstrapFinetune] Bootstrapping data...
+Average Metric: 38.00 / 50 (76.0%): 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 50/50 [00:00<00:00, 131.35it/s]
+2024/12/03 23:06:22 INFO dspy.evaluate.evaluate: Average Metric: 38 / 50 (76.0%)
+[BootstrapFinetune] Preparing the train data...
+[BootstrapFinetune] Collected data for 50 examples
+[BootstrapFinetune] After filtering with the metric, 38 examples remain
+[BootstrapFinetune] Using 38 data points for fine-tuning the model: meta-llama/Meta-Llama-3-8B-Instruct
+[BootstrapFinetune] Starting LM fine-tuning...
+[BootstrapFinetune] 1 fine-tuning job(s) to start
+[BootstrapFinetune] Starting 1 fine-tuning job(s)...
+[HF Provider] Validating data format
+[HF Provider] Data format DataFormat.chat validated
+[HF Provider] Loading model and tokenizer for 'meta-llama/Meta-Llama-3-8B-Instruct'
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:31<00:00,  7.94s/it]
+[HF Provider] Preparing model for LoRA fine-tuning
+trainable params: 13,631,488 || all params: 8,043,892,736 || trainable%: 0.1695
+[HF Provider] Preparing training dataset
+[HF Provider] Preparing training texts
+[HF Provider] Tokenizing dataset
+Map:   0%|                                                                                                                                                        | 0/38 [00:00<?, ? examples/s]Asking to truncate to max_length but no maximum length is provided and the model has no predefined maximum length. Default to no truncation.
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 38/38 [00:00<00:00, 1700.85 examples/s]
+[HF Provider] Initializing the Trainer
+[HF Provider] Launching training thread
+[HF Provider] Waiting for training thread to finish
+[HF Provider] Starting LoRA fine-tuning
+{'train_runtime': 20.3463, 'train_samples_per_second': 9.338, 'train_steps_per_second': 0.246, 'train_loss': 2.717795753479004, 'epoch': 4.0}
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:20<00:00,  4.07s/it]
+[HF Provider] LoRA Fine-tuning complete and trained weights saved.
+[HF Provider] Merging LoRA trained weights to base model
+[HF Provider] Saving merged model to /results
+[HF Provider] Model successfully merged and saved to /results.
+[HF Provider] Re-deploying meta-llama/Meta-Llama-3-8B-Instruct model after LoRA fine-tuning
+[Re-deployment] Stopping any existing SGLang server on port 7501...
+[Re-deployment] Attempting to terminate process with PID: 68057 on port 7501
+[Re-deployment] Process (PID: 68057) did not terminate in time. Sending SIGKILL.
+[Re-deployment] Process (PID: 68057) forcefully terminated.
+[Re-deployment] Verifying port 7501 is cleared (attempt 1/5)
+[Re-deployment] Port 7501 is now cleared.
+[Re-deployment] Cleaning up GPU resources on device 1
+[Re-deployment] Skipping termination of the current process (PID: 68976).
+[Re-deployment] Found GPU-bound process (PID: 68153), attempting to terminate.
+[Re-deployment] GPU-bound process (PID: 68153) terminated.
+[Re-deployment] Cleaned up GPU processes: 68153
+[Re-deployment] Deploying the fine-tuned model...
+[Re-deployment] Server is running on port 7501.
+[Re-deployment] Deployment completed.
+[BootstrapFinetune] Job 1/1 is done
+[BootstrapFinetune] Updating the student program with the fine-tuned LMs...
+[BootstrapFinetune] BootstrapFinetune has finished compiling the student program
+2024/12/03 23:12:19 INFO dspy.teleprompt.bettertogether:
+[BetterTogether] ########## Step 2 of 2 - Strategy 'w -> p' ##########
+2024/12/03 23:12:19 INFO dspy.teleprompt.bettertogether: [BetterTogether] Shuffling the trainset...
+2024/12/03 23:12:19 INFO dspy.teleprompt.bettertogether: [BetterTogether] Preparing for prompt optimization...
+2024/12/03 23:12:19 INFO dspy.teleprompt.bettertogether: [BetterTogether] Launching the program LMs for sampling...
+[HF Provider] Launching model '/results'
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:03<00:00,  1.03it/s]
+2024/12/03 23:12:25 INFO dspy.teleprompt.bettertogether: [BetterTogether] Compiling the prompt optimizer...
+Average Metric: 1.00 / 5 (20.0%): 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00, 2072.08it/s]
+2024/12/03 23:12:25 INFO dspy.evaluate.evaluate: Average Metric: 1 / 5 (20.0%)
+New best score: 20.0 for seed -3
+Scores so far: [20.0]
+Best score so far: 20.0
+Average Metric: 4.00 / 5 (80.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  2.65it/s]
+2024/12/03 23:12:27 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+New best score: 80.0 for seed -2
+Scores so far: [20.0, 80.0]
+Best score so far: 80.0
+  7%|██████████▍                                                                                                                                                 | 3/45 [00:04<01:01,  1.47s/it]
+Bootstrapped 3 full traces after 3 examples for up to 1 rounds, amounting to 3 attempts.
+Average Metric: 3.00 / 5 (60.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:02<00:00,  2.48it/s]
+2024/12/03 23:12:33 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [20.0, 80.0, 60.0]
+Best score so far: 80.0
+  9%|█████████████▊                                                                                                                                              | 4/45 [00:05<00:59,  1.46s/it]
+Bootstrapped 2 full traces after 4 examples for up to 1 rounds, amounting to 4 attempts.
+Average Metric: 3.00 / 5 (60.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  2.62it/s]
+2024/12/03 23:12:41 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [20.0, 80.0, 60.0, 60.0]
+Best score so far: 80.0
+  2%|███▍                                                                                                                                                        | 1/45 [00:01<01:05,  1.49s/it]
+Bootstrapped 1 full traces after 1 examples for up to 1 rounds, amounting to 1 attempts.
+Average Metric: 4.00 / 5 (80.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  2.77it/s]
+2024/12/03 23:12:44 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+Scores so far: [20.0, 80.0, 60.0, 60.0, 80.0]
+Best score so far: 80.0
+  2%|███▍                                                                                                                                                        | 1/45 [00:01<00:54,  1.23s/it]
+Bootstrapped 1 full traces after 1 examples for up to 1 rounds, amounting to 1 attempts.
+Average Metric: 2.00 / 5 (40.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  2.66it/s]
+2024/12/03 23:12:48 INFO dspy.evaluate.evaluate: Average Metric: 2 / 5 (40.0%)
+Scores so far: [20.0, 80.0, 60.0, 60.0, 80.0, 40.0]
+Best score so far: 80.0
+  2%|███▍                                                                                                                                                        | 1/45 [00:01<01:01,  1.40s/it]
+Bootstrapped 1 full traces after 1 examples for up to 1 rounds, amounting to 1 attempts.
+Average Metric: 3.00 / 5 (60.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:02<00:00,  2.34it/s]
+2024/12/03 23:12:51 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [20.0, 80.0, 60.0, 60.0, 80.0, 40.0, 60.0]
+Best score so far: 80.0
+  7%|██████████▍                                                                                                                                                 | 3/45 [00:03<00:51,  1.23s/it]
+Bootstrapped 1 full traces after 3 examples for up to 1 rounds, amounting to 3 attempts.
+Average Metric: 2.00 / 5 (40.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:01<00:00,  2.66it/s]
+2024/12/03 23:12:57 INFO dspy.evaluate.evaluate: Average Metric: 2 / 5 (40.0%)
+Scores so far: [20.0, 80.0, 60.0, 60.0, 80.0, 40.0, 60.0, 40.0]
+Best score so far: 80.0
+  7%|██████████▍                                                                                                                                                 | 3/45 [00:03<00:54,  1.31s/it]
+Bootstrapped 3 full traces after 3 examples for up to 1 rounds, amounting to 3 attempts.
+Average Metric: 3.00 / 5 (60.0%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:02<00:00,  2.26it/s]
+2024/12/03 23:13:03 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+Scores so far: [20.0, 80.0, 60.0, 60.0, 80.0, 40.0, 60.0, 40.0, 60.0]
+Best score so far: 80.0
+9 candidate programs found.
+2024/12/03 23:13:03 INFO dspy.teleprompt.bettertogether: [BetterTogether] Killing the LMs used for sampling...
+[HF Provider] Killing model '/results' and clearing cache
+2024/12/03 23:13:03 INFO dspy.teleprompt.bettertogether: [BetterTogether] BetterTogether has finished compiling the student program
+[BetterTogether x GSM8K x p -> w] Calculating experiment program results...
+Average Metric: 432.00 / 500 (86.4%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 500/500 [01:14<00:00,  6.74it/s]
+2024/12/03 23:14:18 INFO dspy.evaluate.evaluate: Average Metric: 432 / 500 (86.4%)
+Average Metric: 1023.00 / 1318 (77.6%): 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1318/1318 [03:15<00:00,  6.73it/s]
+2024/12/03 23:17:34 INFO dspy.evaluate.evaluate: Average Metric: 1023 / 1318 (77.6%)
+Experiment Accuracy:
+Validation set: 86.4
+Test set:       77.62

@@ -89,16 +89,17 @@ better_together = BetterTogether(
 small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
+optimization_strategy = "p -> w"
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
-        trainset=small_trainset,
-        strategy="w -> p",
+        trainset=trainset,
+        strategy=optimization_strategy,
         valset_ratio=0.1
     )
 
 # Evaluate accuracy and output the results
-print("[BetterTogether x GSM8K x w -> p] Calculating experiment program results...")
+print(f"[BetterTogether x GSM8K x {optimization_strategy}] Calculating experiment program results...")
 accuracy_dev = evaluate_dev(optimized_program)
 accuracy_test = evaluate_test(optimized_program)
 print(f"Experiment Accuracy:\nValidation set:\t{accuracy_dev}\nTest set:\t{accuracy_test}")
