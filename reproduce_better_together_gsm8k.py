@@ -22,7 +22,7 @@ lm = dspy.LM(
 )
 dspy.configure(lm=lm)
 
-# Prepare the HotPotQA dataset (devset max size = 300, trainset max size = 200)
+# Prepare the GSM8K dataset
 dataset = GSM8K()
 TRAINSET_SIZE = 1000
 DEVSET_SIZE = 500
@@ -85,7 +85,6 @@ better_together = BetterTogether(
 )
 
 # Sample a smaller dataset for quick testing
-# TODO: Use full trainset after getting a stable run with results.
 small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
