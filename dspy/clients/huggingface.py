@@ -129,7 +129,7 @@ class HFProvider(Provider):
         )
 
         # Init results output directory
-        trained_model_path = "/results"
+        trained_model_path = f"/{model_name}-trained"
         os.makedirs(trained_model_path, exist_ok=True)
 
         training_args = TrainingArguments(
