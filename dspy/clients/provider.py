@@ -51,8 +51,9 @@ class Provider:
     def kill(model: str, kill_kwargs: Optional[Dict[str, Any]] = None):
         pass
 
-    @staticmethod
+    # @staticmethod
     def finetune(
+        self,
         job: TrainingJob,
         model: str,
         train_data: List[Dict[str, Any]],
