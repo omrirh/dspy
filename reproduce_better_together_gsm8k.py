@@ -11,17 +11,6 @@ from programs import CoT
 dspy.settings.experimental = True
 RANDOM_SEED = int(time.time())
 
-# Define local Llama model endpoint for training
-sglang_port = 7501
-sglang_url = f"http://localhost:{sglang_port}/v1"
-lm = dspy.LM(
-    model="meta-llama/Meta-Llama-3-8B-Instruct",
-    api_base=sglang_url,
-    api_key="local",
-    provider=HFProvider(),
-)
-dspy.configure(lm=lm)
-
 # Prepare the GSM8K dataset
 dataset = GSM8K()
 TRAINSET_SIZE = 1000
@@ -33,18 +22,22 @@ trainset = [x.with_inputs('question') for x in dataset.train if AVOID_INPUT_TRAI
 devset = [x.with_inputs('question')for x in dataset.dev if AVOID_INPUT_TRAIN not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
 testset = [x.with_inputs('question') for x in dataset.test if AVOID_INPUT_TEST not in x.question][:TESTSET_SIZE]
 
+# Define local Llama model endpoint for training
+sglang_port = 7501
+sglang_url = f"http://localhost:{sglang_port}/v1"
+lm = dspy.LM(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    api_base=sglang_url,
+    api_key="local",
+    provider=HFProvider(validation_set=devset, validation_metric=gsm8k_metric),
+)
+dspy.configure(lm=lm)
+
 # Set up the metric and evaluation tool
 NUM_THREADS = 12
 metric = gsm8k_metric
-evaluate_dev = Evaluate(
-    devset=devset[:],
-    metric=metric,
-    num_threads=NUM_THREADS,
-    display_progress=True,
-    display_table=False
-)
 evaluate_test = Evaluate(
-    devset=testset[:],
+    devset=testset,
     metric=metric,
     num_threads=NUM_THREADS,
     display_progress=True,
@@ -88,7 +81,7 @@ better_together = BetterTogether(
 small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
-optimization_strategy = "p -> w -> p -> w -> p"
+optimization_strategy = "w -> p"
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
@@ -99,8 +92,6 @@ with dspy.context(lm=lm, rm=retriever):
 
 # Evaluate accuracy and output the results
 print(f"[BetterTogether x GSM8K x {optimization_strategy}] Calculating experiment program results...")
-accuracy_dev = evaluate_dev(optimized_program)
 accuracy_test = evaluate_test(optimized_program)
 print(f"Experiment Accuracy:\n"
-      f"Validation set:\t{accuracy_dev}\n"
       f"Test set:\t{accuracy_test}")

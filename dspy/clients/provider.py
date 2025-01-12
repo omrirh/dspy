@@ -58,8 +58,9 @@ class Provider:
         # kill_kwargs.
         pass
 
-    @staticmethod
+    # @staticmethod
     def finetune(
+        self,
         job: TrainingJob,
         model: str,
         train_data: List[Dict[str, Any]],

@@ -50,10 +50,12 @@ class TrainingJobHF(TrainingJob):
 
 
 class HFProvider(Provider):
-    def __init__(self):
+    def __init__(self, validation_set, validation_metric):
         super().__init__()
         self.finetunable = True
         self.TrainingJob = TrainingJobHF
+        self.validation_set = validation_set
+        self.validation_metric = validation_metric
 
     @staticmethod
     def is_provider_model(model: str) -> bool:
@@ -76,8 +78,9 @@ class HFProvider(Provider):
         del model
         torch.cuda.empty_cache()
 
-    @staticmethod
+    # @staticmethod
     def finetune(
+            self,
             job: TrainingJobHF,
             model: str,
             train_data: List[Dict[str, Any]],
@@ -115,12 +118,17 @@ class HFProvider(Provider):
         train_texts = HFProvider.prepare_training_texts(train_data)
         train_dataset = Dataset.from_dict({"text": train_texts})
 
+        print("[HF Provider] Preparing validation dataset")
+        val_texts = HFProvider.prepare_validation_texts(self.validation_set)
+        val_dataset = Dataset.from_dict({"text": val_texts})
+
         def tokenize_function(examples):
             tokens = tokenizer(examples["text"], truncation=True)
             return tokens
 
-        print("[HF Provider] Tokenizing dataset")
-        tokenized_datasets = train_dataset.map(tokenize_function, batched=True)
+        print("[HF Provider] Tokenizing datasets")
+        tokenized_train_datasets = train_dataset.map(tokenize_function, batched=True)
+        tokenized_val_datasets = val_dataset.map(tokenize_function, batched=True)
 
         # Use DataCollatorForLanguageModeling for padding and truncation
         data_collator = DataCollatorForLanguageModeling(
@@ -141,14 +149,24 @@ class HFProvider(Provider):
             per_device_train_batch_size=4,
             gradient_accumulation_steps=8,
             logging_steps=10,
+            # eval_strategy="steps",
+            # eval_steps=50,
+            # save_steps=100,
         )
+
+        def compute_metrics(eval_preds):
+            logits, labels = eval_preds
+            preds = logits.argmax(axis=-1)
+            return {"accuracy": self.validation_metric(labels, preds)}
 
         print("[HF Provider] Initializing the Trainer")
         trainer = Trainer(
             model=peft_model,
             args=training_args,
-            train_dataset=tokenized_datasets,
+            train_dataset=tokenized_train_datasets,
+            # eval_dataset=tokenized_val_datasets,
             data_collator=data_collator,
+            # compute_metrics=compute_metrics
         )
 
         def train():
@@ -167,7 +185,8 @@ class HFProvider(Provider):
         print("[HF Provider] Waiting for training thread to finish")
         training_thread.join()
 
-        HFProvider.merge_lora_weights_to_base_model(base_model=base_model, trained_model_path=trained_model_path, tokenizer=tokenizer)
+        HFProvider.merge_lora_weights_to_base_model(base_model=base_model, trained_model_path=trained_model_path,
+                                                    tokenizer=tokenizer)
 
         print(f"[HF Provider] Re-deploying {model_name} model after LoRA fine-tuning")
         redeploy_sglang_model(model_path=trained_model_path)
@@ -176,7 +195,7 @@ class HFProvider(Provider):
             model=model_name,
             api_base="http://localhost:7501/v1",
             api_key="local",
-            provider=HFProvider(),
+            provider=HFProvider(validation_set=self.validation_set, validation_metric=self.validation_metric),
         )
         dspy.configure(lm=lm)
 
@@ -195,6 +214,26 @@ class HFProvider(Provider):
             return [" ".join(msg["content"] for msg in item["messages"] if "content" in msg) for item in train_data]
         else:
             raise ValueError("Expected 'messages' key in train_data items.")
+
+    @staticmethod
+    def prepare_validation_texts(validation_data: List[Any]) -> List[str]:
+        print("[HF Provider] Preparing validation texts")
+
+        prepared_texts = []
+        for example in validation_data:
+            # Extract the question as the primary input text
+            question = example["question"] if "question" in example else ""
+
+            # Optionally, include gold reasoning and answer for more context (if needed for validation task)
+            gold_reasoning = example.get("gold_reasoning", "")
+            answer = example.get("answer", "")
+
+            # Combine the fields into a single string (adjust formatting as needed for the task)
+            validation_text = f"Q: {question} Context: {gold_reasoning} Answer: {answer}".strip()
+
+            prepared_texts.append(validation_text)
+
+        return prepared_texts
 
     @staticmethod
     def merge_lora_weights_to_base_model(
