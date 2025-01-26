@@ -19,7 +19,7 @@ TESTSET_SIZE = 1319
 AVOID_INPUT_TRAIN = 'Jack is mad at his neighbors'
 AVOID_INPUT_TEST = 'Michael is racing his horse'
 trainset = [x.with_inputs('question') for x in dataset.train if AVOID_INPUT_TRAIN not in x.question][:TRAINSET_SIZE]
-devset = [x.with_inputs('question')for x in dataset.dev if AVOID_INPUT_TRAIN not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
+devset = [x.with_inputs('question') for x in dataset.dev if AVOID_INPUT_TRAIN not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
 testset = [x.with_inputs('question') for x in dataset.test if AVOID_INPUT_TEST not in x.question][:TESTSET_SIZE]
 
 # Define local Llama model endpoint for training
