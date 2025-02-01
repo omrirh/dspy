@@ -30,7 +30,7 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
         teacher_settings={},
         max_bootstrapped_demos=4,
         max_labeled_demos=16,
-        max_rounds=1,
+        max_rounds=5,
         num_candidate_programs=16,
         num_threads=6,
         max_errors=10,
