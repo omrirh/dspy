@@ -9,6 +9,7 @@ import dspy
 
 from .teleprompt import Teleprompter
 from .vanilla import LabeledFewShot
+from dspy.evaluate import EvaluateWithTraces
 
 # TODO: metrics should return an object with __bool__ basically, but fine if they're more complex.
 # They can also be sortable.
@@ -165,15 +166,7 @@ class BootstrapFewShot(Teleprompter):
         )
 
         # Unbootstrapped training examples
-
         self.validation = [x for idx, x in enumerate(self.trainset) if idx not in bootstrapped]
-        random.Random(0).shuffle(self.validation)
-
-        self.validation = self.validation
-
-        # NOTE: Can't yet use evaluate because we need to trace *per example*
-        # evaluate = Evaluate(program=self.teacher, metric=self.metric, num_threads=12)
-        # score = evaluate(self.metric, display_table=False, display_progress=True)
 
     def _bootstrap_one_example(self, example, round_idx=0):
         name2traces = {}
@@ -251,16 +244,63 @@ class BootstrapFewShot(Teleprompter):
         return success
 
     def _train(self):
-        rng = random.Random(0)
+        rng = random.Random()  # removed seed 0 to avoid deterministic sampling
         raw_demos = self.validation
+        traces_evaluator = EvaluateWithTraces(
+                            devset=self.validation,
+                            metric=self.metric,
+                            num_threads=4,
+                            display_progress=True,
+                            return_traces=True
+                )
+        # TODO: understand if should use reset_copy and why?
+        teacher_copy = self.teacher.deep_copy()
+        student_copy = self.student.deep_copy()
 
         for name, predictor in self.student.named_predictors():
-            augmented_demos = self.name2traces[name][: self.max_bootstrapped_demos]
+            sorted_traces = self.traces_joint_evaluation(
+                predictor_name=name,
+                evaluator=traces_evaluator,
+                teacher_copy=teacher_copy,
+                student_copy=student_copy,
+            )
+            best_augmented_demos = sorted_traces[name][: self.max_bootstrapped_demos]
 
-            sample_size = min(self.max_labeled_demos - len(augmented_demos), len(raw_demos))
+            sample_size = min(self.max_labeled_demos - len(best_augmented_demos), len(raw_demos))
             sample_size = max(0, sample_size)
 
+            # TODO: sampling here with fixed seed is sub-optimal, maybe a better way?
             raw_demos = rng.sample(raw_demos, sample_size)
-            predictor.demos = augmented_demos + raw_demos
+            predictor.demos = best_augmented_demos + raw_demos
 
         return self.student
+
+    def traces_joint_evaluation(
+            self, predictor_name, evaluator, teacher_copy, student_copy, teacher_exp=0.75, student_exp=0.15
+    ):
+        traces = self.name2traces[predictor_name]
+        scored_traces = []
+
+        logger.info(f"Evaluating {len(traces)} traces for predictor '{predictor_name}'")
+
+        for trace in traces:
+            for name, teacher_predictor in teacher_copy.named_predictors():
+                student_predictor = dict(student_copy.named_predictors()).get(name)
+                if name == predictor_name:
+                    teacher_predictor.demos = [trace]
+                    student_predictor.demos = [trace]
+                else:
+                    teacher_predictor.demos = []
+                    student_predictor.demos = []
+
+            # Evaluate the single trace
+            teacher_score, _ = evaluator(program=teacher_copy)
+            student_score, _ = evaluator(program=student_copy)
+
+            final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
+            scored_traces.append((trace, final_score))
+
+        # Sort traces by score (descending)
+        sorted_traces = sorted(scored_traces, key=lambda x: x[1], reverse=True)
+
+        return [trace for trace, score in sorted_traces]
