@@ -4,6 +4,7 @@ import threading
 from typing import Dict, Optional
 
 import tqdm
+import copy
 
 import dspy
 
@@ -244,7 +245,7 @@ class BootstrapFewShot(Teleprompter):
         return success
 
     def _train(self):
-        rng = random.Random()  # removed seed 0 to avoid deterministic sampling
+        rng = random.Random(0)
         raw_demos = self.validation
         traces_evaluator = EvaluateWithTraces(
                             devset=self.validation,
@@ -253,52 +254,52 @@ class BootstrapFewShot(Teleprompter):
                             display_progress=True,
                             return_traces=True
                 )
-        # TODO: understand if should use reset_copy and why?
-        teacher_copy = self.teacher.deep_copy()
-        student_copy = self.student.deep_copy()
+        teacher = self.teacher.deepcopy()
+        student = self.student.deepcopy()
 
         for name, predictor in self.student.named_predictors():
             sorted_traces = self.traces_joint_evaluation(
                 predictor_name=name,
                 evaluator=traces_evaluator,
-                teacher_copy=teacher_copy,
-                student_copy=student_copy,
+                teacher=teacher,
+                student=student,
             )
             best_augmented_demos = sorted_traces[name][: self.max_bootstrapped_demos]
 
             sample_size = min(self.max_labeled_demos - len(best_augmented_demos), len(raw_demos))
             sample_size = max(0, sample_size)
 
-            # TODO: sampling here with fixed seed is sub-optimal, maybe a better way?
             raw_demos = rng.sample(raw_demos, sample_size)
             predictor.demos = best_augmented_demos + raw_demos
 
         return self.student
 
     def traces_joint_evaluation(
-            self, predictor_name, evaluator, teacher_copy, student_copy, teacher_exp=0.75, student_exp=0.15
+            self, predictor_name, evaluator, teacher, student, teacher_exp=0.75, student_exp=0.15
     ):
         traces = self.name2traces[predictor_name]
         scored_traces = []
 
         logger.info(f"Evaluating {len(traces)} traces for predictor '{predictor_name}'")
 
+        teacher_predictor = dict(teacher.named_predictors()).get(predictor_name)
+        student_predictor = dict(student.named_predictors()).get(predictor_name)
+        teacher_demos_cache = teacher_predictor.demos
+        student_demos_cache = student_predictor.demos
+
         for trace in traces:
-            for name, teacher_predictor in teacher_copy.named_predictors():
-                student_predictor = dict(student_copy.named_predictors()).get(name)
-                if name == predictor_name:
-                    teacher_predictor.demos = [trace]
-                    student_predictor.demos = [trace]
-                else:
-                    teacher_predictor.demos = []
-                    student_predictor.demos = []
+            teacher_predictor.demos = [x for x in teacher_predictor.demos if x != trace]
+            student_predictor.demos = [x for x in student_predictor.demos if x != trace]
 
-            # Evaluate the single trace
-            teacher_score, _ = evaluator(program=teacher_copy)
-            student_score, _ = evaluator(program=student_copy)
+            teacher_score, _ = evaluator(program=teacher)
+            student_score, _ = evaluator(program=student)
 
+            # Weighted scoring with more attention to teacher predictor
             final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
             scored_traces.append((trace, final_score))
+
+            teacher_predictor.demos = teacher_demos_cache
+            student_predictor.demos = student_demos_cache
 
         # Sort traces by score (descending)
         sorted_traces = sorted(scored_traces, key=lambda x: x[1], reverse=True)
