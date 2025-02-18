@@ -10,7 +10,7 @@ import dspy
 
 from .teleprompt import Teleprompter
 from .vanilla import LabeledFewShot
-from dspy.evaluate import EvaluateWithTraces
+from dspy.evaluate import Evaluate
 
 # TODO: metrics should return an object with __bool__ basically, but fine if they're more complex.
 # They can also be sortable.
@@ -35,36 +35,37 @@ from dspy.evaluate import EvaluateWithTraces
 
 logger = logging.getLogger(__name__)
 
-
 class BootstrapFewShot(Teleprompter):
     def __init__(
         self,
         metric=None,
         metric_threshold=None,
-        teacher_settings: Optional[Dict] = None,
+        teacher_settings: Optional[Dict]=None,
         max_bootstrapped_demos=4,
         max_labeled_demos=16,
         max_rounds=1,
         max_errors=5,
     ):
-        """A Teleprompter class that composes a set of demos/examples to go into a predictor's prompt.
+        """
+        A Teleprompter class that composes a set of demos/examples to go into a predictor's prompt.
         These demos come from a combination of labeled examples in the training set, and bootstrapped demos.
 
         Args:
-            metric (Callable): A function that compares an expected value and predicted value,
-                outputting the result of that comparison.
-            metric_threshold (float, optional): If the metric yields a numerical value, then check it
-                against this threshold when deciding whether or not to accept a bootstrap example.
-                Defaults to None.
-            teacher_settings (dict, optional): Settings for the `teacher` model.
-                Defaults to None.
-            max_bootstrapped_demos (int): Maximum number of bootstrapped demonstrations to include.
-                Defaults to 4.
-            max_labeled_demos (int): Maximum number of labeled demonstrations to include.
-                Defaults to 16.
-            max_rounds (int): Number of iterations to attempt generating the required bootstrap
-                examples. If unsuccessful after `max_rounds`, the program ends. Defaults to 1.
-            max_errors (int): Maximum number of errors until program ends. Defaults to 5.
+            metric: Callable
+                A function that compares an expected value and predicted value, outputting the result of that comparison.
+            metric_threshold: optional float, default `None`
+                If the metric yields a numerical value, then check it against this threshold when
+                deciding whether or not to accept a bootstrap example.
+            teacher_settings: dict, optional
+                Settings for the `teacher` model.
+            max_bootstrapped_demos: int, default 4
+                Maximum number of bootstrapped demonstrations to include
+            max_labeled_demos: int, default 16
+                Maximum number of labeled demonstrations to include.
+            max_rounds: int, default 1
+                Number of iterations to attempt generating the required bootstrap examples. If unsuccessful after `max_rounds`, the program ends.
+            max_errors: int, default 5
+                Maximum number of errors until program ends.
         """
         self.metric = metric
         self.metric_threshold = metric_threshold
@@ -118,10 +119,9 @@ class BootstrapFewShot(Teleprompter):
             if hasattr(predictor1.signature, "equals"):
                 assert predictor1.signature.equals(
                     predictor2.signature,
-                ), (
-                    f"Student and teacher must have the same signatures. "
+                ), (f"Student and teacher must have the same signatures. "
                     f"{type(predictor1.signature)} != {type(predictor2.signature)}"
-                )
+                    )
             else:
                 # fallback in case if .equals is not implemented (e.g. dsp.Prompt)
                 assert predictor1.signature == predictor2.signature, (
@@ -151,8 +151,7 @@ class BootstrapFewShot(Teleprompter):
         self.name2traces = {name: [] for name in self.name2predictor}
 
         for example_idx, example in enumerate(tqdm.tqdm(self.trainset)):
-            if len(bootstrapped) >= max_bootstraps:
-                break
+            if len(bootstrapped) >= max_bootstraps: break
 
             for round_idx in range(self.max_rounds):
                 bootstrap_attempts += 1
@@ -170,8 +169,8 @@ class BootstrapFewShot(Teleprompter):
         self.validation = [x for idx, x in enumerate(self.trainset) if idx not in bootstrapped]
 
     def _bootstrap_one_example(self, example, round_idx=0):
-        name2traces = {}
-        teacher = self.teacher
+        name2traces = {} #self.name2traces
+        teacher = self.teacher  # .deepcopy()
         predictor_cache = {}
 
         try:
@@ -234,7 +233,6 @@ class BootstrapFewShot(Teleprompter):
             # Update the traces
             for name, demos in name2traces.items():
                 from datasets.fingerprint import Hasher
-
                 # If there are multiple traces for the same predictor in the sample example,
                 # sample 50/50 from the first N-1 traces or the last trace.
                 if len(demos) > 1:
@@ -247,24 +245,27 @@ class BootstrapFewShot(Teleprompter):
     def _train(self):
         rng = random.Random(0)
         raw_demos = self.validation
-        traces_evaluator = EvaluateWithTraces(
-                            devset=self.validation,
-                            metric=self.metric,
-                            num_threads=4,
-                            display_progress=True,
-                            return_traces=True
-                )
+        traces_evaluator = Evaluate(
+            devset=rng.sample(self.validation, int(0.1 * len(self.validation))),
+            metric=self.metric,
+            num_threads=12,
+            display_progress=False
+        )
         teacher = self.teacher.deepcopy()
-        student = self.student.deepcopy()
+        student = self.student.reset_copy()
 
         for name, predictor in self.student.named_predictors():
-            sorted_traces = self.traces_joint_evaluation(
-                predictor_name=name,
-                evaluator=traces_evaluator,
-                teacher=teacher,
-                student=student,
-            )
-            best_augmented_demos = sorted_traces[name][: self.max_bootstrapped_demos]
+            if len(self.name2traces[name]) > 1:
+                sorted_traces = self.traces_joint_evaluation(
+                    predictor_name=name,
+                    evaluator=traces_evaluator,
+                    teacher=teacher,
+                    student=student,
+                )
+            else:
+                sorted_traces = self.name2traces[name]
+
+            best_augmented_demos = sorted_traces[: self.max_bootstrapped_demos]
 
             sample_size = min(self.max_labeled_demos - len(best_augmented_demos), len(raw_demos))
             sample_size = max(0, sample_size)
@@ -275,7 +276,7 @@ class BootstrapFewShot(Teleprompter):
         return self.student
 
     def traces_joint_evaluation(
-            self, predictor_name, evaluator, teacher, student, teacher_exp=0.75, student_exp=0.15
+            self, predictor_name, evaluator, teacher, student, teacher_exp=0.75, student_exp=0.25
     ):
         traces = self.name2traces[predictor_name]
         scored_traces = []
@@ -288,20 +289,22 @@ class BootstrapFewShot(Teleprompter):
         student_demos_cache = student_predictor.demos
 
         for trace in traces:
-            teacher_predictor.demos = [x for x in teacher_predictor.demos if x != trace]
-            student_predictor.demos = [x for x in student_predictor.demos if x != trace]
+            logger.info(f"\nTrace:\n{trace.question}\n\n")
 
-            teacher_score, _ = evaluator(program=teacher)
-            student_score, _ = evaluator(program=student)
+            teacher_predictor.demos = [trace]
+            student_predictor.demos = [trace]
+
+            logger.info("Evaluation demos including only current trace with both teacher & student\n")
+            teacher_score = evaluator(program=teacher)
+            student_score = evaluator(program=student)
 
             # Weighted scoring with more attention to teacher predictor
             final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
             scored_traces.append((trace, final_score))
 
-            teacher_predictor.demos = teacher_demos_cache
-            student_predictor.demos = student_demos_cache
-
-        # Sort traces by score (descending)
+        # Sort traces by significance in model depencdency
         sorted_traces = sorted(scored_traces, key=lambda x: x[1], reverse=True)
+        teacher_predictor.demos = teacher_demos_cache
+        student_predictor.demos = student_demos_cache
 
         return [trace for trace, score in sorted_traces]
