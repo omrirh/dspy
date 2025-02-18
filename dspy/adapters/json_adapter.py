@@ -36,7 +36,8 @@ class JSONAdapter(Adapter):
         inputs = dict(prompt=inputs) if isinstance(inputs, str) else dict(messages=inputs)
 
         try:
-            provider = lm.model.split("/", 1)[0] or "openai"
+            # provider = lm.model.split("/", 1)[0] or "openai"
+            provider = "huggingface"  # TODO: check if necessary and why ?
             params = litellm.get_supported_openai_params(model=lm.model, custom_llm_provider=provider)
             if params and "response_format" in params:
                 try:

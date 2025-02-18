@@ -76,7 +76,7 @@ class Predict(Module, Parameter):
         config = dict(**self.config, **kwargs.pop("config", {}))
 
         # Get the right LM to use.
-        lm = kwargs.pop("lm", self.lm) or dspy.settings.lm
+        lm = dspy.settings.lm or kwargs.pop("lm", self.lm)
         assert isinstance(lm, dspy.LM), "No LM is loaded."
 
         # If temperature is 0.0 but its n > 1, set temperature to 0.7.
