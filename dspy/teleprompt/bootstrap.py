@@ -10,7 +10,7 @@ import dspy
 
 from .teleprompt import Teleprompter
 from .vanilla import LabeledFewShot
-from dspy.evaluate import EvaluateWithTraces
+from dspy.evaluate import Evaluate
 
 # TODO: metrics should return an object with __bool__ basically, but fine if they're more complex.
 # They can also be sortable.
@@ -52,7 +52,7 @@ class BootstrapFewShot(Teleprompter):
 
         Args:
             metric: Callable
-                A function that compares an expected value and predicted value, outputting the result of that comparison. 
+                A function that compares an expected value and predicted value, outputting the result of that comparison.
             metric_threshold: optional float, default `None`
                 If the metric yields a numerical value, then check it against this threshold when
                 deciding whether or not to accept a bootstrap example.
@@ -229,7 +229,7 @@ class BootstrapFewShot(Teleprompter):
 
                 name2traces[predictor_name] = name2traces.get(predictor_name, [])
                 name2traces[predictor_name].append(demo)
-        
+
             # Update the traces
             for name, demos in name2traces.items():
                 from datasets.fingerprint import Hasher
@@ -245,24 +245,27 @@ class BootstrapFewShot(Teleprompter):
     def _train(self):
         rng = random.Random(0)
         raw_demos = self.validation
-        traces_evaluator = EvaluateWithTraces(
-                            devset=self.validation,
-                            metric=self.metric,
-                            num_threads=4,
-                            display_progress=True,
-                            return_traces=True
-                )
+        traces_evaluator = Evaluate(
+            devset=rng.sample(self.validation, int(0.1 * len(self.validation))),
+            metric=self.metric,
+            num_threads=12,
+            display_progress=False
+        )
         teacher = self.teacher.deepcopy()
-        student = self.student.deepcopy()
+        student = self.student.reset_copy()
 
         for name, predictor in self.student.named_predictors():
-            sorted_traces = self.traces_joint_evaluation(
-                predictor_name=name,
-                evaluator=traces_evaluator,
-                teacher=teacher,
-                student=student,
-            )
-            best_augmented_demos = sorted_traces[name][: self.max_bootstrapped_demos]
+            if len(self.name2traces[name]) > 1:
+                sorted_traces = self.traces_joint_evaluation(
+                    predictor_name=name,
+                    evaluator=traces_evaluator,
+                    teacher=teacher,
+                    student=student,
+                )
+            else:
+                sorted_traces = self.name2traces[name]
+
+            best_augmented_demos = sorted_traces[: self.max_bootstrapped_demos]
 
             sample_size = min(self.max_labeled_demos - len(best_augmented_demos), len(raw_demos))
             sample_size = max(0, sample_size)
@@ -273,7 +276,7 @@ class BootstrapFewShot(Teleprompter):
         return self.student
 
     def traces_joint_evaluation(
-            self, predictor_name, evaluator, teacher, student, teacher_exp=0.75, student_exp=0.15
+            self, predictor_name, evaluator, teacher, student, teacher_exp=0.75, student_exp=0.25
     ):
         traces = self.name2traces[predictor_name]
         scored_traces = []
@@ -286,20 +289,22 @@ class BootstrapFewShot(Teleprompter):
         student_demos_cache = student_predictor.demos
 
         for trace in traces:
-            teacher_predictor.demos = [x for x in teacher_predictor.demos if x != trace]
-            student_predictor.demos = [x for x in student_predictor.demos if x != trace]
+            logger.info(f"\nTrace:\n{trace.question}\n\n")
 
-            teacher_score, _ = evaluator(program=teacher)
-            student_score, _ = evaluator(program=student)
+            teacher_predictor.demos = [trace]
+            student_predictor.demos = [trace]
+
+            logger.info("Evaluation demos including only current trace with both teacher & student\n")
+            teacher_score = evaluator(program=teacher)
+            student_score = evaluator(program=student)
 
             # Weighted scoring with more attention to teacher predictor
             final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
             scored_traces.append((trace, final_score))
 
-            teacher_predictor.demos = teacher_demos_cache
-            student_predictor.demos = student_demos_cache
-
-        # Sort traces by score (descending)
+        # Sort traces by significance in model depencdency
         sorted_traces = sorted(scored_traces, key=lambda x: x[1], reverse=True)
+        teacher_predictor.demos = teacher_demos_cache
+        student_predictor.demos = student_demos_cache
 
         return [trace for trace, score in sorted_traces]
