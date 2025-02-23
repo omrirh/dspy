@@ -26,3 +26,4 @@ uvloop
 fastapi
 zmq
 vllm
+sgl_kernel
