@@ -329,7 +329,7 @@ def litellm_completion(request: Dict[str, Any], num_retries: int, cache={"no-cac
         return litellm.completion(
             cache=cache,
             **retry_kwargs,
-            **request,
+            **request,  # TODO: debug request values
         )
 
     # The stream is already opened, and will be closed by the caller.

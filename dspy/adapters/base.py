@@ -20,7 +20,7 @@ class Adapter(ABC):
         inputs_ = self.format(signature, demos, inputs)
         inputs_ = dict(prompt=inputs_) if isinstance(inputs_, str) else dict(messages=inputs_)
 
-        outputs = lm(**inputs_, **lm_kwargs)
+        outputs = lm(**inputs_, **lm_kwargs)  # TODO: debug outputs value. impacts trace "augmentation"
         values = []
 
         try:

@@ -20,3 +20,9 @@ ujson
 openai
 sentence-transformers
 cachetools
+orjson
+uvicorn
+uvloop
+fastapi
+zmq
+vllm

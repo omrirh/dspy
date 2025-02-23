@@ -100,7 +100,7 @@ class Predict(Module, Parameter):
 
         if kwargs.pop("_trace", True) and dspy.settings.trace is not None:
             trace = dspy.settings.trace
-            trace.append((self, {**kwargs}, pred))
+            trace.append((self, {**kwargs}, pred))  # TODO: debug this line!! understand which inputs where predicted correctly
 
         return pred
 

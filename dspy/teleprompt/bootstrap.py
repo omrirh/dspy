@@ -103,7 +103,8 @@ class BootstrapFewShot(Teleprompter):
         assert getattr(self.student, "_compiled", False) is False, "Student must be uncompiled."
 
         if self.max_labeled_demos and getattr(self.teacher, "_compiled", False) is False:
-            teleprompter = LabeledFewShot(k=self.max_labeled_demos)
+            teleprompter = LabeledFewShot(k=self.max_labeled_demos)  # TODO: according to config - randomly assigns 3 demos from trainset to predictor demos.
+                                                                     # TODO: maybe there's something better than random?
             self.teacher = teleprompter.compile(self.teacher.reset_copy(), trainset=self.trainset)
 
     def _prepare_predictor_mappings(self):
@@ -114,17 +115,18 @@ class BootstrapFewShot(Teleprompter):
             teacher.predictors(),
         ), "Student and teacher must have the same number of predictors."
 
+        # TODO: when will a student/teacher have multiple predictors and why?
         for (name1, predictor1), (name2, predictor2) in zip(student.named_predictors(), teacher.named_predictors()):
             assert name1 == name2, "Student and teacher must have the same program structure."
             if hasattr(predictor1.signature, "equals"):
-                assert predictor1.signature.equals(
+                assert predictor1.signature.equals(  # TODO: what is the signature here? how is it being used and where?
                     predictor2.signature,
                 ), (f"Student and teacher must have the same signatures. "
                     f"{type(predictor1.signature)} != {type(predictor2.signature)}"
                     )
             else:
                 # fallback in case if .equals is not implemented (e.g. dsp.Prompt)
-                assert predictor1.signature == predictor2.signature, (
+                assert predictor1.signature == predictor2.signature, (  # TODO: why do they need to be the same?
                     f"Student and teacher must have the same signatures. "
                     f"{type(predictor1.signature)} != {type(predictor2.signature)}"
                 )
@@ -184,8 +186,8 @@ class BootstrapFewShot(Teleprompter):
                         predictor_cache[name] = predictor.demos
                         predictor.demos = [x for x in predictor.demos if x != example]
 
-                    prediction = teacher(**example.inputs())
-                    trace = dspy.settings.trace
+                    prediction = teacher(**example.inputs())  # TODO: what happens here? what is example.inputs()?
+                    trace = dspy.settings.trace  # TODO: how the trace is affected from the above?
 
                     for name, predictor in teacher.named_predictors():
                         predictor.demos = predictor_cache[name]
@@ -208,7 +210,7 @@ class BootstrapFewShot(Teleprompter):
             logger.error(f"Failed to run or to evaluate example {example} with {self.metric} due to {e}.")
 
         if success:
-            for step in trace:
+            for step in trace:  # TODO: debug trace object after some back & forth
                 predictor, inputs, outputs = step
                 demo = dspy.Example(augmented=True, **inputs, **outputs)
 
@@ -236,48 +238,44 @@ class BootstrapFewShot(Teleprompter):
                 # If there are multiple traces for the same predictor in the sample example,
                 # sample 50/50 from the first N-1 traces or the last trace.
                 if len(demos) > 1:
-                    rng = random.Random(Hasher.hash(tuple(demos)))
+                    rng = random.Random(Hasher.hash(tuple(demos)))  # TODO: what does this produce and why used like that?
                     demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]
-                self.name2traces[name].extend(demos)
+                self.name2traces[name].extend(demos)  # TODO: i.e there will be duplicates if len(demos) > 1. how does this affect?
 
         return success
 
     def _train(self):
         rng = random.Random(0)
         raw_demos = self.validation
-        traces_evaluator = Evaluate(
-            devset=rng.sample(self.validation, int(0.1 * len(self.validation))),
-            metric=self.metric,
-            num_threads=12,
-            display_progress=False
-        )
         teacher = self.teacher.deepcopy()
         student = self.student.reset_copy()
 
         for name, predictor in self.student.named_predictors():
-            if len(self.name2traces[name]) > 1:
-                sorted_traces = self.traces_joint_evaluation(
+            if len(self.name2traces[name]) > 1:  # TODO: which "positive examples" will produce multiple traces? (understand trace first)
+                sorted_traces = self.sort_traces(
                     predictor_name=name,
-                    evaluator=traces_evaluator,
                     teacher=teacher,
                     student=student,
                 )
             else:
                 sorted_traces = self.name2traces[name]
 
-            best_augmented_demos = sorted_traces[: self.max_bootstrapped_demos]
-
-            sample_size = min(self.max_labeled_demos - len(best_augmented_demos), len(raw_demos))
+            sorted_traces = sorted_traces[: self.max_bootstrapped_demos]  # TODO: does the student predictor depend on traces order? why? (understand predictor.demos first)
+                                                                                 # TODO: what if max_bootstrapped_demos == len(sorted_traces)? we will end up with the same traces just sorted
+            sample_size = min(self.max_labeled_demos - len(sorted_traces), len(raw_demos))
             sample_size = max(0, sample_size)
 
             raw_demos = rng.sample(raw_demos, sample_size)
-            predictor.demos = best_augmented_demos + raw_demos
+            predictor.demos = sorted_traces + raw_demos
 
         return self.student
 
-    def traces_joint_evaluation(
-            self, predictor_name, evaluator, teacher, student, teacher_exp=0.75, student_exp=0.25
+    def sort_traces(
+            self, predictor_name, teacher, student, teacher_exp=0.75, student_exp=0.25
     ):
+        rng = random.Random(0)
+        confidence_subset = rng.sample(self.validation, int(0.1 * len(self.validation)))
+
         traces = self.name2traces[predictor_name]
         scored_traces = []
 
@@ -291,20 +289,28 @@ class BootstrapFewShot(Teleprompter):
         for trace in traces:
             logger.info(f"\nTrace:\n{trace.question}\n\n")
 
+            # TODO: Need to make sure we evaluate on a subset of the train set that does not include the trace?
             teacher_predictor.demos = [trace]
             student_predictor.demos = [trace]
 
-            logger.info("Evaluation demos including only current trace with both teacher & student\n")
+            logger.info(f"Evaluation demos including only current trace with both teacher ({teacher_exp*100}%) & student ({student_exp*100}%)\n")
+            evaluator = Evaluate(
+                devset=[x for x in confidence_subset if x != trace],
+                metric=self.metric,
+                num_threads=12,
+                display_progress=False
+            )
             teacher_score = evaluator(program=teacher)
             student_score = evaluator(program=student)
 
             # Weighted scoring with more attention to teacher predictor
+            # TODO: when running optimization strategy = p, student and teacher prediction score is the same. why?
             final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
             scored_traces.append((trace, final_score))
 
         # Sort traces by significance in model depencdency
-        sorted_traces = sorted(scored_traces, key=lambda x: x[1], reverse=True)
+        scored_traces.sort(key=lambda x: x[1], reverse=True)  # TODO: IMPORTANT: worth trying in ascending order too, where the model sees increasing quality of demonstrations prior to the input.
         teacher_predictor.demos = teacher_demos_cache
         student_predictor.demos = student_demos_cache
 
-        return [trace for trace, score in sorted_traces]
+        return [trace for trace, score in scored_traces]

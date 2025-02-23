@@ -20,7 +20,7 @@ class LabeledFewShot(Teleprompter):
             if sample:
                 predictor.demos = rng.sample(self.trainset, min(self.k, len(self.trainset)))
             else:
-                predictor.demos = self.trainset[: min(self.k, len(self.trainset))]
+                predictor.demos = self.trainset[: min(self.k, len(self.trainset))] # TODO: sort zero-shot demonstrations?
 
         return self.student
 

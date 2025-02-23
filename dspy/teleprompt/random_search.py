@@ -98,7 +98,7 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
                 optimizer = BootstrapFewShot(
                     metric=self.metric,
                     metric_threshold=self.metric_threshold,
-                    max_bootstrapped_demos=size,
+                    max_bootstrapped_demos=size,  # TODO: according to config - 1<=size<=3. why not use size>=3 ?
                     max_labeled_demos=self.max_labeled_demos,
                     teacher_settings=self.teacher_settings,
                     max_rounds=self.max_rounds,
@@ -116,10 +116,11 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
                 display_progress=True,
             )
 
-            score, subscores = evaluate(program, return_all_scores=True)
+            score, subscores = evaluate(program, return_all_scores=True)  # TODO: what are subscores? why do they matter?
 
             all_subscores.append(subscores)
 
+            # TODO: review _suggest_failures and _assert_failures in live if they exist (understand when/why)
             ############ Assertion-aware Optimization ############
             if hasattr(program, "_suggest_failures"):
                 score = score - program._suggest_failures * 0.2
@@ -135,15 +136,15 @@ class BootstrapFewShotWithRandomSearch(Teleprompter):
             print(f"Scores so far: {scores}")
             print(f"Best score so far: {max(scores)}")
 
-            score_data.append({"score": score, "subscores": subscores, "seed": seed, "program": program})
+            score_data.append((score, subscores, seed, program))
 
             if self.stop_at_score is not None and score >= self.stop_at_score:
                 print(f"Stopping early because score {score} is >= stop_at_score {self.stop_at_score}")
                 break
 
         # To best program, attach all program candidates in decreasing average score
-        best_program.candidate_programs = score_data
-        best_program.candidate_programs = sorted(best_program.candidate_programs, key=lambda x: x["score"], reverse=True)
+        best_program.candidate_programs = score_data  # TODO: ever being used?
+        best_program.candidate_programs = sorted(best_program.candidate_programs, key=lambda x: x[0], reverse=True)
 
         print(f"{len(best_program.candidate_programs)} candidate programs found.")
 

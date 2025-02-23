@@ -45,9 +45,9 @@ class ChatAdapter(Adapter):
             if any(k in demo for k in signature.input_fields) and any(k in demo for k in signature.output_fields)
         ]
 
-        demos = incomplete_demos + complete_demos
+        demos = incomplete_demos + complete_demos  # TODO: why incomplete first then complete? how does this matter?
 
-        prepared_instructions = prepare_instructions(signature)
+        prepared_instructions = prepare_instructions(signature)  # TODO: debug this line!!! prompt instructions are crucial!!
         messages.append({"role": "system", "content": prepared_instructions})
         for demo in demos:
             messages.append(format_turn(signature, demo, role="user", incomplete=demo in incomplete_demos))
@@ -129,7 +129,7 @@ def format_fields(fields_with_values: Dict[FieldInfoWithName, Any]) -> str:
     return "\n\n".join(output).strip()
 
 
-def format_turn(signature, values, role, incomplete=False):
+def format_turn(signature, values, role, incomplete=False):  # TODO: debug this function (how user/assistant vary)
     """
     Constructs a new message ("turn") to append to a chat thread. The message is carefully formatted
     so that it can instruct an LLM to generate responses conforming to the specified DSPy signature.
@@ -220,7 +220,7 @@ def prepare_schema(field_type):
     return schema
 
 
-def prepare_instructions(signature: SignatureMeta):
+def prepare_instructions(signature: SignatureMeta):  # TODO: Thought - is it legit to modify this in terms of reproducability alignment? might be interesting to prepare the model for a set of ordered-by-quality few-shot demonstrations.
     parts = []
     parts.append("Your input fields are:\n" + enumerate_fields(signature.input_fields))
     parts.append("Your output fields are:\n" + enumerate_fields(signature.output_fields))

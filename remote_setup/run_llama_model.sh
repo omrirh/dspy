@@ -6,7 +6,7 @@ source dspy_venv/bin/activate
 
 # Setup SGLang & flashinfer (patch transformers version for compatibility)
 pip install sglang==0.4.1
-pip install flashinfer==0.1.6+cu121torch2.4 -f https://flashinfer.ai/whl/cu121/torch2.4/
+pip install flashinfer -i https://flashinfer.ai/whl/cu121/torch2.4/
 pip install transformers==4.48.3
 pip install huggingface_hub
 
