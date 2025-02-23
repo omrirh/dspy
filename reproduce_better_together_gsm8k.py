@@ -81,7 +81,7 @@ better_together = BetterTogether(
 small_trainset = trainset[:10]
 
 # Run the BetterTogether optimization
-optimization_strategy = "w -> p"
+optimization_strategy = "p"
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
