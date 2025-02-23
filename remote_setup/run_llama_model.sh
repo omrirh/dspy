@@ -6,10 +6,9 @@ source dspy_venv/bin/activate
 
 # Setup SGLang & flashinfer (patch transformers version for compatibility)
 pip install --upgrade pip
-#pip install "sglang[all]==0.4.1"
-#pip install flashinfer -i https://flashinfer.ai/whl/cu124/torch2.4/
-#pip install transformers==4.48.3
-#pip install huggingface_hub
+pip install "sglang[all]"
+pip install flashinfer -i https://flashinfer.ai/whl/cu124/torch2.4/
+pip install huggingface_hub
 
 # make sure Nvidia driver is present on machine
 command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are missing."; exit 1; }

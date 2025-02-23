@@ -20,9 +20,6 @@ fi
 sudo add-apt-repository ppa:graphics-drivers/ppa
 sudo apt update
 
-# install nvcc
-sudo apt install nvidia-cuda-toolkit
-
 echo "Installing NVIDIA driver..."
 sudo apt install -y nvidia-driver-535
 
