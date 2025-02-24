@@ -95,7 +95,7 @@ class BootstrapFewShot(Teleprompter):
         return self.student
 
     def _prepare_student_and_teacher(self, student, teacher):
-        self.student = student.reset_copy()
+        self.student = student.reset_copy()  # TODO: debug reset_copy and what differentiates student-as-teacher from student.reset_copy
 
         # NOTE: behavior change on Oct 28, 2024. Deep copy instead of reset copy for the student-as-teacher.
         self.teacher = teacher.deepcopy() if teacher is not None else student.deepcopy()
@@ -103,8 +103,7 @@ class BootstrapFewShot(Teleprompter):
         assert getattr(self.student, "_compiled", False) is False, "Student must be uncompiled."
 
         if self.max_labeled_demos and getattr(self.teacher, "_compiled", False) is False:
-            teleprompter = LabeledFewShot(k=self.max_labeled_demos)  # TODO: according to config - randomly assigns 3 demos from trainset to predictor demos.
-                                                                     # TODO: maybe there's something better than random?
+            teleprompter = LabeledFewShot(k=self.max_labeled_demos)
             self.teacher = teleprompter.compile(self.teacher.reset_copy(), trainset=self.trainset)
 
     def _prepare_predictor_mappings(self):
@@ -115,11 +114,10 @@ class BootstrapFewShot(Teleprompter):
             teacher.predictors(),
         ), "Student and teacher must have the same number of predictors."
 
-        # TODO: when will a student/teacher have multiple predictors and why?
         for (name1, predictor1), (name2, predictor2) in zip(student.named_predictors(), teacher.named_predictors()):
             assert name1 == name2, "Student and teacher must have the same program structure."
             if hasattr(predictor1.signature, "equals"):
-                assert predictor1.signature.equals(  # TODO: what is the signature here? how is it being used and where?
+                assert predictor1.signature.equals(
                     predictor2.signature,
                 ), (f"Student and teacher must have the same signatures. "
                     f"{type(predictor1.signature)} != {type(predictor2.signature)}"
@@ -186,8 +184,8 @@ class BootstrapFewShot(Teleprompter):
                         predictor_cache[name] = predictor.demos
                         predictor.demos = [x for x in predictor.demos if x != example]
 
-                    prediction = teacher(**example.inputs())  # TODO: what happens here? what is example.inputs()?
-                    trace = dspy.settings.trace  # TODO: how the trace is affected from the above?
+                    prediction = teacher(**example.inputs())
+                    trace = dspy.settings.trace
 
                     for name, predictor in teacher.named_predictors():
                         predictor.demos = predictor_cache[name]
@@ -238,9 +236,9 @@ class BootstrapFewShot(Teleprompter):
                 # If there are multiple traces for the same predictor in the sample example,
                 # sample 50/50 from the first N-1 traces or the last trace.
                 if len(demos) > 1:
-                    rng = random.Random(Hasher.hash(tuple(demos)))  # TODO: what does this produce and why used like that?
+                    rng = random.Random(Hasher.hash(tuple(demos)))
                     demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]
-                self.name2traces[name].extend(demos)  # TODO: i.e there will be duplicates if len(demos) > 1. how does this affect?
+                self.name2traces[name].extend(demos)
 
         return success
 
@@ -251,7 +249,7 @@ class BootstrapFewShot(Teleprompter):
         student = self.student.reset_copy()
 
         for name, predictor in self.student.named_predictors():
-            if len(self.name2traces[name]) > 1:  # TODO: which "positive examples" will produce multiple traces? (understand trace first)
+            if len(self.name2traces[name]) > 1:
                 sorted_traces = self.sort_traces(
                     predictor_name=name,
                     teacher=teacher,
@@ -260,8 +258,7 @@ class BootstrapFewShot(Teleprompter):
             else:
                 sorted_traces = self.name2traces[name]
 
-            sorted_traces = sorted_traces[: self.max_bootstrapped_demos]  # TODO: does the student predictor depend on traces order? why? (understand predictor.demos first)
-                                                                                 # TODO: what if max_bootstrapped_demos == len(sorted_traces)? we will end up with the same traces just sorted
+            sorted_traces = sorted_traces[: self.max_bootstrapped_demos]
             sample_size = min(self.max_labeled_demos - len(sorted_traces), len(raw_demos))
             sample_size = max(0, sample_size)
 
@@ -286,7 +283,7 @@ class BootstrapFewShot(Teleprompter):
         teacher_demos_cache = teacher_predictor.demos
         student_demos_cache = student_predictor.demos
 
-        for trace in traces:
+        for trace in traces:  # TODO: debug the trace again to understand if failed examples are included
             logger.info(f"\nTrace:\n{trace.question}\n\n")
 
             # TODO: Need to make sure we evaluate on a subset of the train set that does not include the trace?
@@ -304,7 +301,7 @@ class BootstrapFewShot(Teleprompter):
             student_score = evaluator(program=student)
 
             # Weighted scoring with more attention to teacher predictor
-            # TODO: when running optimization strategy = p, student and teacher prediction score is the same. why?
+            # TODO: check if teacher & model have same demonstrations first? how does reset_copy affect a program?
             final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
             scored_traces.append((trace, final_score))
 

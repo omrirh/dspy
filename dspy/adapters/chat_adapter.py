@@ -47,7 +47,7 @@ class ChatAdapter(Adapter):
 
         demos = incomplete_demos + complete_demos  # TODO: why incomplete first then complete? how does this matter?
 
-        prepared_instructions = prepare_instructions(signature)  # TODO: debug this line!!! prompt instructions are crucial!!
+        prepared_instructions = prepare_instructions(signature)
         messages.append({"role": "system", "content": prepared_instructions})
         for demo in demos:
             messages.append(format_turn(signature, demo, role="user", incomplete=demo in incomplete_demos))
@@ -129,7 +129,7 @@ def format_fields(fields_with_values: Dict[FieldInfoWithName, Any]) -> str:
     return "\n\n".join(output).strip()
 
 
-def format_turn(signature, values, role, incomplete=False):  # TODO: debug this function (how user/assistant vary)
+def format_turn(signature, values, role, incomplete=False):
     """
     Constructs a new message ("turn") to append to a chat thread. The message is carefully formatted
     so that it can instruct an LLM to generate responses conforming to the specified DSPy signature.
