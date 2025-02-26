@@ -6,8 +6,8 @@ source dspy_venv/bin/activate
 
 # Setup SGLang & flashinfer (patch transformers version for compatibility)
 pip install --upgrade pip
-pip install "sglang[all]"
-pip install flashinfer -i https://flashinfer.ai/whl/cu124/torch2.4/
+pip install flashinfer-python -f https://flashinfer.ai/whl/cu124/torch2.5/flashinfer-python
+pip install "sglang==0.4.3"
 pip install huggingface_hub
 
 # make sure Nvidia driver is present on machine

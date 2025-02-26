@@ -21,7 +21,7 @@ pip install --upgrade pip
 cd dspy
 pip install poetry
 poetry env use python3.11
-# poetry install --> TODO: fix as poetry.lock changed significantly (need to rebase dev branch)
+poetry install
 
 # Install pip dependencies
 pip install -r remote_setup/requirements.txt

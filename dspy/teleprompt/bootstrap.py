@@ -237,7 +237,7 @@ class BootstrapFewShot(Teleprompter):
                 # sample 50/50 from the first N-1 traces or the last trace.
                 if len(demos) > 1:
                     rng = random.Random(Hasher.hash(tuple(demos)))
-                    demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]
+                    demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]  # TODO: debug if this ever hold more than one demo?
                 self.name2traces[name].extend(demos)
 
         return success
@@ -286,7 +286,6 @@ class BootstrapFewShot(Teleprompter):
         for trace in traces:  # TODO: debug the trace again to understand if failed examples are included
             logger.info(f"\nTrace:\n{trace.question}\n\n")
 
-            # TODO: Need to make sure we evaluate on a subset of the train set that does not include the trace?
             teacher_predictor.demos = [trace]
             student_predictor.demos = [trace]
 
