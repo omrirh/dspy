@@ -20,7 +20,7 @@ from dspy.adapters.base import Adapter
 from dspy.clients.openai import OpenAIProvider
 from dspy.clients.huggingface import HFProvider
 from dspy.clients.provider import Provider, TrainingJob
-from dspy.clients.utils_finetune import DataFormat, infer_data_format, validate_data_format
+from dspy.clients.utils_finetune import TrainDataFormat, infer_data_format, validate_data_format
 from dspy.utils.callback import BaseCallback, with_callbacks
 
 from .base_lm import BaseLM
@@ -144,7 +144,7 @@ class LM(BaseLM):
         self,
         train_data: List[Dict[str, Any]],
         train_kwargs: Optional[Dict[str, Any]] = None,
-        data_format: Optional[DataFormat] = None,
+        data_format: Optional[TrainDataFormat] = None,
     ) -> TrainingJob:
         from dspy import settings as settings
 

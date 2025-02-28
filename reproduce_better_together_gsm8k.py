@@ -25,8 +25,9 @@ testset = [x.with_inputs('question') for x in dataset.test if AVOID_INPUT_TEST n
 # Define local Llama model endpoint for training
 sglang_port = 7501
 sglang_url = f"http://localhost:{sglang_port}/v1"
+model_name = "Meta-Llama-3-8B-Instruct"
 lm = dspy.LM(
-    model="meta-llama/Meta-Llama-3-8B-Instruct",
+    model=f"meta-llama/{model_name}",
     api_base=sglang_url,
     api_key="local",
     provider=HFProvider(validation_set=devset, validation_metric=gsm8k_metric),
@@ -91,7 +92,7 @@ with dspy.context(lm=lm, rm=retriever):
     )
 
 # Evaluate accuracy and output the results
-print(f"[BetterTogether x GSM8K x {optimization_strategy}] Calculating experiment program results...")
+print(f"[BetterTogether x GSM8K x {model_name} x {optimization_strategy}] Calculating experiment program results...")
 accuracy_test = evaluate_test(optimized_program)
 print(f"Experiment Accuracy:\n"
       f"Test set:\t{accuracy_test}")

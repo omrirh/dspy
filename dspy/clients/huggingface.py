@@ -16,7 +16,8 @@ from datasets import Dataset
 from peft import LoraConfig, get_peft_model, PeftModel
 from remote_setup.utils import redeploy_sglang_model
 from dspy.clients.provider import TrainingJob, Provider
-from dspy.clients.utils_finetune import DataFormat, TrainingStatus
+from dspy.clients.utils_finetune import TrainDataFormat, TrainingStatus
+
 
 _HF_MODELS = [
     "meta-llama/Meta-Llama-2-7b-chat-hf",
@@ -85,7 +86,7 @@ class HFProvider(Provider):
             model: str,
             train_data: List[Dict[str, Any]],
             train_kwargs: Optional[Dict[str, Any]] = None,
-            data_format: Optional[DataFormat] = None,
+            data_format: Optional[TrainDataFormat] = None,
     ) -> str:
         print("[HF Provider] Validating data format")
         HFProvider.validate_data_format(data_format)
@@ -202,8 +203,8 @@ class HFProvider(Provider):
         return trained_model_path
 
     @staticmethod
-    def validate_data_format(data_format: DataFormat):
-        if data_format not in [DataFormat.completion, DataFormat.chat]:
+    def validate_data_format(data_format: TrainDataFormat):
+        if data_format not in [TrainDataFormat.completion, TrainDataFormat.chat]:
             raise ValueError(f"[HF Provider] Unsupported data format {data_format}.")
         print(f"[HF Provider] Data format {data_format} validated")
 

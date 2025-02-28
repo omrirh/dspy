@@ -45,7 +45,7 @@ class ChatAdapter(Adapter):
             if any(k in demo for k in signature.input_fields) and any(k in demo for k in signature.output_fields)
         ]
 
-        demos = incomplete_demos + complete_demos  # TODO: why incomplete first then complete? how does this matter?
+        # demos = incomplete_demos + complete_demos TODO: avoid this as it re-orders the demos before inference
 
         prepared_instructions = prepare_instructions(signature)
         messages.append({"role": "system", "content": prepared_instructions})

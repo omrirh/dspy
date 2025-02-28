@@ -8,6 +8,7 @@ import copy
 
 import dspy
 
+from datasets.fingerprint import Hasher
 from .teleprompt import Teleprompter
 from .vanilla import LabeledFewShot
 from dspy.evaluate import Evaluate
@@ -35,16 +36,17 @@ from dspy.evaluate import Evaluate
 
 logger = logging.getLogger(__name__)
 
+
 class BootstrapFewShot(Teleprompter):
     def __init__(
-        self,
-        metric=None,
-        metric_threshold=None,
-        teacher_settings: Optional[Dict]=None,
-        max_bootstrapped_demos=4,
-        max_labeled_demos=16,
-        max_rounds=1,
-        max_errors=5,
+            self,
+            metric=None,
+            metric_threshold=None,
+            teacher_settings: Optional[Dict] = None,
+            max_bootstrapped_demos=4,
+            max_labeled_demos=16,
+            max_rounds=1,
+            max_errors=5,
     ):
         """
         A Teleprompter class that composes a set of demos/examples to go into a predictor's prompt.
@@ -169,7 +171,7 @@ class BootstrapFewShot(Teleprompter):
         self.validation = [x for idx, x in enumerate(self.trainset) if idx not in bootstrapped]
 
     def _bootstrap_one_example(self, example, round_idx=0):
-        name2traces = {} #self.name2traces
+        name2traces = {}  # self.name2traces
         teacher = self.teacher  # .deepcopy()
         predictor_cache = {}
 
@@ -215,29 +217,18 @@ class BootstrapFewShot(Teleprompter):
                 try:
                     predictor_name = self.predictor2name[id(predictor)]
                 except KeyError:
-                    continue  # FIXME: !
-
-                    # # TODO: Look closer into this. It's a bit tricky to reproduce.
-                    # print(f"Failed to find predictor {predictor} in {self.predictor2name}.")
-                    # print(
-                    #     "Are you doing this in a notebook (Jupyter)? This might be caused by redefining values by rerunning cells.",
-                    # )
-                    # print("Try restarting the notebook, or open an issue.")
-                    # raise KeyError(
-                    #     f"Failed to find predictor {id(predictor)} {predictor} in {self.predictor2name}.",
-                    # ) from e
+                    continue
 
                 name2traces[predictor_name] = name2traces.get(predictor_name, [])
                 name2traces[predictor_name].append(demo)
 
             # Update the traces
             for name, demos in name2traces.items():
-                from datasets.fingerprint import Hasher
                 # If there are multiple traces for the same predictor in the sample example,
                 # sample 50/50 from the first N-1 traces or the last trace.
                 if len(demos) > 1:
                     rng = random.Random(Hasher.hash(tuple(demos)))
-                    demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]  # TODO: debug if this ever hold more than one demo?
+                    demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]
                 self.name2traces[name].extend(demos)
 
         return success
@@ -246,67 +237,60 @@ class BootstrapFewShot(Teleprompter):
         rng = random.Random(0)
         raw_demos = self.validation
         teacher = self.teacher.deepcopy()
-        student = self.student.reset_copy()
 
         for name, predictor in self.student.named_predictors():
-            if len(self.name2traces[name]) > 1:
-                sorted_traces = self.sort_traces(
+            raw_sample_size = min(
+                self.max_labeled_demos - min(self.max_bootstrapped_demos, len(self.name2traces[name])), len(raw_demos))
+            raw_sample_size = max(0, raw_sample_size)
+            raw_demos = rng.sample(raw_demos, raw_sample_size)
+            demonstrations = self.name2traces[name] + raw_demos
+
+            if len(demonstrations) > 1:
+                sorted_demos = self.sort_demos(
+                    demonstrations=demonstrations,
                     predictor_name=name,
                     teacher=teacher,
-                    student=student,
+                    # descending=False,
                 )
             else:
-                sorted_traces = self.name2traces[name]
+                sorted_demos = demonstrations
 
-            sorted_traces = sorted_traces[: self.max_bootstrapped_demos]
-            sample_size = min(self.max_labeled_demos - len(sorted_traces), len(raw_demos))
-            sample_size = max(0, sample_size)
-
-            raw_demos = rng.sample(raw_demos, sample_size)
-            predictor.demos = sorted_traces + raw_demos
+            predictor.demos = sorted_demos[: self.max_bootstrapped_demos + raw_sample_size]
 
         return self.student
 
-    def sort_traces(
-            self, predictor_name, teacher, student, teacher_exp=0.75, student_exp=0.25
+    def sort_demos(
+            self, demonstrations, predictor_name, teacher, descending=True
     ):
-        rng = random.Random(0)
+        rng = random.Random(Hasher.hash(tuple(demonstrations)))
         confidence_subset = rng.sample(self.validation, int(0.1 * len(self.validation)))
+        logger.info(f"Confidence set size: {len(confidence_subset)}, Validation set size: {len(self.validation)}")
 
-        traces = self.name2traces[predictor_name]
-        scored_traces = []
+        scored_demos = []
 
-        logger.info(f"Evaluating {len(traces)} traces for predictor '{predictor_name}'")
+        logger.info(f"Evaluating {len(demonstrations)} demonstrations for predictor '{predictor_name}'")
 
         teacher_predictor = dict(teacher.named_predictors()).get(predictor_name)
-        student_predictor = dict(student.named_predictors()).get(predictor_name)
         teacher_demos_cache = teacher_predictor.demos
-        student_demos_cache = student_predictor.demos
 
-        for trace in traces:  # TODO: debug the trace again to understand if failed examples are included
-            logger.info(f"\nTrace:\n{trace.question}\n\n")
+        for demo in demonstrations:
+            teacher_predictor.demos = [demo]
 
-            teacher_predictor.demos = [trace]
-            student_predictor.demos = [trace]
+            logger.info(
+                f"Predicting a sampled subset of validation set using the following example as one-shot demonstration:\n{demo.question} --> {demo.answer}")
 
-            logger.info(f"Evaluation demos including only current trace with both teacher ({teacher_exp*100}%) & student ({student_exp*100}%)\n")
             evaluator = Evaluate(
-                devset=[x for x in confidence_subset if x != trace],
+                devset=[x for x in confidence_subset if x != demo],
                 metric=self.metric,
                 num_threads=12,
                 display_progress=False
             )
-            teacher_score = evaluator(program=teacher)
-            student_score = evaluator(program=student)
-
-            # Weighted scoring with more attention to teacher predictor
-            # TODO: check if teacher & model have same demonstrations first? how does reset_copy affect a program?
-            final_score = (teacher_exp * teacher_score) + (student_exp * student_score)
-            scored_traces.append((trace, final_score))
+            demo_score = evaluator(program=teacher)
+            scored_demos.append((demo, demo_score))
+            print("\n\n")
 
         # Sort traces by significance in model depencdency
-        scored_traces.sort(key=lambda x: x[1], reverse=True)  # TODO: IMPORTANT: worth trying in ascending order too, where the model sees increasing quality of demonstrations prior to the input.
+        scored_demos.sort(key=lambda x: x[1], reverse=descending)
         teacher_predictor.demos = teacher_demos_cache
-        student_predictor.demos = student_demos_cache
 
-        return [trace for trace, score in scored_traces]
+        return [demo for demo, score in scored_demos]
