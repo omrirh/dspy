@@ -113,7 +113,8 @@ class Settings:
             if config_owner_thread_id in [None, current_thread_id]:
                 config_owner_thread_id = current_thread_id
             else:
-                raise RuntimeError("dspy.settings can only be changed by the thread that initially configured it.")
+                pass
+                # raise RuntimeError("dspy.settings can only be changed by the thread that initially configured it.")
 
         # Update global config
         for k, v in kwargs.items():
