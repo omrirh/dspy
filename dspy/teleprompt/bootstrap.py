@@ -245,7 +245,12 @@ class BootstrapFewShot(Teleprompter):
                 # sample 50/50 from the first N-1 traces or the last trace.
                 if len(demos) > 1:
                     rng = random.Random(Hasher.hash(tuple(demos)))
-                    demos = [rng.choice(demos[:-1]) if rng.random() < 0.5 else demos[-1]]
+                    if rng.random() < 0.5:
+                        demos = [rng.choice(demos[:-1])]
+                        # TODO: debug this, should be an LM generated reasoning step example. how to verify?
+                        # TODO: run --> demos[0] not in self.trainset (True/False)
+                    else:
+                        demos = [demos[-1]]
                 self.name2traces[name].extend(demos)
 
         return success

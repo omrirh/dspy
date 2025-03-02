@@ -3,8 +3,9 @@ import dspy
 from dspy.evaluate import Evaluate
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.bettertogether import BetterTogether
+from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
-from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
+# from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dspy.clients.huggingface import HFProvider
 from programs import CoT
 
@@ -63,12 +64,17 @@ weight_optimizer = BootstrapFinetune(
     num_threads=1
 )
 
-prompt_optimizer = BootstrapFewShotWithRandomSearch(
+# prompt_optimizer = BootstrapFewShotWithRandomSearch(
+#     metric=metric,
+#     max_bootstrapped_demos=3,
+#     max_labeled_demos=3,
+#     num_candidate_programs=6,
+#     num_threads=6
+# )
+prompt_optimizer = ClusterFewshot(
     metric=metric,
-    max_bootstrapped_demos=3,
-    max_labeled_demos=3,
-    num_candidate_programs=6,
-    num_threads=6
+    num_fewshot=4,
+    valset_ratio=0.1
 )
 
 better_together = BetterTogether(
@@ -79,14 +85,14 @@ better_together = BetterTogether(
 )
 
 # Sample a smaller dataset for quick testing
-small_trainset = trainset[:10]
+small_trainset = trainset[:50]
 
 # Run the BetterTogether optimization
 optimization_strategy = "p"
 with dspy.context(lm=lm, rm=retriever):
     optimized_program = better_together.compile(
         student=CoT(),
-        trainset=trainset,
+        trainset=small_trainset,
         strategy=optimization_strategy,
         valset_ratio=0.1
     )

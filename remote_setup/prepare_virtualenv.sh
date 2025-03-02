@@ -24,4 +24,5 @@ poetry env use python3.11
 poetry install
 
 # Install pip dependencies
+pip install --upgrade pip
 pip install -r remote_setup/requirements.txt

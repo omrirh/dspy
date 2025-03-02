@@ -5,41 +5,44 @@ from typing import Callable, List, Optional
 import dspy
 from dspy.primitives.example import Example
 from dspy.primitives.program import Program
-from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune, prepare_student, set_missing_predictor_lms, launch_lms, kill_lms
+from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune, prepare_student, set_missing_predictor_lms, \
+    launch_lms, kill_lms
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
+from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.teleprompt import Teleprompter
 
 logger = logging.getLogger(__name__)
 
 
 class BetterTogether(Teleprompter):
-
     STRAT_SEP = " -> "
 
     def __init__(self,
-        metric: Callable,
-        prompt_optimizer: Optional[Teleprompter] = None,
-        weight_optimizer: Optional[Teleprompter] = None,
-        seed: Optional[int] = None,
-      ):
+             metric: Callable,
+             prompt_optimizer: Optional[Teleprompter] = None,
+             weight_optimizer: Optional[Teleprompter] = None,
+             seed: Optional[int] = None,
+         ):
         if not dspy.settings.experimental:
             raise ValueError("This is an experimental optimizer. Set `dspy.settings.experimental` to `True` to use it.")
 
         # TODO: Note that the BetterTogether optimizer is meaningful when
         # BootstrapFinetune uses a metric to filter the training data before
-        # fine-tuning. However, one can also choose to run this optimizer with 
+        # fine-tuning. However, one can also choose to run this optimizer with
         # a BoostrapFinetune without a metric, say, if there aren't labels
         # available for the training data. Should this be noted somewhere?
         # TODO: We should re-consider if the metric should be required.
-        self.prompt_optimizer = prompt_optimizer if prompt_optimizer else BootstrapFewShotWithRandomSearch(metric=metric)
+        self.prompt_optimizer = prompt_optimizer if prompt_optimizer else BootstrapFewShotWithRandomSearch(
+            metric=metric)
         self.weight_optimizer = weight_optimizer if weight_optimizer else BootstrapFinetune(metric=metric)
 
-        is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch)
+        is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch) or isinstance(
+            self.prompt_optimizer, ClusterFewshot)
         is_supported_weight = isinstance(self.weight_optimizer, BootstrapFinetune)
         if not is_supported_prompt or not is_supported_weight:
             raise ValueError(
                 "The BetterTogether optimizer only supports the following optimizers for now: BootstrapFinetune, "
-                "BootstrapFewShotWithRandomSearch."
+                "BootstrapFewShotWithRandomSearch and ClusterFewshot."
             )
 
         self.rng = random.Random(seed)
@@ -49,7 +52,7 @@ class BetterTogether(Teleprompter):
         student: Program,
         trainset: List[Example],
         strategy: str = "p -> w -> p",
-        valset_ratio = 0.1,
+        valset_ratio=0.1,
     ) -> Program:
         # TODO: We could record acc on a different valset to pick the best
         # strategy within the provided strategy
@@ -73,10 +76,10 @@ class BetterTogether(Teleprompter):
         trainset = trainset[:]
         logger.info("Compiling the student program...")
         student = self._run_strategies(parsed_strategy, student, trainset, valset_ratio)
-        
+
         logger.info("BetterTogether has finished compiling the student program")
         return student
-  
+
     def _run_strategies(self, parsed_strategy, student, trainset, valset_ratio) -> Program:
         # Keep track of all the partial strategies/programs in parsed_strategy
         # "" corresponds to the initial student program
@@ -115,7 +118,7 @@ class BetterTogether(Teleprompter):
 
         student.candidate_programs = candidate_programs
         return student
-  
+
     def _compile_prompt_optimizer(self, student, trainset, valset_ratio) -> Program:
         logger.info("Preparing for prompt optimization...")
 
@@ -141,7 +144,7 @@ class BetterTogether(Teleprompter):
             pred.lm = lm
 
         return student
-    
+
     def _compile_weight_optimizer(self, student, trainset) -> Program:
         logger.info("Preparing for weight optimization...")
 
@@ -152,7 +155,7 @@ class BetterTogether(Teleprompter):
         # prompt optimizers are accepting a valset or encode a way to check if
         # a valset should be passed to an optimizer's compile.
         logger.info("Compiling the weight optimizer...")
-        student = self.weight_optimizer.compile(student, trainset=trainset)     
+        student = self.weight_optimizer.compile(student, trainset=trainset)
 
         # Updating the train kwargs for the new LMs. This is needed because the
         # train_kwargs of the optimizer is configured for the original LMs.

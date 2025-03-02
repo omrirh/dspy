@@ -68,6 +68,7 @@ class HFProvider(Provider):
 
     @staticmethod
     def launch(model: str, launch_kwargs: Optional[Dict[str, Any]] = None):
+        model = "meta-llama/Meta-Llama-3-8B-Instruct"  # TODO: fix this as original model gives LM object as str
         print(f"[HF Provider] Launching model '{model}'")
         tokenizer = AutoTokenizer.from_pretrained(model)
         model = AutoModelForCausalLM.from_pretrained(model)
@@ -75,6 +76,7 @@ class HFProvider(Provider):
 
     @staticmethod
     def kill(model: str, launch_kwargs: Optional[Dict[str, Any]] = None):
+        model = "meta-llama/Meta-Llama-3-8B-Instruct"  # TODO: fix this as original model gives LM object as str
         print(f"[HF Provider] Killing model '{model}' and clearing cache")
         del model
         torch.cuda.empty_cache()
