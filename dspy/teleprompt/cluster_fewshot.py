@@ -1,5 +1,7 @@
 import logging
 import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 from typing import List, Dict, Optional
 from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
@@ -72,10 +74,10 @@ class ClusterFewshot(Teleprompter):
         self._cluster_examples()
         self._assemble_validation_set()
         self._sort_examples_as_demos()
-        self.fewshot_subset = self.collect_fewshot_subset()
+        self.collect_fewshot_subset()
 
         # Update student LM predictors with optimized few-shot subset
-        for _, predictor in student.named_predictors():
+        for _, predictor in self.student.named_predictors():
             predictor.demos = self.fewshot_subset  # TODO: try with/without in-context sort
 
         self.student._compiled = True
@@ -102,9 +104,33 @@ class ClusterFewshot(Teleprompter):
         for idx, label in enumerate(cluster_labels):
             self.clusters[label].append(self.trainset[idx])
 
-        # TODO: add visulization of clusters with matplotlib
+        self._visualize_clusters(embeddings, cluster_labels, self.N)
 
         logger.info(f"Examples clustering by semantic embedding completed (K={self.N}).")
+
+    def _visualize_clusters(self, embeddings, cluster_labels, num_clusters, save_path="cluster_plot.png"):
+        """
+        Visualizes clustered embeddings in 2D using t-SNE and saves the plot to a file.
+        """
+        logger.info("Performing t-SNE dimensionality reduction for visualization...")
+        tsne = TSNE(n_components=2, random_state=42, perplexity=30)
+        embeddings_2d = tsne.fit_transform(embeddings)
+
+        # Plot clusters
+        plt.figure(figsize=(10, 7))
+        scatter = plt.scatter(
+            embeddings_2d[:, 0], embeddings_2d[:, 1], c=cluster_labels, cmap='tab10', alpha=0.7
+        )
+        plt.colorbar(scatter, label="Cluster Labels")
+        plt.title(f"t-SNE Visualization of {num_clusters} Clusters")
+        plt.xlabel("t-SNE Dimension 1")
+        plt.ylabel("t-SNE Dimension 2")
+
+        # Save instead of showing
+        plt.savefig(save_path)
+        plt.close()  # Close figure to free memory
+
+        logger.info(f"Cluster visualization saved to {save_path}.")
 
     def _assemble_validation_set(self):
         """
@@ -134,7 +160,8 @@ class ClusterFewshot(Teleprompter):
         """
         Sorts examples globally based on their impact when used as one-shot examples.
         """
-        raw_trainset = [ex for ex in self.trainset if ex not in self.validation_set]  # TODO: debug number of items in raw trainset
+        raw_trainset = [ex for ex in self.trainset if
+                        ex not in self.validation_set]  # TODO: debug number of items in raw trainset
 
         evaluator = Evaluate(
             devset=self.validation_set,
@@ -158,7 +185,7 @@ class ClusterFewshot(Teleprompter):
                 key=lambda ex: self.ranked_examples[ex],  # TODO: verify that ex is a valid key
                 reverse=self.descending,
             )
-            for cluster_id, cluster_examples in self.clusters
+            for cluster_id, cluster_examples in self.clusters.items()
         }
 
         logger.info(f"Demonstrations are sorted in {'descending' if self.descending else 'ascending'} order.")
@@ -169,6 +196,19 @@ class ClusterFewshot(Teleprompter):
         when used as a sole demonstration.
         """
         student_copy = self.student.deepcopy()
+
+        # If current example was answered correctly, collect reasoning from LM
+        prediction = student_copy(**example.inputs())
+
+        if self.metric:
+            metric_val = self.metric(example, prediction, trace=None)
+        if self.metric_threshold:
+            success = metric_val >= self.metric_threshold
+        else:
+            success = metric_val
+
+        if success:
+            example.reasoning = prediction.reasoning
 
         logger.info(f"ֿ\n\nPredicting the validation set ({len(self.validation_set)} questions) "
                     f"using the following demonstration:\n"
@@ -186,22 +226,22 @@ class ClusterFewshot(Teleprompter):
         Collects the final few-shot subset using the Strategy design pattern (incorporating several approaches),
         while balancing exploration (diversity) and exploitation (strong demos).
         """
-        sampling_method = "cluster_strength"
-        logger.info(f"Collecting few-shot subset from clusters using {sampling_method} method")
+        sampling_strategy = "top_n"
+        logger.info(f"Collecting few-shot subset from clusters using {sampling_strategy} method")
 
         fewshot_subset = []
 
-        for cluster_id, _ in self.clusters:
+        for cluster_id, _ in self.clusters.items():
             fewshot_subset.extend(
                 self.sample_examples_from_cluster(
                     cluster_id=cluster_id,
-                    method=sampling_method  # TODO: run with each of 3 approaches to evaluate
+                    sampling_strategy=sampling_strategy  # TODO: run with each of 3 approaches to evaluate
                 )
             )
 
         self.fewshot_subset = fewshot_subset
 
-    def sample_examples_from_cluster(self, cluster_id, method="cluster_strength"):
+    def sample_examples_from_cluster(self, cluster_id, sampling_strategy="cluster_strength"):
         """
         Samples examples from a given cluster based on one of 3 approaches:
         1. top N: Collects examples that fall in the top global N potential demos rank.
@@ -217,23 +257,24 @@ class ClusterFewshot(Teleprompter):
             if not cluster_examples:
                 return sampled_examples
 
-            if method == "top_n":
+            if sampling_strategy == "top_n":
                 top_global_n = self.global_sorted_examples[:self.N]
                 sampled_examples.extend([ex for ex in cluster_examples if ex in top_global_n])
 
-            elif method == "best_in_cluster":
+            elif sampling_strategy == "best_in_cluster":
                 sampled_examples.append(cluster_examples[0])
 
-            elif method == "cluster_strength":
+            elif sampling_strategy == "cluster_strength":
                 # Compute sum of clusters mean rank **once**
                 if not self._sum_of_clusters_mean_rank:
                     self._sum_of_clusters_mean_rank = 0
                     for _, cluster in self.clusters.items():
-                        self._sum_of_clusters_mean_rank += np.mean([self.ranked_examples[ex] for ex in cluster])
+                        self._sum_of_clusters_mean_rank += np.mean(
+                            [self.ranked_examples[ex] for ex in cluster]) if cluster else 0
 
                 # Calculate cluster strength as the mean rank of its examples
                 cluster_ranks = [self.ranked_examples[ex] for ex in cluster_examples]
-                cluster_strength = np.mean(cluster_ranks)
+                cluster_strength = np.mean(cluster_ranks)  # TODO: examples with top global ranks might be considered as outliers (ignored)
 
                 # Compute how many slots to allocate for this cluster
                 proportion = cluster_strength / self._sum_of_clusters_mean_rank  # TODO: examine edge use-cases for this proportion

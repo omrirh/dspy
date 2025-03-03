@@ -73,7 +73,7 @@ weight_optimizer = BootstrapFinetune(
 # )
 prompt_optimizer = ClusterFewshot(
     metric=metric,
-    num_fewshot=4,
+    num_fewshot=3,
     valset_ratio=0.1
 )
 
@@ -85,7 +85,7 @@ better_together = BetterTogether(
 )
 
 # Sample a smaller dataset for quick testing
-small_trainset = trainset[:50]
+small_trainset = trainset[:100]
 
 # Run the BetterTogether optimization
 optimization_strategy = "p"
