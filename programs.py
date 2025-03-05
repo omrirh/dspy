@@ -6,6 +6,7 @@ class BasicMH(dspy.Module):
     def __init__(self, passages_per_hop=3, num_hops=2):
         super().__init__()
         self.num_hops = num_hops
+        # TODO: learn how the search_query looks like
         self.retrieve = dspy.Retrieve(k=passages_per_hop)
         self.generate_query = [dspy.ChainOfThought("context, question -> search_query") for _ in range(self.num_hops)]
         self.generate_answer = dspy.ChainOfThought("context, question -> answer")

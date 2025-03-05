@@ -125,9 +125,13 @@ class BetterTogether(Teleprompter):
         # Sampling a validation set from the trainset for the prompt optimizer
         # We drop the hints for prompt optimization
         trainset = [x.with_inputs(*list(set(x.inputs().keys()) - {"hint"})) for x in trainset]
-        num_val = int(valset_ratio * len(trainset))
-        prompt_valset = trainset[:num_val]
-        prompt_trainset = trainset[num_val:]
+
+        # according to BetterTogether papers, 100 and 250 were sub-sampled for training/validation
+        # from the original training set
+        num_train = 100
+        num_val = 250
+        prompt_valset = trainset[:num_train]
+        prompt_trainset = trainset[num_train:num_train + num_val]
 
         # TODO: To make this optimizer general, we need to ensure that all the
         # prompt optimizers are accepting a valset or encode a way to check if

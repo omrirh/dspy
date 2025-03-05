@@ -258,3 +258,5 @@ zipp==3.21.0
 zstandard==0.23.0
 scikit-learn==1.6.1
 sentence-transformers==3.4.1
+matplotlib==3.10.1
+matplotlib-inline==0.1.7

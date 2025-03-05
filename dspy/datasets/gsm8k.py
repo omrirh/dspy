@@ -1,6 +1,5 @@
 import random
 
-import time
 import tqdm
 from datasets import load_dataset
 
@@ -38,12 +37,10 @@ class GSM8K:
 
             official_test.append(dict(question=question, gold_reasoning=gold_reasoning, answer=answer))
 
-        seed = int(time.time())
-
-        rng = random.Random(seed)
+        rng = random.Random(0)
         rng.shuffle(official_train)
 
-        rng = random.Random(seed)
+        rng = random.Random(0)
         rng.shuffle(official_test)
 
         trainset = official_train[:]
