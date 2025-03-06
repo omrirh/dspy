@@ -10,6 +10,7 @@ from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dspy.clients.huggingface import HFProvider
 from dspy.clients.lm_local import LocalProvider
+from remote_setup.utils import get_sglang_process
 
 dspy.settings.experimental = True
 RANDOM_SEED = int(time.time())
@@ -22,20 +23,21 @@ def main(dataset, prompt_optimizer, strategy, model):
     metric = None
     student = None
 
-    if dataset == "gsm8k":
+    dataset_name = dataset
+    if dataset_name == "gsm8k":
         dataset = GSM8K()
         test_size = 1319  # According to BetterTogether report
         metric = gsm8k_metric
         student = CoT()
 
-    elif dataset == "hotpotqa":
+    elif dataset_name == "hotpotqa":
         dataset = HotPotQA(only_hard_examples=True)
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
         student = BasicMH()
 
     trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-    # devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
+    devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
     testset = [x.with_inputs('question') for x in dataset.test][:test_size]
 
     # TODO: add support for iris dataset in the future
@@ -47,7 +49,8 @@ def main(dataset, prompt_optimizer, strategy, model):
         model=model,
         api_base=sglang_url,
         api_key="local",
-        provider=LocalProvider(),  # TODO: test this provider
+        provider=HFProvider(validation_set=devset, validation_metric=gsm8k_metric)
+        # LocalProvider(),  # TODO: test this provider
     )
     dspy.configure(lm=lm)
 
@@ -91,8 +94,8 @@ def main(dataset, prompt_optimizer, strategy, model):
     if prompt_optimizer_name == "clusterfs":
         prompt_optimizer = ClusterFewshot(
             metric=metric,
-            num_fewshot=3,  # TODO: maybe num_clusters? and let optimizer decide num_fewshot
-            # sampling_strategy="central",
+            num_fewshot=3,
+            sampling_strategy="central"
         )
 
     better_together = BetterTogether(
@@ -112,7 +115,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         )
 
     # Evaluate accuracy and output the results
-    print(f"[BetterTogether x {dataset} x {model} x {strategy} x {prompt_optimizer_name.upper()}]\n"
+    print(f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]\n"
           "Calculating experiment program results...")
     accuracy_test = evaluate_test(optimized_program)
     print(f"\nScore:\t{accuracy_test}")
@@ -120,11 +123,20 @@ def main(dataset, prompt_optimizer, strategy, model):
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
     parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
-    parser.add_argument("--prompts-optimizer", type=str, required=True, help="Name of the prompt optimizer")
-    parser.add_argument("--dataset", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
-    parser.add_argument("--dataset", type=str, required=True, help="Name of Language Model")
+    parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
+    parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
+    parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
     args = parser.parse_args()
 
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
+
+    # # for debugging
+    # dataset = "gsm8k"
+    # prompt_optimizer = "clusterfs"
+    # strategy = "p"
+    # model = "meta-llama/Meta-Llama-3-8B-Instruct"
+
+    # main(dataset, prompt_optimizer, strategy, model)

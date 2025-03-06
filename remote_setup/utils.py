@@ -3,6 +3,28 @@ import psutil
 import socket
 import time
 import os
+import psutil
+
+
+def get_sglang_process():
+    """Fetch the process instance of the sglang server running on localhost."""
+    for process in psutil.process_iter(attrs=['pid', 'name', 'cmdline']):
+        try:
+            cmdline = process.info.get('cmdline', [])
+            if cmdline and any("sglang" in arg for arg in cmdline):
+                return process
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            continue
+    return None
+
+
+if __name__ == "__main__":
+    sglang_process = get_sglang_process()
+    if sglang_process:
+        print(f"sglang server is running with PID: {sglang_process.pid}")
+        # Example: sglang_process.kill()  # Uncomment to kill the process
+    else:
+        print("sglang server is not running.")
 
 
 def wait_for_server(port: int, timeout: int = 60):
@@ -155,3 +177,11 @@ def redeploy_sglang_model(model_path: str, port: int = 7501, cuda_device: int = 
     # Wait for the server to start
     wait_for_server(port)
     print("[Re-deployment] Deployment completed.")
+
+
+if __name__ == "__main__":
+    sglang_process = get_sglang_process()
+    if sglang_process:
+        print(f"sglang server is running with PID: {sglang_process.pid}")
+    else:
+        print("sglang server is not running.")
