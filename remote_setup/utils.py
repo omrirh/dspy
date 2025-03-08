@@ -5,7 +5,6 @@ import os
 import psutil
 import logging
 from dspy.clients.provider import Provider
-from dspy.clients.huggingface import HFProvider
 
 logger = logging.getLogger(__name__)
 

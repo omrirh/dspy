@@ -90,7 +90,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshot(
             metric=metric,
             num_fewshot=3,
-            sampling_strategy="central"
+            sampling_strategy="top_n"
         )
 
     better_together = BetterTogether(
