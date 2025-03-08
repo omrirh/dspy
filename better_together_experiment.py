@@ -3,14 +3,13 @@ import dspy
 from programs import CoT, BasicMH
 from dspy.datasets import HotPotQA
 from dspy.evaluate import Evaluate
+from remote_setup.utils import assign_local_lm
+from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
-from dspy.clients.huggingface import HFProvider
-from dspy.clients.lm_local import LocalProvider
-from remote_setup.utils import get_sglang_process
 
 dspy.settings.experimental = True
 RANDOM_SEED = int(time.time())
@@ -37,22 +36,18 @@ def main(dataset, prompt_optimizer, strategy, model):
         student = BasicMH()
 
     trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-    devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
+    devset = [x.with_inputs('question') for x in dataset.dev][train_size:train_size+dev_size]
     testset = [x.with_inputs('question') for x in dataset.test][:test_size]
 
     # TODO: add support for iris dataset in the future
 
-    # Define local Llama model endpoint for training
     sglang_port = 7501
     sglang_url = f"http://localhost:{sglang_port}/v1"
-    lm = dspy.LM(
+    lm = assign_local_lm(
         model=model,
         api_base=sglang_url,
-        api_key="local",
         provider=HFProvider(validation_set=devset, validation_metric=gsm8k_metric)
-        # LocalProvider(),  # TODO: test this provider
     )
-    dspy.configure(lm=lm)
 
     # Set up the metric and evaluation tool
     evaluate_test = Evaluate(
