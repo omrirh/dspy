@@ -4,7 +4,6 @@ import time
 import os
 import psutil
 import logging
-from dspy.clients.provider import Provider
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 def assign_local_lm(
         model: str,
         api_base: str,
-        provider: Provider,
+        provider,
 ):
     import dspy
     lm = dspy.LM(
@@ -22,6 +21,8 @@ def assign_local_lm(
         provider=provider,
     )
     dspy.configure(lm=lm)
+
+    return lm
 
 
 def get_sglang_process():

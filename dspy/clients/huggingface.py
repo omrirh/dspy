@@ -22,6 +22,10 @@ from transformers import DataCollatorForLanguageModeling
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import TrainDataFormat, TrainingStatus
 from remote_setup.utils import deploy_sglang_model, stop_server_and_clean_resources
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from dspy.clients.lm import LM
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +33,7 @@ _HF_MODELS = [
     "meta-llama/Meta-Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
 ]
+
 
 # os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -69,21 +74,36 @@ class HFProvider(Provider):
         return model in _HF_MODELS
 
     @staticmethod
-    def launch(model: str, launch_kwargs: Optional[Dict[str, Any]] = None):
-        pass
+    def launch(lm: "LM", launch_kwargs: Optional[Dict[str, Any]] = None):
+        from remote_setup.utils import get_sglang_process
+
+        lm.kwargs["api_base"] = f"http://localhost:7501/v1"
+        lm.kwargs["api_key"] = "local"
+        lm.process = get_sglang_process()
+
+    @staticmethod
+    def kill(lm: "LM", launch_kwargs: Optional[Dict[str, Any]] = None):
+        from sglang.utils import terminate_process
+        if not hasattr(lm, "process"):
+            logger.info("No running server to kill.")
+            return
+
+        # terminate_process(lm.process)
+        # logger.info("Server killed.")
+
+        logger.info("Skipping SGLang server kill (handled externally)")
 
     @staticmethod
     def finetune(
         job: TrainingJobHF,
         model: str,
         train_data: List[Dict[str, Any]],
+        train_data_format: Optional[TrainDataFormat],
         train_kwargs: Optional[Dict[str, Any]] = None,
-        data_format: Optional[TrainDataFormat] = None,
     ) -> str:
-        HFProvider.validate_data_format(data_format)
+        HFProvider.validate_data_format(train_data_format)
         logger.info(f"[HF Provider] Finetuning '{model}' with LoRA")
 
-        # Cleanup running sglang server with GPU resources
         stop_server_and_clean_resources(port=7501)
 
         device = (
@@ -244,6 +264,6 @@ class HFProvider(Provider):
 
     @staticmethod
     def validate_data_format(data_format: Optional[TrainDataFormat]) -> None:
-        if data_format not in [TrainDataFormat.completion, TrainDataFormat.chat]:
+        if data_format not in [TrainDataFormat.COMPLETION, TrainDataFormat.CHAT]:
             raise ValueError(f"[HF Provider] Unsupported data format {data_format}.")
         logger.info(f"[HF Provider] Data format {data_format} validated")
