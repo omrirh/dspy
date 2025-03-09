@@ -35,7 +35,7 @@ _HF_MODELS = [
 ]
 
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 class TrainingJobHF(TrainingJob):
@@ -114,14 +114,9 @@ class HFProvider(Provider):
         )
         logger.info(f"[HF Provider] Using device: {device}")
 
+        logger.info("[HF Provider] Loading LoRA PEFT model and tokenizer")
         tokenizer: PreTrainedTokenizer = AutoTokenizer.from_pretrained(model)
         base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(model).to(device)
-
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
-            logger.info("[HF Provider] Set tokenizer pad_token to eos_token.")
-
-        logger.info("[HF Provider] Applying LoRA fine-tuning")
         lora_config = LoraConfig(
             r=32,
             lora_alpha=64,
@@ -130,20 +125,30 @@ class HFProvider(Provider):
             bias="none",
             task_type="CAUSAL_LM",
         )
+        if tokenizer.pad_token_id is None:
+            logger.info("Adding pad token to tokenizer")
+            tokenizer.pad_token = tokenizer.eos_token or '[PAD]'
+            base_model.resize_token_embeddings(len(tokenizer))
+
         peft_model = get_peft_model(base_model, lora_config)
+        peft_model.print_trainable_parameters()
 
-        train_texts = [HFProvider.encode_sft_example(ex, tokenizer) for ex in train_data]
-        train_dataset = Dataset.from_dict({"text": train_texts})
+        logger.info(f"[HF Provider] Tokenizing training set")
+        hf_dataset = Dataset.from_list(train_data)
 
-        def tokenize_function(examples: Dict[str, str]) -> BatchEncoding:
-            return tokenizer(examples["text"], truncation=True)
+        def tokenize_function(example):
+            return HFProvider.encode_sft_example(example, tokenizer)
 
-        tokenized_train_dataset = train_dataset.map(tokenize_function, batched=True)
+        tokenized_dataset = hf_dataset.map(tokenize_function, batched=False, remove_columns=hf_dataset.column_names)
+        tokenized_dataset.set_format(type="torch")
+        tokenized_dataset = tokenized_dataset.filter(lambda example: (example["labels"] != -100).any())
 
+        tokenized_dataset.set_format(type=None)
+
+        logger.info("[HF Provider] Initializing SFTTrainer")
         trained_model_path = f"{model}-trained"
         os.makedirs(trained_model_path, exist_ok=True)
 
-        logger.info("[HF Provider] Initializing SFTTrainer")
         sft_config = SFTConfig(
             output_dir=trained_model_path,
             num_train_epochs=5,
@@ -155,15 +160,16 @@ class HFProvider(Provider):
             warmup_ratio=0.03,
             lr_scheduler_type="constant",
             bf16=True,
-            max_seq_length=4096,
-            packing=True,
+            max_seq_length=1024,
+            packing=False,
         )
 
         trainer = SFTTrainer(
             model=peft_model,
             args=sft_config,
-            train_dataset=tokenized_train_dataset,
+            train_dataset=tokenized_dataset,
             data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
+            # label_names=["labels"],
         )
 
         def train():
@@ -173,6 +179,7 @@ class HFProvider(Provider):
             trainer.save_model()
             logger.info("[HF Provider] Training complete")
 
+        logger.info("[HF Provider] Applying LoRA fine-tuning")
         training_thread = threading.Thread(target=train)
         training_thread.start()
         job.thread = training_thread
@@ -220,18 +227,20 @@ class HFProvider(Provider):
     def encode_sft_example(
             example: Dict[str, Any],
             tokenizer: PreTrainedTokenizer,
-            max_seq_length: int = 4096
-    ) -> Dict[str, torch.Tensor]:
+            max_seq_length: int = 1024
+    ) -> dict[str, list]:
         """Encodes an example using DSPy's loss-masked chat format for instruction tuning."""
         messages = example["messages"]
         if len(messages) == 0:
             raise ValueError("messages field is empty.")
 
+        vocab_size = tokenizer.vocab_size
+
         input_ids = tokenizer.apply_chat_template(
             conversation=messages,
             tokenize=True,
             return_tensors="pt",
-            padding=False,
+            padding="max_length",
             truncation=True,
             max_length=max_seq_length,
             add_generation_prompt=False,
@@ -241,32 +250,58 @@ class HFProvider(Provider):
 
         for message_idx, message in enumerate(messages):
             if message["role"] != "assistant":
-                message_start_idx = 0 if message_idx == 0 else tokenizer.apply_chat_template(
-                    messages[:message_idx], tokenize=True, return_tensors="pt",
-                    truncation=True, max_length=max_seq_length, padding=False, add_generation_prompt=False
-                ).shape[1]
-
-                # Check if the next message is an assistant message to decide add_generation_prompt
-                add_generation_prompt = (
-                    message_idx < len(messages) - 1 and messages[message_idx + 1]["role"] == "assistant"
-                )
-
-                message_end_idx = tokenizer.apply_chat_template(
-                    messages[:message_idx + 1], tokenize=True, return_tensors="pt",
-                    truncation=True, max_length=max_seq_length, padding=False, add_generation_prompt=add_generation_prompt
-                ).shape[1]
-
-                labels[:, message_start_idx:message_end_idx] = -100  # Mask non-assistant text
-
+                # we calculate the start index of this non-assistant message
+                if message_idx == 0:
+                    message_start_idx = 0
+                else:
+                    message_start_idx = tokenizer.apply_chat_template(
+                        conversation=messages[:message_idx],  # here marks the end of the previous messages
+                        tokenize=True,
+                        return_tensors="pt",
+                        padding="max_length",
+                        truncation=True,
+                        max_length=max_seq_length,
+                        add_generation_prompt=False,
+                    ).shape[1]
+                # next, we calculate the end index of this non-assistant message
+                if message_idx < len(messages) - 1 and messages[message_idx + 1]["role"] == "assistant":
+                    # for intermediate messages that follow with an assistant message, we need to
+                    # set `add_generation_prompt=True` to avoid the assistant generation prefix being included in the loss
+                    # (e.g., `<|assistant|>`)
+                    message_end_idx = tokenizer.apply_chat_template(
+                        conversation=messages[: message_idx + 1],
+                        tokenize=True,
+                        return_tensors="pt",
+                        padding="max_length",
+                        truncation=True,
+                        max_length=max_seq_length,
+                        add_generation_prompt=True,
+                    ).shape[1]
+                else:
+                    # for the last message or the message that doesn't follow with an assistant message,
+                    # we don't need to add the assistant generation prefix
+                    message_end_idx = tokenizer.apply_chat_template(
+                        conversation=messages[: message_idx + 1],
+                        tokenize=True,
+                        return_tensors="pt",
+                        padding="max_length",
+                        truncation=True,
+                        max_length=max_seq_length,
+                        add_generation_prompt=False,
+                    ).shape[1]
+                # set the label to -100 for the non-assistant part
+                labels[:, message_start_idx:message_end_idx] = -100
                 if max_seq_length and message_end_idx >= max_seq_length:
                     break
 
-        attention_mask = torch.ones_like(input_ids)  # TODO: check if this passes?
+        attention_mask = torch.ones_like(input_ids)
+        input_ids = torch.clamp(input_ids, min=0, max=vocab_size - 1)
+        labels = torch.clamp(labels, min=0, max=vocab_size - 1)
 
         return {
-            "input_ids": input_ids.flatten(),
-            "labels": labels.flatten(),
-            "attention_mask": attention_mask.flatten(),
+            "input_ids": input_ids.squeeze(0).tolist(),
+            "labels": labels.squeeze(0).tolist(),
+            "attention_mask": attention_mask.squeeze(0).tolist(),
         }
 
     @staticmethod
