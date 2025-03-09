@@ -179,9 +179,10 @@ class ClusterFewshot(Teleprompter):
             metric=self.metric,
             num_threads=12,
         )
+        student_copy = self.student.deepcopy()
 
         logger.info(f"Sorting examples-as-demos from trainset ({len(self.trainset)} examples)")
-        self.ranked_examples = {ex: self._evaluate_example_as_demo(ex, evaluator) for ex in self.trainset}
+        self.ranked_examples = {ex: self._evaluate_example_as_demo(ex, evaluator, student_copy) for ex in self.trainset}
         self.global_sorted_examples = sorted(
             self.ranked_examples.keys(),
             key=lambda ex: self.ranked_examples[ex],
@@ -200,15 +201,13 @@ class ClusterFewshot(Teleprompter):
 
         logger.info(f"Demonstrations are sorted in {'descending' if self.descending else 'ascending'} order.")
 
-    def _evaluate_example_as_demo(self, example, evaluator):
+    def _evaluate_example_as_demo(self, example, evaluator, student):
         """
         Evaluates an example by measuring how well it helps predict the validation set
         when used as a sole demonstration.
         """
-        student_copy = self.student.deepcopy()
-
         # If current example was answered correctly, collect reasoning from LM
-        prediction = student_copy(**example.inputs())
+        prediction = student(**example.inputs())
 
         if self.metric:
             metric_val = self.metric(example, prediction, trace=None)
@@ -224,10 +223,10 @@ class ClusterFewshot(Teleprompter):
                     f"using the following demonstration:\n"
                     f"{example.question} --> {example.answer}")
 
-        for _, predictor in student_copy.named_predictors():
+        for _, predictor in student.named_predictors():
             predictor.demos = [example]  # Test as one-shot demonstration
 
-        student_score = evaluator(program=student_copy)
+        student_score = evaluator(program=student)
 
         return student_score
 
