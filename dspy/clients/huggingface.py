@@ -104,6 +104,7 @@ class HFProvider(Provider):
         HFProvider.validate_data_format(train_data_format)
         logger.info(f"[HF Provider] Finetuning '{model}' with LoRA")
 
+        # Cleanup current model along with GPU resources
         stop_server_and_clean_resources(port=7501)
 
         device = (
@@ -238,15 +239,21 @@ class HFProvider(Provider):
 
         labels = input_ids.clone()
 
-        # Mask non-assistant parts for avoiding loss computation
         for message_idx, message in enumerate(messages):
             if message["role"] != "assistant":
                 message_start_idx = 0 if message_idx == 0 else tokenizer.apply_chat_template(
-                    messages[:message_idx], tokenize=True, return_tensors="pt", truncation=True
+                    messages[:message_idx], tokenize=True, return_tensors="pt",
+                    truncation=True, max_length=max_seq_length, padding=False, add_generation_prompt=False
                 ).shape[1]
 
+                # Check if the next message is an assistant message to decide add_generation_prompt
+                add_generation_prompt = (
+                    message_idx < len(messages) - 1 and messages[message_idx + 1]["role"] == "assistant"
+                )
+
                 message_end_idx = tokenizer.apply_chat_template(
-                    messages[:message_idx + 1], tokenize=True, return_tensors="pt", truncation=True
+                    messages[:message_idx + 1], tokenize=True, return_tensors="pt",
+                    truncation=True, max_length=max_seq_length, padding=False, add_generation_prompt=add_generation_prompt
                 ).shape[1]
 
                 labels[:, message_start_idx:message_end_idx] = -100  # Mask non-assistant text
