@@ -213,6 +213,8 @@ class ClusterFewshot(Teleprompter):
         Evaluates an example by measuring how well it helps predict the validation set
         when used as a sole demonstration.
         """
+        # TODO: Clear the student's demonstrations prior evaluation ?
+
         # If current example was answered correctly, collect reasoning from LM
         prediction = student(**example.inputs())
 
