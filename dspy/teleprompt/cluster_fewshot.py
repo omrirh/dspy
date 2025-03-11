@@ -18,7 +18,7 @@ class ClusterFewshot(Teleprompter):
             self,
             metric=None,
             metric_threshold=None,
-            num_fewshot: int = 4,
+            num_fewshot: int = 3,
             descending: bool = True,
             embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
             sampling_strategy: str = "top_n",
@@ -123,7 +123,7 @@ class ClusterFewshot(Teleprompter):
         return clusters
 
     @staticmethod
-    def _visualize_clusters(embeddings, cluster_labels, num_clusters, train, save_path="cluster_plot.png"):
+    def _visualize_clusters(embeddings, cluster_labels, num_clusters, train, save_path):
         """
         Visualizes clustered embeddings in 2D using t-SNE and saves the plot to a file.
         """
@@ -182,7 +182,13 @@ class ClusterFewshot(Teleprompter):
         student_copy = self.student.deepcopy()
 
         logger.info(f"Sorting examples-as-demos from trainset ({len(self.trainset)} examples)")
-        self.ranked_examples = {ex: self._evaluate_example_as_demo(ex, evaluator, student_copy) for ex in self.trainset}
+        self.ranked_examples = {}
+        trainset_size = len(self.trainset)
+
+        for idx, ex in enumerate(self.trainset):
+            logger.info(f"\n\nEvaluating example {idx+1}/{trainset_size}")
+            self.ranked_examples[ex] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
+
         self.global_sorted_examples = sorted(
             self.ranked_examples.keys(),
             key=lambda ex: self.ranked_examples[ex],
@@ -193,6 +199,7 @@ class ClusterFewshot(Teleprompter):
         self.training_clusters = {
             cluster_id: sorted(
                 [ex for ex in cluster_examples if ex in self.ranked_examples],
+                # TODO: should remove that if? does it drop any examples?
                 key=lambda ex: self.ranked_examples[ex],
                 reverse=self.descending,
             )
@@ -219,8 +226,9 @@ class ClusterFewshot(Teleprompter):
         if success:
             example.reasoning = prediction.reasoning
 
-        logger.info(f"ֿ\n\nConducting example-as-demo test ({len(self.ead_set)} questions) "
-                    f"using the following demonstration:\n"
+        logger.info(f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
+                    f"using the following demonstration "
+                    f"(reasoning info {'is not' if not success else 'is'} included):\n"
                     f"{example.question} --> {example.answer}")
 
         for _, predictor in student.named_predictors():
@@ -243,15 +251,15 @@ class ClusterFewshot(Teleprompter):
             fewshot_subset.extend(
                 self.sample_examples_from_cluster(
                     cluster_id=cluster_id,
-                    sampling_strategy=self.sampling_strategy  # TODO: run with each of 3 approaches to evaluate
+                    sampling_strategy=self.sampling_strategy
                 )
             )
 
         self.fewshot_subset = fewshot_subset
 
-    def sample_examples_from_cluster(self, cluster_id, sampling_strategy="cluster_strength"):
+    def sample_examples_from_cluster(self, cluster_id, sampling_strategy="top_n"):
         """
-        Samples examples from a given cluster based on one of 3 approaches:
+        Samples examples from a given cluster based on one of 4 approaches:
         1. top N: Collects examples that fall in the top global N potential demos rank.
             If there aren't any in the given cluster, returns an empty list.
         2. Best in cluster: Returns the top-ranked examples-as-demos from the given cluster.
@@ -302,4 +310,3 @@ class ClusterFewshot(Teleprompter):
                 sampled_examples = [cluster_examples[selected_indice]]
 
         return sampled_examples
-

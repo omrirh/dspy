@@ -21,25 +21,27 @@ def main(dataset, prompt_optimizer, strategy, model):
     dev_size = 500
     metric = None
     student = None
+    devset = None
 
     dataset_name = dataset
     if dataset_name == "gsm8k":
         dataset = GSM8K()
+        devset = [x.with_inputs('question') for x in dataset.dev][train_size:train_size + dev_size]
         test_size = 1319  # According to BetterTogether report
         metric = gsm8k_metric
         student = CoT()
 
     elif dataset_name == "hotpotqa":
-        dataset = HotPotQA(only_hard_examples=True)
+        dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
+        devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
         student = BasicMH()
 
-    trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-    devset = [x.with_inputs('question') for x in dataset.dev][train_size:train_size+dev_size]
-    testset = [x.with_inputs('question') for x in dataset.test][:test_size]
-
     # TODO: add support for iris dataset in the future
+
+    trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
+    testset = [x.with_inputs('question') for x in dataset.test][:test_size]
 
     sglang_port = 7501
     sglang_url = f"http://localhost:{sglang_port}/v1"
@@ -73,7 +75,6 @@ def main(dataset, prompt_optimizer, strategy, model):
         train_kwargs=train_kwargs,
         adapter=adapter,
         exclude_demos=True,
-        num_threads=1
     )
 
     prompt_optimizer_name = prompt_optimizer
@@ -90,7 +91,6 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshot(
             metric=metric,
             num_fewshot=3,
-            sampling_strategy="top_n"
         )
 
     better_together = BetterTogether(
