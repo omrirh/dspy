@@ -12,6 +12,7 @@ from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 dspy.settings.experimental = True
@@ -35,8 +36,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         student = CoT()
 
     elif dataset_name == "hotpotqa":
-        # logger.info(f"Using training seed={RANDOM_SEED}")
-        dataset = HotPotQA(only_hard_examples=True)  # TODO: try also with random seed after stabilizing
+        dataset = HotPotQA(only_hard_examples=True)
         devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
@@ -113,8 +113,14 @@ def main(dataset, prompt_optimizer, strategy, model):
             valset_ratio=0.1
         )
 
+    experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
+
+    demos = [(demo.question, demo.answer) for demo in optimized_program.named_predictors()[0][1].demos]
+    demos_desc = '\n'.join([f"{demo[0]} --> {demo[1]}" for demo in demos])
+    print(f"{experiment_header}\nDemonstrations collected:\n{demos_desc}\n\n")
+
     # Evaluate accuracy and output the results
-    print(f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]\n"
+    print(f"{experiment_header}\n"
           "Calculating experiment program results...")
     accuracy_test = evaluate_test(optimized_program)
     print(f"\nScore:\t{accuracy_test}")
