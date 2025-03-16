@@ -11,6 +11,9 @@ from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 
+import logging
+logger = logging.getLogger(__name__)
+
 dspy.settings.experimental = True
 RANDOM_SEED = int(time.time())
 
@@ -32,7 +35,8 @@ def main(dataset, prompt_optimizer, strategy, model):
         student = CoT()
 
     elif dataset_name == "hotpotqa":
-        dataset = HotPotQA(train_seed=1, eval_seed=2023, test_size=0, only_hard_examples=True)
+        # logger.info(f"Using training seed={RANDOM_SEED}")
+        dataset = HotPotQA(only_hard_examples=True)  # TODO: try also with random seed after stabilizing
         devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
