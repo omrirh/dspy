@@ -65,6 +65,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     )
 
     # Retriever model as ColBERTv2
+    # TODO: Retriever issue reported at https://github.com/stanfordnlp/dspy/issues/7966
     COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
     retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
     dspy.configure(rm=retriever)
