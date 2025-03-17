@@ -190,6 +190,7 @@ class ClusterFewshot(Teleprompter):
             devset=self.ead_set,
             metric=self.metric,
             num_threads=12,
+            display_progress=True,
         )
         student_copy = self.student.deepcopy()
 
@@ -276,7 +277,7 @@ class ClusterFewshot(Teleprompter):
 
         for cluster_id, _ in self.training_clusters.items():
             for sampling_strategy in fewshot_subsets.keys():
-                logger.info(f"Collecting few-shot subset from clusters using '{sampling_strategy}' sampling strategy")
+                logger.info(f"Collecting few-shot subset from cluster no. {cluster_id} using '{sampling_strategy}' sampling strategy")
                 fewshot_subsets[sampling_strategy].extend(
                     self.sample_examples_from_cluster(
                         cluster_id=cluster_id,
@@ -357,17 +358,18 @@ class ClusterFewshot(Teleprompter):
             devset=self.valset,
             metric=self.metric,
             num_threads=12,
+            display_progress=True,
         )
         student = self.student.deepcopy()
 
         for sampling_strategy in self.sampling_strategies:
-            logger.info(f"Testing '{sampling_strategy}' sampled few-shot subset")
+            logger.info(f"\n\nTesting '{sampling_strategy}' sampled few-shot subset")
             fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
 
             for _, predictor in student.named_predictors():
                 predictor.demos = fewshot_subset
 
-            fewshot_subset_score = evaluator(fewshot_subset)
+            fewshot_subset_score = evaluator(student)
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
             logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% on validation set.")
 
