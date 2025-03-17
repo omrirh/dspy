@@ -361,7 +361,7 @@ class ClusterFewshot(Teleprompter):
         student = self.student.deepcopy()
 
         for sampling_strategy in self.sampling_strategies:
-            logger.info(f"Testing {sampling_strategy} sampled few-shot subset")
+            logger.info(f"Testing '{sampling_strategy}' sampled few-shot subset")
             fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
 
             for _, predictor in student.named_predictors():
@@ -369,11 +369,11 @@ class ClusterFewshot(Teleprompter):
 
             fewshot_subset_score = evaluator(fewshot_subset)
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
-            logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score}% on validation set.")
+            logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% on validation set.")
 
         best_strategy = max(ranked_sampling_strategies, key=ranked_sampling_strategies.get)
         self.best_fewshot_subset = self.candidate_fewshot_subsets[best_strategy]
 
         logger.info(
-            f"Best few-shot subset sampled according to {best_strategy} strategy "
+            f"Best few-shot subset sampled according to '{best_strategy}' strategy "
             f"({ranked_sampling_strategies[best_strategy]}% accuracy on validation set)")
