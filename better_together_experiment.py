@@ -1,7 +1,7 @@
 import time
 import dspy
-from programs import CoT, BasicMH
-from dspy.datasets import HotPotQA
+from programs import CoT, BasicMH, IrisProgram
+from dspy.datasets import HotPotQA, IrisDataset
 from dspy.evaluate import Evaluate
 from remote_setup.utils import assign_local_lm
 from dspy.clients.huggingface import HFProvider
@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 dspy.settings.experimental = True
 RANDOM_SEED = int(time.time())
+QA_DATASETS = ["gsm8k", "hotpotqa"]
 
 
 def main(dataset, prompt_optimizer, strategy, model):
@@ -27,6 +28,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     student = None
     devset = None
 
+    # Init dataset
     dataset_name = dataset
     if dataset_name == "gsm8k":
         dataset = GSM8K()
@@ -42,11 +44,17 @@ def main(dataset, prompt_optimizer, strategy, model):
         metric = dspy.evaluate.answer_exact_match
         student = BasicMH()
 
-    # TODO: add support for iris dataset in the future
+    elif dataset_name == "iris":
+        dataset = IrisDataset()
+        metric = dspy.evaluate.answer_exact_match
+        student = IrisProgram()
+        trainset, devset, testset = dataset.get_data_splits()
 
-    trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-    testset = [x.with_inputs('question') for x in dataset.test][:test_size]
+    if dataset_name in QA_DATASETS:
+        trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
+        testset = [x.with_inputs('question') for x in dataset.test][:test_size]
 
+    # Set up local LM client
     sglang_port = 7501
     sglang_url = f"http://localhost:{sglang_port}/v1"
     lm = assign_local_lm(

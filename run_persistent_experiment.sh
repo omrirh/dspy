@@ -11,7 +11,7 @@ STRATEGY="p"
 MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 
 # Supported values
-VALID_DATASETS=("hotpotqa" "gsm8k")
+VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
 VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p")
 
@@ -24,7 +24,7 @@ while [[ "$#" -gt 0 ]]; do
         --model) MODEL="$2"; shift ;;
         -h|--help)
             echo "Usage: $0 [--dataset <dataset name>] [--prompt-optimizer <optimizer>] [--strategy <strategy>] [--model <model name>]"
-            echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k"
+            echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k, iris"
             echo "  --prompt-optimizer  Specify the prompt optimization method. Default: bfrs. Options: bfrs, clusterfs"
             echo "  --strategy          Specify the strategy. Default: p. Options: 'p', 'w', 'p -> w', 'w -> p', 'p -> w -> p'"
             echo "  --model             Specify the model to use. Default: meta-llama/Meta-Llama-3-8B-Instruct"
