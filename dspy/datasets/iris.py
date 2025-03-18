@@ -30,15 +30,20 @@ class IrisDataset(Dataset):
         random.seed(self.train_seed)
         random.shuffle(examples)
 
-        # Split into 50/50/50 for train/dev/test
-        self._train = examples[:50]
-        self._dev = examples[50:100]
-        self._test = examples[100:]
+        # Setup examples with correct inputs
+        iris_examples = [x.with_inputs(
+            'sepal_length',
+            'sepal_width',
+            'petal_length',
+            'petal_width'
+        )
+            for x in examples]
 
-        # Sub-sample non-overlapping sets for prompt optimization
-        self.train_prompt_opt = self._train[:15]  # 15 examples for prompt optimization
-        self.dev_prompt_opt = self._dev[:35]  # 35 examples for validation
+        # Split into 50/50/50 for train/dev/test
+        self._train = iris_examples[:50]
+        self._dev = iris_examples[50:100]
+        self._test = iris_examples[100:]
 
     def get_data_splits(self):
         """Return the dataset splits as reported in BetterTogether paper."""
-        return self.train_prompt_opt, self.dev_prompt_opt, self._test
+        return self._train, self._dev, self._test

@@ -49,6 +49,7 @@ class ClusterFewshot(Teleprompter):
         self.N = num_fewshot
         self.descending = descending
         self.sampling_strategy = sampling_strategy
+        self.iris = None  # Identifying dataset for embedding matter
 
         # Load sentence embedding model
         self.embedding_model = SentenceTransformer(embedding_model)
@@ -73,6 +74,8 @@ class ClusterFewshot(Teleprompter):
         self.trainset = trainset
         self.valset = valset
 
+        self.iris = False if 'question' in trainset[0]._input_keys else True
+
         logger.info("Compiling the student program using ClusteFewshot optimizer...")
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
@@ -95,11 +98,20 @@ class ClusterFewshot(Teleprompter):
         Uses semantic embeddings to cluster the training/validation set into N groups.
         """
         data = self.trainset if train else self.valset
-        texts = [ex.question for ex in data]  # TODO: Try also with ex.answer included (different distribution)
-        logger.info(f"Generating {len(texts)} examples embeddings for clustering ...")
 
-        # maps examples to 384 dimensional dense vector space
-        embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
+        # Cluster by example question of dataset is GSM8K/HotPotQA.
+        # Else, Cluster by Iris attributes (vectors of petal/sepal attributes)
+        if self.iris:
+            embeddings = np.array([
+                [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
+                for ex in data
+            ])
+        else:
+            texts = [ex.question for ex in data]
+            logger.info(f"Generating {len(texts)} examples embeddings for clustering ...")
+
+            # maps examples to 384 dimensional dense vector space
+            embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
 
         logger.info(f"Clustering into {self.N} clusters...")
         kmeans = KMeans(n_clusters=self.N, random_state=42, n_init=10)
@@ -122,13 +134,12 @@ class ClusterFewshot(Teleprompter):
 
         return clusters
 
-    @staticmethod
-    def _visualize_clusters(embeddings, cluster_labels, num_clusters, train, save_path):
+    def _visualize_clusters(self, embeddings, cluster_labels, num_clusters, train, save_path):
         """
         Visualizes clustered embeddings in 2D using t-SNE and saves the plot to a file.
         """
         logger.info("Performing t-SNE dimensionality reduction for visualization...")
-        tsne = TSNE(n_components=2, random_state=42, perplexity=30)
+        tsne = TSNE(n_components=2, random_state=42, perplexity=min(len(self.trainset), len(self.valset)) - 1)
         embeddings_2d = tsne.fit_transform(embeddings)
 
         # Plot clusters
@@ -158,13 +169,7 @@ class ClusterFewshot(Teleprompter):
             if len(examples) <= samples_per_cluster:
                 selected = examples  # If fewer examples than needed, take all
             else:
-                # Sort by proximity to cluster centroids (using embedding distances)
-                embeddings = self.embedding_model.encode([ex.question for ex in examples], convert_to_numpy=True)
-                cluster_center = np.mean(embeddings, axis=0)
-                distances = np.linalg.norm(embeddings - cluster_center, axis=1)
-                selected_indices = np.argsort(distances)[:samples_per_cluster]
-                selected = [examples[i] for i in selected_indices]
-                # TODO: thought - maybe we should sample "hardest" questions from "selected" by max probability confidence?
+                selected = self.get_central_examples(examples=examples, sample_size=samples_per_cluster)
 
             self.ead_set.extend(selected)
 
@@ -186,7 +191,7 @@ class ClusterFewshot(Teleprompter):
         trainset_size = len(self.trainset)
 
         for idx, ex in enumerate(self.trainset):
-            logger.info(f"\n\nEvaluating example {idx+1}/{trainset_size}")
+            logger.info(f"\n\nEvaluating example {idx + 1}/{trainset_size}")
             self.ranked_examples[ex] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
 
         self.global_sorted_examples = sorted(
@@ -230,8 +235,18 @@ class ClusterFewshot(Teleprompter):
 
         logger.info(f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
                     f"using the following demonstration "
-                    f"(reasoning info {'is not' if not success else 'is'} included):\n"
-                    f"{example.question} --> {example.answer}")
+                    f"(reasoning info {'is not' if not success else 'is'} included):\n")
+
+        if self.iris:
+            example_visual = (f"sepal_length: {example.sepal_length}, "
+                              f"sepal_width: {example.sepal_width}, "
+                              f"petal_length: {example.petal_length}, "
+                              f"petal_width: {example.petal_width} "
+                              f"--> {example.answer}")
+        else:
+            example_visual = f"{example.question} --> {example.answer}"
+
+        logger.info(example_visual)
 
         for _, predictor in student.named_predictors():
             predictor.demos = [example]  # Test as one-shot demonstration
@@ -293,7 +308,8 @@ class ClusterFewshot(Teleprompter):
 
                 # Calculate cluster strength as the mean rank of its examples
                 cluster_ranks = [self.ranked_examples[ex] for ex in cluster_examples]
-                cluster_strength = np.mean(cluster_ranks)  # TODO: examples with top global ranks might be considered as outliers (ignored)
+                cluster_strength = np.mean(
+                    cluster_ranks)  # TODO: examples with top global ranks might be considered as outliers (ignored)
 
                 # Compute how many slots to allocate for this cluster
                 proportion = cluster_strength / self._sum_of_clusters_mean_rank  # TODO: examine edge use-cases for this proportion
@@ -304,11 +320,22 @@ class ClusterFewshot(Teleprompter):
                     sampled_examples = cluster_examples[:num_slots]
 
             elif sampling_strategy == "central":
-                # Sort by proximity to cluster centroids (using embedding distances)
-                embeddings = self.embedding_model.encode([ex.question for ex in cluster_examples], convert_to_numpy=True)
-                cluster_center = np.mean(embeddings, axis=0)  # TODO: Save a dict of distance from cluster centroid for each example
-                distances = np.linalg.norm(embeddings - cluster_center, axis=1)
-                selected_indice = np.argsort(distances)[0]
-                sampled_examples = [cluster_examples[selected_indice]]
+                sampled_examples = self.get_central_examples(examples=cluster_examples, sample_size=1)
+
+        return sampled_examples
+
+    def get_central_examples(self, examples, sample_size):
+        # Sort by proximity to cluster centroids (using embedding distances)
+        if self.iris:
+            embeddings = np.array([
+                [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
+                for ex in examples
+            ])
+        else:
+            embeddings = self.embedding_model.encode([ex.question for ex in examples], convert_to_numpy=True)
+        cluster_center = np.mean(embeddings, axis=0)
+        distances = np.linalg.norm(embeddings - cluster_center, axis=1)
+        selected_indices = np.argsort(distances)[:sample_size]
+        sampled_examples = [examples[i] for i in selected_indices]
 
         return sampled_examples
