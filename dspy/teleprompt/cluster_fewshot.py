@@ -1,10 +1,11 @@
 import logging
 import numpy as np
+from typing import List
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
-from typing import List, Dict, Optional
-from sklearn.cluster import KMeans
+# from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
+from sklearn.cluster import AgglomerativeClustering
 from sentence_transformers import SentenceTransformer
 
 from dspy.teleprompt.teleprompt import Teleprompter
@@ -92,7 +93,7 @@ class ClusterFewshot(Teleprompter):
 
     def _cluster_examples(self, train=True):
         """
-        Uses semantic embeddings to cluster the training/validation set into N groups.
+        Applies Agglomerative clustering over examples semantic embeddings
         """
         data = self.trainset if train else self.valset
         texts = [ex.question for ex in data]  # TODO: Try also with ex.answer included (different distribution)
@@ -101,9 +102,9 @@ class ClusterFewshot(Teleprompter):
         # maps examples to 384 dimensional dense vector space
         embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
 
-        logger.info(f"Clustering into {self.N} clusters...")
-        kmeans = KMeans(n_clusters=self.N, random_state=42, n_init=10)
-        cluster_labels = kmeans.fit_predict(embeddings)
+        logger.info(f"Clustering into {self.N} clusters using Agglomerative Clustering...")
+        agg_clustering = AgglomerativeClustering(n_clusters=self.N, affinity='cosine', linkage='average')
+        cluster_labels = agg_clustering.fit_predict(embeddings)
 
         clusters = {i: [] for i in range(self.N)}
         for idx, label in enumerate(cluster_labels):
