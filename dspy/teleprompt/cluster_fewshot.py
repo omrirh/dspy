@@ -36,7 +36,7 @@ class ClusterFewshot(Teleprompter):
             embedding_model: str
                 Pretrained model for generating semantic embeddings.
             descending: bool
-                Whether to sort examples within each cluster
+                Whether to sort examples per-cluster/globally
                     in descending order of impact as one-shot demonstrations.
         """
         super().__init__()
@@ -107,7 +107,7 @@ class ClusterFewshot(Teleprompter):
         """
         data = self.trainset if train else self.valset
 
-        # Cluster by example question of dataset is GSM8K/HotPotQA.
+        # Cluster by example question if dataset is GSM8K/HotPotQA.
         # Else, Cluster by Iris attributes (vectors of petal/sepal attributes)
         logger.info(f"Generating {len(data)} examples embeddings for clustering ...")
         if self.iris:
@@ -212,7 +212,6 @@ class ClusterFewshot(Teleprompter):
         self.training_clusters = {
             cluster_id: sorted(
                 [ex for ex in cluster_examples if ex in self.ranked_examples],
-                # TODO: should remove that if? does it drop any examples?
                 key=lambda ex: self.ranked_examples[ex],
                 reverse=self.descending,
             )
@@ -293,9 +292,9 @@ class ClusterFewshot(Teleprompter):
         1. top N: Collects examples that fall in the top global N potential demos rank.
             If there aren't any in the given cluster, returns an empty list.
         2. Best in cluster: Returns the top-ranked example-as-demo from the given cluster.
-        3. Cluster strength: Allocates a proportionate number of slots in few-shot to the given cluster,
-            based on cluster strength (i.e., mean example ranking).
-        4. Central: Samples most centric examples (i.e. most common within a semantic questions trend)
+        3. Cluster strength: Allocates a proportionate number of slots in the few-shot subset
+            for the given cluster top-ranked examples, based on cluster strength (i.e., mean example ranking).
+        4. Central: Samples most centric examples (i.e most common within a semantic questions trend)
         """
         sampled_examples = []
 
@@ -337,7 +336,6 @@ class ClusterFewshot(Teleprompter):
         return sampled_examples
 
     def get_central_examples(self, examples, sample_size):
-        # Sort by proximity to cluster centroids (using embedding distances)
         if self.iris:
             embeddings = np.array([
                 [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]

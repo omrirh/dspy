@@ -24,15 +24,17 @@ class EvaluateEntropy(Evaluate):
         """
 
         # Run the base evaluation method to get the predictions
-        score, results = super().__call__(program, return_outputs=True, **kwargs)[1]
+        score, results = super().__call__(program, return_outputs=True, **kwargs)
 
         total_entropy = 0.0
-        for example, prediction, score in results:
+        for example, prediction, success in results:
             if hasattr(prediction, 'logits'):
+                # TODO: nope, need to attach logprobs to prediction instance. see:
+                #  https://github.com/omrirh/dspy/blob/281bf2e77c1910a70b9b8f63642cb4ab159f2f17/dspy/clients/lm.py#L129
                 probs = softmax(prediction.logits)
                 pred_entropy = entropy(probs, base=2)
 
-                if score == 1.0:  # Correct prediction
+                if success:  # Correct prediction
                     total_entropy += pred_entropy
                 else:  # Incorrect prediction, apply penalty
                     total_entropy += self.penalty_factor * pred_entropy
