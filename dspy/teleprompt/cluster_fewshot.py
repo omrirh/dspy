@@ -369,11 +369,12 @@ class ClusterFewshot(Teleprompter):
 
             fewshot_subset_score = evaluator(student)
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
-            logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% on validation set.")
+            logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% "
+                        f"on the validation set with {len(fewshot_subset)} demonstrations.")
 
         best_strategy = max(ranked_sampling_strategies, key=ranked_sampling_strategies.get)
         self.best_fewshot_subset = self.candidate_fewshot_subsets[best_strategy]
 
         logger.info(
             f"Best few-shot subset sampled according to '{best_strategy}' strategy "
-            f"({ranked_sampling_strategies[best_strategy]}% accuracy on validation set)")
+            f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")

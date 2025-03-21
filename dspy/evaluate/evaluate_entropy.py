@@ -1,7 +1,7 @@
 import numpy as np
 import dspy
 from scipy.stats import entropy
-from evaluate import Evaluate
+from dspy.evaluate import Evaluate
 
 
 class EvaluateEntropy(Evaluate):
