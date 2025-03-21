@@ -1,8 +1,8 @@
 import logging
 import numpy as np
+from typing import List
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
-from typing import List, Dict, Optional
 from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
 from sentence_transformers import SentenceTransformer
