@@ -105,11 +105,13 @@ def main(dataset, prompt_optimizer, strategy, model):
         seed=RANDOM_SEED
     )
 
+    small_trainset = trainset[:10]
+
     # Run the BetterTogether optimization
     with dspy.context(lm=lm, rm=retriever):
         optimized_program = better_together.compile(
             student=student,
-            trainset=trainset,
+            trainset=small_trainset,
             strategy=strategy,
             valset_ratio=0.1
         )
@@ -143,21 +145,21 @@ def main(dataset, prompt_optimizer, strategy, model):
 
 
 if __name__ == "__main__":
-    import argparse
+    # import argparse
 
-    parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
-    parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
-    parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
-    parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
-    parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
+    # parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
+    # parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
+    # parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
+    # parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
+    # args = parser.parse_args()
 
-    main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
+    # main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
-    # # for debugging
-    # dataset = "gsm8k"
-    # prompt_optimizer = "clusterfs"
-    # strategy = "p"
-    # model = "meta-llama/Meta-Llama-3-8B-Instruct"
+    # for debugging
+    dataset = "gsm8k"
+    prompt_optimizer = "clusterfs"
+    strategy = "w"
+    model = "meta-llama/Meta-Llama-3-8B-Instruct"
 
-    # main(dataset, prompt_optimizer, strategy, model)
+    main(dataset, prompt_optimizer, strategy, model)

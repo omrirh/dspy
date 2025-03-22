@@ -7,7 +7,7 @@ from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
     PreTrainedTokenizer,
-    BatchEncoding,
+    BitsAndBytesConfig,
 )
 from remote_setup.utils import assign_local_lm
 from datasets import Dataset
@@ -115,8 +115,18 @@ class HFProvider(Provider):
         logger.info(f"[HF Provider] Using device: {device}")
 
         logger.info("[HF Provider] Loading LoRA PEFT model and tokenizer")
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16,  # Ensure L4 can handle this
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True
+        )
         tokenizer: PreTrainedTokenizer = AutoTokenizer.from_pretrained(model)
-        base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(model).to(device)
+        base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
+            model,
+            device_map="auto",
+            quantization_config=quantization_config,
+        )  # .to(device)
         lora_config = LoraConfig(
             r=32,
             lora_alpha=64,
