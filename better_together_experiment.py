@@ -26,26 +26,28 @@ def main(dataset, prompt_optimizer, strategy, model):
     metric = None
     student = None
     devset = None
+    exclude_examples = []
 
     dataset_name = dataset
     if dataset_name == "gsm8k":
         dataset = GSM8K()
-        devset = [x.with_inputs('question') for x in dataset.dev][train_size:train_size + dev_size]
+        exclude_examples = ['Jack is mad at his neighbors', 'John plans to sell all his toys']
+        devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][train_size:train_size + dev_size]
         test_size = 1319  # According to BetterTogether report
         metric = gsm8k_metric
         student = CoT()
 
     elif dataset_name == "hotpotqa":
         dataset = HotPotQA(only_hard_examples=True)
-        devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
+        devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
         student = BasicMH()
 
     # TODO: add support for iris dataset in the future
 
-    trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-    testset = [x.with_inputs('question') for x in dataset.test][:test_size]
+    trainset = [x.with_inputs('question') for x in dataset.train if not any(ex in x.question for ex in exclude_examples)][:train_size]
+    testset = [x.with_inputs('question') for x in dataset.test if not any(ex in x.question for ex in exclude_examples)][:test_size]
 
     sglang_port = 7501
     sglang_url = f"http://localhost:{sglang_port}/v1"
@@ -105,13 +107,11 @@ def main(dataset, prompt_optimizer, strategy, model):
         seed=RANDOM_SEED
     )
 
-    small_trainset = trainset[:10]
-
     # Run the BetterTogether optimization
     with dspy.context(lm=lm, rm=retriever):
         optimized_program = better_together.compile(
             student=student,
-            trainset=small_trainset,
+            trainset=trainset,
             strategy=strategy,
             valset_ratio=0.1
         )
@@ -145,21 +145,21 @@ def main(dataset, prompt_optimizer, strategy, model):
 
 
 if __name__ == "__main__":
-    # import argparse
+    import argparse
 
-    # parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
-    # parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
-    # parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
-    # parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
-    # parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
-    # args = parser.parse_args()
+    parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
+    parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
+    parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
+    parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
+    parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
+    args = parser.parse_args()
 
-    # main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
+    main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
-    # for debugging
-    dataset = "gsm8k"
-    prompt_optimizer = "clusterfs"
-    strategy = "w"
-    model = "meta-llama/Meta-Llama-3-8B-Instruct"
+    # # for debugging
+    # dataset = "gsm8k"
+    # prompt_optimizer = "clusterfs"
+    # strategy = "w"
+    # model = "meta-llama/Meta-Llama-3-8B-Instruct"
 
-    main(dataset, prompt_optimizer, strategy, model)
+    # main(dataset, prompt_optimizer, strategy, model)

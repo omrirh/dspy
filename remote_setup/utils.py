@@ -37,7 +37,7 @@ def get_sglang_process():
     return None
 
 
-def wait_for_server(port: int, timeout: int = 60):
+def wait_for_server(port: int, timeout: int = 180):
     """
     Wait for a server to start listening on the specified port.
 

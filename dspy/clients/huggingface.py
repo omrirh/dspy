@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
-    PreTrainedTokenizer,
+    PreTrainedTokenizerFast,
     BitsAndBytesConfig,
 )
 from remote_setup.utils import assign_local_lm
@@ -15,7 +15,6 @@ from peft import (
     LoraConfig,
     get_peft_model,
     PeftModel,
-    AutoPeftModelForCausalLM,
 )
 from trl import SFTTrainer, SFTConfig
 from transformers import DataCollatorForLanguageModeling
@@ -33,7 +32,6 @@ _HF_MODELS = [
     "meta-llama/Meta-Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
 ]
-
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -75,11 +73,8 @@ class HFProvider(Provider):
 
     @staticmethod
     def launch(lm: "LM", launch_kwargs: Optional[Dict[str, Any]] = None):
-        from remote_setup.utils import get_sglang_process
-
         lm.kwargs["api_base"] = f"http://localhost:7501/v1"
         lm.kwargs["api_key"] = "local"
-        lm.process = get_sglang_process()
 
     @staticmethod
     def kill(lm: "LM", launch_kwargs: Optional[Dict[str, Any]] = None):
@@ -95,38 +90,33 @@ class HFProvider(Provider):
 
     @staticmethod
     def finetune(
-        job: TrainingJobHF,
-        model: str,
-        train_data: List[Dict[str, Any]],
-        train_data_format: Optional[TrainDataFormat],
-        train_kwargs: Optional[Dict[str, Any]] = None,
+            job: TrainingJobHF,
+            model: str,
+            train_data: List[Dict[str, Any]],
+            train_data_format: Optional[TrainDataFormat],
+            train_kwargs: Optional[Dict[str, Any]] = None,
     ) -> str:
         HFProvider.validate_data_format(train_data_format)
         logger.info(f"[HF Provider] Finetuning '{model}' with LoRA")
 
-        # Cleanup current model along with GPU resources
         stop_server_and_clean_resources(port=7501)
 
-        device = (
-            "cuda"
-            if torch.cuda.is_available()
-            else "mps" if torch.backends.mps.is_available() else "cpu"
-        )
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         logger.info(f"[HF Provider] Using device: {device}")
 
-        logger.info("[HF Provider] Loading LoRA PEFT model and tokenizer")
         quantization_config = BitsAndBytesConfig(
             load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.float16,  # Ensure L4 can handle this
+            bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True
+            bnb_4bit_use_double_quant=True,
         )
-        tokenizer: PreTrainedTokenizer = AutoTokenizer.from_pretrained(model)
+        tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(model)
         base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
             model,
             device_map="auto",
             quantization_config=quantization_config,
-        )  # .to(device)
+        )
+
         lora_config = LoraConfig(
             r=32,
             lora_alpha=64,
@@ -143,32 +133,27 @@ class HFProvider(Provider):
         peft_model = get_peft_model(base_model, lora_config)
         peft_model.print_trainable_parameters()
 
-        logger.info(f"[HF Provider] Tokenizing training set")
         hf_dataset = Dataset.from_list(train_data)
-
-        def tokenize_function(example):
-            return HFProvider.encode_sft_example(example, tokenizer)
-
-        tokenized_dataset = hf_dataset.map(tokenize_function, batched=False, remove_columns=hf_dataset.column_names)
+        tokenized_dataset = hf_dataset.map(
+            lambda example: HFProvider.encode_sft_example(example, tokenizer),
+            batched=False,
+        )
         tokenized_dataset.set_format(type="torch")
         tokenized_dataset = tokenized_dataset.filter(lambda example: (example["labels"] != -100).any())
-
         tokenized_dataset.set_format(type=None)
 
-        logger.info("[HF Provider] Initializing SFTTrainer")
         trained_model_path = f"{model}-trained"
         os.makedirs(trained_model_path, exist_ok=True)
 
         sft_config = SFTConfig(
             output_dir=trained_model_path,
             num_train_epochs=5,
-            per_device_train_batch_size=4,
-            gradient_accumulation_steps=8,
+            per_device_train_batch_size=2,
+            gradient_accumulation_steps=4,
             learning_rate=1e-5,
             max_grad_norm=2.0,
             logging_steps=10,
             warmup_ratio=0.03,
-            lr_scheduler_type="constant",
             bf16=True,
             max_seq_length=1024,
             packing=False,
@@ -179,7 +164,6 @@ class HFProvider(Provider):
             args=sft_config,
             train_dataset=tokenized_dataset,
             data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
-            # label_names=["labels"],
         )
 
         def train():
@@ -187,6 +171,8 @@ class HFProvider(Provider):
             torch.cuda.empty_cache()
             trainer.train()
             trainer.save_model()
+            torch.cuda.synchronize()
+            torch.cuda.empty_cache()
             logger.info("[HF Provider] Training complete")
 
         logger.info("[HF Provider] Applying LoRA fine-tuning")
@@ -195,13 +181,37 @@ class HFProvider(Provider):
         job.thread = training_thread
         training_thread.join()
 
-        logger.info("[HF Provider] Merging LoRA weights into base model")
-        HFProvider.merge_lora_weights_to_base_model(base_model, tokenizer, trained_model_path)
+        logger.info("[HF Provider] Reloading base model in bf16 for precise LoRA merging")
+        base_model_fp16 = AutoModelForCausalLM.from_pretrained(
+            model,  # Load original non-quantized model
+            torch_dtype=torch.bfloat16,
+            device_map="auto"
+        )
 
-        logger.info(f"[HF Provider] Deploying {model} model after LoRA fine-tuning")
+        logger.info("[HF Provider] Merging LoRA weights into base model")
+        HFProvider.merge_lora_weights_to_base_model(base_model_fp16, tokenizer, trained_model_path)
+
+        logger.info("[HF Provider] Releasing GPU memory before redeployment")
+
+        # Delete all model references
+        del base_model
+        del base_model_fp16
+        del peft_model
+        del trainer
+
+        # Empty CUDA cache
+        torch.cuda.synchronize()
+        torch.cuda.empty_cache()
+
+        # Run garbage collection
+        import gc
+        gc.collect()
+
+        logger.info("[HF Provider] GPU memory released successfully")
+
+        logger.info(f"[HF Provider] Deploying {trained_model_path} model after LoRA fine-tuning")
         deploy_sglang_model(model_path=trained_model_path, log_file="trained_llama_run.log")
 
-        # Re-assigning DSPy context model post-training
         assign_local_lm(
             model=model,
             api_base=f"http://localhost:7501/v1",
@@ -212,9 +222,9 @@ class HFProvider(Provider):
 
     @staticmethod
     def merge_lora_weights_to_base_model(
-        base_model: AutoModelForCausalLM,
-        tokenizer: PreTrainedTokenizer,
-        trained_model_path: str
+            base_model: AutoModelForCausalLM,
+            tokenizer: PreTrainedTokenizerFast,
+            trained_model_path: str
     ) -> None:
         """Merges LoRA-trained weights back into the base model for deployment."""
         logger.info("[HF Provider] Merging LoRA trained weights to base model")
@@ -225,18 +235,14 @@ class HFProvider(Provider):
 
         logger.info(f"[HF Provider] Saving merged model to {trained_model_path}")
         merged_model.save_pretrained(trained_model_path)
-
-        if isinstance(tokenizer, PreTrainedTokenizer):
-            tokenizer.save_pretrained(trained_model_path)
-        else:
-            logger.warning("[HF Provider] Tokenizer does not support save_pretrained()")
+        tokenizer.save_pretrained(trained_model_path)
 
         logger.info(f"[HF Provider] Model successfully merged and saved to {trained_model_path}.")
 
     @staticmethod
     def encode_sft_example(
             example: Dict[str, Any],
-            tokenizer: PreTrainedTokenizer,
+            tokenizer: PreTrainedTokenizerFast,
             max_seq_length: int = 1024
     ) -> dict[str, list]:
         """Encodes an example using DSPy's loss-masked chat format for instruction tuning."""
