@@ -51,19 +51,18 @@ def main(dataset, prompt_optimizer, strategy, model):
         student = IrisProgram()
         trainset, devset, testset = dataset.get_data_splits()
 
-    trainset = [x.with_inputs('question') for x in dataset.train if not any(ex in x.question for ex in exclude_examples)][:train_size]
-    testset = [x.with_inputs('question') for x in dataset.test if not any(ex in x.question for ex in exclude_examples)][:test_size]
-
     if dataset_name in QA_DATASETS:
-        trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-        testset = [x.with_inputs('question') for x in dataset.test][:test_size]
+        trainset = [x.with_inputs('question') for x in dataset.train if
+                    not any(ex in x.question for ex in exclude_examples)][:train_size]
+        testset = [x.with_inputs('question') for x in dataset.test if
+                   not any(ex in x.question for ex in exclude_examples)][:test_size]
 
     sglang_port = 7501
     sglang_url = f"http://localhost:{sglang_port}/v1"
     lm = assign_local_lm(
         model=model,
         api_base=sglang_url,
-        provider=HFProvider(validation_set=devset, validation_metric=gsm8k_metric)
+        provider=HFProvider(validation_set=devset, validation_metric=metric)
     )
 
     # Set up the metric and evaluation tool
