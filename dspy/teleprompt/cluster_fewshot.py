@@ -101,6 +101,7 @@ class ClusterFewshot(Teleprompter):
 
         # Cluster by example question of dataset is GSM8K/HotPotQA.
         # Else, Cluster by Iris attributes (vectors of petal/sepal attributes)
+        logger.info(f"Generating {len(data)} examples embeddings for clustering ...")
         if self.iris:
             embeddings = np.array([
                 [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
@@ -108,7 +109,6 @@ class ClusterFewshot(Teleprompter):
             ])
         else:
             texts = [ex.question for ex in data]
-            logger.info(f"Generating {len(texts)} examples embeddings for clustering ...")
 
             # maps examples to 384 dimensional dense vector space
             embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
@@ -152,9 +152,8 @@ class ClusterFewshot(Teleprompter):
         plt.xlabel("t-SNE Dimension 1")
         plt.ylabel("t-SNE Dimension 2")
 
-        # Save instead of showing
         plt.savefig(save_path)
-        plt.close()  # Close figure to free memory
+        plt.close()
 
         logger.info(f"Cluster visualization saved to {save_path}.")
 
@@ -215,7 +214,7 @@ class ClusterFewshot(Teleprompter):
 
     def _evaluate_example_as_demo(self, example, evaluator, student):
         """
-        Evaluates an example by measuring how well it helps predict the validation set
+        Evaluates an example by measuring how well it helps the student predict
         when used as a sole demonstration.
         """
         # TODO: Clear the student's demonstrations prior evaluation ?
@@ -282,7 +281,7 @@ class ClusterFewshot(Teleprompter):
         2. Best in cluster: Returns the top-ranked examples-as-demos from the given cluster.
         3. Cluster strength: Allocates a proportionate number of slots in few-shot to the given cluster,
             based on cluster strength (i.e., mean example ranking).
-        4. Central: Samples most centric examples (i.e most common within a semantic questions trend)
+        4. Central: Samples most centric examples (i.e. most common within a semantic questions trend)
         """
         sampled_examples = []
 
