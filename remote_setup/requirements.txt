@@ -261,3 +261,4 @@ sentence-transformers==3.4.1
 matplotlib==3.10.1
 matplotlib-inline==0.1.7
 trl==0.15.2
+bitsandbytes==0.45.3

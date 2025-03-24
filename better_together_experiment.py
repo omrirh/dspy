@@ -26,26 +26,28 @@ def main(dataset, prompt_optimizer, strategy, model):
     metric = None
     student = None
     devset = None
+    exclude_examples = []
 
     dataset_name = dataset
     if dataset_name == "gsm8k":
         dataset = GSM8K()
-        devset = [x.with_inputs('question') for x in dataset.dev][train_size:train_size + dev_size]
+        exclude_examples = ["Jack is mad at his neighbors", "John plans to sell all his toys", "Sandy's goal is to drink"]
+        devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][train_size:train_size + dev_size]
         test_size = 1319  # According to BetterTogether report
         metric = gsm8k_metric
         student = CoT()
 
     elif dataset_name == "hotpotqa":
         dataset = HotPotQA(only_hard_examples=True)
-        devset = [x.with_inputs('question') for x in dataset.dev][:dev_size]
+        devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
         student = BasicMH()
 
     # TODO: add support for iris dataset in the future
 
-    trainset = [x.with_inputs('question') for x in dataset.train][:train_size]
-    testset = [x.with_inputs('question') for x in dataset.test][:test_size]
+    trainset = [x.with_inputs('question') for x in dataset.train if not any(ex in x.question for ex in exclude_examples)][:train_size]
+    testset = [x.with_inputs('question') for x in dataset.test if not any(ex in x.question for ex in exclude_examples)][:test_size]
 
     sglang_port = 7501
     sglang_url = f"http://localhost:{sglang_port}/v1"
@@ -79,7 +81,6 @@ def main(dataset, prompt_optimizer, strategy, model):
         multitask=True,
         train_kwargs=train_kwargs,
         adapter=adapter,
-        exclude_demos=True,
     )
 
     prompt_optimizer_name = prompt_optimizer
@@ -114,7 +115,7 @@ def main(dataset, prompt_optimizer, strategy, model):
             valset_ratio=0.1
         )
     """
-    demonstrations set by ClusterFewshot achieving 82% accuracy on GSM8K:
+    demonstrations set by ClusterFewshot achieving 82% accuracy on GSM8K (standalone mode):
     --------------------------------------------------------------------
     optimized_demos = [dspy.Example({'question': 'Wanda has 62 crayons. Dina has 28 and Jacob has two fewer crayons than Dina. How many crayons do they have in total?',
             'gold_reasoning': 'Jacob has 28 - 2 = <<28-2=26>>26 crayons. You can find the total number of crayons by adding the number of crayons each person has: 26 crayons + 62 crayons + 28 crayons = <<26+62+28=116>>116 crayons',
@@ -157,7 +158,7 @@ if __name__ == "__main__":
     # # for debugging
     # dataset = "gsm8k"
     # prompt_optimizer = "clusterfs"
-    # strategy = "p"
+    # strategy = "w"
     # model = "meta-llama/Meta-Llama-3-8B-Instruct"
 
     # main(dataset, prompt_optimizer, strategy, model)
