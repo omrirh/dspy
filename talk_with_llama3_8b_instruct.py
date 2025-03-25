@@ -9,11 +9,23 @@ dataset = GSM8K()
 TRAINSET_SIZE = 1000
 DEVSET_SIZE = 500
 TESTSET_SIZE = 1319
-AVOID_INPUT_TRAIN = 'Jack is mad at his neighbors'
-AVOID_INPUT_TEST = 'Michael is racing his horse'
-trainset = [x.with_inputs('question') for x in dataset.train if AVOID_INPUT_TRAIN not in x.question][:TRAINSET_SIZE]
-devset = [x.with_inputs('question') for x in dataset.dev if AVOID_INPUT_TRAIN not in x.question][TRAINSET_SIZE:TRAINSET_SIZE+DEVSET_SIZE]
-testset = [x.with_inputs('question') for x in dataset.test if AVOID_INPUT_TEST not in x.question][:TESTSET_SIZE]
+AVOID_INPUT = ['Jack is mad at his neighbors', "John plans to sell all his toys", "Sandy's goal is to drink"]
+trainset = [x.with_inputs('question') for x in dataset.train]
+devset = [x.with_inputs('question') for x in dataset.dev]
+testset = [x.with_inputs('question') for x in dataset.test]
+
+exclude_exampels = []
+
+for ex in trainset:
+    if any(exclude_ex in ex.question for exclude_ex in AVOID_INPUT):
+        exclude_exampels.append(ex)
+
+for ex in testset:
+    if any(exclude_ex in ex.question for exclude_ex in AVOID_INPUT):
+        exclude_exampels.append(ex)
+
+if exclude_exampels:
+    print(f"Examples to exclude:\n{exclude_exampels}")
 
 # Define local Llama model endpoint for training
 sglang_port = 7501
@@ -37,5 +49,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
