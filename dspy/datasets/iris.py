@@ -42,7 +42,7 @@ class IrisDataset(Dataset):
         # Split into 50/50/50 for train/dev/test
         self._train = iris_examples[:50]
         self._dev = iris_examples[50:100]
-        self._test = iris_examples[100:]
+        self._test = iris_examples[100:150]
 
     def get_data_splits(self):
         """Return the dataset splits as reported in BetterTogether paper."""
