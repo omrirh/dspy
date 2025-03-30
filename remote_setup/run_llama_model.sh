@@ -17,4 +17,4 @@ huggingface-cli login --token $HF_TOKEN
 # Spin up the local llama model persistently
 nohup env CUDA_VISIBLE_DEVICES=0 python -m sglang.launch_server \
   --model-path meta-llama/Meta-Llama-3-8B-Instruct \
-  --port 7501 > llama_run.log 2>&1 &
+  --port 7501  | tee "llama_run.log" &
