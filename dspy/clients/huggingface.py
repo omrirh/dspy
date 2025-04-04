@@ -210,7 +210,10 @@ class HFProvider(Provider):
         logger.info("[HF Provider] GPU memory released successfully")
 
         logger.info(f"[HF Provider] Deploying {trained_model_path} model after LoRA fine-tuning")
-        deploy_sglang_model(model_path=trained_model_path, log_file="trained_llama_run.log")
+        deploy_sglang_model(
+            model_path=trained_model_path,
+            log_file=f"trained_{trained_model_path.replace('/', '_')}_run.log"
+        )
 
         assign_local_lm(
             model=model,
