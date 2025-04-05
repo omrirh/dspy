@@ -1,8 +1,8 @@
 import logging
 import numpy as np
-from typing import List
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
+from typing import List, Dict, Optional
 from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
 from sentence_transformers import SentenceTransformer
@@ -13,7 +13,7 @@ from dspy.evaluate import Evaluate
 logger = logging.getLogger(__name__)
 
 
-class ClusterFewshotv2(Teleprompter):
+class ClusterFewshot(Teleprompter):
     def __init__(
             self,
             metric=None,
@@ -21,9 +21,10 @@ class ClusterFewshotv2(Teleprompter):
             num_fewshot: int = 3,
             descending: bool = True,
             embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
+            sampling_strategy: str = "top_n",
     ):
         """
-        ClusterFewshotv2: Optimized few-shot selection using clustering over semantic embeddings
+        ClusterFewshot: Optimized few-shot selection using clustering over semantic embeddings
             and example-as-one-shot evaluation.
 
         Args:
@@ -36,8 +37,10 @@ class ClusterFewshotv2(Teleprompter):
             embedding_model: str
                 Pretrained model for generating semantic embeddings.
             descending: bool
-                Whether to sort examples per-cluster/globally
+                Whether to sort examples within each cluster
                     in descending order of impact as one-shot demonstrations.
+            sampling_strategy: str
+                How ClusterFewshot samples demonstrations per-cluster.
         """
         super().__init__()
         self.metric = metric
@@ -45,15 +48,7 @@ class ClusterFewshotv2(Teleprompter):
 
         self.N = num_fewshot
         self.descending = descending
-
-        # Sampling strategies to assemble the few-shot subsets
-        self.sampling_strategies = [
-            "top_n",
-            "best_in_cluster",
-            "cluster_strength",
-            "central",
-        ]
-
+        self.sampling_strategy = sampling_strategy
         self.iris = None  # Identifying dataset for embedding matter
 
         # Load sentence embedding model
@@ -69,13 +64,11 @@ class ClusterFewshotv2(Teleprompter):
         self.global_sorted_examples = None
         self._sum_of_clusters_mean_rank = None
 
-        # Final selected demonstration sets
-        self.candidate_fewshot_subsets = None
-        self.best_fewshot_subset = None
+        self.fewshot_subset = None  # Final selected demonstrations
 
     def compile(self, student: Program, trainset: List[Example], *, valset):
         """
-        Compiles the ClusterFewshotv2 optimizer.
+        Compiles the ClusterFewshot optimizer.
         """
         self.student = student.deepcopy()
         self.trainset = trainset
@@ -88,12 +81,11 @@ class ClusterFewshotv2(Teleprompter):
         self.validation_clusters = self._cluster_examples(train=False)
         self._sample_validation_clusters()
         self._sort_examples_as_demos()
-        self.collect_fewshot_subsets()
-        self.pick_best_fewshot_subset()
+        self.collect_fewshot_subset()
 
         # Update student LM predictors with optimized few-shot subset
         for _, predictor in self.student.named_predictors():
-            predictor.demos = self.best_fewshot_subset  # TODO: try with/without in-context sort
+            predictor.demos = self.fewshot_subset  # TODO: try with/without in-context sort
 
         self.student._compiled = True
 
@@ -107,7 +99,7 @@ class ClusterFewshotv2(Teleprompter):
         """
         data = self.trainset if train else self.valset
 
-        # Cluster by example question if dataset is GSM8K/HotPotQA.
+        # Cluster by example question of dataset is GSM8K/HotPotQA.
         # Else, Cluster by Iris attributes (vectors of petal/sepal attributes)
         logger.info(f"Generating {len(data)} examples embeddings for clustering ...")
         if self.iris:
@@ -190,7 +182,6 @@ class ClusterFewshotv2(Teleprompter):
             devset=self.ead_set,
             metric=self.metric,
             num_threads=12,
-            display_progress=True,
         )
         student_copy = self.student.deepcopy()
 
@@ -199,7 +190,7 @@ class ClusterFewshotv2(Teleprompter):
         trainset_size = len(self.trainset)
 
         for idx, ex in enumerate(self.trainset):
-            logger.info(f"\n\nEvaluating example {idx+1}/{trainset_size}")
+            logger.info(f"\n\nEvaluating example {idx + 1}/{trainset_size}")
             self.ranked_examples[ex] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
 
         self.global_sorted_examples = sorted(
@@ -262,39 +253,34 @@ class ClusterFewshotv2(Teleprompter):
 
         return student_score
 
-    def collect_fewshot_subsets(self):
+    def collect_fewshot_subset(self):
         """
-        Collects few-shot subsets using each sampling strategy (incorporating several approaches),
+        Collects the final few-shot subset using the Strategy design pattern (incorporating several approaches),
         while balancing exploration (diversity) and exploitation (strong demos).
         """
-        fewshot_subsets = {
-            sampling_strategy: []
-            for
-            sampling_strategy
-            in self.sampling_strategies
-        }
+        logger.info(f"Collecting few-shot subset from clusters using {self.sampling_strategy} sampling strategy")
+
+        fewshot_subset = []
 
         for cluster_id, _ in self.training_clusters.items():
-            for sampling_strategy in fewshot_subsets.keys():
-                logger.info(f"Collecting few-shot subset from cluster no. {cluster_id} using '{sampling_strategy}' sampling strategy")
-                fewshot_subsets[sampling_strategy].extend(
-                    self.sample_examples_from_cluster(
-                        cluster_id=cluster_id,
-                        sampling_strategy=sampling_strategy
-                    )
+            fewshot_subset.extend(
+                self.sample_examples_from_cluster(
+                    cluster_id=cluster_id,
+                    sampling_strategy=self.sampling_strategy
                 )
+            )
 
-        self.candidate_fewshot_subsets = fewshot_subsets
+        self.fewshot_subset = fewshot_subset
 
-    def sample_examples_from_cluster(self, cluster_id, sampling_strategy):
+    def sample_examples_from_cluster(self, cluster_id, sampling_strategy="top_n"):
         """
         Samples examples from a given cluster based on one of 4 approaches:
         1. top N: Collects examples that fall in the top global N potential demos rank.
             If there aren't any in the given cluster, returns an empty list.
-        2. Best in cluster: Returns the top-ranked example-as-demo from the given cluster.
-        3. Cluster strength: Allocates a proportionate number of slots in the few-shot subset
-            for the given cluster top-ranked examples, based on cluster strength (i.e., mean example ranking).
-        4. Central: Samples most centric examples (i.e most common within a semantic questions trend)
+        2. Best in cluster: Returns the top-ranked examples-as-demos from the given cluster.
+        3. Cluster strength: Allocates a proportionate number of slots in few-shot to the given cluster,
+            based on cluster strength (i.e., mean example ranking).
+        4. Central: Samples most centric examples (i.e. most common within a semantic questions trend)
         """
         sampled_examples = []
 
@@ -320,7 +306,8 @@ class ClusterFewshotv2(Teleprompter):
 
                 # Calculate cluster strength as the mean rank of its examples
                 cluster_ranks = [self.ranked_examples[ex] for ex in cluster_examples]
-                cluster_strength = np.mean(cluster_ranks)  # TODO: examples with top global ranks might be considered as outliers (ignored)
+                cluster_strength = np.mean(
+                    cluster_ranks)  # TODO: examples with top global ranks might be considered as outliers (ignored)
 
                 # Compute how many slots to allocate for this cluster
                 proportion = cluster_strength / self._sum_of_clusters_mean_rank  # TODO: examine edge use-cases for this proportion
@@ -336,6 +323,7 @@ class ClusterFewshotv2(Teleprompter):
         return sampled_examples
 
     def get_central_examples(self, examples, sample_size):
+        # Sort by proximity to cluster centroids (using embedding distances)
         if self.iris:
             embeddings = np.array([
                 [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
@@ -349,32 +337,3 @@ class ClusterFewshotv2(Teleprompter):
         sampled_examples = [examples[i] for i in selected_indices]
 
         return sampled_examples
-
-    def pick_best_fewshot_subset(self):
-        ranked_sampling_strategies = {}
-        evaluator = Evaluate(
-            devset=self.valset,
-            metric=self.metric,
-            num_threads=12,
-            display_progress=True,
-        )
-        student = self.student.deepcopy()
-
-        for sampling_strategy in self.sampling_strategies:
-            logger.info(f"\n\nTesting '{sampling_strategy}' sampled few-shot subset")
-            fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
-
-            for _, predictor in student.named_predictors():
-                predictor.demos = fewshot_subset
-
-            fewshot_subset_score = evaluator(student)
-            ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
-            logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% "
-                        f"on the validation set with {len(fewshot_subset)} demonstrations.")
-
-        best_strategy = max(ranked_sampling_strategies, key=ranked_sampling_strategies.get)
-        self.best_fewshot_subset = self.candidate_fewshot_subsets[best_strategy]
-
-        logger.info(
-            f"Best few-shot subset sampled according to '{best_strategy}' strategy "
-            f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
