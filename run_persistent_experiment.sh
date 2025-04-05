@@ -56,6 +56,12 @@ if [[ ! " ${VALID_STRATEGIES[@]} " =~ " ${STRATEGY} " ]]; then
     exit 1
 fi
 
+# Auto confirm prompt optimization run with MIPROv2
+if [[ "$PROMPT_OPTIMIZER" == "miprov2" ]]; then
+    export PYTHONUNBUFFERED=1
+    export AUTO_CONFIRM=true
+fi
+
 # Format additional params for log filename
 LOG_PARAMS="_${PROMPT_OPTIMIZER}_$(echo "$STRATEGY" | tr ' ' '_')"
 

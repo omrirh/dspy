@@ -349,6 +349,12 @@ class MIPROv2(Teleprompter):
         """
         )
 
+        import os
+
+        # For running in automation, auto confirm optimization run
+        if os.environ.get("AUTO_CONFIRM", "false").lower() == "true":
+            return True
+
         user_input = (
             input(f"{user_message}\n{user_confirmation_message}\nDo you wish to continue? (y/n): ").strip().lower()
         )
