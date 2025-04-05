@@ -8,7 +8,7 @@ from dspy.primitives.program import Program
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune, prepare_student, set_missing_predictor_lms, \
     launch_lms, kill_lms
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
-from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.cluster_fewshot_v2 import ClusterFewshotv2
 from dspy.teleprompt.teleprompt import Teleprompter
 
 logger = logging.getLogger(__name__)
@@ -37,7 +37,7 @@ class BetterTogether(Teleprompter):
         self.weight_optimizer = weight_optimizer if weight_optimizer else BootstrapFinetune(metric=metric)
 
         is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch) or isinstance(
-            self.prompt_optimizer, ClusterFewshot)
+            self.prompt_optimizer, ClusterFewshotv2)
         is_supported_weight = isinstance(self.weight_optimizer, BootstrapFinetune)
         if not is_supported_prompt or not is_supported_weight:
             raise ValueError(

@@ -12,7 +12,7 @@ MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 
 # Supported values
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
-VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs")
+VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfsv2")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p")
 
 # Parse arguments

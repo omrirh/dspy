@@ -13,7 +13,7 @@ from dspy.evaluate import Evaluate
 logger = logging.getLogger(__name__)
 
 
-class ClusterFewshot(Teleprompter):
+class ClusterFewshotv2(Teleprompter):
     def __init__(
             self,
             metric=None,
@@ -23,7 +23,7 @@ class ClusterFewshot(Teleprompter):
             embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
     ):
         """
-        ClusterFewshot: Optimized few-shot selection using clustering over semantic embeddings
+        ClusterFewshot v2: Optimized few-shot selection using clustering over semantic embeddings
             and example-as-one-shot evaluation.
 
         Args:
