@@ -1,0 +1,159 @@
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'fields' has been removed
+  warnings.warn(message, UserWarning)
+100%|█████████████████████████████████████████████████████████| 7473/7473 [00:00<00:00, 16238.06it/s]
+100%|█████████████████████████████████████████████████████████| 1319/1319 [00:00<00:00, 16291.51it/s]
+modules.json: 100%|█████████████████████████████████████████████████| 349/349 [00:00<00:00, 1.18MB/s]
+config_sentence_transformers.json: 100%|█████████████████████████████| 116/116 [00:00<00:00, 358kB/s]
+README.md: 100%|████████████████████████████████████████████████| 10.5k/10.5k [00:00<00:00, 26.9MB/s]
+sentence_bert_config.json: 100%|███████████████████████████████████| 53.0/53.0 [00:00<00:00, 208kB/s]
+config.json: 100%|██████████████████████████████████████████████████| 612/612 [00:00<00:00, 2.47MB/s]
+model.safetensors: 100%|█████████████████████████████████████████| 90.9M/90.9M [00:00<00:00, 188MB/s]
+tokenizer_config.json: 100%|████████████████████████████████████████| 350/350 [00:00<00:00, 1.40MB/s]
+vocab.txt: 100%|██████████████████████████████████████████████████| 232k/232k [00:00<00:00, 10.2MB/s]
+tokenizer.json: 100%|█████████████████████████████████████████████| 466k/466k [00:00<00:00, 11.2MB/s]
+special_tokens_map.json: 100%|███████████████████████████████████████| 112/112 [00:00<00:00, 461kB/s]
+config.json: 100%|███████████████████████████████████████████████████| 190/190 [00:00<00:00, 727kB/s]
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 1 - Strategy 'p' ##########
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/04/04 16:55:26 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/04/04 16:55:26 INFO dspy.teleprompt.cluster_fewshot: Compiling the student program using ClusteFewshot optimizer...
+2025/04/04 16:55:26 INFO dspy.teleprompt.cluster_fewshot: Generating 15 examples embeddings for clustering ...
+2025/04/04 16:55:27 INFO dspy.teleprompt.cluster_fewshot: Clustering into 3 clusters...
+2025/04/04 16:55:27 INFO dspy.teleprompt.cluster_fewshot: Performing t-SNE dimensionality reduction for visualization...
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Cluster visualization saved to training_clusters.png.
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Training examples clustering by semantic embedding completed (K=3).
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Generating 5 examples embeddings for clustering ...
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Clustering into 3 clusters...
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Performing t-SNE dimensionality reduction for visualization...
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Cluster visualization saved to validation_clusters.png.
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Validation examples clustering by semantic embedding completed (K=3).
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Validation set assembled with 5 examples.
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Sorting examples-as-demos from trainset (15 examples)
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 1/15
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:28 INFO dspy.teleprompt.cluster_fewshot: James splits 4 packs of stickers that have 30 stickers each.  Each sticker cost $.10.  If his friend pays for half how much did James pay? --> 6
+2025/04/04 16:55:31 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+2025/04/04 16:55:31 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 2/15
+2025/04/04 16:55:33 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:33 INFO dspy.teleprompt.cluster_fewshot: Rookie police officers have to buy duty shoes at the full price of $85, but officers who have served at least a year get a 20% discount. Officers who have served at least three years get an additional 25% off the discounted price. How much does an officer who has served at least three years have to pay for shoes? --> 51
+2025/04/04 16:55:35 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+2025/04/04 16:55:35 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 3/15
+2025/04/04 16:55:37 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:37 INFO dspy.teleprompt.cluster_fewshot: The average score on last week's Spanish test was 90.  Marco scored 10% less than the average test score and Margaret received 5 more points than Marco.  What score did Margaret receive on her test? --> 86
+2025/04/04 16:55:39 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+2025/04/04 16:55:39 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 4/15
+2025/04/04 16:55:40 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:40 INFO dspy.teleprompt.cluster_fewshot: John needs to replace his shoes so he decides to buy a $150 pair of Nikes and a $120 pair of work boots.  Tax is 10%.  How much did he pay for everything? --> 297
+2025/04/04 16:55:42 INFO dspy.evaluate.evaluate: Average Metric: 2 / 5 (40.0%)
+2025/04/04 16:55:42 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 5/15
+2025/04/04 16:55:45 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:45 INFO dspy.teleprompt.cluster_fewshot: Amaya scored 20 marks fewer in Maths than she scored in Arts. She also got 10 marks more in Social Studies than she got in Music. If she scored 70 in Music and scored 1/10 less in Maths, what's the total number of marks she scored in all the subjects? --> 296
+2025/04/04 16:55:48 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+2025/04/04 16:55:48 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 6/15
+2025/04/04 16:55:50 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:50 INFO dspy.teleprompt.cluster_fewshot: A tank contains 6000 liters of water, 2000 liters evaporated, and then 3500 liters were drained by Bob. How many liters are in the tank if it now rains for 30 minutes and every 10 minutes 350 liters of rain are added to the tank? --> 1550
+2025/04/04 16:55:52 INFO dspy.evaluate.evaluate: Average Metric: 2 / 5 (40.0%)
+2025/04/04 16:55:52 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 7/15
+2025/04/04 16:55:54 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:54 INFO dspy.teleprompt.cluster_fewshot: Bridget counted 14 shooting stars in the night sky.  Reginald counted two fewer shooting stars than did Bridget, but Sam counted four more shooting stars than did Reginald.  How many more shooting stars did Sam count in the night sky than was the average number of shooting stars observed for the three of them? --> 2
+2025/04/04 16:55:56 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+2025/04/04 16:55:56 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 8/15
+2025/04/04 16:55:57 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:55:57 INFO dspy.teleprompt.cluster_fewshot: Sarah buys 20 pencils on Monday. Then she buys 18 more pencils on Tuesday. On Wednesday she buys triple the number of pencils she did on Tuesday. How many pencils does she have? --> 92
+2025/04/04 16:55:59 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+2025/04/04 16:55:59 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 9/15
+2025/04/04 16:56:01 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:56:01 INFO dspy.teleprompt.cluster_fewshot: A third of the contestants at a singing competition are female, and the rest are male. If there are 18 contestants in total, how many of them are male? --> 12
+2025/04/04 16:56:05 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+2025/04/04 16:56:05 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 10/15
+2025/04/04 16:56:06 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is not included):
+
+2025/04/04 16:56:06 INFO dspy.teleprompt.cluster_fewshot: John takes 3 days off of streaming per week.  On the days he does stream, he streams for 4 hours at a time and makes $10 an hour.  How much does he make a week? --> 160
+2025/04/04 16:56:09 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+2025/04/04 16:56:09 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 11/15
+2025/04/04 16:56:11 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:56:11 INFO dspy.teleprompt.cluster_fewshot: Daryl is loading crates at a warehouse and wants to make sure that they are not overloaded. Each crate can weigh up to 20kg and he has 15 crates he can fill. He has 4 bags of nails to load, each of which weighs 5kg; he has 12 bags of hammers, each of which weighs 5 kg; he also has 10 bags of wooden planks, each of which weighs 30kg and can be sub-divided. He realizes that he has too much to load and will have to leave some items out of the crates to meet the weight limit. In kg, how much is Daryl going to have to leave out of the crates? --> 80
+2025/04/04 16:56:13 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+2025/04/04 16:56:13 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 12/15
+2025/04/04 16:56:15 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:56:15 INFO dspy.teleprompt.cluster_fewshot: Nancy bought a pie sliced it into 8 pieces. She gave 1/2 to Joe and Darcy, and she gave 1/4 to Carl. How many slices were left? --> 2
+2025/04/04 16:56:17 INFO dspy.evaluate.evaluate: Average Metric: 4 / 5 (80.0%)
+2025/04/04 16:56:17 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 13/15
+2025/04/04 16:56:21 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is not included):
+
+2025/04/04 16:56:21 INFO dspy.teleprompt.cluster_fewshot: In 2004, there were some kids at a cookout. In 2005, half the number of kids came to the cookout as compared to 2004. In 2006, 2/3 as many kids came to the cookout as in 2005. If there were 20 kids at the cookout in 2006, how many kids came to the cookout in 2004? --> 60
+2025/04/04 16:56:23 INFO dspy.evaluate.evaluate: Average Metric: 2 / 5 (40.0%)
+2025/04/04 16:56:23 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 14/15
+2025/04/04 16:56:24 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is not included):
+
+2025/04/04 16:56:24 INFO dspy.teleprompt.cluster_fewshot: Alice and Bob are each given $2000 to invest. Alice puts all of her money in the stock market and doubles her money. Bob invests in real estate and makes five times more money than he invested. How much more money does Bob have now than Alice? --> 8000
+2025/04/04 16:56:26 INFO dspy.evaluate.evaluate: Average Metric: 3 / 5 (60.0%)
+2025/04/04 16:56:26 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 15/15
+2025/04/04 16:56:28 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (5 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 16:56:28 INFO dspy.teleprompt.cluster_fewshot: Betty and Dora started making some cupcakes at the same time. Betty makes 10 cupcakes every hour and Dora makes 8 every hour. If Betty took a two-hour break, what is the difference between the number of cupcakes they made after 5 hours? --> 10
+2025/04/04 16:56:31 INFO dspy.evaluate.evaluate: Average Metric: 5 / 5 (100.0%)
+2025/04/04 16:56:31 INFO dspy.teleprompt.cluster_fewshot: Re-ordering clusters by demonstrations ranks
+2025/04/04 16:56:31 INFO dspy.teleprompt.cluster_fewshot: Demonstrations are sorted in descending order.
+2025/04/04 16:56:31 INFO dspy.teleprompt.cluster_fewshot: Collecting few-shot subset from clusters using top_n sampling strategy
+2025/04/04 16:56:31 INFO dspy.teleprompt.cluster_fewshot: Student program compiled successfully.
+2025/04/04 16:56:31 INFO dspy.clients.huggingface: No running server to kill.
+2025/04/04 16:56:31 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x CLUSTERFS]
+Demonstrations collected:
+[Example({'question': 'James splits 4 packs of stickers that have 30 stickers each.  Each sticker cost $.10.  If his friend pays for half how much did James pay?', 'gold_reasoning': 'He buys 4*30=<<4*30=120>>120 stickers That means it cost 120*.1=$<<120*.1=12>>12 So he pays 12*.5=$<<12*.5=6>>6', 'answer': '6', 'reasoning': 'James has 4 packs of stickers, each with 30 stickers. So he has a total of 4 x 30 = 120 stickers. Each sticker costs $.10, so the total cost is 120 x $.10 = $12. Since his friend pays for half, James pays for the other half, which is $6.'}) (input_keys={'question'}), Example({'question': 'Rookie police officers have to buy duty shoes at the full price of $85, but officers who have served at least a year get a 20% discount. Officers who have served at least three years get an additional 25% off the discounted price. How much does an officer who has served at least three years have to pay for shoes?', 'gold_reasoning': 'Cops that served a year pay $85 * 0.2 = $<<85*0.2=17>>17 less. Cops that served a year pay $85 - $17 = $<<85-17=68>>68. Cops that served at least 3 years get a $68 * 0.25 = $<<68*0.25=17>>17 discount. Cops that served at least 3 years pay $68 - $17 = $<<68-17=51>>51 for shoes.', 'answer': '51', 'reasoning': 'First, the officer who has served at least a year gets a 20% discount on the full price of $85, which is $85 - (20% of $85) = $85 - $17 = $68. Then, the officer who has served at least three years gets an additional 25% off the discounted price, which is $68 - (25% of $68) = $68 - $17 = $51.'}) (input_keys={'question'}), Example({'question': 'Betty and Dora started making some cupcakes at the same time. Betty makes 10 cupcakes every hour and Dora makes 8 every hour. If Betty took a two-hour break, what is the difference between the number of cupcakes they made after 5 hours?', 'gold_reasoning': 'Dora made 8 cupcakes per hour for 5 hours for a total of 8*5 = <<8*5=40>>40 cupcakes Betty took a 2-hour break so she spent 5-2 = <<5-2=3>>3 hours making cupcakes Betty made 10 cupcakes per hour for 3 hours for a total of 10*3 = <<10*3=30>>30 cupcakes The difference between the number of cupcakes they made is 40-30 = <<40-30=10>>10 cupcakes', 'answer': '10', 'reasoning': "Betty makes 10 cupcakes every hour, but took a 2-hour break, so she made 10 * 3 = 30 cupcakes in the first 3 hours and 10 * 2 = 20 cupcakes in the last 2 hours. In total, she made 30 + 20 = 50 cupcakes. Dora makes 8 cupcakes every hour, so in 5 hours she made 8 * 5 = 40 cupcakes. The difference between the number of cupcakes they made is 40 - 50 = -10, but since you can't have a negative number of cupcakes, the difference is actually 50 - 40 = 10."}) (input_keys={'question'})]
+
+
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x CLUSTERFS]
+Calculating experiment program results...
+Average Metric: 1062.00 / 1318 (80.6%): 100%|███████████████████████████████████████████████████| 1318/1318 [04:09<00:00,  5.29it/s]
+2025/04/04 17:00:40 INFO dspy.evaluate.evaluate: Average Metric: 1062 / 1318 (80.6%)
+
+Score:  80.58

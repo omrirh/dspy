@@ -1,0 +1,149 @@
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'fields' has been removed
+  warnings.warn(message, UserWarning)
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7473/7473 [00:00<00:00, 16452.61it/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1319/1319 [00:00<00:00, 16517.40it/s]
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 1 - Strategy 'p' ##########
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/04/04 17:06:40 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/04/04 17:06:40 INFO dspy.teleprompt.cluster_fewshot: Compiling the student program using ClusteFewshot optimizer...
+2025/04/04 17:06:40 INFO dspy.teleprompt.cluster_fewshot: Generating 15 examples embeddings for clustering ...
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Clustering into 3 clusters...
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Performing t-SNE dimensionality reduction for visualization...
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Cluster visualization saved to training_clusters.png.
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Training examples clustering by semantic embedding completed (K=3).
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Generating 15 examples embeddings for clustering ...
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Clustering into 3 clusters...
+2025/04/04 17:06:41 INFO dspy.teleprompt.cluster_fewshot: Performing t-SNE dimensionality reduction for visualization...
+2025/04/04 17:06:42 INFO dspy.teleprompt.cluster_fewshot: Cluster visualization saved to validation_clusters.png.
+2025/04/04 17:06:42 INFO dspy.teleprompt.cluster_fewshot: Validation examples clustering by semantic embedding completed (K=3).
+2025/04/04 17:06:42 INFO dspy.teleprompt.cluster_fewshot: Validation set assembled with 9 examples.
+2025/04/04 17:06:42 INFO dspy.teleprompt.cluster_fewshot: Sorting examples-as-demos from trainset (15 examples)
+2025/04/04 17:06:42 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 1/15
+2025/04/04 17:06:44 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:06:44 INFO dspy.teleprompt.cluster_fewshot: A cafe has 9 indoor tables and 11 outdoor tables. Each indoor table has 10 chairs, and each outdoor table has 3 chairs. How many chairs are there in all? --> 123
+2025/04/04 17:06:47 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:06:47 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 2/15
+2025/04/04 17:06:49 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:06:49 INFO dspy.teleprompt.cluster_fewshot: A gumball machine has red, green, and blue gumballs. The machine has half as many blue gumballs as red gumballs. For each blue gumball, the machine has 4 times as many green gumballs. If the machine has 16 red gumballs how many gumballs are in the machine? --> 56
+2025/04/04 17:06:52 INFO dspy.evaluate.evaluate: Average Metric: 7 / 9 (77.8%)
+2025/04/04 17:06:52 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 3/15
+2025/04/04 17:06:54 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:06:54 INFO dspy.teleprompt.cluster_fewshot: Hammond carves life-sized statues out of marble. His latest set of four statues started with an 80-pound block of marble. The first statue he carved weighed 10 pounds. The second statue weighed 18. The remaining two statues weighed the same amount. The marble he discarded after carving it off the statues weighed 22 pounds. How much did each of the remaining statues Hammond carved weigh? --> 15
+2025/04/04 17:06:57 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:06:57 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 4/15
+2025/04/04 17:06:59 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:06:59 INFO dspy.teleprompt.cluster_fewshot: A third of the contestants at a singing competition are female, and the rest are male. If there are 18 contestants in total, how many of them are male? --> 12
+2025/04/04 17:07:03 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:03 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 5/15
+2025/04/04 17:07:07 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:07 INFO dspy.teleprompt.cluster_fewshot: Louise is baking cakes for a gathering. She needs 60 cakes in total, and has already produced half this many. Today, she calculates how many cakes she has left to make and bakes half this amount. The next day, she again calculates how many cakes she has left to make and bakes a third of this amount. How many more cakes does Louise need to bake? --> 10
+2025/04/04 17:07:10 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:10 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 6/15
+2025/04/04 17:07:12 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:12 INFO dspy.teleprompt.cluster_fewshot: Mary does her grocery shopping on Saturday. She does her shopping only at a specific store where she is allowed a credit of $100, which must be paid in full before her next shopping trip. That week she spent the full credit limit and paid $15 of it on Tuesday and $23 of it on Thursday. How much credit will Mary need to pay before her next shopping trip? --> 62
+2025/04/04 17:07:15 INFO dspy.evaluate.evaluate: Average Metric: 9 / 9 (100.0%)
+2025/04/04 17:07:15 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 7/15
+2025/04/04 17:07:18 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:18 INFO dspy.teleprompt.cluster_fewshot: Daryl is loading crates at a warehouse and wants to make sure that they are not overloaded. Each crate can weigh up to 20kg and he has 15 crates he can fill. He has 4 bags of nails to load, each of which weighs 5kg; he has 12 bags of hammers, each of which weighs 5 kg; he also has 10 bags of wooden planks, each of which weighs 30kg and can be sub-divided. He realizes that he has too much to load and will have to leave some items out of the crates to meet the weight limit. In kg, how much is Daryl going to have to leave out of the crates? --> 80
+2025/04/04 17:07:21 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:21 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 8/15
+2025/04/04 17:07:24 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is not included):
+
+2025/04/04 17:07:24 INFO dspy.teleprompt.cluster_fewshot: In 2004, there were some kids at a cookout. In 2005, half the number of kids came to the cookout as compared to 2004. In 2006, 2/3 as many kids came to the cookout as in 2005. If there were 20 kids at the cookout in 2006, how many kids came to the cookout in 2004? --> 60
+2025/04/04 17:07:27 INFO dspy.evaluate.evaluate: Average Metric: 7 / 9 (77.8%)
+2025/04/04 17:07:27 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 9/15
+2025/04/04 17:07:28 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:28 INFO dspy.teleprompt.cluster_fewshot: Nancy bought a pie sliced it into 8 pieces. She gave 1/2 to Joe and Darcy, and she gave 1/4 to Carl. How many slices were left? --> 2
+2025/04/04 17:07:31 INFO dspy.evaluate.evaluate: Average Metric: 7 / 9 (77.8%)
+2025/04/04 17:07:31 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 10/15
+2025/04/04 17:07:33 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:33 INFO dspy.teleprompt.cluster_fewshot: Billy is breeding mice for an experiment. He starts with 8 mice, who each have 6 pups. When the pups grow up, all the mice have another 6 pups. Then each adult mouse eats 2 of their pups due to the stress of overcrowding. How many mice are left? --> 280
+2025/04/04 17:07:36 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:36 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 11/15
+2025/04/04 17:07:38 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is not included):
+
+2025/04/04 17:07:38 INFO dspy.teleprompt.cluster_fewshot: A YouTube video got 3000 likes and 100 more than half as many dislikes. If the video gets 1000 more dislikes and 0 more likes how many dislikes does the video have? --> 2600
+2025/04/04 17:07:41 INFO dspy.evaluate.evaluate: Average Metric: 7 / 9 (77.8%)
+2025/04/04 17:07:41 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 12/15
+2025/04/04 17:07:42 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:42 INFO dspy.teleprompt.cluster_fewshot: Sarah buys 20 pencils on Monday. Then she buys 18 more pencils on Tuesday. On Wednesday she buys triple the number of pencils she did on Tuesday. How many pencils does she have? --> 92
+2025/04/04 17:07:45 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:45 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 13/15
+2025/04/04 17:07:46 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:46 INFO dspy.teleprompt.cluster_fewshot: Megan pays $16 for a shirt that costs $22 before sales. What is the amount of the discount? --> 6
+2025/04/04 17:07:49 INFO dspy.evaluate.evaluate: Average Metric: 9 / 9 (100.0%)
+2025/04/04 17:07:49 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 14/15
+2025/04/04 17:07:50 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:50 INFO dspy.teleprompt.cluster_fewshot: John takes 3 days off of streaming per week.  On the days he does stream, he streams for 4 hours at a time and makes $10 an hour.  How much does he make a week? --> 160
+2025/04/04 17:07:53 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:53 INFO dspy.teleprompt.cluster_fewshot:
+
+Evaluating example 15/15
+2025/04/04 17:07:54 INFO dspy.teleprompt.cluster_fewshot: Conducting example-as-demo test (9 questions) using the following demonstration (reasoning info is included):
+
+2025/04/04 17:07:54 INFO dspy.teleprompt.cluster_fewshot: The result from the 40-item Statistics exam Marion and Ella took already came out. Ella got 4 incorrect answers while Marion got 6 more than half the score of Ella. What is Marion's score? --> 24
+2025/04/04 17:07:57 INFO dspy.evaluate.evaluate: Average Metric: 8 / 9 (88.9%)
+2025/04/04 17:07:57 INFO dspy.teleprompt.cluster_fewshot: Re-ordering clusters by demonstrations ranks
+2025/04/04 17:07:57 INFO dspy.teleprompt.cluster_fewshot: Demonstrations are sorted in descending order.
+2025/04/04 17:07:57 INFO dspy.teleprompt.cluster_fewshot: Collecting few-shot subset from clusters using top_n sampling strategy
+2025/04/04 17:07:57 INFO dspy.teleprompt.cluster_fewshot: Student program compiled successfully.
+2025/04/04 17:07:57 INFO dspy.clients.huggingface: No running server to kill.
+2025/04/04 17:07:57 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x CLUSTERFS]
+Demonstrations collected:
+[Example({'question': 'Mary does her grocery shopping on Saturday. She does her shopping only at a specific store where she is allowed a credit of $100, which must be paid in full before her next shopping trip. That week she spent the full credit limit and paid $15 of it on Tuesday and $23 of it on Thursday. How much credit will Mary need to pay before her next shopping trip?', 'gold_reasoning': 'So far, Mary has paid back $15 +$23=$<<15+23=38>>38 of the credit. So she still needs to pay $100-$38=$<<100-38=62>>62', 'answer': '62', 'reasoning': 'Mary has a credit of $100, which she spent in full. She paid $15 on Tuesday, leaving her with:\n\n$100 - $15 = $85\n\nShe paid $23 on Thursday, leaving her with:\n\n$85 - $23 = $62\n\nSo, Mary still owes $62 before her next shopping trip.'}) (input_keys={'question'}), Example({'question': 'Megan pays $16 for a shirt that costs $22 before sales. What is the amount of the discount?', 'gold_reasoning': 'Let x be the amount of the discount. We have, 22 - x = $16 We change the writing of the equation: 22 - x + x = 16 + x So, 22 = 16 + x We then Remove 16 from both sides: 22 - 16 = 16 + x - 16 So, 22 - 16 = x So, the amount of the discount is x = $<<6=6>>6.', 'answer': '6', 'reasoning': 'The original price of the shirt is $22. Megan pays $16, which means the discount is the difference between the original price and the price she paid. The discount is $22 - $16 = $6.'}) (input_keys={'question'}), Example({'question': 'A cafe has 9 indoor tables and 11 outdoor tables. Each indoor table has 10 chairs, and each outdoor table has 3 chairs. How many chairs are there in all?', 'gold_reasoning': 'There are 9 indoor tables * 10 chairs = <<9*10=90>>90 chairs. There are 11 outdoor tables * 3 chairs = <<11*3=33>>33 chairs. The total number of chairs is 90 chairs + 33 chairs = <<90+33=123>>123 chairs.', 'answer': '123', 'reasoning': 'The cafe has 9 indoor tables with 10 chairs each, so the total number of chairs for indoor tables is 9 x 10 = 90. The cafe also has 11 outdoor tables with 3 chairs each, so the total number of chairs for outdoor tables is 11 x 3 = 33. To find the total number of chairs, we add the number of chairs for indoor and outdoor tables: 90 + 33 = 123.'}) (input_keys={'question'})]
+
+
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x CLUSTERFS]
+Calculating experiment program results...
+Average Metric: 507.00 / 641 (79.1%):  49%|██████████████████████████████████████████████▌                                       Average Metric: 507.00 / 641 (79.1%):  49%|██████████████████████████████████████████████▋                                       Average Metric: 508.00 / 642 (79.1%):  49%|██████████████████████████████████████████████▋                                       Average Metric: 509.00 / 643 (79.2%):  49%|████████████████████████▊                          | 642/1318 [02:13<02:00,  5.61it/s]Average Metric: 1064.00 / 1318 (80.7%): 100%|████████████████████████████████████████████████| 1318/1318 [04:31<00:00,  4.86it/s]
+
+2025/04/04 17:12:28 INFO dspy.evaluate.evaluate: Average Metric: 1064 / 1318 (80.7%)
+
+Score:  80.73
