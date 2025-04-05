@@ -8,7 +8,7 @@ from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.bettertogether import BetterTogether
-from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.cluster_fewshot_v2 import ClusterFewshotv2
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 
@@ -102,8 +102,8 @@ def main(dataset, prompt_optimizer, strategy, model):
             num_threads=6
         )
 
-    if prompt_optimizer_name == "clusterfs":
-        prompt_optimizer = ClusterFewshot(
+    if prompt_optimizer_name == "clusterfsv2":
+        prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             num_fewshot=3,
         )
@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
     # # for debugging
     # dataset = "gsm8k"
-    # prompt_optimizer = "clusterfs"
+    # prompt_optimizer = "clusterfsv2"
     # strategy = "w"
     # model = "meta-llama/Meta-Llama-3-8B-Instruct"
 

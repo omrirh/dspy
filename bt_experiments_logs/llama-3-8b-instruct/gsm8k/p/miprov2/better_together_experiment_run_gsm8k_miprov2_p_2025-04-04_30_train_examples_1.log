@@ -1,0 +1,161 @@
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'fields' has been removed
+  warnings.warn(message, UserWarning)
+100%|█████████████████████████████████████████████████████████████████████████████████████| 7473/7473 [00:00<00:00, 16543.31it/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1319/1319 [00:00<00:00, 16813.47it/s]
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 1 - Strategy 'p' ##########
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/04/04 17:17:53 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/04/04 17:17:53 INFO dspy.teleprompt.mipro_optimizer_v2:
+RUNNING WITH THE FOLLOWING LIGHT AUTO RUN SETTINGS:
+num_trials: 7
+minibatch: False
+num_candidates: 5
+valset size: 15
+
+Projected Language Model (LM) Calls
+
+Based on the parameters you have set, the maximum number of LM calls is projected as follows:
+
+- Prompt Generation: 10 data summarizer calls + 5 * 1 lm calls in program + (2) lm calls in program-aware proposer = 17 prompt model calls
+- Program Evaluation: 15 examples in val set * 7 batches = 105 LM program calls
+
+Estimated Cost Calculation:
+
+Total Cost = (Number of calls to task model * (Avg Input Token Length per Call * Task Model Price per Input Token + Avg Output Token Length per Call * Task Model Price per Output Token)
+            + (Number of program calls * (Avg Input Token Length per Call * Task Prompt Price per Input Token + Avg Output Token Length per Call * Prompt Model Price per Output Token).
+
+For a preliminary estimate of potential costs, we recommend you perform your own calculations based on the task
+and prompt models you intend to use. If the projected costs exceed your budget or expectations, you may consider:
+
+- Reducing the number of trials (`num_trials`), the size of the valset, or the number of LM calls in your program.
+- Using a cheaper task model to optimize the prompt.
+- Setting `minibatch=True` if you haven't already.
+
+To proceed with the execution of this program, please confirm by typing 'y' for yes or 'n' for no.
+
+If you would like to bypass this confirmation step in future executions, set the `requires_permission_to_run` flag to `False` when calling compile.
+
+Awaiting your input...
+
+Do you wish to continue? (y/n): y
+2025/04/04 17:17:57 INFO dspy.teleprompt.mipro_optimizer_v2:
+==> STEP 1: BOOTSTRAP FEWSHOT EXAMPLES <==
+2025/04/04 17:17:57 INFO dspy.teleprompt.mipro_optimizer_v2: These will be used as few-shot example candidates for our program and for creating instructions.
+
+2025/04/04 17:17:57 INFO dspy.teleprompt.mipro_optimizer_v2: Bootstrapping N=5 sets of demonstrations...
+Bootstrapping set 1/5
+Bootstrapping set 2/5
+Bootstrapping set 3/5
+ 73%|███████████████████████████████████████████████████████████████████▍                        | 11/15 [00:10<00:03,  1.10it/s]
+Bootstrapped 4 full traces after 11 examples for up to 1 rounds, amounting to 11 attempts.
+Bootstrapping set 4/5
+  7%|██████▏                                                                                      | 1/15 [00:00<00:08,  1.64it/s]
+Bootstrapped 1 full traces after 1 examples for up to 1 rounds, amounting to 1 attempts.
+Bootstrapping set 5/5
+ 20%|██████████████████▌                                                                          | 3/15 [00:03<00:12,  1.03s/it]
+Bootstrapped 1 full traces after 3 examples for up to 1 rounds, amounting to 3 attempts.
+2025/04/04 17:18:11 INFO dspy.teleprompt.mipro_optimizer_v2:
+==> STEP 2: PROPOSE INSTRUCTION CANDIDATES <==
+2025/04/04 17:18:11 INFO dspy.teleprompt.mipro_optimizer_v2: We will use the few-shot examples from the previous step, a generated dataset summary, a summary of the program code, and a randomly selected prompting tip to propose instructions.
+2025/04/04 17:18:41 INFO dspy.teleprompt.mipro_optimizer_v2:
+Proposing instructions...
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: Proposed Instructions for Predictor 0:
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: 0: Given the fields `question`, produce the fields `answer`.
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: 1: Given a mathematical question, generate a step-by-step reasoning process and produce the corresponding answer, using the provided examples as a guide, and providing a clear and logical solution to the problem.
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: 2: Generate a step-by-step reasoning and answer for a given math problem, using the provided question as input.
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: 3: Given the fields `question`, generate a step-by-step reasoning and the corresponding answer for the mathematical problem described in the question.
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: 4: Generate a step-by-step explanation of the solution and the final answer for a given math question.
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2:
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: ==> STEP 3: FINDING OPTIMAL PROMPT PARAMETERS <==
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: We will evaluate the program over a series of trials with different combinations of instructions and few-shot examples to find the optimal combination using Bayesian Optimization.
+
+2025/04/04 17:19:02 INFO dspy.teleprompt.mipro_optimizer_v2: == Trial 1 / 7 - Full Evaluation of Default Program ==
+Average Metric: 11.00 / 15 (73.3%): 100%|████████████████████████████████████████████████████████| 15/15 [00:05<00:00,  2.60it/s]
+2025/04/04 17:19:08 INFO dspy.evaluate.evaluate: Average Metric: 11 / 15 (73.3%)
+2025/04/04 17:19:08 INFO dspy.teleprompt.mipro_optimizer_v2: Default program score: 73.33
+
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/optuna/samplers/_tpe/sampler.py:319: ExperimentalWarning: ``multivariate`` option is an experimental feature. The interface can change in the future.
+  warnings.warn(
+2025/04/04 17:19:08 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 2 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:04<00:00,  3.32it/s]
+2025/04/04 17:19:12 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:19:12 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 1', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:19:12 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0]
+2025/04/04 17:19:12 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:19:12 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:19:12 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 3 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:04<00:00,  3.38it/s]
+2025/04/04 17:19:17 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:19:17 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 2', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:19:17 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0]
+2025/04/04 17:19:17 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:19:17 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:19:17 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 4 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:04<00:00,  3.38it/s]
+2025/04/04 17:19:22 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 4', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 40.0]
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 5 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|████████████████████████████████████████████████████████| 15/15 [00:00<00:00, 154.95it/s]
+2025/04/04 17:19:22 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 2', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 40.0, 40.0]
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:19:22 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 6 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:02<00:00,  6.48it/s]
+2025/04/04 17:19:25 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:19:25 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 4', 'Predictor 0: Few-Shot Set 3'].
+2025/04/04 17:19:25 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 40.0, 40.0, 40.0]
+2025/04/04 17:19:25 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:19:25 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:19:25 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 7 / 7 =====
+Average Metric: 5.00 / 15 (33.3%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:04<00:00,  3.24it/s]
+2025/04/04 17:19:30 INFO dspy.evaluate.evaluate: Average Metric: 5 / 15 (33.3%)
+2025/04/04 17:19:30 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 33.33 with parameters ['Predictor 0: Instruction 0', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:19:30 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 40.0, 40.0, 40.0, 33.33]
+2025/04/04 17:19:30 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:19:30 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:21:22 INFO dspy.teleprompt.mipro_optimizer_v2: Returning best identified program with score 73.33!
+2025/04/04 17:21:22 INFO dspy.clients.huggingface: No running server to kill.
+2025/04/04 17:21:22 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x MIPROV2]
+Demonstrations collected:
+[]
+
+
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x MIPROV2]
+Calculating experiment program results...
+Average Metric: 1001.00 / 1318 (75.9%): 100%|████████████████████████████████████████████████| 1318/1318 [04:29<00:00,  4.88it/s]
+
+2025/04/04 17:25:53 INFO dspy.evaluate.evaluate: Average Metric: 1001 / 1318 (75.9%)
+
+Score:  75.95

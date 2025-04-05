@@ -9,6 +9,7 @@ from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune, prepare_studen
     launch_lms, kill_lms
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.cluster_fewshot_v2 import ClusterFewshotv2
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.teleprompt import Teleprompter
 
@@ -38,12 +39,13 @@ class BetterTogether(Teleprompter):
         self.weight_optimizer = weight_optimizer if weight_optimizer else BootstrapFinetune(metric=metric)
 
         is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch) or isinstance(
-            self.prompt_optimizer, ClusterFewshot) or isinstance(self.prompt_optimizer, MIPROv2)
+            self.prompt_optimizer, ClusterFewshot) or isinstance(self.prompt_optimizer, MIPROv2) \
+            or isinstance(self.prompt_optimizer, ClusterFewshotv2)
         is_supported_weight = isinstance(self.weight_optimizer, BootstrapFinetune)
         if not is_supported_prompt or not is_supported_weight:
             raise ValueError(
                 "The BetterTogether optimizer only supports the following optimizers for now: BootstrapFinetune, "
-                "BootstrapFewShotWithRandomSearch, ClusterFewshot and MIPROv2"
+                "BootstrapFewShotWithRandomSearch, ClusterFewshot, ClusterFewshotv2 and MIPROv2"
             )
 
         self.rng = random.Random(seed)
