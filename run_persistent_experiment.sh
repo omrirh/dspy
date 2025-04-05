@@ -12,7 +12,7 @@ MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 
 # Supported values
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
-VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs")
+VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "miprov2")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p")
 
 # Parse arguments
@@ -25,7 +25,7 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help)
             echo "Usage: $0 [--dataset <dataset name>] [--prompt-optimizer <optimizer>] [--strategy <strategy>] [--model <model name>]"
             echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k, iris"
-            echo "  --prompt-optimizer  Specify the prompt optimization method. Default: bfrs. Options: bfrs, clusterfs"
+            echo "  --prompt-optimizer  Specify the prompt optimization method. Default: bfrs. Options: bfrs, clusterfs, miprov2"
             echo "  --strategy          Specify the strategy. Default: p. Options: 'p', 'w', 'p -> w', 'w -> p', 'p -> w -> p'"
             echo "  --model             Specify the model to use. Default: meta-llama/Meta-Llama-3-8B-Instruct"
             exit 0
@@ -54,6 +54,12 @@ if [[ ! " ${VALID_STRATEGIES[@]} " =~ " ${STRATEGY} " ]]; then
     echo "Invalid strategy: $STRATEGY"
     echo "Supported strategies: ${VALID_STRATEGIES[*]}"
     exit 1
+fi
+
+# Auto confirm prompt optimization run with MIPROv2
+if [[ "$PROMPT_OPTIMIZER" == "miprov2" ]]; then
+    export PYTHONUNBUFFERED=1
+    export AUTO_CONFIRM=true
 fi
 
 # Format additional params for log filename

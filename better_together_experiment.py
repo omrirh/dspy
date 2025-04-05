@@ -6,6 +6,7 @@ from dspy.evaluate import Evaluate
 from remote_setup.utils import assign_local_lm
 from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
+from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
@@ -105,6 +106,11 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshot(
             metric=metric,
             num_fewshot=3,
+        )
+    if prompt_optimizer_name == "miprov2":
+        prompt_optimizer = MIPROv2(
+            metric=metric,
+            auto="light",
         )
 
     better_together = BetterTogether(
