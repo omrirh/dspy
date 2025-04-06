@@ -10,7 +10,6 @@ class IrisDataset(Dataset):
         import dspy
 
         iris = datasets.load_iris()
-        feature_names = iris.feature_names  # ['sepal length', 'sepal width', 'petal length', 'petal width']
         target_names = iris.target_names  # ['setosa', 'versicolor', 'virginica']
 
         examples = [
