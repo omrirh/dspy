@@ -176,6 +176,7 @@ class ClusterFewshotv2(Teleprompter):
             if len(examples) <= samples_per_cluster:
                 selected = examples  # If fewer examples than needed, take all
             else:
+                # TODO: select "hardest" question from cluster according to their answer's max entropy probability in ClusterFewshot v3
                 selected = self.get_central_examples(examples=examples, sample_size=samples_per_cluster)
 
             self.ead_set.extend(selected)
@@ -186,6 +187,7 @@ class ClusterFewshotv2(Teleprompter):
         """
         Sorts examples globally based on their impact when used as one-shot examples.
         """
+        # TODO: use EvaluateEntropy in ClusterFewshot v3
         evaluator = Evaluate(
             devset=self.ead_set,
             metric=self.metric,

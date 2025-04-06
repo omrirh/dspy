@@ -8,6 +8,7 @@ from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.bettertogether import BetterTogether
+from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.cluster_fewshot_v2 import ClusterFewshotv2
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
@@ -102,6 +103,12 @@ def main(dataset, prompt_optimizer, strategy, model):
             num_threads=6
         )
 
+    if prompt_optimizer_name == "clusterfs":
+        prompt_optimizer = ClusterFewshot(
+            metric=metric,
+            num_fewshot=3,
+        )
+
     if prompt_optimizer_name == "clusterfsv2":
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
@@ -129,7 +136,7 @@ def main(dataset, prompt_optimizer, strategy, model):
             valset_ratio=0.1
         )
     """
-    demonstrations set by ClusterFewshot achieving 82% accuracy on GSM8K (standalone mode):
+    Demonstrations set selected by ClusterFewshot achieving 82.11% accuracy on GSM8K (standalone mode):
     --------------------------------------------------------------------
     optimized_demos = [dspy.Example({'question': 'Wanda has 62 crayons. Dina has 28 and Jacob has two fewer crayons than Dina. How many crayons do they have in total?',
             'gold_reasoning': 'Jacob has 28 - 2 = <<28-2=26>>26 crayons. You can find the total number of crayons by adding the number of crayons each person has: 26 crayons + 62 crayons + 28 crayons = <<26+62+28=116>>116 crayons',

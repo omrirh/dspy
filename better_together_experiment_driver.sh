@@ -6,7 +6,7 @@ source ../dspy_venv/bin/activate
 
 # Default values
 DATASET="gsm8k"
-PROMPT_OPTIMIZER="bfrs"
+PROMPT_OPTIMIZER="clusterfs"
 STRATEGY="p"
 MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 

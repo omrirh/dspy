@@ -34,10 +34,7 @@ class EvaluateEntropy(Evaluate):
                 probs = softmax(prediction.logits)
                 pred_entropy = entropy(probs, base=2)
 
-                if success:  # Correct prediction
-                    total_entropy += pred_entropy
-                else:  # Incorrect prediction, apply penalty
-                    total_entropy += self.penalty_factor * pred_entropy
+                total_entropy += pred_entropy if success else self.penalty_factor * pred_entropy
             else:
                 raise ValueError("Prediction object must contain 'logits' for entropy calculation.")
 
