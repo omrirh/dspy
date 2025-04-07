@@ -112,7 +112,7 @@ class ClusterFewshotv2(Teleprompter):
         logger.info(f"Generating {len(data)} examples embeddings for clustering ...")
         if self.iris:
             embeddings = np.array([
-                [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
+                [ex.sepal_length, ex.sepal_width, ex.petal_length, ex.petal_width]
                 for ex in data
             ])
         else:
@@ -147,7 +147,7 @@ class ClusterFewshotv2(Teleprompter):
         Visualizes clustered embeddings in 2D using t-SNE and saves the plot to a file.
         """
         logger.info("Performing t-SNE dimensionality reduction for visualization...")
-        tsne = TSNE(n_components=2, random_state=42, perplexity=min(len(self.trainset), len(self.valset)) - 1)
+        tsne = TSNE(n_components=2, random_state=42, perplexity=max(2, min(50, len(embeddings) // 3)))
         embeddings_2d = tsne.fit_transform(embeddings)
 
         # Plot clusters
@@ -156,7 +156,7 @@ class ClusterFewshotv2(Teleprompter):
             embeddings_2d[:, 0], embeddings_2d[:, 1], c=cluster_labels, cmap='tab10', alpha=0.7
         )
         plt.colorbar(scatter, label="Cluster Labels")
-        plt.title(f"t-SNE of {'Training' if train else 'Validation'} Semantic Embeddings Clusters (K={num_clusters})")
+        plt.title(f"t-SNE of {'Training' if train else 'Validation'} Semantic Embedding Clusters\nK={num_clusters}\nsize={len(embeddings)}")
         plt.xlabel("t-SNE Dimension 1")
         plt.ylabel("t-SNE Dimension 2")
 
