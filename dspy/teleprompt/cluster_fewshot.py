@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
+from sklearn.metrics import silhouette_score
 from sentence_transformers import SentenceTransformer
 
 from dspy.teleprompt.teleprompt import Teleprompter
@@ -12,15 +13,16 @@ from dspy.evaluate import Evaluate
 
 logger = logging.getLogger(__name__)
 
+MIN_CLUSTERS: int = 3
+MAX_CLUSTERS: int = 5
+
 
 class ClusterFewshot(Teleprompter):
     def __init__(
             self,
             metric=None,
             metric_threshold=None,
-            num_fewshot: int = 3,
             descending: bool = True,
-            embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
             sampling_strategy: str = "top_n",
     ):
         """
@@ -32,10 +34,6 @@ class ClusterFewshot(Teleprompter):
                 Function to evaluate the model's predictions.
             metric_threshold: Optional[float]
                 Threshold for metric-based filtering.
-            num_fewshot: int
-                Number of few-shot demonstrations (also number of clusters).
-            embedding_model: str
-                Pretrained model for generating semantic embeddings.
             descending: bool
                 Whether to sort examples within each cluster
                     in descending order of impact as one-shot demonstrations.
@@ -46,14 +44,11 @@ class ClusterFewshot(Teleprompter):
         self.metric = metric
         self.metric_threshold = metric_threshold
 
-        self.N = num_fewshot
         self.descending = descending
         self.sampling_strategy = sampling_strategy
         self.iris = None  # Identifying dataset for embedding matter
 
-        # Load sentence embedding model
-        self.embedding_model = SentenceTransformer(embedding_model)
-
+        self.N = None
         self.valset = None
         self.student = None
         self.training_clusters = None
@@ -80,6 +75,9 @@ class ClusterFewshot(Teleprompter):
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
         self._sample_validation_clusters()
+
+        exit(0)
+
         self._sort_examples_as_demos()
         self.collect_fewshot_subset()
 
@@ -94,47 +92,79 @@ class ClusterFewshot(Teleprompter):
         return self.student
 
     def _cluster_examples(self, train=True):
-        """
-        Uses semantic embeddings to cluster the training/validation set into N groups.
-        """
         data = self.trainset if train else self.valset
 
-        # Cluster by example question of dataset is GSM8K/HotPotQA.
-        # Else, Cluster by Iris attributes (vectors of petal/sepal attributes)
-        logger.info(f"Generating {len(data)} examples embeddings for clustering ...")
         if self.iris:
             embeddings = np.array([
                 [ex.sepal_length, ex.sepal_width, ex.petal_length, ex.petal_width]
                 for ex in data
             ])
+            best_k = 3   # setosa, versicolor or virginica
+            best_embedding_model = None
+            cluster_labels = KMeans(n_clusters=best_k, random_state=42, n_init=10).fit_predict(embeddings)
         else:
             texts = [ex.question for ex in data]
+            candidate_embedding_models = [
+                "sentence-transformers/all-MiniLM-L6-v2",
+                "sentence-transformers/all-mpnet-base-v2",
+                "sentence-transformers/gtr-t5-base"
+            ]
 
-            # maps examples to 384 dimensional dense vector space
-            embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
+            best_score = -1
+            best_k = None
+            best_embedding_model = None
+            best_labels = None
+            best_embeddings = None
 
-        logger.info(f"Clustering into {self.N} clusters...")
-        kmeans = KMeans(n_clusters=self.N, random_state=42, n_init=10)
-        cluster_labels = kmeans.fit_predict(embeddings)
+            logger.info(f"Searching for best combination of "
+                        f"{'training' if train else 'validation'} set semantic embeddings and K...")
 
-        clusters = {i: [] for i in range(self.N)}
+            for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
+                for model_id in candidate_embedding_models:
+                    embedding_model = SentenceTransformer(model_id)
+                    embeddings = embedding_model.encode(texts, convert_to_numpy=True)
+
+                    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+                    labels = kmeans.fit_predict(embeddings)
+                    score = silhouette_score(embeddings, labels)
+
+                    if score > best_score:
+                        best_score = score
+                        best_k = k
+                        best_embedding_model = model_id
+                        best_labels = labels
+                        best_embeddings = embeddings
+
+            logger.info(f"Selected model: {best_embedding_model} with K={best_k} (silhouette={best_score:.3f})")
+
+            self.embedding_model = SentenceTransformer(best_embedding_model)
+            embeddings = best_embeddings
+            cluster_labels = best_labels
+
+        clusters = {i: [] for i in range(best_k)}
         for idx, label in enumerate(cluster_labels):
             clusters[label].append(self.trainset[idx] if train else self.valset[idx])
 
         self._visualize_clusters(
             embeddings,
+            best_embedding_model.split("/")[-1],
             cluster_labels,
-            self.N,
+            best_k,
             train,
             save_path=f"{'training' if train else 'validation'}_clusters.png"
         )
 
-        logger.info(f"{'Training' if train else 'Validation'} examples clustering "
-                    f"by semantic embedding completed (K={self.N}).")
+        logger.info(f"{'Training' if train else 'Validation'} clustering complete "
+                    f"with model={best_embedding_model if best_embedding_model else 'N/A'} and K={best_k}.")
+
+        if train:
+            self.N = best_k
 
         return clusters
 
-    def _visualize_clusters(self, embeddings, cluster_labels, num_clusters, train, save_path):
+    def _visualize_clusters(
+            self, embeddings, embedding_model, cluster_labels, num_clusters, train, save_path
+    ):
         """
         Visualizes clustered embeddings in 2D using t-SNE and saves the plot to a file.
         """
@@ -148,12 +178,17 @@ class ClusterFewshot(Teleprompter):
             embeddings_2d[:, 0], embeddings_2d[:, 1], c=cluster_labels, cmap='tab10', alpha=0.7
         )
         plt.colorbar(scatter, label="Cluster Labels")
-        plt.title(f"t-SNE of {'Training' if train else 'Validation'} Semantic Embedding Clusters\nK={num_clusters}\nsize={len(embeddings)}")
+        plt.title(f"t-SNE of {'Training' if train else 'Validation'} Semantic Embedding Clusters\n"
+                  f"K={num_clusters}\n"
+                  f"size={len(embeddings)}\n"
+                  f"embedding model={embedding_model if embedding_model else 'not used'}")
         plt.xlabel("t-SNE Dimension 1")
         plt.ylabel("t-SNE Dimension 2")
 
-        plt.savefig(save_path)
-        plt.close()
+        # plt.savefig(save_path)
+        # plt.close()
+
+        plt.show()
 
         logger.info(f"Cluster visualization saved to {save_path}.")
 
@@ -162,7 +197,8 @@ class ClusterFewshot(Teleprompter):
         Selects most central examples from each validation cluster to form a set for EAD testing.
         """
         self.ead_set = []
-        samples_per_cluster = 3  # TODO: fixed number. consider a dynamic way (maybe self.N?)
+        num_validation_clusters = len(self.validation_clusters.keys())
+        samples_per_cluster = 3 if num_validation_clusters < MAX_CLUSTERS else 2
 
         for cluster_id, examples in self.validation_clusters.items():
             if len(examples) <= samples_per_cluster:
@@ -172,7 +208,7 @@ class ClusterFewshot(Teleprompter):
 
             self.ead_set.extend(selected)
 
-        logger.info(f"Validation set assembled with {len(self.ead_set)} examples.")
+        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} examples.")
 
     def _sort_examples_as_demos(self):
         """
@@ -181,7 +217,7 @@ class ClusterFewshot(Teleprompter):
         evaluator = Evaluate(
             devset=self.ead_set,
             metric=self.metric,
-            num_threads=12,
+            num_threads=len(self.ead_set),
         )
         student_copy = self.student.deepcopy()
 
@@ -199,7 +235,7 @@ class ClusterFewshot(Teleprompter):
             reverse=self.descending,
         )
 
-        logger.info(f"Re-ordering clusters by demonstrations ranks")
+        logger.info(f"Ordering clusters by demonstrations ranks")
         self.training_clusters = {
             cluster_id: sorted(
                 [ex for ex in cluster_examples if ex in self.ranked_examples],
@@ -213,8 +249,8 @@ class ClusterFewshot(Teleprompter):
 
     def _evaluate_example_as_demo(self, example, evaluator, student):
         """
-        Evaluates an example by measuring how well it helps the student predict
-        when used as a sole demonstration.
+        Evaluates an example by measuring how well it demonstrate the student
+        to predict correctly when used as a sole demonstration.
         """
         # TODO: Clear the student's demonstrations prior evaluation ?
 
@@ -306,11 +342,9 @@ class ClusterFewshot(Teleprompter):
 
                 # Calculate cluster strength as the mean rank of its examples
                 cluster_ranks = [self.ranked_examples[ex] for ex in cluster_examples]
-                cluster_strength = np.mean(
-                    cluster_ranks)  # TODO: examples with top global ranks might be considered as outliers (ignored)
-
+                cluster_strength = np.mean(cluster_ranks)
                 # Compute how many slots to allocate for this cluster
-                proportion = cluster_strength / self._sum_of_clusters_mean_rank  # TODO: examine edge use-cases for this proportion
+                proportion = cluster_strength / self._sum_of_clusters_mean_rank
                 num_slots = int(self.N * proportion)
 
                 # Select top-ranked examples from the cluster based on this proportion

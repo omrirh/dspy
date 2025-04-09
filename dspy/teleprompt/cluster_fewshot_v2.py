@@ -83,7 +83,7 @@ class ClusterFewshotv2(Teleprompter):
 
         self.iris = False if 'question' in trainset[0]._input_keys else True
 
-        logger.info("Compiling the student program using ClusteFewshot optimizer...")
+        logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
         self._sample_validation_clusters()

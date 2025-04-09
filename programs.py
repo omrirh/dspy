@@ -38,7 +38,7 @@ class IrisSignature(dspy.Signature):
     petal_width = dspy.InputField()
     sepal_length = dspy.InputField()
     sepal_width = dspy.InputField()
-    answer = dspy.OutputField(desc='setosa, versicolor, or virginica')
+    answer = dspy.OutputField(desc='setosa, versicolor or virginica')
 
 
 class IrisProgram(dspy.Module):
