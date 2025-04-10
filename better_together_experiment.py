@@ -106,13 +106,11 @@ def main(dataset, prompt_optimizer, strategy, model):
     if prompt_optimizer_name == "clusterfs":
         prompt_optimizer = ClusterFewshot(
             metric=metric,
-            num_fewshot=3,
         )
 
     if prompt_optimizer_name == "clusterfsv2":
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
-            num_fewshot=3,
         )
     if prompt_optimizer_name == "miprov2":
         prompt_optimizer = MIPROv2(

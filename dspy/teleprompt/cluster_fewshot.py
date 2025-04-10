@@ -44,11 +44,12 @@ class ClusterFewshot(Teleprompter):
         self.metric = metric
         self.metric_threshold = metric_threshold
 
-        self.descending = descending
         self.sampling_strategy = sampling_strategy
-        self.iris = None  # Identifying dataset for embedding matter
 
         self.N = None
+        self.iris = None  # Identifying dataset for embedding matter
+        self.descending = descending
+        self.embedding_model = None
         self.valset = None
         self.student = None
         self.training_clusters = None
@@ -75,9 +76,6 @@ class ClusterFewshot(Teleprompter):
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
         self._sample_validation_clusters()
-
-        exit(0)
-
         self._sort_examples_as_demos()
         self.collect_fewshot_subset()
 
@@ -92,6 +90,10 @@ class ClusterFewshot(Teleprompter):
         return self.student
 
     def _cluster_examples(self, train=True):
+        """
+        Performs embeddings & K-Means search to cluster the training/validation sets
+        into semantic groups.
+        """
         data = self.trainset if train else self.valset
 
         if self.iris:
@@ -121,7 +123,7 @@ class ClusterFewshot(Teleprompter):
 
             for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
                 for model_id in candidate_embedding_models:
-                    embedding_model = SentenceTransformer(model_id)
+                    embedding_model = SentenceTransformer(model_id, device='cpu')
                     embeddings = embedding_model.encode(texts, convert_to_numpy=True)
 
                     kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
@@ -137,7 +139,7 @@ class ClusterFewshot(Teleprompter):
 
             logger.info(f"Selected model: {best_embedding_model} with K={best_k} (silhouette={best_score:.3f})")
 
-            self.embedding_model = SentenceTransformer(best_embedding_model)
+            self.embedding_model = SentenceTransformer(best_embedding_model, device='cpu')
             embeddings = best_embeddings
             cluster_labels = best_labels
 
@@ -185,10 +187,8 @@ class ClusterFewshot(Teleprompter):
         plt.xlabel("t-SNE Dimension 1")
         plt.ylabel("t-SNE Dimension 2")
 
-        # plt.savefig(save_path)
-        # plt.close()
-
-        plt.show()
+        plt.savefig(save_path)
+        plt.close()
 
         logger.info(f"Cluster visualization saved to {save_path}.")
 
@@ -218,6 +218,7 @@ class ClusterFewshot(Teleprompter):
             devset=self.ead_set,
             metric=self.metric,
             num_threads=len(self.ead_set),
+            display_progress=True,
         )
         student_copy = self.student.deepcopy()
 

@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
+from sklearn.metrics import silhouette_score, davies_bouldin_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sentence_transformers import SentenceTransformer
 
 from dspy.teleprompt.teleprompt import Teleprompter
@@ -12,15 +15,16 @@ from dspy.evaluate import Evaluate
 
 logger = logging.getLogger(__name__)
 
+MIN_CLUSTERS: int = 3
+MAX_CLUSTERS: int = 5
+
 
 class ClusterFewshotv2(Teleprompter):
     def __init__(
             self,
             metric=None,
             metric_threshold=None,
-            num_fewshot: int = 3,
             descending: bool = True,
-            embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
     ):
         """
         ClusterFewshotv2: Optimized few-shot selection using clustering over semantic embeddings
@@ -31,10 +35,6 @@ class ClusterFewshotv2(Teleprompter):
                 Function to evaluate the model's predictions.
             metric_threshold: Optional[float]
                 Threshold for metric-based filtering.
-            num_fewshot: int
-                Number of few-shot demonstrations (also number of clusters).
-            embedding_model: str
-                Pretrained model for generating semantic embeddings.
             descending: bool
                 Whether to sort examples per-cluster/globally
                     in descending order of impact as one-shot demonstrations.
@@ -42,9 +42,6 @@ class ClusterFewshotv2(Teleprompter):
         super().__init__()
         self.metric = metric
         self.metric_threshold = metric_threshold
-
-        self.N = num_fewshot
-        self.descending = descending
 
         # Sampling strategies to assemble the few-shot subsets
         self.sampling_strategies = [
@@ -54,11 +51,10 @@ class ClusterFewshotv2(Teleprompter):
             "central",
         ]
 
+        self.N = None
         self.iris = None  # Identifying dataset for embedding matter
-
-        # Load sentence embedding model
-        self.embedding_model = SentenceTransformer(embedding_model)
-
+        self.descending = descending
+        self.embedding_model = None
         self.valset = None
         self.student = None
         self.training_clusters = None
@@ -101,48 +97,108 @@ class ClusterFewshotv2(Teleprompter):
 
         return self.student
 
-    def _cluster_examples(self, train=True):
+    def _cluster_examples(self, train=True, use_pca=True, pca_dim=50):
         """
-        Uses semantic embeddings to cluster the training/validation set into N groups.
+        Performs embeddings & K search then applies K-Means over training/validation sets
+        into semantic groups.
         """
         data = self.trainset if train else self.valset
+        clusters = None
 
-        # Cluster by example question if dataset is GSM8K/HotPotQA.
-        # Else, Cluster by Iris attributes (vectors of petal/sepal attributes)
-        logger.info(f"Generating {len(data)} examples embeddings for clustering ...")
         if self.iris:
             embeddings = np.array([
                 [ex.sepal_length, ex.sepal_width, ex.petal_length, ex.petal_width]
                 for ex in data
             ])
+            best_k = 3  # setosa, versicolor or virginica
+            best_embedding_model = None
+            cluster_labels = KMeans(
+                n_clusters=best_k,
+                init='k-means++',
+                n_init=20, max_iter=500,
+                random_state=42
+            ).fit_predict(embeddings)
         else:
             texts = [ex.question for ex in data]
+            candidate_embedding_models = [
+                "sentence-transformers/all-MiniLM-L6-v2",
+                "sentence-transformers/all-mpnet-base-v2",
+                "sentence-transformers/gtr-t5-base"
+            ]
 
-            # maps examples to 384 dimensional dense vector space
-            embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
+            best_score = -np.inf
+            best_k = None
+            best_embedding_model = None
+            best_labels = None
+            best_embeddings = None
 
-        logger.info(f"Clustering into {self.N} clusters...")
-        kmeans = KMeans(n_clusters=self.N, random_state=42, n_init=10)
-        cluster_labels = kmeans.fit_predict(embeddings)
+            logger.info(f"Searching for best combination of {'training' if train else 'validation'} "
+                        f"set semantic embeddings and K using hybrid clustering score...")
 
-        clusters = {i: [] for i in range(self.N)}
-        for idx, label in enumerate(cluster_labels):
-            clusters[label].append(self.trainset[idx] if train else self.valset[idx])
+            for model_id in candidate_embedding_models:
+                logger.info(f"Encoding {'training' if train else 'validation'} examples with model: {model_id}")
+                embedding_model = SentenceTransformer(model_id, device='cpu')
+                embeddings = embedding_model.encode(texts, convert_to_numpy=True)
+
+                # Optional dimensionality reduction (e.g., for semantic noise reduction)
+                if use_pca:
+                    logger.info(f"Reducing embedding dimensions to {pca_dim} with PCA")
+                    embeddings = PCA(n_components=pca_dim).fit_transform(embeddings)
+
+                # Normalize embeddings before clustering
+                embeddings = StandardScaler().fit_transform(embeddings)
+
+                for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
+                    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=500, random_state=42)
+                    labels = kmeans.fit_predict(embeddings)
+
+                    sil_score = silhouette_score(embeddings, labels)
+                    db_score = davies_bouldin_score(embeddings, labels)
+
+                    hybrid_score = sil_score - 0.25 * db_score
+
+                    logger.info(f"Model: {model_id}, K={k}, Silhouette={sil_score:.3f}, "
+                                f"Davies-Bouldin={db_score:.3f}, Hybrid Score={hybrid_score:.3f}")
+
+                    if hybrid_score > best_score:
+                        best_score = hybrid_score
+                        best_k = k
+                        best_embedding_model = model_id
+                        best_labels = labels
+                        best_embeddings = embeddings
+
+            logger.info(f"Selected model: {best_embedding_model} with K={best_k} "
+                        f"(Hybrid Score={best_score:.3f})")
+
+            # Store the best model and clustering for later use
+            self.embedding_model = SentenceTransformer(best_embedding_model, device='cpu')
+            embeddings = best_embeddings
+            cluster_labels = best_labels
+
+            clusters = {i: [] for i in range(best_k)}
+            for idx, label in enumerate(cluster_labels):
+                clusters[label].append(self.trainset[idx] if train else self.valset[idx])
 
         self._visualize_clusters(
             embeddings,
+            best_embedding_model,
             cluster_labels,
-            self.N,
+            best_k,
             train,
             save_path=f"{'training' if train else 'validation'}_clusters.png"
         )
 
-        logger.info(f"{'Training' if train else 'Validation'} examples clustering "
-                    f"by semantic embedding completed (K={self.N}).")
+        logger.info(f"{'Training' if train else 'Validation'} clustering complete "
+                    f"with model={best_embedding_model if best_embedding_model else 'N/A'} and K={best_k}.")
+
+        if train:
+            self.N = best_k
 
         return clusters
 
-    def _visualize_clusters(self, embeddings, cluster_labels, num_clusters, train, save_path):
+    def _visualize_clusters(
+            self, embeddings, embedding_model, cluster_labels, num_clusters, train, save_path
+    ):
         """
         Visualizes clustered embeddings in 2D using t-SNE and saves the plot to a file.
         """
@@ -156,7 +212,10 @@ class ClusterFewshotv2(Teleprompter):
             embeddings_2d[:, 0], embeddings_2d[:, 1], c=cluster_labels, cmap='tab10', alpha=0.7
         )
         plt.colorbar(scatter, label="Cluster Labels")
-        plt.title(f"t-SNE of {'Training' if train else 'Validation'} Semantic Embedding Clusters\nK={num_clusters}\nsize={len(embeddings)}")
+        plt.title(f"t-SNE of {'Training' if train else 'Validation'} Semantic Embedding Clusters\n"
+                  f"K={num_clusters}\n"
+                  f"size={len(embeddings)}\n"
+                  f"embedding model={embedding_model if embedding_model else 'not used'}")
         plt.xlabel("t-SNE Dimension 1")
         plt.ylabel("t-SNE Dimension 2")
 
@@ -170,28 +229,38 @@ class ClusterFewshotv2(Teleprompter):
         Selects most central examples from each validation cluster to form a set for EAD testing.
         """
         self.ead_set = []
-        samples_per_cluster = 3  # TODO: fixed number. consider a dynamic way (maybe self.N?)
+        student_copy = self.student.deepcopy()
 
         for cluster_id, examples in self.validation_clusters.items():
-            if len(examples) <= samples_per_cluster:
-                selected = examples  # If fewer examples than needed, take all
-            else:
-                # TODO: select "hardest" question from cluster according to their answer's max entropy probability in ClusterFewshot v3
-                selected = self.get_central_examples(examples=examples, sample_size=samples_per_cluster)
+            sample_size = len(examples) // 3
+            logger.info(f"Sampling {sample_size} most central validation examples from cluster no. {cluster_id + 1}")
+            central_examples = self.get_central_examples(examples=examples, sample_size=sample_size)
 
-            self.ead_set.extend(selected)
+            logger.info(f"Collecting hard questions from cluster {cluster_id} sampled examples")
+            evaluator = Evaluate(
+                devset=central_examples,
+                metric=self.metric,
+                num_threads=sample_size,
+                display_progress=True,
+            )
 
-        logger.info(f"Validation set assembled with {len(self.ead_set)} examples.")
+            _, results = evaluator(program=student_copy, return_outputs=True)
+
+            hard_questions = [example for example, _, success in results if not success]
+
+            logger.info(f"Collected {len(hard_questions)} hard questions from cluster {cluster_id}")
+            self.ead_set.extend(hard_questions)
+
+        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions.")
 
     def _sort_examples_as_demos(self):
         """
         Sorts examples globally based on their impact when used as one-shot examples.
         """
-        # TODO: use EvaluateEntropy in ClusterFewshot v3
         evaluator = Evaluate(
             devset=self.ead_set,
             metric=self.metric,
-            num_threads=12,
+            num_threads=len(self.ead_set),
             display_progress=True,
         )
         student_copy = self.student.deepcopy()
@@ -201,7 +270,7 @@ class ClusterFewshotv2(Teleprompter):
         trainset_size = len(self.trainset)
 
         for idx, ex in enumerate(self.trainset):
-            logger.info(f"\n\nEvaluating example {idx+1}/{trainset_size}")
+            logger.info(f"\n\nEvaluating example {idx + 1}/{trainset_size}")
             self.ranked_examples[ex] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
 
         self.global_sorted_examples = sorted(
@@ -210,7 +279,7 @@ class ClusterFewshotv2(Teleprompter):
             reverse=self.descending,
         )
 
-        logger.info(f"Re-ordering clusters by demonstrations ranks")
+        logger.info(f"Ordering clusters by demonstrations ranks")
         self.training_clusters = {
             cluster_id: sorted(
                 [ex for ex in cluster_examples if ex in self.ranked_examples],
@@ -224,23 +293,14 @@ class ClusterFewshotv2(Teleprompter):
 
     def _evaluate_example_as_demo(self, example, evaluator, student):
         """
-        Evaluates an example by measuring how well it helps the student predict
-        when used as a sole demonstration.
+        Evaluates an example by measuring how well it demonstrate the student
+        to predict correctly when used as a sole demonstration.
         """
-        # TODO: Clear the student's demonstrations prior evaluation ?
-
         # If current example was answered correctly, collect reasoning from LM
-        prediction = student(**example.inputs())
-
-        if self.metric:
-            metric_val = self.metric(example, prediction, trace=None)
-        if self.metric_threshold:
-            success = metric_val >= self.metric_threshold
-        else:
-            success = metric_val
+        pred, success = self.answer(student, example)
 
         if success:
-            example.reasoning = prediction.reasoning
+            example.reasoning = pred.reasoning
 
         logger.info(f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
                     f"using the following demonstration "
@@ -278,7 +338,8 @@ class ClusterFewshotv2(Teleprompter):
 
         for cluster_id, _ in self.training_clusters.items():
             for sampling_strategy in fewshot_subsets.keys():
-                logger.info(f"Collecting few-shot subset from cluster no. {cluster_id} using '{sampling_strategy}' sampling strategy")
+                logger.info(
+                    f"Collecting few-shot subset from cluster no. {cluster_id} using '{sampling_strategy}' sampling strategy")
                 fewshot_subsets[sampling_strategy].extend(
                     self.sample_examples_from_cluster(
                         cluster_id=cluster_id,
@@ -363,7 +424,7 @@ class ClusterFewshotv2(Teleprompter):
         student = self.student.deepcopy()
 
         for sampling_strategy in self.sampling_strategies:
-            logger.info(f"\n\nTesting '{sampling_strategy}' sampled few-shot subset")
+            logger.info(f"\n\nTesting '{sampling_strategy}' candidate few-shot subset")
             fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
 
             for _, predictor in student.named_predictors():
@@ -380,3 +441,19 @@ class ClusterFewshotv2(Teleprompter):
         logger.info(
             f"Best few-shot subset sampled according to '{best_strategy}' strategy "
             f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
+
+    def answer(self, student, example):
+        # Clear the student's demonstrations prior evaluation
+        for _, predictor in student.named_predictors():
+            predictor.demos = []
+
+        prediction = student(**example.inputs())
+
+        if self.metric:
+            metric_val = self.metric(example, prediction, trace=None)
+        if self.metric_threshold:
+            success = metric_val >= self.metric_threshold
+        else:
+            success = metric_val
+
+        return prediction, success
