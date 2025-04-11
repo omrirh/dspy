@@ -29,6 +29,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     metric = None
     student = None
     devset = None
+    task_type = None
     exclude_examples = []
 
     dataset_name = dataset
@@ -38,6 +39,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][train_size:train_size + dev_size]
         test_size = 1319  # According to BetterTogether report
         metric = gsm8k_metric
+        task_type = "arithmetic"
         student = CoT()
 
     elif dataset_name == "hotpotqa":
@@ -45,11 +47,13 @@ def main(dataset, prompt_optimizer, strategy, model):
         devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
+        task_type = "multihop"
         student = BasicMH()
 
     elif dataset_name == "iris":
         dataset = IrisDataset()
         metric = dspy.evaluate.answer_exact_match
+        task_type = "classification"
         student = IrisProgram()
         trainset, devset, testset = dataset.get_data_splits()
 
@@ -77,7 +81,6 @@ def main(dataset, prompt_optimizer, strategy, model):
     )
 
     # Retriever model as ColBERTv2
-    # TODO: Retriever issue reported at https://github.com/stanfordnlp/dspy/issues/7966
     COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
     retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
     dspy.configure(rm=retriever)
@@ -111,6 +114,8 @@ def main(dataset, prompt_optimizer, strategy, model):
     if prompt_optimizer_name == "clusterfsv2":
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
+            task_type=task_type,
+            model_name=model,
         )
     if prompt_optimizer_name == "miprov2":
         prompt_optimizer = MIPROv2(
@@ -175,9 +180,9 @@ if __name__ == "__main__":
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
     # # for debugging
-    # dataset = "gsm8k"
+    # dataset = "iris"
     # prompt_optimizer = "clusterfsv2"
-    # strategy = "w"
+    # strategy = "p"
     # model = "meta-llama/Meta-Llama-3-8B-Instruct"
 
     # main(dataset, prompt_optimizer, strategy, model)

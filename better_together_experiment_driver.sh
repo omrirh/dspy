@@ -13,7 +13,7 @@ MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 # Supported values
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
 VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "clusterfsv2" "miprov2")
-VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p")
+VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p" "p -> p")
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
