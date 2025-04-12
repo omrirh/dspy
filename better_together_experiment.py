@@ -1,8 +1,8 @@
 import time
 import dspy
+from dspy.evaluate import Evaluate
 from programs import CoT, BasicMH, IrisProgram
 from dspy.datasets import HotPotQA, IrisDataset
-from dspy.evaluate import Evaluate
 from remote_setup.utils import assign_local_lm
 from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
@@ -115,7 +115,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
-            model_name=model,
+            # model_name=model,
         )
     if prompt_optimizer_name == "miprov2":
         prompt_optimizer = MIPROv2(
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
     # # for debugging
-    # dataset = "iris"
+    # dataset = "gsm8k"
     # prompt_optimizer = "clusterfsv2"
     # strategy = "p"
     # model = "meta-llama/Meta-Llama-3-8B-Instruct"
