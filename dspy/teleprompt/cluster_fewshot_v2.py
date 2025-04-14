@@ -22,9 +22,8 @@ MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n"],
-    "multihop": ["top_n", "central", "cluster_strength"],  # TODO: Still need to figure out compatible sampling.
-    "classification": ["best_in_cluster"],
-    "general": ["central"],
+    "multihop": ["cluster_strength", "central"],  # TODO: Still need to figure out compatible sampling.
+    "classification": ["best_in_cluster", "central"],
 }
 
 CANDIDATE_EMBEDDING_MODELS = [
@@ -48,7 +47,7 @@ class ClusterFewshotv2(Teleprompter):
 
         Args:
             task_type: str
-                Label of the given task type which the final few-shot demonstration set
+                Label of the given task type which the candidate few-shot demonstration sets
                 will be designed accordingly.
             metric: Callable
                 Function to evaluate the model's predictions.
@@ -107,8 +106,10 @@ class ClusterFewshotv2(Teleprompter):
         # TODO: this should support init not only for transformers-based models.
         # TODO: this code only supports one predictor per compilation. should be re-visited?
         if self.use_target_model_embeddings:
+            # ----- NOTE -----
+            # This option requires high CPU for target model loading.
             model_name = self.student.named_predictors()[0][1].lm.model
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name).to("cpu")
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
             self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cpu")
             self.embedding_model_name = model_name
             self.generate_embeddings_func = self.generate_examples_embeddings_from_target_model

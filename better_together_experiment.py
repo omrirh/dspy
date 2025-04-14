@@ -115,7 +115,9 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
+            use_target_model_embeddings=True,
         )
+
     if prompt_optimizer_name == "miprov2":
         prompt_optimizer = MIPROv2(
             metric=metric,
