@@ -43,7 +43,7 @@ class ClusterFewshotv2(Teleprompter):
             use_target_model_embeddings: bool = False
     ):
         """
-        ClusterFewshotv2: Task-adaptive few-shot selection using clustering over semantic embeddings
+        ClusterFewshotv2: Task-adaptive few-shot selection using clustering over examples embeddings
             and example-as-one-shot evaluation.
 
         Args:
@@ -56,11 +56,11 @@ class ClusterFewshotv2(Teleprompter):
                 Threshold for metric-based filtering.
             descending: bool
                 Whether to sort examples per-cluster/globally
-                    in descending order of impact as one-shot demonstrations.
+                in descending order of impact as one-shot demonstrations.
             use_target_model_embeddings: bool
                 Whether to use the target model's input embeddings layer or
                 a candidate SentenceTransformer's semantic embeddings.
-                This option is relevant for running this teleprompter in the
+                This option is relevant when running this teleprompter in the
                 BetterTogether optimization pipeline.
         """
         super().__init__()
@@ -144,21 +144,18 @@ class ClusterFewshotv2(Teleprompter):
         """
         data = self.trainset if train else self.valset
         data_type = 'training' if train else 'validation'
-        embeddings = []
+        examples_embeddings = None
 
         # TODO: think of a better way to generalize that (only supports Iris for now)
         if self.task_type == "classification":
-            for example in data:
-                example_embeddings = np.array(
-                    [example.sepal_length, example.sepal_width, example.petal_length, example.petal_width])
-
-                embeddings.append(example_embeddings)
-                self.examples2embeddings.update({
-                    example: example_embeddings,  # Use the embeddings as the example itself (for Iris)
-                })
+            examples_embeddings = np.array(
+                [
+                    [example.sepal_length, example.sepal_width, example.petal_length, example.petal_width]
+                    for example in data
+                ]
+            )
 
             self.embedding_model_name = "N/A"  # No model was used to create embeddings
-            embeddings = np.array(embeddings)
 
             # setosa, versicolor or virginica
             iris_kinds = sorted(set(ex.answer for ex in data))
@@ -169,11 +166,12 @@ class ClusterFewshotv2(Teleprompter):
             examples_embeddings, cluster_labels, k = self.generate_embeddings_func(
                 examples=data
             )
-            self.examples2embeddings.update({
-                example: example_embeddings
-                for example, example_embeddings
-                in zip(data, examples_embeddings)
-            })
+
+        self.examples2embeddings.update({
+            str(example): example_embeddings
+            for example, example_embeddings
+            in zip(data, examples_embeddings)
+        })
 
         if train:
             self.training_K = k
@@ -186,7 +184,7 @@ class ClusterFewshotv2(Teleprompter):
             clusters[label].append(self.trainset[idx] if train else self.valset[idx])
 
         self._visualize_clusters(
-            embeddings,
+            examples_embeddings,
             self.embedding_model_name,
             cluster_labels,
             k,
@@ -290,7 +288,9 @@ class ClusterFewshotv2(Teleprompter):
         pred, success = self.answer(student, example)
 
         if success:
+            embeddings = self.examples2embeddings.pop(str(example))
             example.reasoning = pred.reasoning
+            self.examples2embeddings[str(example)] = embeddings
 
         if self.task_type == "classification":
             example_visual = (f"sepal_length: {example.sepal_length}, "
@@ -443,7 +443,7 @@ class ClusterFewshotv2(Teleprompter):
             f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
 
     def get_central_examples(self, examples, sample_size):
-        embeddings = [self.examples2embeddings[ex] for ex in examples]
+        embeddings = [self.examples2embeddings[str(ex)] for ex in examples]
         cluster_center = np.mean(embeddings, axis=0)
         distances = np.linalg.norm(embeddings - cluster_center, axis=1)
         selected_indices = np.argsort(distances)[:sample_size]
@@ -539,11 +539,14 @@ class ClusterFewshotv2(Teleprompter):
 
     def generate_example_embeddings_from_candidate_models(self, examples):
         best_k = None
-        best_score = None
+        best_score = -np.inf
         best_labels = None
         best_embeddings = None
         best_embedding_model = None
         best_embedding_model_name = None
+
+        # TODO: Should include also answer label in embeddings?
+        examples = [ex.question for ex in examples]
 
         if not self.embedding_model:
             for model_id in CANDIDATE_EMBEDDING_MODELS:
@@ -588,5 +591,4 @@ class ClusterFewshotv2(Teleprompter):
             best_embeddings = embeddings
 
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
-
         return best_embeddings, best_labels, best_k

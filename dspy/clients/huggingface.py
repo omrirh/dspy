@@ -104,17 +104,10 @@ class HFProvider(Provider):
         device = "cuda" if torch.cuda.is_available() else "cpu"
         logger.info(f"[HF Provider] Using device: {device}")
 
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-        )
         tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(model)
         base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
             model,
             device_map="auto",
-            quantization_config=quantization_config,
         )
 
         lora_config = LoraConfig(
@@ -183,7 +176,7 @@ class HFProvider(Provider):
 
         logger.info("[HF Provider] Reloading base model in bf16 for precise LoRA merging")
         base_model_fp16 = AutoModelForCausalLM.from_pretrained(
-            model,  # Load original non-quantized model
+            model,
             torch_dtype=torch.bfloat16,
             device_map="auto"
         )
