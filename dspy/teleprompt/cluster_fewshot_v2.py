@@ -1,35 +1,28 @@
-# import torch
+import torch
 import logging
 import numpy as np
-from typing import List, Dict
-from datasets import Dataset
+from typing import List, Tuple
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from dspy.primitives import Program, Example
 from sklearn.metrics import silhouette_score
 from sentence_transformers import SentenceTransformer
-# from transformers import (
-#     AutoTokenizer,
-#     PreTrainedTokenizerFast,
-#     AutoModelForCausalLM,
-#     BitsAndBytesConfig,
-# )
-# from remote_setup.utils import (
-#     stop_server_and_clean_resources,
-#     deploy_sglang_model,
-# )
+from transformers import (
+    AutoTokenizer,
+    AutoModelForCausalLM,
+)
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
 
 logger = logging.getLogger(__name__)
 
 MIN_CLUSTERS: int = 3
-MAX_CLUSTERS: int = 5
+MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n"],
-    "multihop": ["top_n", "cluster_strength"],
+    "multihop": ["top_n", "central", "cluster_strength"],  # TODO: Still need to figure out compatible sampling.
     "classification": ["best_in_cluster"],
     "general": ["central"],
 }
@@ -44,10 +37,10 @@ class ClusterFewshotv2(Teleprompter):
     def __init__(
             self,
             task_type: str,
-            # model_name: str,
             metric=None,
             metric_threshold=None,
             descending: bool = True,
+            use_target_model_embeddings: bool = False
     ):
         """
         ClusterFewshotv2: Task-adaptive few-shot selection using clustering over semantic embeddings
@@ -57,9 +50,6 @@ class ClusterFewshotv2(Teleprompter):
             task_type: str
                 Label of the given task type which the final few-shot demonstration set
                 will be designed accordingly.
-            model_name: str
-                Name of the model to use for tokenizing given trainset/valset examples.
-                Currently supported are transformers pre-trained models (e.g. Llama-3-8B-Instruct)
             metric: Callable
                 Function to evaluate the model's predictions.
             metric_threshold: Optional[float]
@@ -67,6 +57,11 @@ class ClusterFewshotv2(Teleprompter):
             descending: bool
                 Whether to sort examples per-cluster/globally
                     in descending order of impact as one-shot demonstrations.
+            use_target_model_embeddings: bool
+                Whether to use the target model's input embeddings layer or
+                a candidate SentenceTransformer's semantic embeddings.
+                This option is relevant for running this teleprompter in the
+                BetterTogether optimization pipeline.
         """
         super().__init__()
         self.metric = metric
@@ -77,13 +72,17 @@ class ClusterFewshotv2(Teleprompter):
             raise ValueError(f"{task_type} task is not supported in ClusterFewshotv2.")
 
         self.task_type = task_type
-        # self.model_name = model_name
+
+        self.tokenizer = None
+        self.embedding_model = None
+        self.embedding_model_name = None
+        self.examples2embeddings = {}  # Used for caching example embeddings (reduce computational overhead)
+        self.use_target_model_embeddings = use_target_model_embeddings
+        self.generate_embeddings_func = None
 
         self.training_K = None
         self.validation_K = None
         self.descending = descending
-        self.embedding_model = None
-        self.embedding_model_name = None
         self.valset = None
         self.student = None
         self.training_clusters = None
@@ -104,6 +103,21 @@ class ClusterFewshotv2(Teleprompter):
         self.student = student.deepcopy()
         self.trainset = trainset
         self.valset = valset
+
+        # TODO: this should support init not only for transformers-based models.
+        # TODO: this code only supports one predictor per compilation. should be re-visited?
+        if self.use_target_model_embeddings:
+            model_name = self.student.named_predictors()[0][1].lm.model
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name).to("cpu")
+            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cpu")
+            self.embedding_model_name = model_name
+            self.generate_embeddings_func = self.generate_examples_embeddings_from_target_model
+
+            if self.tokenizer.pad_token_id is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token or '[PAD]'
+                self.embedding_model.resize_token_embeddings(len(self.tokenizer))
+        else:
+            self.generate_embeddings_func = self.generate_example_embeddings_from_candidate_models
 
         logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
@@ -130,33 +144,36 @@ class ClusterFewshotv2(Teleprompter):
         """
         data = self.trainset if train else self.valset
         data_type = 'training' if train else 'validation'
+        embeddings = []
 
         # TODO: think of a better way to generalize that (only supports Iris for now)
         if self.task_type == "classification":
-            embeddings = np.array([
-                [ex.sepal_length, ex.sepal_width, ex.petal_length, ex.petal_width]
-                for ex in data
-            ])
+            for example in data:
+                example_embeddings = np.array(
+                    [example.sepal_length, example.sepal_width, example.petal_length, example.petal_width])
+
+                embeddings.append(example_embeddings)
+                self.examples2embeddings.update({
+                    example: example_embeddings,  # Use the embeddings as the example itself (for Iris)
+                })
+
+            self.embedding_model_name = "N/A"  # No model was used to create embeddings
+            embeddings = np.array(embeddings)
 
             # setosa, versicolor or virginica
             iris_kinds = sorted(set(ex.answer for ex in data))
-            cluster_labels = [iris_kinds.index(ex.answer) for ex in data]
-
             k = len(iris_kinds)
-            embedding_model_name = "N/A"  # No model was used to create embeddings
+            cluster_labels = [iris_kinds.index(example.answer) for example in data]
         else:
             logger.info(f"Generating {len(data)} {data_type} examples embeddings")
-
-            # tokenizer = None
-            # model = None
-
-            # embeddings = [self.generate_example_embeddings(example=example, tokenizer=tokenizer, model=model) for example in data]
-
-            embeddings, cluster_labels = self.generate_examples_embeddings(texts=[ex.question for ex in data],
-                                                                           data_type=data_type)
-            embedding_model_name = self.embedding_model_name
-
-            k = len(set(cluster_labels))
+            examples_embeddings, cluster_labels, k = self.generate_embeddings_func(
+                examples=data
+            )
+            self.examples2embeddings.update({
+                example: example_embeddings
+                for example, example_embeddings
+                in zip(data, examples_embeddings)
+            })
 
         if train:
             self.training_K = k
@@ -170,7 +187,7 @@ class ClusterFewshotv2(Teleprompter):
 
         self._visualize_clusters(
             embeddings,
-            embedding_model_name,
+            self.embedding_model_name,
             cluster_labels,
             k,
             data_type,
@@ -269,15 +286,11 @@ class ClusterFewshotv2(Teleprompter):
         Evaluates an example by measuring how well it demonstrate the student
         to predict correctly when used as a sole demonstration.
         """
-        # If current example was answered correctly, collect reasoning from LM
+        # If current example was answered correctly by the student, collect reasoning from LM
         pred, success = self.answer(student, example)
 
         if success:
             example.reasoning = pred.reasoning
-
-        logger.info(f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
-                    f"using the following demonstration "
-                    f"(reasoning info {'is not' if not success else 'is'} included):\n")
 
         if self.task_type == "classification":
             example_visual = (f"sepal_length: {example.sepal_length}, "
@@ -288,7 +301,12 @@ class ClusterFewshotv2(Teleprompter):
         else:
             example_visual = f"{example.question} --> {example.answer}"
 
-        logger.info(example_visual)
+        logger.info(
+            f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
+            f"using the following demonstration "
+            f"(reasoning info {'is not' if not success else 'is'} included):\n"
+            f"{example_visual}"
+        )
 
         cached_demos = [pred.demos for _, pred in student.named_predictors()]
 
@@ -318,7 +336,7 @@ class ClusterFewshotv2(Teleprompter):
         for sampling_strategy in sampling_strategies:
             logger.info(
                 f"Collecting candidate few-shot using '{sampling_strategy}' "
-                f"sampling strategy ({self.task_type} optimization)"
+                f"sampling strategy ({self.task_type} task optimization)"
             )
             for cluster_id, _ in self.training_clusters.items():
                 adaptive_fewshot_subsets[sampling_strategy].extend(
@@ -363,15 +381,15 @@ class ClusterFewshotv2(Teleprompter):
                             cluster_ranks = [self.ranked_examples[ex] for ex in cluster][:self.N]
                             self._sum_of_clusters_strength += np.mean(cluster_ranks) - 0.3 * np.std(cluster_ranks)
                             # TODO: Should dynamically set std scaler param
-                            # TODO: need to re-visit implementation
 
                 # Calculate cluster strength as the consistency
                 # rate of performance Over a semantic group
+                # TODO: need to re-visit implementation
                 cluster_ranks = [self.ranked_examples[ex] for ex in cluster_examples][:self.N]
                 cluster_strength = np.mean(cluster_ranks) - 0.3 * np.std(cluster_ranks)
 
                 # Compute how many slots to allocate for this cluster
-                proportion = cluster_strength / self._sum_of_clusters_strength  # TODO: examine edge use-cases for this proportion
+                proportion = cluster_strength / self._sum_of_clusters_strength
                 num_slots = round(self.N * proportion)
 
                 # Select top-ranked examples from the cluster based on this proportion
@@ -380,6 +398,11 @@ class ClusterFewshotv2(Teleprompter):
 
             elif sampling_strategy == "central":
                 sampled_examples = self.get_central_examples(examples=cluster_examples, sample_size=1)
+
+        logger.info(
+            f"{len(sampled_examples)}/{self.N} slots given to cluster {cluster_id + 1} "
+            f"in the few-shot subset according to {sampling_strategy} sampling strategy."
+        )
 
         return sampled_examples
 
@@ -420,13 +443,7 @@ class ClusterFewshotv2(Teleprompter):
             f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
 
     def get_central_examples(self, examples, sample_size):
-        if self.task_type == "classification":
-            embeddings = np.array([
-                [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
-                for ex in examples
-            ])
-        else:
-            embeddings = self.embedding_model.encode([ex.question for ex in examples], convert_to_numpy=True)
+        embeddings = [self.examples2embeddings[ex] for ex in examples]
         cluster_center = np.mean(embeddings, axis=0)
         distances = np.linalg.norm(embeddings - cluster_center, axis=1)
         selected_indices = np.argsort(distances)[:sample_size]
@@ -434,20 +451,106 @@ class ClusterFewshotv2(Teleprompter):
 
         return sampled_examples
 
-    def generate_examples_embeddings(self, texts, data_type):
+    def answer(self, student, example):
+        prediction = student(**example.inputs())
+
+        if self.metric:
+            metric_val = self.metric(example, prediction, trace=None)
+        if self.metric_threshold:
+            success = metric_val >= self.metric_threshold
+        else:
+            success = metric_val
+
+        return prediction, success
+
+    def generate_examples_embeddings_from_target_model(
+            self,
+            examples: List[Example],
+            max_seq_length: int = 1024,
+    ) -> Tuple[np.ndarray, List[int], int]:
+        """
+        Generates a mean-pooled input embedding for a DSPy `Example`,
+        aligning with the model's chat-based fine-tuning input format.
+        """
+        embeddings = []
+
+        logger.info(f"Encoding examples with model: {self.embedding_model_name}")
+
+        for example in examples:
+            # TODO: this should be generic for all I/O type fields (i.e. now only QA)
+            conversation_format = [
+                {"role": "user", "content": example.question},
+                {"role": "assistant", "content": example.answer},
+            ]
+
+            chat_str = self.tokenizer.apply_chat_template(
+                conversation=conversation_format,
+                tokenize=False,
+                add_generation_prompt=False,
+            )
+
+            encoding = self.tokenizer(
+                chat_str,
+                return_tensors="pt",
+                padding="max_length",
+                truncation=True,
+                max_length=max_seq_length,
+            )
+
+            input_ids = encoding["input_ids"].to(self.embedding_model.device)
+
+            if input_ids.dim() == 1:
+                input_ids = input_ids.unsqueeze(0)
+
+            input_ids = input_ids.to(self.embedding_model.device)
+
+            # TODO: re-visit the logic of this to understand the embeddings better
+            with torch.no_grad():
+                token_embs = self.embedding_model.get_input_embeddings()(input_ids)  # (1, seq_len, hidden_dim)
+                mean_emb = token_embs.mean(dim=1).squeeze(0)  # (hidden_dim,)
+
+            embeddings.append(mean_emb.cpu().numpy())
+
         best_score = -np.inf
         best_k = None
-        best_embedding_model = None
+        best_labels = None
+        embeddings = np.array(embeddings)
+
+        logger.info(f"Searching best K for {self.embedding_model_name} model embeddings")
+
+        for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
+            kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=400, random_state=42)
+            labels = kmeans.fit_predict(embeddings)
+            score = silhouette_score(embeddings, labels)
+
+            logger.info(f"K={k}, Silhouette Score={score:.3f}")
+
+            if score > best_score:
+                best_score = score
+                best_k = k
+                best_labels = labels
+
+        logger.info(f"Selected K={best_k} with silhouette score={best_score:.3f}")
+
+        k = best_k
+        cluster_labels = best_labels
+
+        return np.array(embeddings), cluster_labels, k
+
+    def generate_example_embeddings_from_candidate_models(self, examples):
+        best_k = None
+        best_score = None
         best_labels = None
         best_embeddings = None
+        best_embedding_model = None
+        best_embedding_model_name = None
 
-        logger.info("Searching for best combination of semantic embeddings & K that maximizes silhouette score...")
         if not self.embedding_model:
             for model_id in CANDIDATE_EMBEDDING_MODELS:
-                logger.info(f"Encoding {data_type} examples with model: {model_id}")
+                logger.info(f"Encoding examples with model: {model_id}")
 
                 embedding_model = SentenceTransformer(model_id, device='cpu')
-                embeddings = embedding_model.encode(texts, convert_to_numpy=True)
+                embeddings = embedding_model.encode(examples, convert_to_numpy=True)
 
                 for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
                     kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=500, random_state=42)
@@ -467,7 +570,7 @@ class ClusterFewshotv2(Teleprompter):
             self.embedding_model = best_embedding_model
             self.embedding_model_name = best_embedding_model_name
         else:
-            embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
+            embeddings = self.embedding_model.encode(examples, convert_to_numpy=True)
 
             for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
                 kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=400, random_state=42)
@@ -486,56 +589,4 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
 
-        return best_embeddings, best_labels
-
-    def answer(self, student, example):
-        prediction = student(**example.inputs())
-
-        if self.metric:
-            metric_val = self.metric(example, prediction, trace=None)
-        if self.metric_threshold:
-            success = metric_val >= self.metric_threshold
-        else:
-            success = metric_val
-
-        return prediction, success
-
-        # def generate_example_embeddings(example, tokenizer, model, max_seq_length=1024):
-    #     """
-    #     Returns a mean-pooled embedding of a tokenized example using the model's input embedding layer.
-
-    #     Formats the example as a single-turn chat (user → assistant), applies the tokenizer’s chat template,
-    #     and averages the resulting token embeddings.Used for clustering examples in the same space
-    #     used during model fine-tuning.
-
-    #     Args:
-    #         example (Dict[str, str]): Contains 'question' and 'answer' fields.
-    #         tokenizer (PreTrainedTokenizerFast): Tokenizer aligned with the model.
-    #         model (AutoModelForCausalLM): The causal LM used for inference or fine-tuning.
-    #         max_seq_length (int): Max token length for the input. Default is 1024.
-
-    #     Returns:
-    #         np.ndarray: 1D array of mean token embedding.
-    #     """
-    #     def as_chat_format(example: Dict[str, str]) -> List[Dict[str, str]]:
-    #         # TODO: for other tasks than arithmetic/multihop, the input/output fields might vary.
-    #         return [
-    #             {"role": "user", "content": example.question},
-    #             {"role": "assistant", "content": example.answer},
-    #         ]
-
-    #     input_ids = tokenizer.apply_chat_template(
-    #         conversation=as_chat_format(example=example),
-    #         tokenize=True,
-    #         return_tensors="pt",
-    #         padding="max_length",
-    #         truncation=True,
-    #         max_length=max_seq_length,
-    #         add_generation_prompt=False,
-    #     )["input_ids"].to(model.device)
-
-    #     with torch.no_grad():
-    #         embedding_layer = model.get_input_embeddings()
-    #         token_embs = embedding_layer(input_ids)
-    #         mean_emb = token_embs.mean(dim=1).squeeze(0)
-    #         return mean_emb.cpu().numpy()
+        return best_embeddings, best_labels, best_k
