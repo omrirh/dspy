@@ -110,7 +110,7 @@ class ClusterFewshotv2(Teleprompter):
             # This option requires high CPU for target model loading.
             model_name = self.student.named_predictors()[0][1].lm.model
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cpu")
+            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name)  # .to("cpu")
             self.embedding_model_name = model_name
             self.generate_embeddings_func = self.generate_examples_embeddings_from_target_model
 
@@ -503,14 +503,12 @@ class ClusterFewshotv2(Teleprompter):
             if input_ids.dim() == 1:
                 input_ids = input_ids.unsqueeze(0)
 
-            input_ids = input_ids.to(self.embedding_model.device)
-
-            # TODO: re-visit the logic of this to understand the embeddings better
             with torch.no_grad():
-                token_embs = self.embedding_model.get_input_embeddings()(input_ids)  # (1, seq_len, hidden_dim)
-                mean_emb = token_embs.mean(dim=1).squeeze(0)  # (hidden_dim,)
+                outputs = self.embedding_model(input_ids=input_ids, output_hidden_states=True)
+                final_hidden_states = outputs.hidden_states[-1]  # shape: [1, seq_len, hidden_dim]
+                mean_emb = final_hidden_states.mean(dim=1).squeeze(0)  # shape: [hidden_dim]
 
-            embeddings.append(mean_emb.cpu().numpy())
+            embeddings.append(mean_emb.numpy())
 
         best_score = -np.inf
         best_k = None
