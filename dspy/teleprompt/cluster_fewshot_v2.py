@@ -110,7 +110,7 @@ class ClusterFewshotv2(Teleprompter):
             # This option requires high CPU for target model loading.
             model_name = self.student.named_predictors()[0][1].lm.model
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name)  # .to("cpu")
+            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:0")
             self.embedding_model_name = model_name
             self.generate_embeddings_func = self.generate_examples_embeddings_from_target_model
 
@@ -474,14 +474,15 @@ class ClusterFewshotv2(Teleprompter):
         aligning with the model's chat-based fine-tuning input format.
         """
         embeddings = []
+        examples_size = len(examples)
 
         logger.info(f"Encoding examples with model: {self.embedding_model_name}")
 
-        for example in examples:
+        for i in range(examples_size):
             # TODO: this should be generic for all I/O type fields (i.e. now only QA)
             conversation_format = [
-                {"role": "user", "content": example.question},
-                {"role": "assistant", "content": example.answer},
+                {"role": "user", "content": examples[i].question},
+                {"role": "assistant", "content": examples[i].answer},
             ]
 
             chat_str = self.tokenizer.apply_chat_template(
@@ -502,6 +503,8 @@ class ClusterFewshotv2(Teleprompter):
 
             if input_ids.dim() == 1:
                 input_ids = input_ids.unsqueeze(0)
+
+            logger.info(f"Generating embeddings for example {i + 1}/{examples_size}")
 
             with torch.no_grad():
                 outputs = self.embedding_model(input_ids=input_ids, output_hidden_states=True)
