@@ -110,7 +110,7 @@ class ClusterFewshotv2(Teleprompter):
             # This option requires high CPU for target model loading.
             model_name = self.student.named_predictors()[0][1].lm.model
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:0")
+            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:1")
             self.embedding_model_name = model_name
             self.generate_embeddings_func = self.generate_examples_embeddings_from_target_model
 
