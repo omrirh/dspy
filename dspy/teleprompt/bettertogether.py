@@ -133,8 +133,8 @@ class BetterTogether(Teleprompter):
         # from the original training set for prompts optimization on GSM8K/HotPotQA.
         # For Iris, 15 and 35 were sub-sampled for trainin/validation.
         if len(trainset) > 50:
-            num_train = 100
-            num_val = 250
+            num_train = 1000  # For debugging first 1000 examples in GSM8K
+            num_val = 0
         else:
             num_train = 15
             num_val = 35

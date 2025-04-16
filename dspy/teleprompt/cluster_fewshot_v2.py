@@ -1,3 +1,5 @@
+import os
+import json
 import torch
 import logging
 import numpy as np
@@ -31,6 +33,8 @@ CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/gtr-t5-base"
 ]
 
+EMBEDDINGS_FILENAME = "example_embeddings.json"
+
 
 class ClusterFewshotv2(Teleprompter):
     def __init__(
@@ -57,9 +61,9 @@ class ClusterFewshotv2(Teleprompter):
                 Whether to sort examples per-cluster/globally
                 in descending order of impact as one-shot demonstrations.
             use_target_model_embeddings: bool
-                Whether to use the target model's input embeddings layer or
+                Whether to use the target model layers embedding or
                 a candidate SentenceTransformer's semantic embeddings.
-                This option is relevant when running this teleprompter in the
+                This option is recommended when running this teleprompter in the
                 BetterTogether optimization pipeline.
         """
         super().__init__()
@@ -67,8 +71,8 @@ class ClusterFewshotv2(Teleprompter):
         self.metric_threshold = metric_threshold
 
         # Choose sampling strategy based on the given task
-        if not task_type in TASK_2_SAMPLINGS:
-            raise ValueError(f"{task_type} task is not supported in ClusterFewshotv2.")
+        if task_type not in TASK_2_SAMPLINGS:
+            raise ValueError(f"'{task_type}' task is not supported in ClusterFewshotv2.")
 
         self.task_type = task_type
 
@@ -106,23 +110,23 @@ class ClusterFewshotv2(Teleprompter):
         # TODO: this should support init not only for transformers-based models.
         # TODO: this code only supports one predictor per compilation. should be re-visited?
         if self.use_target_model_embeddings:
-            # ----- NOTE -----
-            # This option requires high CPU for target model loading.
             model_name = self.student.named_predictors()[0][1].lm.model
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:1")
             self.embedding_model_name = model_name
-            self.generate_embeddings_func = self.generate_examples_embeddings_from_target_model
+            self.generate_embeddings_func = self.generate_embedding_clusters_with_target_model
 
             if self.tokenizer.pad_token_id is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token or '[PAD]'
                 self.embedding_model.resize_token_embeddings(len(self.tokenizer))
         else:
-            self.generate_embeddings_func = self.generate_example_embeddings_from_candidate_models
+            self.generate_embeddings_func = self.generate_embedding_clusters_with_candidate_models
 
         logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
+
+        # Debug feed-forward output embeddings
+        exit(0)
+
         self._sample_validation_clusters()
         self._sort_examples_as_demos()
         self.collect_fewshot_subsets()
@@ -165,7 +169,8 @@ class ClusterFewshotv2(Teleprompter):
         else:
             logger.info(f"Generating {len(data)} {data_type} examples embeddings")
             examples_embeddings, cluster_labels, k = self.generate_embeddings_func(
-                examples=data
+                examples=data,
+                filename=EMBEDDINGS_FILENAME
             )
 
         self.examples2embeddings.update({
@@ -227,7 +232,7 @@ class ClusterFewshotv2(Teleprompter):
 
     def _sample_validation_clusters(self):
         """
-        Selects most central examples (optionally hardest among them) from each validation cluster to form a set for EAD testing.
+        Selects most central examples from each validation cluster.
         """
         self.ead_set = []
 
@@ -244,7 +249,7 @@ class ClusterFewshotv2(Teleprompter):
 
     def _sort_examples_as_demos(self):
         """
-        Sorts examples globally based on their impact when used as one-shot examples.
+        Sorts examples based on their impact when used as one-shot demonstrations.
         """
         evaluator = Evaluate(
             devset=self.ead_set,
@@ -254,7 +259,7 @@ class ClusterFewshotv2(Teleprompter):
         )
         student_copy = self.student.deepcopy()
 
-        logger.info(f"Sorting examples-as-demos from trainset ({len(self.trainset)} examples)")
+        logger.info(f"Sorting examples-as-demos from training set ({len(self.trainset)} examples)")
         self.ranked_examples = {}
         trainset_size = len(self.trainset)
 
@@ -323,8 +328,7 @@ class ClusterFewshotv2(Teleprompter):
 
     def collect_fewshot_subsets(self):
         """
-        Collects the potential few-shot demonstrations using task-adaptive sampling strategies,
-        while balancing exploration (diversity) and exploitation (strong demos).
+        Collects the potential few-shot candidate subsets using task-specific sampling strategies.
         """
         sampling_strategies = TASK_2_SAMPLINGS[self.task_type]
         adaptive_fewshot_subsets = {
@@ -352,7 +356,7 @@ class ClusterFewshotv2(Teleprompter):
     def sample_examples_from_cluster(self, cluster_id, sampling_strategy):
         """
         Samples examples from a given cluster based on one of 4 approaches:
-        1. top N: Collects examples that fall in the top global N potential demos rank.
+        1. top N: Collects examples that fall in the top global N demonstrations set.
             If there aren't any in the given cluster, returns an empty list.
         2. Best in cluster: Returns the top-ranked example-as-demo from the given cluster.
         3. Cluster strength: Allocates a proportionate number of slots in the few-shot subset
@@ -464,7 +468,7 @@ class ClusterFewshotv2(Teleprompter):
 
         return prediction, success
 
-    def generate_examples_embeddings_from_target_model(
+    def generate_embedding_clusters_with_target_model(
             self,
             examples: List[Example],
             max_seq_length: int = 1024,
@@ -472,46 +476,59 @@ class ClusterFewshotv2(Teleprompter):
         """
         Generates a mean-pooled input embedding for a DSPy `Example`,
         aligning with the model's chat-based fine-tuning input format.
+        Loading cached embeddings from EMBEDDINGS_FILENAME is also supported.
         """
-        embeddings = []
-        examples_size = len(examples)
+        if os.path.exists(path=EMBEDDINGS_FILENAME):
+            embeddings = self.read_embeddings_from_cache(filename=EMBEDDINGS_FILENAME, examples=examples)
+        else:
+            # ----- NOTE -----
+            # This operation requires additional GPU resources to compute LM model feed-forward embeddings.
+            model_name = self.embedding_model_name
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:0")  # TODO: should be dynamic
 
-        logger.info(f"Encoding examples with model: {self.embedding_model_name}")
+            embeddings = []
+            examples_size = len(examples)
+            logger.info(f"Encoding examples with model: {self.embedding_model_name}")
 
-        for i in range(examples_size):
-            # TODO: this should be generic for all I/O type fields (i.e. now only QA)
-            conversation_format = [
-                {"role": "user", "content": examples[i].question},
-                {"role": "assistant", "content": examples[i].answer},
-            ]
+            for i in range(examples_size):
+                # TODO: this should be generic for all I/O type fields (i.e. now supports only QA)
+                conversation_format = [
+                    {"role": "user", "content": examples[i].question},
+                    {"role": "assistant", "content": examples[i].answer},
+                ]
 
-            chat_str = self.tokenizer.apply_chat_template(
-                conversation=conversation_format,
-                tokenize=False,
-                add_generation_prompt=False,
-            )
+                chat_str = self.tokenizer.apply_chat_template(
+                    conversation=conversation_format,
+                    tokenize=False,
+                    add_generation_prompt=False,
+                )
 
-            encoding = self.tokenizer(
-                chat_str,
-                return_tensors="pt",
-                padding="max_length",
-                truncation=True,
-                max_length=max_seq_length,
-            )
+                encoding = self.tokenizer(
+                    chat_str,
+                    return_tensors="pt",
+                    padding="max_length",
+                    truncation=True,
+                    max_length=max_seq_length,
+                )
 
-            input_ids = encoding["input_ids"].to(self.embedding_model.device)
+                input_ids = encoding["input_ids"].to(self.embedding_model.device)
 
-            if input_ids.dim() == 1:
-                input_ids = input_ids.unsqueeze(0)
+                # TODO: is this needed?
+                if input_ids.dim() == 1:
+                    input_ids = input_ids.unsqueeze(0)
 
-            logger.info(f"Generating embeddings for example {i + 1}/{examples_size}")
+                logger.info(f"Generating embeddings for example {i + 1}/{examples_size}")
 
-            with torch.no_grad():
-                outputs = self.embedding_model(input_ids=input_ids, output_hidden_states=True)
-                final_hidden_states = outputs.hidden_states[-1]  # shape: [1, seq_len, hidden_dim]
-                mean_emb = final_hidden_states.mean(dim=1).squeeze(0)  # shape: [hidden_dim]
+                with torch.no_grad():
+                    outputs = self.embedding_model(input_ids=input_ids, output_hidden_states=True)
+                    final_hidden_states = outputs.hidden_states[-1]  # shape: [1, seq_len, hidden_dim]
+                    mean_emb = final_hidden_states.mean(dim=1).squeeze(0)  # shape: [hidden_dim]
 
-            embeddings.append(mean_emb.numpy())
+                embeddings.append(mean_emb.numpy())
+
+            # Cache embeddings for further use
+            self.save_examples_embeddings_to_file(filename=EMBEDDINGS_FILENAME)
 
         best_score = -np.inf
         best_k = None
@@ -539,7 +556,7 @@ class ClusterFewshotv2(Teleprompter):
 
         return np.array(embeddings), cluster_labels, k
 
-    def generate_example_embeddings_from_candidate_models(self, examples):
+    def generate_embedding_clusters_with_candidate_models(self, examples, filename=None):
         best_k = None
         best_score = -np.inf
         best_labels = None
@@ -594,3 +611,31 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
         return best_embeddings, best_labels, best_k
+
+    def save_examples_embeddings_to_file(self, filename):
+        logger.info(f"Caching examples embeddings (total of {len(self.examples2embeddings)})")
+
+        example_to_embedding = {
+            example: embedding.tolist()
+            for example, embedding in self.examples2embeddings
+        }
+
+        # Save to JSON file
+        with open(filename, "w") as f:
+            json.dump(example_to_embedding, f, indent=2)
+
+    @staticmethod
+    def read_embeddings_from_cache(filename, examples):
+        with open(filename, "r") as f:
+            example_to_embedding = json.load(f)
+
+        embeddings = []
+
+        for example in examples:
+            key = str(example)
+            if key not in example_to_embedding:
+                raise ValueError(f"Example '{key}' not found in the saved embeddings.")
+
+            embeddings.append(np.array(example_to_embedding[key]))
+
+        return embeddings
