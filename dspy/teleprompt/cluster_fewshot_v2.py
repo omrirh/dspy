@@ -24,7 +24,7 @@ MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n"],
-    "multihop": ["cluster_strength", "central"],  # TODO: Still need to figure out compatible sampling.
+    "multihop": ["top_n" "best_in_cluster", "central"],  # TODO: Still need to figure out compatible sampling.
     "classification": ["best_in_cluster", "central"],
 }
 
@@ -80,6 +80,7 @@ class ClusterFewshotv2(Teleprompter):
         self.embedding_model = None
         self.embedding_model_name = None
         self.examples2embeddings = {}  # Used for caching example embeddings (reduce computational overhead)
+        self.embeddings2examples = {}
         self.use_target_model_embeddings = use_target_model_embeddings
         self.generate_embeddings_func = None
 
@@ -113,20 +114,12 @@ class ClusterFewshotv2(Teleprompter):
             model_name = self.student.named_predictors()[0][1].lm.model
             self.embedding_model_name = model_name
             self.generate_embeddings_func = self.generate_embedding_clusters_with_target_model
-
-            if self.tokenizer.pad_token_id is None:
-                self.tokenizer.pad_token = self.tokenizer.eos_token or '[PAD]'
-                self.embedding_model.resize_token_embeddings(len(self.tokenizer))
         else:
             self.generate_embeddings_func = self.generate_embedding_clusters_with_candidate_models
 
         logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
-
-        # Debug feed-forward output embeddings
-        exit(0)
-
         self._sample_validation_clusters()
         self._sort_examples_as_demos()
         self.collect_fewshot_subsets()
@@ -168,15 +161,17 @@ class ClusterFewshotv2(Teleprompter):
             cluster_labels = [iris_kinds.index(example.answer) for example in data]
         else:
             logger.info(f"Generating {len(data)} {data_type} examples embeddings")
-            examples_embeddings, cluster_labels, k = self.generate_embeddings_func(
-                examples=data,
-                filename=EMBEDDINGS_FILENAME
-            )
+            examples_embeddings, cluster_labels, k = self.generate_embeddings_func(examples=data)
 
         self.examples2embeddings.update({
             str(example): example_embeddings
             for example, example_embeddings
             in zip(data, examples_embeddings)
+        })
+        self.embeddings2examples.update({
+            example_embeddings: str(example)
+            for example_embeddings, example
+            in zip(examples_embeddings, data)
         })
 
         if train:
@@ -230,6 +225,9 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Cluster visualization saved to {save_path}.")
 
+    def visualize_ead_scores_distribution(self):
+        pass
+
     def _sample_validation_clusters(self):
         """
         Selects most central examples from each validation cluster.
@@ -237,7 +235,7 @@ class ClusterFewshotv2(Teleprompter):
         self.ead_set = []
 
         for cluster_id, examples in self.validation_clusters.items():
-            sample_size = min(3, len(examples))
+            sample_size = min(4, len(examples))
 
             logger.info(f"Sampling {sample_size} most central validation examples from cluster no. {cluster_id + 1}")
             selected = self.get_central_examples(examples=examples, sample_size=sample_size)
@@ -254,7 +252,7 @@ class ClusterFewshotv2(Teleprompter):
         evaluator = Evaluate(
             devset=self.ead_set,
             metric=self.metric,
-            num_threads=len(self.ead_set),
+            num_threads=min(12, len(self.ead_set)),
             display_progress=True,
         )
         student_copy = self.student.deepcopy()
@@ -487,6 +485,10 @@ class ClusterFewshotv2(Teleprompter):
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
             self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:0")  # TODO: should be dynamic
 
+            if self.tokenizer.pad_token_id is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token or '[PAD]'
+                self.embedding_model.resize_token_embeddings(len(self.tokenizer))
+
             embeddings = []
             examples_size = len(examples)
             logger.info(f"Encoding examples with model: {self.embedding_model_name}")
@@ -521,14 +523,15 @@ class ClusterFewshotv2(Teleprompter):
                 logger.info(f"Generating embeddings for example {i + 1}/{examples_size}")
 
                 with torch.no_grad():
+                    # final hidden states as examples embeddings
                     outputs = self.embedding_model(input_ids=input_ids, output_hidden_states=True)
                     final_hidden_states = outputs.hidden_states[-1]  # shape: [1, seq_len, hidden_dim]
                     mean_emb = final_hidden_states.mean(dim=1).squeeze(0)  # shape: [hidden_dim]
 
-                embeddings.append(mean_emb.numpy())
+                embeddings.append(mean_emb.cpu().numpy())
 
             # Cache embeddings for further use
-            self.save_examples_embeddings_to_file(filename=EMBEDDINGS_FILENAME)
+            self.save_examples_embeddings_to_file(filename=EMBEDDINGS_FILENAME, examples=examples, embeddings=embeddings)
 
         best_score = -np.inf
         best_k = None
@@ -556,7 +559,7 @@ class ClusterFewshotv2(Teleprompter):
 
         return np.array(embeddings), cluster_labels, k
 
-    def generate_embedding_clusters_with_candidate_models(self, examples, filename=None):
+    def generate_embedding_clusters_with_candidate_models(self, examples):
         best_k = None
         best_score = -np.inf
         best_labels = None
@@ -612,12 +615,12 @@ class ClusterFewshotv2(Teleprompter):
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
         return best_embeddings, best_labels, best_k
 
-    def save_examples_embeddings_to_file(self, filename):
-        logger.info(f"Caching examples embeddings (total of {len(self.examples2embeddings)})")
+    def save_examples_embeddings_to_file(self, filename, examples, embeddings):
+        logger.info(f"Caching examples embeddings (total of {len(examples)})")
 
         example_to_embedding = {
-            example: embedding.tolist()
-            for example, embedding in self.examples2embeddings
+            str(example): embedding.tolist()
+            for example, embedding in zip(examples, embeddings)
         }
 
         # Save to JSON file
