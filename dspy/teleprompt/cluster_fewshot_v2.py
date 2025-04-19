@@ -24,7 +24,7 @@ MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n"],
-    "multihop": ["top_n" "best_in_cluster", "central"],  # TODO: Still need to figure out compatible sampling.
+    "multihop": ["top_n", "best_in_cluster", "central"],  # TODO: Still need to figure out compatible sampling.
     "classification": ["best_in_cluster", "central"],
 }
 
@@ -72,7 +72,8 @@ class ClusterFewshotv2(Teleprompter):
 
         # Choose sampling strategy based on the given task
         if task_type not in TASK_2_SAMPLINGS:
-            raise ValueError(f"'{task_type}' task is not supported in ClusterFewshotv2.")
+            raise ValueError(
+                f"'{task_type}' task is not supported in ClusterFewshotv2. Currently supported tasks:\n{list(TASK_2_SAMPLINGS.keys())}")
 
         self.task_type = task_type
 
@@ -108,11 +109,9 @@ class ClusterFewshotv2(Teleprompter):
         self.trainset = trainset
         self.valset = valset
 
-        # TODO: this should support init not only for transformers-based models.
         # TODO: this code only supports one predictor per compilation. should be re-visited?
         if self.use_target_model_embeddings:
-            model_name = self.student.named_predictors()[0][1].lm.model
-            self.embedding_model_name = model_name
+            self.embedding_model_name = self.student.named_predictors()[0][1].lm.model
             self.generate_embeddings_func = self.generate_embedding_clusters_with_target_model
         else:
             self.generate_embeddings_func = self.generate_embedding_clusters_with_candidate_models
@@ -122,6 +121,9 @@ class ClusterFewshotv2(Teleprompter):
         self.validation_clusters = self._cluster_examples(train=False)
         self._sample_validation_clusters()
         self._sort_examples_as_demos()
+
+        # TODO: experiment with DynamicCoTStudent here
+
         self.collect_fewshot_subsets()
         self.pick_best_fewshot_subset()
 
@@ -164,69 +166,136 @@ class ClusterFewshotv2(Teleprompter):
             examples_embeddings, cluster_labels, k = self.generate_embeddings_func(examples=data)
 
         self.examples2embeddings.update({
-            str(example): example_embeddings
+            str(example): np.array(example_embeddings)
             for example, example_embeddings
             in zip(data, examples_embeddings)
         })
         self.embeddings2examples.update({
-            example_embeddings: str(example)
+            str(example_embeddings): example
             for example_embeddings, example
             in zip(examples_embeddings, data)
         })
 
         if train:
-            self.training_K = k
             self.N = k  # Used as hyperparameter for few-shot sampling
-        else:
-            self.validation_K = k
 
         clusters = {i: [] for i in range(k)}
         for idx, label in enumerate(cluster_labels):
             clusters[label].append(self.trainset[idx] if train else self.valset[idx])
 
-        self._visualize_clusters(
-            examples_embeddings,
-            self.embedding_model_name,
-            cluster_labels,
-            k,
-            data_type,
-            save_path=f"{data_type}_clusters.png"
+        self._visualize_examples(
+            embeddings=examples_embeddings,
+            embedding_model=self.embedding_model_name,
+            cluster_labels=cluster_labels,
+            num_clusters=k,
+            data_type=data_type,
+            save_path=f"{data_type}_clusters.png",
+            silhouette=silhouette_score(examples_embeddings, cluster_labels)
         )
 
         logger.info(f"{data_type} clustering completed with K={k}.")
 
         return clusters
 
-    def _visualize_clusters(
-            self, embeddings, embedding_model, cluster_labels, num_clusters, data_type, save_path
+    def _visualize_examples(
+            self,
+            embeddings,
+            embedding_model,
+            cluster_labels=None,
+            num_clusters=None,
+            data_type=None,
+            save_path=None,
+            silhouette=None,
+            show_ranks=False,
     ):
         """
-        Visualizes clustered embeddings in 2D using t-SNE.
+        Visualizes clustered embeddings / ranked examples in 2D using t-SNE.
         """
         logger.info("Performing t-SNE dimensionality reduction for visualization...")
         tsne = TSNE(n_components=2, random_state=42, perplexity=max(2, min(50, len(embeddings) // 3)))
-        embeddings_2d = tsne.fit_transform(embeddings)
+        embeddings_2d = tsne.fit_transform(np.array(embeddings))
 
-        # Plot clusters
+        if show_ranks:
+            examples = [self.embeddings2examples[str(emb)] for emb in embeddings]
+            scores = [self.ranked_examples.get(ex, 0) for ex in examples]
+            np_scores = np.array(scores)
+
+            color_values = np_scores
+            color_label = "EAD Score"
+
+            # Choose a colormap that works well with continuous values
+            cmap = "coolwarm" if len(set(np_scores)) <= 5 else "viridis"
+        else:
+            color_values = np.array(cluster_labels)
+            color_label = "Cluster Labels"
+            cmap = "tab10"
+
+        # Ensure color_values is valid
+        if color_values is None or len(color_values) == 0:
+            raise ValueError("Color values are empty, cannot plot scatter with cmap.")
+
         plt.figure(figsize=(10, 7))
         scatter = plt.scatter(
-            embeddings_2d[:, 0], embeddings_2d[:, 1], c=cluster_labels, cmap='tab10', alpha=0.7
+            embeddings_2d[:, 0],
+            embeddings_2d[:, 1],
+            c=color_values,
+            cmap=cmap,
+            alpha=0.8,
         )
-        plt.colorbar(scatter, label="Cluster Labels")
-        plt.title(f"t-SNE of {data_type} Semantic Embedding Clusters\n"
-                  f"K={num_clusters}\n"
-                  f"size={len(embeddings)}\n"
-                  f"embedding model={embedding_model if embedding_model else 'not used'}")
+
+        cbar = plt.colorbar(scatter)
+        cbar.set_label(color_label)
+
+        if show_ranks:
+            logger.info(f"Unique EAD scores: {set(scores)}")
+            plt.title(f"t-SNE of {data_type.title()} EAD ranks\n"
+                      f"Rank mean={np.mean(np_scores):.2f}\n"
+                      f"Rank std={np.std(np_scores):.2f}")
+        else:
+            plt.title(f"t-SNE of {data_type.title()} Embeddings Clusters\n"
+                      f"K={num_clusters}\n"
+                      f"Size={len(embeddings)}\n"
+                      f"Silhouette={silhouette:.3f}\n"
+                      f"Embedding Model={embedding_model}")
+
         plt.xlabel("t-SNE Dimension 1")
         plt.ylabel("t-SNE Dimension 2")
+
+        plt.grid(True)
+        plt.tight_layout()
 
         plt.savefig(save_path)
         plt.close()
 
         logger.info(f"Cluster visualization saved to {save_path}.")
 
-    def visualize_ead_scores_distribution(self):
-        pass
+    def visualize_ead_scores_distribution(self, save_path="ead_scores_distribution.png"):
+        """
+        Visualizes the distribution of one-shot evaluation scores (EAD ranks).
+        Each score reflects how well an example performed when used as a one-shot demonstration.
+        """
+        from collections import Counter
+
+        if not self.ranked_examples:
+            logger.warning("No ranked examples found. Skipping EAD score visualization.")
+            return
+
+        score_counts = Counter(self.ranked_examples.values())
+
+        sorted_scores = sorted(score_counts.items())
+        scores, counts = zip(*sorted_scores)
+
+        plt.figure(figsize=(8, 5))
+        plt.bar(scores, counts, color='skyblue', edgecolor='black')
+        plt.xlabel("One-shot Evaluation Score")
+        plt.ylabel("Number of Examples")
+        plt.title("Distribution of EAD (Example-As-Demo) Scores")
+        plt.grid(axis='y', linestyle='--', alpha=0.6)
+        plt.tight_layout()
+        plt.savefig(save_path)
+        plt.close()
+
+        logger.info(f"EAD scores distribution saved to {save_path}")
 
     def _sample_validation_clusters(self):
         """
@@ -240,8 +309,6 @@ class ClusterFewshotv2(Teleprompter):
             logger.info(f"Sampling {sample_size} most central validation examples from cluster no. {cluster_id + 1}")
             selected = self.get_central_examples(examples=examples, sample_size=sample_size)
             self.ead_set.extend(selected)
-
-            logger.info(f"Collected {len(selected)} questions from cluster {cluster_id + 1}")
 
         logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions.")
 
@@ -265,21 +332,32 @@ class ClusterFewshotv2(Teleprompter):
             logger.info(f"\n\nEvaluating example {idx + 1}/{trainset_size}")
             self.ranked_examples[ex] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
 
+        logger.info(f"Ordering {len(self.ranked_examples)} demonstrations "
+                    f"by {len(set(self.ranked_examples.values()))} different ranks...")
+
         self.global_sorted_examples = sorted(
             self.ranked_examples.keys(),
             key=lambda ex: self.ranked_examples[ex],
             reverse=self.descending,
         )
 
-        logger.info(f"Ordering clusters by demonstrations ranks")
         self.training_clusters = {
             cluster_id: sorted(
-                [ex for ex in cluster_examples if ex in self.ranked_examples],
+                cluster_examples,
                 key=lambda ex: self.ranked_examples[ex],
                 reverse=self.descending,
             )
             for cluster_id, cluster_examples in self.training_clusters.items()
         }
+
+        self.visualize_ead_scores_distribution()
+        self._visualize_examples(
+            embeddings=[self.examples2embeddings[str(ex)] for ex in self.trainset],
+            embedding_model=self.embedding_model_name,
+            save_path=f"embeddings_to_ead_ranks.png",
+            data_type="training",
+            show_ranks=True,
+        )
 
         logger.info(f"Demonstrations are sorted in {'descending' if self.descending else 'ascending'} order.")
 
@@ -470,68 +548,60 @@ class ClusterFewshotv2(Teleprompter):
             self,
             examples: List[Example],
             max_seq_length: int = 1024,
+            device: str = "cpu",
     ) -> Tuple[np.ndarray, List[int], int]:
         """
-        Generates a mean-pooled input embedding for a DSPy `Example`,
-        aligning with the model's chat-based fine-tuning input format.
-        Loading cached embeddings from EMBEDDINGS_FILENAME is also supported.
+        1. Generates a mean-pooled input embedding of the give examples,
+            aligning with the model's chat-based fine-tuning input format.
+        2. Searches for such K that optimizes the Silhouette score of
+            the embedding clusters using K-means
         """
-        if os.path.exists(path=EMBEDDINGS_FILENAME):
-            embeddings = self.read_embeddings_from_cache(filename=EMBEDDINGS_FILENAME, examples=examples)
-        else:
-            # ----- NOTE -----
-            # This operation requires additional GPU resources to compute LM model feed-forward embeddings.
-            model_name = self.embedding_model_name
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to("cuda:0")  # TODO: should be dynamic
 
-            if self.tokenizer.pad_token_id is None:
-                self.tokenizer.pad_token = self.tokenizer.eos_token or '[PAD]'
-                self.embedding_model.resize_token_embeddings(len(self.tokenizer))
+        # ----- NOTE -----
+        # This operation requires additional compute resources
+        # to encode examples using the LM model input embeddings layer.
+        model_name = self.embedding_model_name
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.embedding_model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
 
-            embeddings = []
-            examples_size = len(examples)
-            logger.info(f"Encoding examples with model: {self.embedding_model_name}")
+        if self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token or '[PAD]'
+            self.embedding_model.resize_token_embeddings(len(self.tokenizer))
 
-            for i in range(examples_size):
-                # TODO: this should be generic for all I/O type fields (i.e. now supports only QA)
-                conversation_format = [
+        embeddings = []
+        examples_size = len(examples)
+
+        for i in range(examples_size):
+            # TODO: this should be generic for all I/O type fields (i.e. now supports only QA)
+            chat_str = self.tokenizer.apply_chat_template(
+                conversation=[
                     {"role": "user", "content": examples[i].question},
                     {"role": "assistant", "content": examples[i].answer},
-                ]
+                ],
+                tokenize=False,
+                add_generation_prompt=False,
+            )
 
-                chat_str = self.tokenizer.apply_chat_template(
-                    conversation=conversation_format,
-                    tokenize=False,
-                    add_generation_prompt=False,
-                )
+            encoding = self.tokenizer(
+                chat_str,
+                return_tensors="pt",
+                padding="max_length",
+                truncation=True,
+                max_length=max_seq_length,
+            )
 
-                encoding = self.tokenizer(
-                    chat_str,
-                    return_tensors="pt",
-                    padding="max_length",
-                    truncation=True,
-                    max_length=max_seq_length,
-                )
+            input_ids = encoding["input_ids"].to(self.embedding_model.device)
 
-                input_ids = encoding["input_ids"].to(self.embedding_model.device)
+            if input_ids.dim() == 1:
+                input_ids = input_ids.unsqueeze(0)
 
-                # TODO: is this needed?
-                if input_ids.dim() == 1:
-                    input_ids = input_ids.unsqueeze(0)
+            with torch.no_grad():
+                # Encoding examples with model input embeddings
+                embedding_layer = self.embedding_model.get_input_embeddings()
+                token_embs = embedding_layer(input_ids)
+                mean_emb = token_embs.mean(dim=1)
 
-                logger.info(f"Generating embeddings for example {i + 1}/{examples_size}")
-
-                with torch.no_grad():
-                    # final hidden states as examples embeddings
-                    outputs = self.embedding_model(input_ids=input_ids, output_hidden_states=True)
-                    final_hidden_states = outputs.hidden_states[-1]  # shape: [1, seq_len, hidden_dim]
-                    mean_emb = final_hidden_states.mean(dim=1).squeeze(0)  # shape: [hidden_dim]
-
-                embeddings.append(mean_emb.cpu().numpy())
-
-            # Cache embeddings for further use
-            self.save_examples_embeddings_to_file(filename=EMBEDDINGS_FILENAME, examples=examples, embeddings=embeddings)
+            embeddings.append(mean_emb.squeeze(0).cpu().numpy())
 
         best_score = -np.inf
         best_k = None
@@ -554,10 +624,7 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Selected K={best_k} with silhouette score={best_score:.3f}")
 
-        k = best_k
-        cluster_labels = best_labels
-
-        return np.array(embeddings), cluster_labels, k
+        return np.array(embeddings), best_labels, best_k
 
     def generate_embedding_clusters_with_candidate_models(self, examples):
         best_k = None
@@ -567,15 +634,14 @@ class ClusterFewshotv2(Teleprompter):
         best_embedding_model = None
         best_embedding_model_name = None
 
-        # TODO: Should include also answer label in embeddings?
-        examples = [ex.question for ex in examples]
+        examples_texts = [ex.question for ex in examples]
 
         if not self.embedding_model:
             for model_id in CANDIDATE_EMBEDDING_MODELS:
                 logger.info(f"Encoding examples with model: {model_id}")
 
                 embedding_model = SentenceTransformer(model_id, device='cpu')
-                embeddings = embedding_model.encode(examples, convert_to_numpy=True)
+                embeddings = embedding_model.encode(examples_texts, convert_to_numpy=True)
 
                 for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
                     kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=500, random_state=42)
@@ -587,20 +653,19 @@ class ClusterFewshotv2(Teleprompter):
                     if score > best_score:
                         best_score = score
                         best_k = k
+                        best_labels = labels
                         best_embedding_model_name = model_id
                         best_embedding_model = embedding_model
-                        best_labels = labels
                         best_embeddings = embeddings
 
             self.embedding_model = best_embedding_model
             self.embedding_model_name = best_embedding_model_name
         else:
-            embeddings = self.embedding_model.encode(examples, convert_to_numpy=True)
+            embeddings = self.embedding_model.encode(examples_texts, convert_to_numpy=True)
 
             for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
                 kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=400, random_state=42)
                 labels = kmeans.fit_predict(embeddings)
-
                 score = silhouette_score(embeddings, labels)
 
                 logger.info(f"K={k}, Silhouette Score={score:.3f}")
@@ -615,30 +680,4 @@ class ClusterFewshotv2(Teleprompter):
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
         return best_embeddings, best_labels, best_k
 
-    def save_examples_embeddings_to_file(self, filename, examples, embeddings):
-        logger.info(f"Caching examples embeddings (total of {len(examples)})")
 
-        example_to_embedding = {
-            str(example): embedding.tolist()
-            for example, embedding in zip(examples, embeddings)
-        }
-
-        # Save to JSON file
-        with open(filename, "w") as f:
-            json.dump(example_to_embedding, f, indent=2)
-
-    @staticmethod
-    def read_embeddings_from_cache(filename, examples):
-        with open(filename, "r") as f:
-            example_to_embedding = json.load(f)
-
-        embeddings = []
-
-        for example in examples:
-            key = str(example)
-            if key not in example_to_embedding:
-                raise ValueError(f"Example '{key}' not found in the saved embeddings.")
-
-            embeddings.append(np.array(example_to_embedding[key]))
-
-        return embeddings

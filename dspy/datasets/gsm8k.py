@@ -37,7 +37,10 @@ class GSM8K:
 
             official_test.append(dict(question=question, gold_reasoning=gold_reasoning, answer=answer))
 
-        rng = random.Random(0)
+        import time
+        seed = int(time.time())
+        print(f"TRAIN SEED GSM8K = {seed}")
+        rng = random.Random(seed)
         rng.shuffle(official_train)
 
         rng = random.Random(0)

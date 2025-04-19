@@ -1,4 +1,5 @@
 import dspy
+import torch
 from dspy.dsp.utils.utils import deduplicate
 
 
@@ -27,6 +28,57 @@ class CoT(dspy.Module):
 
     def forward(self, question):
         return self.prog(question=question)
+
+
+# TODO: experiment with this!
+class DynamicCoTStudent(CoT):
+    def __init__(self, clusterfewshot):
+        super().__init__()
+        self.demo_pool = {
+            demo: {
+                "embedding": clusterfewshot.examples2embeddings[str(demo)],
+                "ead_score": clusterfewshot.ranked_examples[demo]
+            }
+            for demo in clusterfewshot.trainset
+        }
+        self.tokenizer = clusterfewshot.tokenizer
+        self.embedding_model = clusterfewshot.embedding_model
+        self.N = clusterfewshot.N
+
+    def forward(self, question):
+        # Embed the query using the same method
+        chat_str = self.tokenizer.apply_chat_template(
+            [{"role": "user", "content": question}],
+            tokenize=False,
+            add_generation_prompt=False,
+        )
+
+        encoding = self.tokenizer(
+            chat_str,
+            return_tensors="pt",
+            padding="max_length",
+            truncation=True,
+            max_length=1024,
+        )
+        input_ids = encoding["input_ids"].to(self.embedding_model.device)
+        if input_ids.dim() == 1:
+            input_ids = input_ids.unsqueeze(0)
+
+        with torch.no_grad():
+            token_embs = self.embedding_model.get_input_embeddings()(input_ids)
+            query_embedding = token_embs.mean(dim=1).squeeze(0).cpu().numpy()
+
+        # Rank demo_pool by distance * (1 / score)
+        def score_fn(demo):
+            emb = self.demo_pool[demo]["embedding"]
+            ead_score = self.demo_pool[demo]["ead_score"]
+            distance = np.linalg.norm(query_embedding - emb)
+            return distance / (ead_score + 1e-8)  # avoid division by zero
+
+        fewshot = sorted(self.demo_pool.keys(), key=score_fn)[:self.N]
+
+        self.prog.demos = fewshot  # dynamically assign
+        return super().forward(question)
 
 
 class IrisSignature(dspy.Signature):
