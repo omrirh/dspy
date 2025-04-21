@@ -1,5 +1,6 @@
 import dspy
 import torch
+import numpy as np
 from dspy.dsp.utils.utils import deduplicate
 
 
@@ -31,24 +32,28 @@ class CoT(dspy.Module):
 
 
 # TODO: experiment with this!
-class DynamicCoTStudent(CoT):
+class ClusterFewshotCoT(CoT):
     def __init__(self, clusterfewshot):
         super().__init__()
-        self.demo_pool = {
-            demo: {
-                "embedding": clusterfewshot.examples2embeddings[str(demo)],
-                "ead_score": clusterfewshot.ranked_examples[demo]
-            }
-            for demo in clusterfewshot.trainset
+        self.clusters = clusterfewshot.training_clusters
+        self.centers = {
+            cluster_id: np.mean([clusterfewshot.examples2embeddings[str(ex)] for ex in examples], axis=0)
+            for cluster_id, examples in self.clusters.items()
         }
+        self.ranked_examples = clusterfewshot.ranked_examples
+
         self.tokenizer = clusterfewshot.tokenizer
         self.embedding_model = clusterfewshot.embedding_model
-        self.N = clusterfewshot.N
+
+        self.N = 3  # TODO: test this and make it dynamic
 
     def forward(self, question):
         # Embed the query using the same method
         chat_str = self.tokenizer.apply_chat_template(
-            [{"role": "user", "content": question}],
+            conversation=[
+                {"role": "user", "content": question},
+                {"role": "assistant", "content": ""}
+            ],
             tokenize=False,
             add_generation_prompt=False,
         )
@@ -68,16 +73,15 @@ class DynamicCoTStudent(CoT):
             token_embs = self.embedding_model.get_input_embeddings()(input_ids)
             query_embedding = token_embs.mean(dim=1).squeeze(0).cpu().numpy()
 
-        # Rank demo_pool by distance * (1 / score)
-        def score_fn(demo):
-            emb = self.demo_pool[demo]["embedding"]
-            ead_score = self.demo_pool[demo]["ead_score"]
-            distance = np.linalg.norm(query_embedding - emb)
-            return distance / (ead_score + 1e-8)  # avoid division by zero
+        top_cluster_ids = sorted(
+            list(self.clusters.keys()),
+            key=lambda id: np.linalg.norm(query_embedding - self.centers[id]),
+            reverse=False,
+        )[:self.N]
 
-        fewshot = sorted(self.demo_pool.keys(), key=score_fn)[:self.N]
+        # Assign top N performing one-shots from the closest cluster
+        self.prog.predict.demos = [self.clusters[cluster_id][0] for cluster_id in top_cluster_ids] # dynamically assign
 
-        self.prog.demos = fewshot  # dynamically assign
         return super().forward(question)
 
 
@@ -103,3 +107,29 @@ class IrisProgram(dspy.Module):
             sepal_length=sepal_length,
             sepal_width=sepal_width
         )
+
+class ClusterFewshotIrisProgram(IrisProgram):
+    def __init__(self, clusterfewshot):
+        super().__init__()
+        self.clusters = clusterfewshot.training_clusters
+        self.centers = {
+            cluster_id: np.mean([clusterfewshot.examples2embeddings[str(ex)] for ex in examples], axis=0)
+            for cluster_id, examples in self.clusters.items()
+        }
+        self.ranked_examples = clusterfewshot.ranked_examples
+
+        self.N = 3  # setosa, versicolor or virginia
+
+    def forward(self, petal_length, petal_width, sepal_length, sepal_width):
+        query_vect = [petal_length, petal_width, sepal_length, sepal_width]
+
+        top_cluster_ids = sorted(
+            list(self.clusters.keys()),
+            key=lambda id: np.linalg.norm(query_vect - self.centers[id]),
+            reverse=False,
+        )[:self.N]
+
+        # Assign top N performing one-shots from the closest cluster
+        self.generate_answer.predict.demos = [self.clusters[cluster_id][0] for cluster_id in top_cluster_ids] # dynamically assign
+
+        return super().forward(petal_length, petal_width, sepal_length, sepal_width)

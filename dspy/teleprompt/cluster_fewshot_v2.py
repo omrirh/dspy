@@ -7,6 +7,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 from dspy.primitives import Program, Example
 from sklearn.metrics import silhouette_score
 from sentence_transformers import SentenceTransformer
@@ -24,17 +25,14 @@ MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n"],
-    "multihop": ["top_n", "best_in_cluster", "central"],  # TODO: Still need to figure out compatible sampling.
-    "classification": ["best_in_cluster", "central"],
+    "multihop": ["top_n"],  # , "best_in_cluster", "popularity", "central"],
+    "classification": ["best_in_cluster"],
 }
 
 CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
 ]
-
-EMBEDDINGS_FILENAME = "example_embeddings.json"
-
 
 class ClusterFewshotv2(Teleprompter):
     def __init__(
@@ -119,10 +117,9 @@ class ClusterFewshotv2(Teleprompter):
         logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
-        self._sample_validation_clusters()
-        self._sort_examples_as_demos()
 
-        # TODO: experiment with DynamicCoTStudent here
+        self._sample_validation_clusters(method="random")
+        self._sort_examples_as_demos()
 
         self.collect_fewshot_subsets()
         self.pick_best_fewshot_subset()
@@ -212,8 +209,8 @@ class ClusterFewshotv2(Teleprompter):
         Visualizes clustered embeddings / ranked examples in 2D using t-SNE.
         """
         logger.info("Performing t-SNE dimensionality reduction for visualization...")
-        tsne = TSNE(n_components=2, random_state=42, perplexity=max(2, min(50, len(embeddings) // 3)))
-        embeddings_2d = tsne.fit_transform(np.array(embeddings))
+        pca = PCA(n_components=2)
+        embeddings_2d = pca.fit_transform(embeddings)
 
         if show_ranks:
             examples = [self.embeddings2examples[str(emb)] for emb in embeddings]
@@ -248,18 +245,18 @@ class ClusterFewshotv2(Teleprompter):
 
         if show_ranks:
             logger.info(f"Unique EAD scores: {set(scores)}")
-            plt.title(f"t-SNE of {data_type.title()} EAD ranks\n"
+            plt.title(f"PCA of {data_type.title()} EAD ranks\n"
                       f"Rank mean={np.mean(np_scores):.2f}\n"
                       f"Rank std={np.std(np_scores):.2f}")
         else:
-            plt.title(f"t-SNE of {data_type.title()} Embeddings Clusters\n"
+            plt.title(f"PCA of {data_type.title()} Embeddings Clusters\n"
                       f"K={num_clusters}\n"
                       f"Size={len(embeddings)}\n"
                       f"Silhouette={silhouette:.3f}\n"
                       f"Embedding Model={embedding_model}")
 
-        plt.xlabel("t-SNE Dimension 1")
-        plt.ylabel("t-SNE Dimension 2")
+        plt.xlabel("PCA Dimension 1")
+        plt.ylabel("PCA Dimension 2")
 
         plt.grid(True)
         plt.tight_layout()
@@ -288,7 +285,7 @@ class ClusterFewshotv2(Teleprompter):
         plt.figure(figsize=(8, 5))
         plt.bar(scores, counts, color='skyblue', edgecolor='black')
         plt.xlabel("One-shot Evaluation Score")
-        plt.ylabel("Number of Examples")
+        plt.ylabel("Score frequency")
         plt.title("Distribution of EAD (Example-As-Demo) Scores")
         plt.grid(axis='y', linestyle='--', alpha=0.6)
         plt.tight_layout()
@@ -297,20 +294,32 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"EAD scores distribution saved to {save_path}")
 
-    def _sample_validation_clusters(self):
+    def _sample_validation_clusters(self, method="random"):
         """
-        Selects most central examples from each validation cluster.
+        Selects examples from each validation cluster, proportionally to cluster size.
         """
         self.ead_set = []
 
-        for cluster_id, examples in self.validation_clusters.items():
-            sample_size = min(4, len(examples))
+        import random
+        rng = random.Random(0)
 
-            logger.info(f"Sampling {sample_size} most central validation examples from cluster no. {cluster_id + 1}")
-            selected = self.get_central_examples(examples=examples, sample_size=sample_size)
+        total_val_examples = sum(len(examples) for examples in self.validation_clusters.values())
+        total_samples = 12
+
+        for cluster_id, examples in self.validation_clusters.items():
+            proportion = len(examples) / total_val_examples
+            sample_size = min(len(examples), max(1, round(proportion * total_samples)))
+            logger.info(f"Sampling {sample_size} EAD questions from cluster {cluster_id + 1} (size={len(examples)})")
+
+            if method == "random":
+                selected = rng.sample(examples, sample_size)
+            if method == "central":
+                selected = self.get_central_examples(examples=examples, sample_size=sample_size)
+
             self.ead_set.extend(selected)
 
-        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions.")
+        joined_ead_questions = "\n".join([ex.question for ex in self.ead_set])
+        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions:\n{joined_ead_questions}\n\n")
 
     def _sort_examples_as_demos(self):
         """
@@ -453,36 +462,18 @@ class ClusterFewshotv2(Teleprompter):
             elif sampling_strategy == "best_in_cluster":
                 sampled_examples.append(cluster_examples[0])
 
-            elif sampling_strategy == "cluster_strength":
-                # Compute sum of clusters mean rank **once**
-                if not self._sum_of_clusters_strength:
-                    self._sum_of_clusters_strength = 0
-                    for _, cluster in self.training_clusters.items():
-                        if cluster:
-                            cluster_ranks = [self.ranked_examples[ex] for ex in cluster][:self.N]
-                            self._sum_of_clusters_strength += np.mean(cluster_ranks) - 0.3 * np.std(cluster_ranks)
-                            # TODO: Should dynamically set std scaler param
-
-                # Calculate cluster strength as the consistency
-                # rate of performance Over a semantic group
-                # TODO: need to re-visit implementation
-                cluster_ranks = [self.ranked_examples[ex] for ex in cluster_examples][:self.N]
-                cluster_strength = np.mean(cluster_ranks) - 0.3 * np.std(cluster_ranks)
-
-                # Compute how many slots to allocate for this cluster
-                proportion = cluster_strength / self._sum_of_clusters_strength
-                num_slots = round(self.N * proportion)
-
-                # Select top-ranked examples from the cluster based on this proportion
-                if num_slots >= 1:
-                    sampled_examples = cluster_examples[:num_slots]
+            elif sampling_strategy == "popularity":
+                fewshot_size = self.N + 1
+                total_examples = len(self.trainset)
+                proportion = len(cluster_examples) / total_examples
+                sample_size = min(len(cluster_examples), round(proportion * fewshot_size))
+                sampled_examples = cluster_examples[:sample_size]
 
             elif sampling_strategy == "central":
                 sampled_examples = self.get_central_examples(examples=cluster_examples, sample_size=1)
 
         logger.info(
-            f"{len(sampled_examples)}/{self.N} slots given to cluster {cluster_id + 1} "
-            f"in the few-shot subset according to {sampling_strategy} sampling strategy."
+            f"{len(sampled_examples)}/{self.N} slots given to cluster {cluster_id + 1} (size={len(self.training_clusters[cluster_id])})"
         )
 
         return sampled_examples
@@ -572,7 +563,7 @@ class ClusterFewshotv2(Teleprompter):
         examples_size = len(examples)
 
         for i in range(examples_size):
-            # TODO: this should be generic for all I/O type fields (i.e. now supports only QA)
+            # Generate chat-formatted string
             chat_str = self.tokenizer.apply_chat_template(
                 conversation=[
                     {"role": "user", "content": examples[i].question},
@@ -585,21 +576,29 @@ class ClusterFewshotv2(Teleprompter):
             encoding = self.tokenizer(
                 chat_str,
                 return_tensors="pt",
-                padding="max_length",
+                padding="max_length",         # keep consistent sequence length
                 truncation=True,
                 max_length=max_seq_length,
             )
 
             input_ids = encoding["input_ids"].to(self.embedding_model.device)
+            attention_mask = encoding["attention_mask"].to(self.embedding_model.device)
 
             if input_ids.dim() == 1:
                 input_ids = input_ids.unsqueeze(0)
+                attention_mask = attention_mask.unsqueeze(0)
 
             with torch.no_grad():
-                # Encoding examples with model input embeddings
-                embedding_layer = self.embedding_model.get_input_embeddings()
-                token_embs = embedding_layer(input_ids)
-                mean_emb = token_embs.mean(dim=1)
+                # Get token embeddings from input layer
+                token_embs = self.embedding_model.get_input_embeddings()(input_ids)  # [1, seq_len, hidden_dim]
+
+                # Expand mask to [1, seq_len, 1] and apply it
+                attention_expanded = attention_mask.unsqueeze(-1)                   # [1, seq_len, 1]
+                token_embs = token_embs * attention_expanded                        # zero out pads
+
+                sum_embs = token_embs.sum(dim=1)                                    # [1, hidden_dim]
+                lengths = attention_expanded.sum(dim=1).clamp(min=1)                # [1, 1] -> prevent divide-by-zero
+                mean_emb = sum_embs / lengths                                       # [1, hidden_dim]
 
             embeddings.append(mean_emb.squeeze(0).cpu().numpy())
 

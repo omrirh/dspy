@@ -128,7 +128,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         metric=metric,
         weight_optimizer=weight_optimizer,
         prompt_optimizer=prompt_optimizer,
-        seed=RANDOM_SEED
+        seed=2026 # RANDOM_SEED
     )
 
     # Run the BetterTogether optimization
