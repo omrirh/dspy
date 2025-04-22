@@ -1,11 +1,8 @@
-import os
-import json
 import torch
 import logging
 import numpy as np
 from typing import List, Tuple
 import matplotlib.pyplot as plt
-from sklearn.manifold import TSNE
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from dspy.primitives import Program, Example
@@ -116,8 +113,11 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
-        self.validation_clusters = self._cluster_examples(train=False)
 
+        logger.info("Clustering test set completed")
+        exit(0)
+
+        self.validation_clusters = self._cluster_examples(train=False)
         self._sample_validation_clusters(method="random")
         self._sort_examples_as_demos()
 
