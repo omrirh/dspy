@@ -115,7 +115,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
-            use_target_model_embeddings=True,
+            use_target_model_embeddings=False,
         )
 
     if prompt_optimizer_name == "miprov2":
@@ -135,7 +135,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     with dspy.context(lm=lm, rm=retriever):
         optimized_program = better_together.compile(
             student=student,
-            trainset=testset,
+            trainset=trainset,
             strategy=strategy,
             valset_ratio=0.1
         )
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
     # # for debugging
-    # dataset = "gsm8k"
+    # dataset = "hotpotqa"
     # prompt_optimizer = "clusterfsv2"
     # strategy = "p"
     # model = "meta-llama/Meta-Llama-3-8B-Instruct"

@@ -132,14 +132,12 @@ class BetterTogether(Teleprompter):
         # according to BetterTogether papers, 100 and 250 were sub-sampled for training/validation
         # from the original training set for prompts optimization on GSM8K/HotPotQA.
         # For Iris, 15 and 35 were sub-sampled for trainin/validation.
-        # if len(trainset) > 50:
-        #     num_train = 100
-        #     num_val = 250
-        # else:
-        #     num_train = 15
-        #     num_val = 35
-        num_train = len(trainset)
-        num_val = 0
+        if len(trainset) > 50:
+            num_train = 100
+            num_val = 250
+        else:
+            num_train = 15
+            num_val = 35
 
         prompt_trainset = trainset[:num_train]
         prompt_valset = trainset[num_train:num_train + num_val]

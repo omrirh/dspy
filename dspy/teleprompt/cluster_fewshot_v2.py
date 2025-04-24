@@ -12,6 +12,10 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
 )
+from programs import (
+    BasicMH,
+    CoT
+)
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
 
@@ -21,8 +25,8 @@ MIN_CLUSTERS: int = 3
 MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
-    "arithmetic": ["top_n"],
-    "multihop": ["top_n"],  # , "best_in_cluster", "popularity", "central"],
+    "arithmetic": ["best_in_cluster"],
+    "multihop": ["best_in_cluster", "popularity"],
     "classification": ["best_in_cluster"],
 }
 
@@ -113,11 +117,8 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info("Compiling the student program using ClusteFewshotv2 optimizer...")
         self.training_clusters = self._cluster_examples()
-
-        logger.info("Clustering test set completed")
-        exit(0)
-
         self.validation_clusters = self._cluster_examples(train=False)
+
         self._sample_validation_clusters(method="random")
         self._sort_examples_as_demos()
 
@@ -206,9 +207,9 @@ class ClusterFewshotv2(Teleprompter):
             show_ranks=False,
     ):
         """
-        Visualizes clustered embeddings / ranked examples in 2D using t-SNE.
+        Visualizes clustered embeddings / ranked examples in 2D using PCA.
         """
-        logger.info("Performing t-SNE dimensionality reduction for visualization...")
+        logger.info("Performing PCA dimensionality reduction for visualization...")
         pca = PCA(n_components=2)
         embeddings_2d = pca.fit_transform(embeddings)
 
@@ -253,7 +254,8 @@ class ClusterFewshotv2(Teleprompter):
                       f"K={num_clusters}\n"
                       f"Size={len(embeddings)}\n"
                       f"Silhouette={silhouette:.3f}\n"
-                      f"Embedding Model={embedding_model}")
+                      f"Embedding Model={embedding_model}\n"
+                      f"Dataset={'GSM8K' if isinstance(self.student, CoT) else 'HotPotQA' if isinstance(self.student, BasicMH) else 'Iris'}")
 
         plt.xlabel("PCA Dimension 1")
         plt.ylabel("PCA Dimension 2")
@@ -294,6 +296,26 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"EAD scores distribution saved to {save_path}")
 
+    def visualize_reasoning_distribution(self):
+        # Extract ranks based on whether the example has reasoning
+        ranks_with_reasoning = [self.ranked_examples[ex] for ex in self.trainset if hasattr(ex, "reasoning")]
+        ranks_without_reasoning = [self.ranked_examples[ex] for ex in self.trainset if not hasattr(ex, "reasoning")]
+
+        # Plot the distributions
+        plt.figure(figsize=(10, 6))
+        plt.hist(ranks_with_reasoning, bins=len(set(ranks_with_reasoning)), alpha=0.7, label="With reasoning",
+                 edgecolor='black')
+        plt.hist(ranks_without_reasoning, bins=len(set(ranks_without_reasoning)), alpha=0.5, label="Without reasoning",
+                 edgecolor='black')
+
+        plt.title("Distribution of One-shot Ranks With vs Without Reasoning")
+        plt.xlabel("One-shot Evaluation Score (Rank)")
+        plt.ylabel("Frequency")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig("reasoning_ranks_distribution.png")
+
     def _sample_validation_clusters(self, method="random"):
         """
         Selects examples from each validation cluster, proportionally to cluster size.
@@ -304,9 +326,10 @@ class ClusterFewshotv2(Teleprompter):
         rng = random.Random(0)
 
         total_val_examples = sum(len(examples) for examples in self.validation_clusters.values())
-        total_samples = 12
+        total_samples = 16
 
         for cluster_id, examples in self.validation_clusters.items():
+            selected = []
             proportion = len(examples) / total_val_examples
             sample_size = min(len(examples), max(1, round(proportion * total_samples)))
             logger.info(f"Sampling {sample_size} EAD questions from cluster {cluster_id + 1} (size={len(examples)})")
@@ -318,8 +341,7 @@ class ClusterFewshotv2(Teleprompter):
 
             self.ead_set.extend(selected)
 
-        joined_ead_questions = "\n".join([ex.question for ex in self.ead_set])
-        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions:\n{joined_ead_questions}\n\n")
+        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} {method} questions.")
 
     def _sort_examples_as_demos(self):
         """
@@ -367,6 +389,7 @@ class ClusterFewshotv2(Teleprompter):
             data_type="training",
             show_ranks=True,
         )
+        self.visualize_reasoning_distribution()
 
         logger.info(f"Demonstrations are sorted in {'descending' if self.descending else 'ascending'} order.")
 
@@ -455,18 +478,22 @@ class ClusterFewshotv2(Teleprompter):
             if not cluster_examples:
                 return sampled_examples
 
-            if sampling_strategy == "top_n":
-                top_global_n = self.global_sorted_examples[:self.N]
+            if sampling_strategy in ["top_n", "reasoning"]:
+                if sampling_strategy == "reasoning":
+                    top_global_n = list(filter(lambda ex: hasattr(ex, "reasoning"), self.global_sorted_examples))[
+                                   :self.N]
+                else:
+                    top_global_n = self.global_sorted_examples[:self.N]
+
                 sampled_examples.extend([ex for ex in cluster_examples if ex in top_global_n])
 
             elif sampling_strategy == "best_in_cluster":
                 sampled_examples.append(cluster_examples[0])
 
             elif sampling_strategy == "popularity":
-                fewshot_size = self.N + 1
                 total_examples = len(self.trainset)
                 proportion = len(cluster_examples) / total_examples
-                sample_size = min(len(cluster_examples), round(proportion * fewshot_size))
+                sample_size = min(len(cluster_examples), round(proportion * self.N))
                 sampled_examples = cluster_examples[:sample_size]
 
             elif sampling_strategy == "central":
@@ -576,7 +603,7 @@ class ClusterFewshotv2(Teleprompter):
             encoding = self.tokenizer(
                 chat_str,
                 return_tensors="pt",
-                padding="max_length",         # keep consistent sequence length
+                padding="max_length",  # keep consistent sequence length
                 truncation=True,
                 max_length=max_seq_length,
             )
@@ -593,12 +620,12 @@ class ClusterFewshotv2(Teleprompter):
                 token_embs = self.embedding_model.get_input_embeddings()(input_ids)  # [1, seq_len, hidden_dim]
 
                 # Expand mask to [1, seq_len, 1] and apply it
-                attention_expanded = attention_mask.unsqueeze(-1)                   # [1, seq_len, 1]
-                token_embs = token_embs * attention_expanded                        # zero out pads
+                attention_expanded = attention_mask.unsqueeze(-1)  # [1, seq_len, 1]
+                token_embs = token_embs * attention_expanded  # zero out pads
 
-                sum_embs = token_embs.sum(dim=1)                                    # [1, hidden_dim]
-                lengths = attention_expanded.sum(dim=1).clamp(min=1)                # [1, 1] -> prevent divide-by-zero
-                mean_emb = sum_embs / lengths                                       # [1, hidden_dim]
+                sum_embs = token_embs.sum(dim=1)  # [1, hidden_dim]
+                lengths = attention_expanded.sum(dim=1).clamp(min=1)  # [1, 1] -> prevent divide-by-zero
+                mean_emb = sum_embs / lengths  # [1, hidden_dim]
 
             embeddings.append(mean_emb.squeeze(0).cpu().numpy())
 
@@ -678,5 +705,3 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
         return best_embeddings, best_labels, best_k
-
-
