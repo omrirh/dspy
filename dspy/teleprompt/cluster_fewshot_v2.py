@@ -25,8 +25,8 @@ MIN_CLUSTERS: int = 3
 MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
-    "arithmetic": ["best_in_cluster"],
-    "multihop": ["best_in_cluster", "popularity"],
+    "arithmetic": ["top_n"],
+    "multihop": ["top_n"],
     "classification": ["best_in_cluster"],
 }
 
@@ -34,6 +34,7 @@ CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
 ]
+
 
 class ClusterFewshotv2(Teleprompter):
     def __init__(
@@ -119,7 +120,21 @@ class ClusterFewshotv2(Teleprompter):
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
 
-        self._sample_validation_clusters(method="random")
+        # # Log clusters for debug
+        # if self.task_type != "classification":
+        #     logger.info("--- TRAINING CLUSTERS ---\n")
+        #     for cid, examples in self.training_clusters.items():
+        #         examples_str = "\n".join([f"{ex.question} --> {ex.answer}" for ex in examples[:3]])
+        #         logger.info(f"Cluster {cid + 1}:\n{examples_str}")
+
+        #     logger.info("--- VALIDATION CLUSTERS ---\n")
+        #     for cid, examples in self.validation_clusters.items():
+        #         examples_str = "\n".join([f"{ex.question} --> {ex.answer}" for ex in examples[:3]])
+        #         logger.info(f"Cluster {cid + 1}:\n{examples_str}")
+
+        # exit(0)
+
+        self._sample_ead_evaluation_set(method="random")
         self._sort_examples_as_demos()
 
         self.collect_fewshot_subsets()
@@ -303,8 +318,9 @@ class ClusterFewshotv2(Teleprompter):
 
         # Plot the distributions
         plt.figure(figsize=(10, 6))
-        plt.hist(ranks_with_reasoning, bins=len(set(ranks_with_reasoning)), alpha=0.7, label="With reasoning",
-                 edgecolor='black')
+        if ranks_with_reasoning:
+            plt.hist(ranks_with_reasoning, bins=len(set(ranks_with_reasoning)), alpha=0.7, label="With reasoning",
+                     edgecolor='black')
         plt.hist(ranks_without_reasoning, bins=len(set(ranks_without_reasoning)), alpha=0.5, label="Without reasoning",
                  edgecolor='black')
 
@@ -316,28 +332,35 @@ class ClusterFewshotv2(Teleprompter):
         plt.tight_layout()
         plt.savefig("reasoning_ranks_distribution.png")
 
-    def _sample_validation_clusters(self, method="random"):
+    def _sample_ead_evaluation_set(self, method="random"):
         """
-        Selects examples from each validation cluster, proportionally to cluster size.
+        Selects examples from each validation cluster to form the EAD testing set.
         """
         self.ead_set = []
 
         import random
         rng = random.Random(0)
 
-        total_val_examples = sum(len(examples) for examples in self.validation_clusters.values())
-        total_samples = 16
+        samples_per_cluster = 4
 
         for cluster_id, examples in self.validation_clusters.items():
             selected = []
-            proportion = len(examples) / total_val_examples
-            sample_size = min(len(examples), max(1, round(proportion * total_samples)))
-            logger.info(f"Sampling {sample_size} EAD questions from cluster {cluster_id + 1} (size={len(examples)})")
+            sample_size = min(samples_per_cluster, len(examples))
 
             if method == "random":
                 selected = rng.sample(examples, sample_size)
             if method == "central":
                 selected = self.get_central_examples(examples=examples, sample_size=sample_size)
+            if method == "hard":
+                selected = rng.sample(examples, sample_size)
+                for question in selected:
+                    _, success = self.ask(student=self.student, question=question)
+                    if success:
+                        selected.remove(question)
+                sample_size = len(selected)
+
+            logger.info(
+                f"Sampling {sample_size} {method} EAD questions from cluster {cluster_id + 1} (size={len(examples)})")
 
             self.ead_set.extend(selected)
 
@@ -399,7 +422,7 @@ class ClusterFewshotv2(Teleprompter):
         to predict correctly when used as a sole demonstration.
         """
         # If current example was answered correctly by the student, collect reasoning from LM
-        pred, success = self.answer(student, example)
+        pred, success = self.ask(student, question=example)
 
         if success:
             embeddings = self.examples2embeddings.pop(str(example))
@@ -550,11 +573,11 @@ class ClusterFewshotv2(Teleprompter):
 
         return sampled_examples
 
-    def answer(self, student, example):
-        prediction = student(**example.inputs())
+    def ask(self, student, question):
+        prediction = student(**question.inputs())
 
         if self.metric:
-            metric_val = self.metric(example, prediction, trace=None)
+            metric_val = self.metric(question, prediction, trace=None)
         if self.metric_threshold:
             success = metric_val >= self.metric_threshold
         else:
@@ -594,10 +617,9 @@ class ClusterFewshotv2(Teleprompter):
             chat_str = self.tokenizer.apply_chat_template(
                 conversation=[
                     {"role": "user", "content": examples[i].question},
-                    {"role": "assistant", "content": examples[i].answer},
                 ],
                 tokenize=False,
-                add_generation_prompt=False,
+                add_generation_prompt=True,
             )
 
             encoding = self.tokenizer(
@@ -610,10 +632,6 @@ class ClusterFewshotv2(Teleprompter):
 
             input_ids = encoding["input_ids"].to(self.embedding_model.device)
             attention_mask = encoding["attention_mask"].to(self.embedding_model.device)
-
-            if input_ids.dim() == 1:
-                input_ids = input_ids.unsqueeze(0)
-                attention_mask = attention_mask.unsqueeze(0)
 
             with torch.no_grad():
                 # Get token embeddings from input layer
@@ -637,7 +655,7 @@ class ClusterFewshotv2(Teleprompter):
         logger.info(f"Searching best K for {self.embedding_model_name} model embeddings")
 
         for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
-            kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=400, random_state=42)
+            kmeans = KMeans(n_clusters=k, n_init=10, random_state=42)
             labels = kmeans.fit_predict(embeddings)
             score = silhouette_score(embeddings, labels)
 
@@ -670,7 +688,7 @@ class ClusterFewshotv2(Teleprompter):
                 embeddings = embedding_model.encode(examples_texts, convert_to_numpy=True)
 
                 for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
-                    kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=500, random_state=42)
+                    kmeans = KMeans(n_clusters=k, n_init=10, random_state=42)
                     labels = kmeans.fit_predict(embeddings)
                     score = silhouette_score(embeddings, labels)
 
@@ -690,7 +708,7 @@ class ClusterFewshotv2(Teleprompter):
             embeddings = self.embedding_model.encode(examples_texts, convert_to_numpy=True)
 
             for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
-                kmeans = KMeans(n_clusters=k, init='k-means++', n_init=20, max_iter=400, random_state=42)
+                kmeans = KMeans(n_clusters=k, n_init=10, random_state=42)
                 labels = kmeans.fit_predict(embeddings)
                 score = silhouette_score(embeddings, labels)
 

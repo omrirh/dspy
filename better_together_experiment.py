@@ -44,6 +44,7 @@ def main(dataset, prompt_optimizer, strategy, model):
 
     elif dataset_name == "hotpotqa":
         dataset = HotPotQA(only_hard_examples=True)
+        exclude_examples = ["beat, torture, and sexually assault"]
         devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][:dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
@@ -115,7 +116,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
-            use_target_model_embeddings=False,
+            use_target_model_embeddings=True,
         )
 
     if prompt_optimizer_name == "miprov2":
@@ -181,7 +182,7 @@ if __name__ == "__main__":
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
     # # for debugging
-    # dataset = "hotpotqa"
+    # dataset = "iris"
     # prompt_optimizer = "clusterfsv2"
     # strategy = "p"
     # model = "meta-llama/Meta-Llama-3-8B-Instruct"
