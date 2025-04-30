@@ -15,6 +15,7 @@ from peft import (
     LoraConfig,
     get_peft_model,
     PeftModel,
+    prepare_model_for_kbit_training,
 )
 from trl import SFTTrainer, SFTConfig
 from transformers import DataCollatorForLanguageModeling
@@ -104,18 +105,17 @@ class HFProvider(Provider):
         device = "cuda" if torch.cuda.is_available() else "cpu"
         logger.info(f"[HF Provider] Using device: {device}")
 
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
+        quant_config = BitsAndBytesConfig(
+            load_in_8bit=True,
         )
+
         tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(model)
         base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
             model,
             device_map="auto",
-            quantization_config=quantization_config,
+            quantization_config=quant_config,
         )
+        base_model = prepare_model_for_kbit_training(base_model)
 
         lora_config = LoraConfig(
             r=32,
@@ -183,7 +183,7 @@ class HFProvider(Provider):
 
         logger.info("[HF Provider] Reloading base model in bf16 for precise LoRA merging")
         base_model_fp16 = AutoModelForCausalLM.from_pretrained(
-            model,  # Load original non-quantized model
+            model,
             torch_dtype=torch.bfloat16,
             device_map="auto"
         )

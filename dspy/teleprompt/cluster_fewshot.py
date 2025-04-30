@@ -107,15 +107,17 @@ class ClusterFewshot(Teleprompter):
                 [ex.sepal_width, ex.petal_length, ex.sepal_length, ex.petal_width]
                 for ex in data
             ])
+            iris_kinds = sorted(set(ex.answer for ex in data))
+            cluster_labels = [iris_kinds.index(example.answer) for example in data]
         else:
             texts = [ex.question for ex in data]
 
             # maps examples to 384 dimensional dense vector space
             embeddings = self.embedding_model.encode(texts, convert_to_numpy=True)
 
-        logger.info(f"Clustering into {self.N} clusters...")
-        kmeans = KMeans(n_clusters=self.N, random_state=42, n_init=10)
-        cluster_labels = kmeans.fit_predict(embeddings)
+            logger.info(f"Clustering into {self.N} clusters...")
+            kmeans = KMeans(n_clusters=self.N, random_state=42, n_init=10)
+            cluster_labels = kmeans.fit_predict(embeddings)
 
         clusters = {i: [] for i in range(self.N)}
         for idx, label in enumerate(cluster_labels):

@@ -41,25 +41,12 @@ def colbertv2_get_request_v2(url: str, query: str, k: int):
         k <= 100
     ), "Only k <= 100 is supported for the hosted ColBERTv2 server at the moment."
 
-    for _k in range(k, 0, -1):
-        payload = {"query": query, "k": _k}
-        try:
-            res = requests.get(url, params=payload, timeout=10)
-            res.raise_for_status()  # Ensure we don’t get 4xx/5xx errors
+    payload = {"query": query, "k": k}
+    res = requests.get(url, params=payload, timeout=10)
 
-            data = res.json()
-            if "topk" in data:
-                topk = data["topk"][:_k]
-                topk = [{**d, "long_text": d["text"]} for d in topk]
-                return topk
-
-        except requests.exceptions.RequestException as e:
-            print(f"Error retrieving with k={_k}: {e}. trying with reduced passages.")
-            continue  # Try with a lower k if there's an error
-
-    # Retriever might be overloaded/exhausted, fallback to no passages.
-    print("Failed to retrieve any passages from ColBERT-v2.")
-    return []
+    topk = res.json()["topk"][:k]
+    topk = [{**d, "long_text": d["text"]} for d in topk]
+    return topk[:k]
 
 
 @functools.cache
