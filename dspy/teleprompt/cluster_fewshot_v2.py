@@ -22,15 +22,16 @@ from dspy.evaluate import Evaluate
 logger = logging.getLogger(__name__)
 
 MIN_CLUSTERS: int = 3
-MAX_CLUSTERS: int = 4
+MAX_CLUSTERS: int = 3
 
 TASK_2_SAMPLINGS = {
-    "arithmetic": ["top_n"],
-    "multihop": ["top_n"],
+    "arithmetic": ["top_n", "best_in_cluster"],
+    "multihop": ["top_n", "best_in_cluster"],
     "classification": ["best_in_cluster"],
 }
 
 CANDIDATE_EMBEDDING_MODELS = [
+    "sentence-transformers/all-MiniLM-L6-v2",
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
 ]
@@ -134,7 +135,7 @@ class ClusterFewshotv2(Teleprompter):
 
         # exit(0)
 
-        self._sample_ead_evaluation_set(method="random")
+        self._sample_ead_evaluation_set()
         self._sort_examples_as_demos()
 
         self.collect_fewshot_subsets()
@@ -332,39 +333,23 @@ class ClusterFewshotv2(Teleprompter):
         plt.tight_layout()
         plt.savefig("reasoning_ranks_distribution.png")
 
-    def _sample_ead_evaluation_set(self, method="random"):
+    def _sample_ead_evaluation_set(self):
         """
         Selects examples from each validation cluster to form the EAD testing set.
         """
         self.ead_set = []
-
-        import random
-        rng = random.Random(0)
-
-        samples_per_cluster = 4
+        samples_per_cluster = 3
 
         for cluster_id, examples in self.validation_clusters.items():
-            selected = []
             sample_size = min(samples_per_cluster, len(examples))
-
-            if method == "random":
-                selected = rng.sample(examples, sample_size)
-            if method == "central":
-                selected = self.get_central_examples(examples=examples, sample_size=sample_size)
-            if method == "hard":
-                selected = rng.sample(examples, sample_size)
-                for question in selected:
-                    _, success = self.ask(student=self.student, question=question)
-                    if success:
-                        selected.remove(question)
-                sample_size = len(selected)
+            selected = self.get_central_examples(examples=examples, sample_size=sample_size)
 
             logger.info(
-                f"Sampling {sample_size} {method} EAD questions from cluster {cluster_id + 1} (size={len(examples)})")
+                f"Sampling {sample_size} questions from cluster {cluster_id + 1} (size={len(examples)})")
 
             self.ead_set.extend(selected)
 
-        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} {method} questions.")
+        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions.")
 
     def _sort_examples_as_demos(self):
         """
@@ -418,7 +403,7 @@ class ClusterFewshotv2(Teleprompter):
 
     def _evaluate_example_as_demo(self, example, evaluator, student):
         """
-        Evaluates an example by measuring how well it demonstrate the student
+        Evaluates an example by measuring how well it demonstrates the student
         to predict correctly when used as a sole demonstration.
         """
         # If current example was answered correctly by the student, collect reasoning from LM
@@ -459,7 +444,7 @@ class ClusterFewshotv2(Teleprompter):
 
     def collect_fewshot_subsets(self):
         """
-        Collects the potential few-shot candidate subsets using task-specific sampling strategies.
+        Collects the potential few-shot candidate subsets using task-adaptive sampling strategies.
         """
         sampling_strategies = TASK_2_SAMPLINGS[self.task_type]
         adaptive_fewshot_subsets = {
@@ -490,8 +475,8 @@ class ClusterFewshotv2(Teleprompter):
         1. top N: Collects examples that fall in the top global N demonstrations set.
             If there aren't any in the given cluster, returns an empty list.
         2. Best in cluster: Returns the top-ranked example-as-demo from the given cluster.
-        3. Cluster strength: Allocates a proportionate number of slots in the few-shot subset
-            for the given cluster top-ranked examples, based on cluster's performance consistency.
+        3. Popularity: Allocates a proportionate number of slots in the few-shot subset
+            for the given cluster top-ranked examples, based on cluster size (i.e. semantic popularity)
         4. Central: Samples most centric example (i.e most common within a semantic demonstrations trend)
         """
         sampled_examples = []
@@ -501,13 +486,8 @@ class ClusterFewshotv2(Teleprompter):
             if not cluster_examples:
                 return sampled_examples
 
-            if sampling_strategy in ["top_n", "reasoning"]:
-                if sampling_strategy == "reasoning":
-                    top_global_n = list(filter(lambda ex: hasattr(ex, "reasoning"), self.global_sorted_examples))[
-                                   :self.N]
-                else:
-                    top_global_n = self.global_sorted_examples[:self.N]
-
+            if sampling_strategy == "top_n":
+                top_global_n = self.global_sorted_examples[:self.N]
                 sampled_examples.extend([ex for ex in cluster_examples if ex in top_global_n])
 
             elif sampling_strategy == "best_in_cluster":
@@ -635,15 +615,14 @@ class ClusterFewshotv2(Teleprompter):
 
             with torch.no_grad():
                 # Get token embeddings from input layer
-                token_embs = self.embedding_model.get_input_embeddings()(input_ids)  # [1, seq_len, hidden_dim]
+                token_embs = self.embedding_model.get_input_embeddings()(input_ids)
 
-                # Expand mask to [1, seq_len, 1] and apply it
-                attention_expanded = attention_mask.unsqueeze(-1)  # [1, seq_len, 1]
+                attention_expanded = attention_mask.unsqueeze(-1)
                 token_embs = token_embs * attention_expanded  # zero out pads
 
-                sum_embs = token_embs.sum(dim=1)  # [1, hidden_dim]
-                lengths = attention_expanded.sum(dim=1).clamp(min=1)  # [1, 1] -> prevent divide-by-zero
-                mean_emb = sum_embs / lengths  # [1, hidden_dim]
+                sum_embs = token_embs.sum(dim=1)
+                lengths = attention_expanded.sum(dim=1).clamp(min=1)
+                mean_emb = sum_embs / lengths
 
             embeddings.append(mean_emb.squeeze(0).cpu().numpy())
 
@@ -670,7 +649,7 @@ class ClusterFewshotv2(Teleprompter):
 
         return np.array(embeddings), best_labels, best_k
 
-    def generate_embedding_clusters_with_candidate_models(self, examples):
+    def generate_embedding_clusters_with_candidate_models(self, examples: List[Example], device: str = 'cpu'):
         best_k = None
         best_score = -np.inf
         best_labels = None
@@ -684,7 +663,7 @@ class ClusterFewshotv2(Teleprompter):
             for model_id in CANDIDATE_EMBEDDING_MODELS:
                 logger.info(f"Encoding examples with model: {model_id}")
 
-                embedding_model = SentenceTransformer(model_id, device='cpu')
+                embedding_model = SentenceTransformer(model_id, device=device)
                 embeddings = embedding_model.encode(examples_texts, convert_to_numpy=True)
 
                 for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
