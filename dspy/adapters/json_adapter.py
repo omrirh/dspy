@@ -99,6 +99,8 @@ class JSONAdapter(Adapter):
         fields = json_repair.loads(completion)
         fields = {k: v for k, v in fields.items() if k in signature.output_fields}
 
+        if type(fields) == str:
+            return None
         # attempt to cast each value to type signature.output_fields[k].annotation
         for k, v in fields.items():
             if k in signature.output_fields:
@@ -119,10 +121,10 @@ class JSONAdapter(Adapter):
         }
 
         return format_fields(role=role, fields_with_values=fields_with_values)
-    
+
     def format_turn(self, signature: Type[Signature], values, role: str, incomplete: bool = False, is_conversation_history: bool = False) -> dict[str, Any]:
         return format_turn(signature, values, role, incomplete, is_conversation_history)
-    
+
     def format_finetune_data(self, signature: Type[Signature], demos: list[dict[str, Any]], inputs: dict[str, Any], outputs: dict[str, Any]) -> dict[str, list[Any]]:
         # TODO: implement format_finetune_data method in JSONAdapter
         raise NotImplementedError

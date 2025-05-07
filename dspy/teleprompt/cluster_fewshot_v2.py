@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 import logging
 import numpy as np
 from typing import List, Tuple
@@ -140,6 +141,8 @@ class ClusterFewshotv2(Teleprompter):
 
         self.collect_fewshot_subsets()
         self.pick_best_fewshot_subset()
+
+        # self.final_fewshot_subset = self.soft_select(N=self.N)
 
         # Update student LM predictors with optimized few-shot subset
         for _, predictor in self.student.named_predictors():
@@ -702,3 +705,71 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
         return best_embeddings, best_labels, best_k
+
+    def soft_select(
+        self,
+        N: int,
+        steps: int = 100,
+        lr: float = 1e-1,
+        device: str = "cpu",
+        verbose: bool = True,
+        min_lambda: float = 0.1,
+        max_lambda: float = np.inf,
+    ):
+        """
+        Differentiable “soft” selection of a final N-shot subset.
+        Balances one-shot impact (EAD ranks) against semantic redundancy.
+        """
+        import math
+
+        trainset = self.trainset
+        M = len(trainset)
+
+        ead_scores = torch.tensor(
+            [score for _, score in self.ranked_examples.items()],
+            dtype=torch.float32,
+            device=device
+        )  # shape (M,)
+
+        # Build embedding matrix
+        embs = torch.stack([
+            torch.tensor(self.examples2embeddings[str(ex)], device=device, dtype=torch.float32)
+            for ex, _ in self.ranked_examples.items()
+        ]).to(device)  # shape (M, D)
+
+        # Build cosine-similarity matrix
+        embs = embs / (embs.norm(dim=1, keepdim=True).clamp(min=1e-8))
+        S = embs @ embs.t()  # shape (M, M)
+
+        # Initialize learnable logits and diversity log‐lambda
+        logits = torch.zeros(M, device=device, requires_grad=True)
+        log_lambda = torch.zeros(1, device=device, requires_grad=True)
+
+        optimizer = torch.optim.Adam([logits, log_lambda], lr=lr)
+
+        logger.info(f"Learning {N} potential few-shot candidates from {M} examples")
+
+        for step in range(steps):
+            p = F.softmax(logits, dim=0)
+            lambda_ = log_lambda.exp()
+
+            # Loss: negative impact + diversity penalty
+            loss = - (p * ead_scores).sum() + lambda_ * (p @ S @ p)
+            loss_val = loss.item()
+            lambda_val = lambda_.item()
+
+            if verbose:
+                logger.info(f"loss: {loss_val:.4f}, λ: {lambda_val:.4f}, step: {step}")
+
+            optimizer.zero_grad()
+            loss.backward()
+            with torch.no_grad():
+                # clip λ to [min, max] for diversity control
+                log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
+            optimizer.step()
+
+        # Pick top‐N examples by final p probabilities
+        soft_scores = F.softmax(logits, dim=0)
+        topn = torch.topk(soft_scores, N).indices.tolist()
+        candidate_examples = list(self.ranked_examples)
+        return [candidate_examples[i] for i in topn]

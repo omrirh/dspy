@@ -2,6 +2,10 @@ import random
 from dspy.datasets.dataset import Dataset
 from sklearn import datasets
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class IrisDataset(Dataset):
     def __init__(self, *args, **kwargs):
@@ -23,8 +27,12 @@ class IrisDataset(Dataset):
             for features, label in zip(iris.data, iris.target)
         ]
 
-        # Shuffle deterministically
-        random.seed(self.train_seed)
+        import time
+        seed = int(time.time())
+
+        logger.info(f"Iris dataset seed: {seed}")
+
+        random.seed(seed)
         random.shuffle(examples)
 
         iris_examples = [x.with_inputs(

@@ -231,11 +231,13 @@ def bootstrap_trace_data(
 
     data = []
     for example_ind, (example, prediction, score) in enumerate(outputs):
-        prediction, trace = prediction
-        data_dict = dict(example=example, prediction=prediction, trace=trace, example_ind=example_ind)
-        if metric:
-            data_dict["score"] = score
-        data.append(data_dict)
+        content = prediction
+        if content:
+            prediction, trace = content
+            data_dict = dict(example=example, prediction=prediction, trace=trace, example_ind=example_ind)
+            if metric:
+                data_dict["score"] = score
+            data.append(data_dict)
 
     return data
 

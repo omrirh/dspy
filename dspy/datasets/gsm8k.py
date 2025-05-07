@@ -3,6 +3,9 @@ import random
 import tqdm
 from datasets import load_dataset
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class GSM8K:
     def __init__(self):
@@ -37,7 +40,12 @@ class GSM8K:
 
             official_test.append(dict(question=question, gold_reasoning=gold_reasoning, answer=answer))
 
-        rng = random.Random(0)
+        import time
+        seed = int(time.time())
+
+        logger.info(f"GSM8K training set seed: {seed}")
+
+        rng = random.Random(seed)
         rng.shuffle(official_train)
 
         rng = random.Random(0)

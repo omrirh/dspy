@@ -44,8 +44,17 @@ def main(dataset, prompt_optimizer, strategy, model):
 
     elif dataset_name == "hotpotqa":
         dataset = HotPotQA(only_hard_examples=True)
-        exclude_examples = ["beat, torture, and sexually assault"]
-        devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][:dev_size]
+        exclude_examples = [
+            "beat, torture, and sexually assault",
+            "Anti-pedophile activism advocates for victims",
+            "hosting a video of the murder of an international student",
+            "contemporary scholars likens to Ilminism",
+            "Joseph Druce murder John Geoghan",
+            "George Pell first sexually assault a 12 year old boy",
+            "The Gay Nigger Association of America",
+            "insertion and thrusting of the erect penis into a person's anus",
+        ]
+        devset = [x.with_inputs('question') for x in dataset.dev if not any(ex in x.question for ex in exclude_examples)][train_size:train_size + dev_size]
         test_size = 1500  # According to BetterTogether report
         metric = dspy.evaluate.answer_exact_match
         task_type = "multihop"
@@ -129,7 +138,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         metric=metric,
         weight_optimizer=weight_optimizer,
         prompt_optimizer=prompt_optimizer,
-        seed=2026  # RANDOM_SEED
+        seed=RANDOM_SEED
     )
 
     # Run the BetterTogether optimization
