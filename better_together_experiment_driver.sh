@@ -14,6 +14,7 @@ MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
 VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "clusterfsv2" "miprov2")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p" "p -> p" "p -> p -> p")
+VALID_MODELS=("meta-llama/Llama-2-7b-chat-hf" "meta-llama/Meta-Llama-3-8B-Instruct" "mistralai/Mistral-7B-Instruct-v0.2")
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -56,6 +57,13 @@ if [[ ! " ${VALID_STRATEGIES[@]} " =~ " ${STRATEGY} " ]]; then
     exit 1
 fi
 
+# Validate dataset
+if [[ ! " ${VALID_MODELS[@]} " =~ " ${MODEL} " ]]; then
+    echo "Invalid model: $DATASET"
+    echo "Supported models: ${VALID_MODELS[*]}"
+    exit 1
+fi
+
 # Auto confirm prompt optimization run with MIPROv2
 if [[ "$PROMPT_OPTIMIZER" == "miprov2" ]]; then
     export PYTHONUNBUFFERED=1
@@ -64,9 +72,10 @@ fi
 
 # Format additional params for log filename
 LOG_PARAMS="_${PROMPT_OPTIMIZER}_$(echo "$STRATEGY" | tr ' ' '_')"
+MODEL_ID="_$(basename "$MODEL")"
 
 # Set log file
-EXPERIMENT_LOG_FILE="better_together_experiment_run_${DATASET}${LOG_PARAMS}_$(date +'%Y-%m-%d').log"
+EXPERIMENT_LOG_FILE="better_together_experiment_run_${DATASET}${MODEL_ID}${LOG_PARAMS}_$(date +'%Y-%m-%d').log"
 
 # Run experiment
 nohup python3.11 better_together_experiment.py \
@@ -75,8 +84,10 @@ nohup python3.11 better_together_experiment.py \
     --strategy "$STRATEGY" \
     --model "$MODEL" 2>&1 | tee "$EXPERIMENT_LOG_FILE" &
 
-echo "Experiment for dataset: $DATASET"
+echo "BetterTogether Experiment"
+echo "-------------------------"
+echo "Dataset: $DATASET"
 echo "Prompt Optimizer: $PROMPT_OPTIMIZER"
 echo "Strategy: $STRATEGY"
 echo "Model: $MODEL"
-echo "Log file: $EXPERIMENT_LOG_FILE"
+echo -e "Log file: $EXPERIMENT_LOG_FILE\n\n"

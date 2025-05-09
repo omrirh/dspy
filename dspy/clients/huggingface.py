@@ -30,8 +30,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _HF_MODELS = [
-    "meta-llama/Meta-Llama-2-7b-chat-hf",
+    "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
+    "mistralai/Mistral-7B-Instruct-v0.2",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -210,7 +211,7 @@ class HFProvider(Provider):
         logger.info("[HF Provider] GPU memory released successfully")
 
         logger.info(f"[HF Provider] Deploying {trained_model_path} model after LoRA fine-tuning")
-        deploy_sglang_model(model_path=trained_model_path, log_file="trained_llama_run.log")
+        deploy_sglang_model(model_path=trained_model_path, log_file="trained_sglang_run.log")
 
         assign_local_lm(
             model=model,

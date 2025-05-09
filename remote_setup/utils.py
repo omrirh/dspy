@@ -164,10 +164,10 @@ def stop_server_and_clean_resources(port: int, cuda_device: int = 0, retry_attem
 
 def deploy_sglang_model(model_path: str, log_file: str, port: int = 7501, cuda_device: int = 0):
     """
-    Re-deploy the fine-tuned model with SGLang.
+    Deploy a Language Model with SGLang.
 
     Args:
-        model_path (str): Path to the fine-tuned model directory.
+        model_path (str): Path to the model directory.
         port (int): Port for the SGLang server.
         cuda_device (int): CUDA device ID to use.
         log_file (str): Log file for the server output.

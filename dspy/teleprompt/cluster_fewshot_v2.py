@@ -139,10 +139,10 @@ class ClusterFewshotv2(Teleprompter):
         self._sample_ead_evaluation_set()
         self._sort_examples_as_demos()
 
-        self.collect_fewshot_subsets()
-        self.pick_best_fewshot_subset()
+        # self.collect_fewshot_subsets()
+        # self.pick_best_fewshot_subset()
 
-        # self.final_fewshot_subset = self.soft_select(N=self.N)
+        self.soft_select(N=self.N)
 
         # Update student LM predictors with optimized few-shot subset
         for _, predictor in self.student.named_predictors():
@@ -709,11 +709,12 @@ class ClusterFewshotv2(Teleprompter):
     def soft_select(
         self,
         N: int,
-        steps: int = 100,
+        steps: int = 800,
+        log_step: int = 100,
         lr: float = 1e-1,
         device: str = "cpu",
         verbose: bool = True,
-        min_lambda: float = 0.1,
+        min_lambda: float = 0.5,
         max_lambda: float = np.inf,
     ):
         """
@@ -758,7 +759,7 @@ class ClusterFewshotv2(Teleprompter):
             loss_val = loss.item()
             lambda_val = lambda_.item()
 
-            if verbose:
+            if verbose and step % log_step == 0:
                 logger.info(f"loss: {loss_val:.4f}, λ: {lambda_val:.4f}, step: {step}")
 
             optimizer.zero_grad()
@@ -772,4 +773,33 @@ class ClusterFewshotv2(Teleprompter):
         soft_scores = F.softmax(logits, dim=0)
         topn = torch.topk(soft_scores, N).indices.tolist()
         candidate_examples = list(self.ranked_examples)
-        return [candidate_examples[i] for i in topn]
+        self.final_fewshot_subset = [candidate_examples[i] for i in topn]
+
+        self.visualize_soft_selection(div_lambda=log_lambda.exp().item())
+
+    def visualize_soft_selection(self, div_lambda, save_path="soft_selection_pca.png"):
+        """
+        PCA plot of all training embeddings, highlighting selected few-shot examples.
+        """
+        all_examples = list(self.ranked_examples)
+        embs = np.stack([
+            self.examples2embeddings[str(ex)]
+            for ex in all_examples
+        ])
+        selected_set = set(self.final_fewshot_subset)
+
+        pca = PCA(n_components=2)
+        reduced = pca.fit_transform(embs)
+
+        colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
+
+        plt.figure(figsize=(8, 6))
+        plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
+        plt.title(f"PCA of Training Embeddings with Selected Few-shot (Red)\nDiversity λ={div_lambda:.3f}")
+        plt.xlabel("PCA Dimension 1")
+        plt.ylabel("PCA Dimension 2")
+        plt.tight_layout()
+        plt.savefig(save_path)
+        plt.close()
+
+        logger.info(f"Soft selection PCA plot saved to {save_path}")
