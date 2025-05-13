@@ -125,7 +125,8 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
-            use_target_model_embeddings=True,
+            use_target_model_embeddings=(strategy[0] == 'w'),
+            # TODO: this should be set dynamically after fine-tuning
         )
 
     if prompt_optimizer_name == "miprov2":
@@ -177,7 +178,7 @@ if __name__ == "__main__":
     # dataset = "hotpotqa"
     # prompt_optimizer = "clusterfsv2"
     # strategy = "p"
-    # model = "meta-llama/Meta-Llama-3-8B-Instruct"
+    # model = "meta-llama/Llama-2-7b-chat-hf"
 
     # main(dataset, prompt_optimizer, strategy, model)
 
