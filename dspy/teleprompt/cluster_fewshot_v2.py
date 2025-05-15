@@ -709,12 +709,12 @@ class ClusterFewshotv2(Teleprompter):
     def soft_select(
         self,
         N: int,
-        steps: int = 800,
+        steps: int = 1000,
         log_step: int = 100,
         lr: float = 1e-1,
         device: str = "cpu",
         verbose: bool = True,
-        min_lambda: float = 0.5,
+        min_lambda: float = 10,
         max_lambda: float = np.inf,
     ):
         """
