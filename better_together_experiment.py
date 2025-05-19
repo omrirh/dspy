@@ -126,7 +126,6 @@ def main(dataset, prompt_optimizer, strategy, model):
             metric=metric,
             task_type=task_type,
             use_target_model_embeddings=(strategy[0] == 'w'),
-            # TODO: this should be set dynamically after fine-tuning
         )
 
     if prompt_optimizer_name == "miprov2":
