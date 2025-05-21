@@ -45,6 +45,7 @@ class ClusterFewshotv2(Teleprompter):
             metric=None,
             metric_threshold=None,
             descending: bool = True,
+            soft_select: bool = False,
             use_target_model_embeddings: bool = False
     ):
         """
@@ -62,6 +63,10 @@ class ClusterFewshotv2(Teleprompter):
             descending: bool
                 Whether to sort examples per-cluster/globally
                 in descending order of impact as one-shot demonstrations.
+            soft_select: bool
+                Whether to sample the final few-shot based on differentiable "soft" selection process
+                that learns a few-shot subset by balancing strong one-shot examples with semantic diversity,
+                using an SGD-trained probability distribution over candidates.
             use_target_model_embeddings: bool
                 Whether to use the target model layers embedding or
                 a candidate SentenceTransformer's semantic embeddings.
@@ -78,6 +83,7 @@ class ClusterFewshotv2(Teleprompter):
                 f"'{task_type}' task is not supported in ClusterFewshotv2. Currently supported tasks:\n{list(TASK_2_SAMPLINGS.keys())}")
 
         self.task_type = task_type
+        self._soft_select = soft_select
 
         self.tokenizer = None
         self.embedding_model = None
@@ -139,10 +145,11 @@ class ClusterFewshotv2(Teleprompter):
         self._sample_ead_evaluation_set()
         self._sort_examples_as_demos()
 
-        # self.collect_fewshot_subsets()
-        # self.pick_best_fewshot_subset()
-
-        self.soft_select(N=self.N)
+        if self._soft_select:
+            self.soft_select(N=self.N)
+        else:
+            self.collect_fewshot_subsets()
+            self.pick_best_fewshot_subset()
 
         # Update student LM predictors with optimized few-shot subset
         for _, predictor in self.student.named_predictors():
