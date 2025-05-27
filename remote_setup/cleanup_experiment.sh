@@ -19,5 +19,6 @@ fi
 # Remove experiment cache and model directory
 rm -rf ~/.dspy_cache
 rm -rf meta-llama/
+rm -rf mistralai/
 
 echo "Cleanup DSPy experiment cache is done."
