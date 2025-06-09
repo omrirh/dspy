@@ -59,7 +59,7 @@ fi
 
 # Validate dataset
 if [[ ! " ${VALID_MODELS[@]} " =~ " ${MODEL} " ]]; then
-    echo "Invalid model: $DATASET"
+    echo "Invalid model: $MODEL"
     echo "Supported models: ${VALID_MODELS[*]}"
     exit 1
 fi

@@ -153,7 +153,8 @@ def main(dataset, prompt_optimizer, strategy, model):
     experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
 
     # Report collected demonstrations
-    print(f"{experiment_header}\nDemonstrations collected:\n{optimized_program.named_predictors()[0][1].demos}\n\n")
+    final_fewshot = optimized_program.named_predictors()[0][1].demos
+    print(f"{experiment_header}\nDemonstrations collected ({len(final_fewshot)} in total):\n{final_fewshot}\n\n")
 
     # Evaluate accuracy and output the results
     print(f"{experiment_header}\nCalculating experiment program results...")
