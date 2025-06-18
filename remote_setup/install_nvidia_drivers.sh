@@ -21,6 +21,6 @@ sudo add-apt-repository ppa:graphics-drivers/ppa
 sudo apt update
 
 echo "Installing NVIDIA driver..."
-sudo apt install -y nvidia-driver-560
+sudo apt install -y nvidia-driver-560 nvidia-cuda-toolkit
 
 echo "Finished installing NVIDIA driver."

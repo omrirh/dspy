@@ -22,7 +22,7 @@ source vm_vars.env
 source dspy_venv/bin/activate
 
 # Setup SGLang & flashinfer-python (updated requirements.txt takes care of all)
-pip install flashinfer-python -f https://flashinfer.ai/whl/cu124/torch2.5/flashinfer-python
+pip install flashinfer-python==0.2.5 torch==2.5.1 --extra-index-url https://flashinfer.ai/whl/cu124/torch2.5/ --no-deps
 pip install "sglang==0.4.3"
 
 # Make sure Nvidia driver is present on machine
