@@ -85,7 +85,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     evaluate_test = Evaluate(
         devset=testset,
         metric=metric,
-        num_threads=12,
+        num_threads=8,
         display_progress=True,
         display_table=False
     )
@@ -176,9 +176,9 @@ if __name__ == "__main__":
 
     # # for debugging
     # dataset = "hotpotqa"
-    # prompt_optimizer = "clusterfsv2"
+    # prompt_optimizer = "bfrs"
     # strategy = "p"
-    # model = "meta-llama/Llama-2-7b-chat-hf"
+    # model = "mistralai/Mistral-7B-Instruct-v0.2"
 
     # main(dataset, prompt_optimizer, strategy, model)
 

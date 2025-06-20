@@ -530,7 +530,7 @@ class ClusterFewshotv2(Teleprompter):
         evaluator = Evaluate(
             devset=self.valset,
             metric=self.metric,
-            num_threads=12,
+            num_threads=9,
             display_progress=True,
         )
         student = self.student.deepcopy()
