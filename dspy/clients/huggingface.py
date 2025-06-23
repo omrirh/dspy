@@ -33,6 +33,7 @@ _HF_MODELS = [
     "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
     "mistralai/Mistral-7B-Instruct-v0.2",
+    "Qwen/Qwen2.5-7B-Instruct",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
