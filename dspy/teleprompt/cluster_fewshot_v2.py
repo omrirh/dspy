@@ -114,7 +114,7 @@ class ClusterFewshotv2(Teleprompter):
         Compiles the ClusterFewshotv2 optimizer.
         """
         self.student = student.deepcopy()
-        self.trainset = trainset
+        self.trainset = self.bootstrap_examples(trainset)
         self.valset = valset
 
         # TODO: this code only supports one predictor per compilation. should be re-visited?
@@ -174,18 +174,18 @@ class ClusterFewshotv2(Teleprompter):
         if self.task_type == "classification":
             examples_embeddings = np.array(
                 [
-                    [example.sepal_length, example.sepal_width, example.petal_length, example.petal_width]
+                    [input_val for _, input_val in dict(example.inputs()).items()]
                     for example in data
                 ]
             )
 
             self.embedding_model_name = "N/A"  # No model was used to create embeddings
 
-            # setosa, versicolor or virginica
-            iris_kinds = sorted(set(ex.answer for ex in data))
-            k = len(iris_kinds)
-            cluster_labels = [iris_kinds.index(example.answer) for example in data]
+            kinds = sorted(set(ex.answer for ex in data))
+            k = len(kinds)
+            cluster_labels = [kinds.index(example.answer) for example in data]
         else:
+            # TODO: first, bootstrap all examples into [{pred_0: trace_n, ..., pred_n: trace_n}, ...]
             logger.info(f"Generating {len(data)} {data_type} examples embeddings")
             examples_embeddings, cluster_labels, k = self.generate_embeddings_func(examples=data)
 
@@ -359,6 +359,7 @@ class ClusterFewshotv2(Teleprompter):
 
             self.ead_set.extend(selected)
 
+        self.visualize_ead_set()
         logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions.")
 
     def _sort_examples_as_demos(self):
@@ -423,15 +424,9 @@ class ClusterFewshotv2(Teleprompter):
             embeddings = self.examples2embeddings.pop(str(example))
             example.reasoning = pred.reasoning
             self.examples2embeddings[str(example)] = embeddings
+            self.embeddings2examples[str(embeddings)] = example
 
-        if self.task_type == "classification":
-            example_visual = (f"sepal_length: {example.sepal_length}, "
-                              f"sepal_width: {example.sepal_width}, "
-                              f"petal_length: {example.petal_length}, "
-                              f"petal_width: {example.petal_width} "
-                              f"--> {example.answer}")
-        else:
-            example_visual = f"{example.question} --> {example.answer}"
+        example_visual = f"{', '.join([f'{input_key}: {input_val}' for input_key, input_val in dict(example.inputs()).items()])} --> {example.answer}"
 
         logger.info(
             f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
@@ -442,8 +437,8 @@ class ClusterFewshotv2(Teleprompter):
 
         cached_demos = [pred.demos for _, pred in student.named_predictors()]
 
-        for _, predictor in student.named_predictors():
-            predictor.demos = [example]  # Test as one-shot demonstration
+        for name, predictor in student.named_predictors():
+            predictor.demos = example[name]  # Test as one-shot demonstration
 
         student_score = evaluator(program=student)
 
@@ -810,3 +805,100 @@ class ClusterFewshotv2(Teleprompter):
         plt.close()
 
         logger.info(f"Soft selection PCA plot saved to {save_path}")
+
+    def visualize_ead_set(self, save_path="ead_set.png"):
+        """
+        PCA plot of all validation embeddings, highlighting selected few-shot examples.
+        """
+        all_examples = list(self.valset)
+        embs = np.stack([
+            self.examples2embeddings[str(ex)]
+            for ex in all_examples
+        ])
+        selected_set = set(self.ead_set)
+
+        pca = PCA(n_components=2)
+        reduced = pca.fit_transform(embs)
+
+        colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
+
+        plt.figure(figsize=(8, 6))
+        plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
+        plt.title(f"PCA of Validation Embeddings with Selected EAD questions set (Red)")
+        plt.xlabel("PCA Dimension 1")
+        plt.ylabel("PCA Dimension 2")
+        plt.tight_layout()
+        plt.savefig(save_path)
+        plt.close()
+
+        logger.info(f"EAD set PCA plot saved to {save_path}")
+
+    def bootstrap_examples(self, examples):
+        import dspy
+        import random
+        student = self.student
+        predictor_cache = {}
+        predictor2name = {id(pred): name for pred, name in student.named_predictors()}
+
+        bootstrapped_examples = []
+
+        for example in examples:
+            bootstrapped_example = {'raw': example}
+            name2traces = {}  # clear traces for new example bootstrapping
+
+            try:
+                with dspy.settings.context(trace=[]):
+                    with dspy.settings.context():
+                        for name, predictor in student.named_predictors():
+                            predictor_cache[name] = predictor.demos
+                            predictor.demos = [x for x in predictor.demos if x != example]
+
+                        prediction = student(**example.inputs())
+                        trace = dspy.settings.trace
+
+                        for name, predictor in student.named_predictors():
+                            predictor.demos = predictor_cache[name]
+
+                    # if self.metric:
+                    #     metric_val = self.metric(example, prediction, trace)
+                    #     if self.metric_threshold:
+                    #         success = metric_val >= self.metric_threshold
+                    #     else:
+                    #         success = metric_val
+                    # else:
+                    #     success = True
+            except Exception as e:
+                success = False
+                with self.error_lock:
+                    self.error_count += 1
+                    current_error_count = self.error_count
+                if current_error_count >= self.max_errors:
+                    raise e
+                logger.error(f"Failed to run or to evaluate example {example} with {self.metric} due to {e}.")
+
+            # if success:
+            for step in trace:
+                predictor, inputs, outputs = step
+                demo = dspy.Example(augmented=True, **inputs, **outputs)
+
+                predictor_name = predictor2name[id(predictor)]
+                name2traces[predictor_name].append(demo)
+
+            for name, demos in name2traces.items():
+                from datasets.fingerprint import Hasher
+
+                # If there are multiple traces for the same predictor in the sample example,
+                # sample 50/50 from the first N-1 traces or the last trace.
+                if len(demos) > 1:
+                    rng = random.Random(Hasher.hash(tuple(demos)))
+                    if rng.random() < 0.5:
+                        demos = [rng.choice(demos[:-1])]
+                    else:
+                        demos = [demos[-1]]
+
+                name2traces[name] = demos
+
+            bootstrapped_example.extend(name2traces)
+            bootstrapped_examples.append(bootstrapped_example)
+
+        return bootstrapped_examples
