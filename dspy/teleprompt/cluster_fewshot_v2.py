@@ -1,4 +1,6 @@
+import json
 import torch
+import random
 import torch.nn.functional as F
 import logging
 import numpy as np
@@ -105,6 +107,7 @@ class ClusterFewshotv2(Teleprompter):
         self.ranked_examples = None
         self.global_sorted_examples = None
         self._sum_of_clusters_strength = None
+        self.trainset_by_hash = {}
 
         self.candidate_fewshot_subsets = None
         self.final_fewshot_subset = None
@@ -117,7 +120,7 @@ class ClusterFewshotv2(Teleprompter):
         self.trainset = self.bootstrap_examples(trainset)
         self.valset = valset
 
-        # TODO: this code only supports one predictor per compilation. should be re-visited?
+        # This code assumes the base model LM is shared across all predictors
         if self.use_target_model_embeddings:
             self.embedding_model_name = self.student.named_predictors()[0][1].lm.model
             self.generate_embeddings_func = self.generate_embedding_clusters_with_target_model
@@ -166,7 +169,7 @@ class ClusterFewshotv2(Teleprompter):
         Clustering the given examples into semantic groups.
         It performs semantic embeddings & K search to find clusters that maximizes the silhouette metric.
         """
-        data = self.trainset if train else self.valset
+        data = [ex['raw'] for ex in self.trainset] if train else self.valset
         data_type = 'training' if train else 'validation'
         examples_embeddings = None
 
@@ -185,19 +188,18 @@ class ClusterFewshotv2(Teleprompter):
             k = len(kinds)
             cluster_labels = [kinds.index(example.answer) for example in data]
         else:
-            # TODO: first, bootstrap all examples into [{pred_0: trace_n, ..., pred_n: trace_n}, ...]
             logger.info(f"Generating {len(data)} {data_type} examples embeddings")
             examples_embeddings, cluster_labels, k = self.generate_embeddings_func(examples=data)
 
         self.examples2embeddings.update({
-            str(example): np.array(example_embeddings)
+            self.get_example_hash(example): np.array(example_embeddings)
             for example, example_embeddings
-            in zip(data, examples_embeddings)
+            in zip(self.trainset if train else data, examples_embeddings)  # TODO: assuming self.trainset and data are ordered the same.
         })
         self.embeddings2examples.update({
             str(example_embeddings): example
             for example_embeddings, example
-            in zip(examples_embeddings, data)
+            in zip(examples_embeddings, self.trainset if train else data)
         })
 
         if train:
@@ -241,7 +243,7 @@ class ClusterFewshotv2(Teleprompter):
 
         if show_ranks:
             examples = [self.embeddings2examples[str(emb)] for emb in embeddings]
-            scores = [self.ranked_examples.get(ex, 0) for ex in examples]
+            scores = [self.ranked_examples.get(self.get_example_hash(ex), 0) for ex in examples]
             np_scores = np.array(scores)
 
             color_values = np_scores
@@ -380,21 +382,24 @@ class ClusterFewshotv2(Teleprompter):
 
         for idx, ex in enumerate(self.trainset):
             logger.info(f"\n\nEvaluating example {idx + 1}/{trainset_size}")
-            self.ranked_examples[ex] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
+            self.ranked_examples[self.get_example_hash(ex)] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
 
         logger.info(f"Ordering {len(self.ranked_examples)} demonstrations "
                     f"by {len(set(self.ranked_examples.values()))} different ranks...")
 
-        self.global_sorted_examples = sorted(
-            self.ranked_examples.keys(),
-            key=lambda ex: self.ranked_examples[ex],
-            reverse=self.descending,
-        )
+        self.global_sorted_examples = [
+            self.trainset_by_hash[ex_hash]
+            for ex_hash in sorted(
+                self.ranked_examples,
+                key=lambda h: self.ranked_examples[h],
+                reverse=self.descending,
+            )
+        ]
 
         self.training_clusters = {
             cluster_id: sorted(
                 cluster_examples,
-                key=lambda ex: self.ranked_examples[ex],
+                key=lambda ex: self.ranked_examples[self.get_example_hash(ex)],
                 reverse=self.descending,
             )
             for cluster_id, cluster_examples in self.training_clusters.items()
@@ -402,13 +407,13 @@ class ClusterFewshotv2(Teleprompter):
 
         self.visualize_ead_scores_distribution()
         self._visualize_examples(
-            embeddings=[self.examples2embeddings[str(ex)] for ex in self.trainset],
+            embeddings=[self.examples2embeddings[self.get_example_hash(ex)] for ex in self.trainset],
             embedding_model=self.embedding_model_name,
             save_path=f"embeddings_to_ead_ranks.png",
             data_type="training",
             show_ranks=True,
         )
-        self.visualize_reasoning_distribution()
+        # self.visualize_reasoning_distribution()
 
         logger.info(f"Demonstrations are sorted in {'descending' if self.descending else 'ascending'} order.")
 
@@ -418,20 +423,19 @@ class ClusterFewshotv2(Teleprompter):
         to predict correctly when used as a sole demonstration.
         """
         # If current example was answered correctly by the student, collect reasoning from LM
-        pred, success = self.ask(student, question=example)
+        # pred, success = self.ask(student, question=example)
 
-        if success:
-            embeddings = self.examples2embeddings.pop(str(example))
-            example.reasoning = pred.reasoning
-            self.examples2embeddings[str(example)] = embeddings
-            self.embeddings2examples[str(embeddings)] = example
+        # if success:
+        #     embeddings = self.examples2embeddings.pop(str(example))
+        #     example.reasoning = pred.reasoning
+        #     self.examples2embeddings[str(example)] = embeddings
+        #     self.embeddings2examples[str(embeddings)] = example
 
-        example_visual = f"{', '.join([f'{input_key}: {input_val}' for input_key, input_val in dict(example.inputs()).items()])} --> {example.answer}"
+        example_visual = f"{', '.join([f'{input_key}: {input_val}' for input_key, input_val in dict(example['raw'].inputs()).items()])} --> {example['raw'].answer}"
 
         logger.info(
             f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
-            f"using the following demonstration "
-            f"(reasoning info {'is not' if not success else 'is'} included):\n"
+            f"using the following demonstration:\n"
             f"{example_visual}"
         )
 
@@ -534,8 +538,8 @@ class ClusterFewshotv2(Teleprompter):
             logger.info(f"\n\nTesting '{sampling_strategy}' sampled few-shot subset")
             fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
 
-            for _, predictor in student.named_predictors():
-                predictor.demos = fewshot_subset
+            for name, predictor in student.named_predictors():
+                predictor.demos = [demo[name] for demo in fewshot_subset]
 
             fewshot_subset_score = evaluator(student)
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
@@ -550,7 +554,7 @@ class ClusterFewshotv2(Teleprompter):
             f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
 
     def get_central_examples(self, examples, sample_size):
-        embeddings = [self.examples2embeddings[str(ex)] for ex in examples]
+        embeddings = [self.examples2embeddings[self.get_example_hash(ex)] for ex in examples]
         cluster_center = np.mean(embeddings, axis=0)
         distances = np.linalg.norm(embeddings - cluster_center, axis=1)
         selected_indices = np.argsort(distances)[:sample_size]
@@ -736,7 +740,7 @@ class ClusterFewshotv2(Teleprompter):
 
         # Build embedding matrix
         embs = torch.stack([
-            torch.tensor(self.examples2embeddings[str(ex)], device=device, dtype=torch.float32)
+            torch.tensor(self.examples2embeddings[self.get_example_hash(ex)], device=device, dtype=torch.float32)
             for ex, _ in self.ranked_examples.items()
         ]).to(device)  # shape (M, D)
 
@@ -785,7 +789,7 @@ class ClusterFewshotv2(Teleprompter):
         """
         all_examples = list(self.ranked_examples)
         embs = np.stack([
-            self.examples2embeddings[str(ex)]
+            self.examples2embeddings[self.get_example_hash(ex)]
             for ex in all_examples
         ])
         selected_set = set(self.final_fewshot_subset)
@@ -812,7 +816,7 @@ class ClusterFewshotv2(Teleprompter):
         """
         all_examples = list(self.valset)
         embs = np.stack([
-            self.examples2embeddings[str(ex)]
+            self.examples2embeddings[self.get_example_hash(ex)]
             for ex in all_examples
         ])
         selected_set = set(self.ead_set)
@@ -835,16 +839,20 @@ class ClusterFewshotv2(Teleprompter):
 
     def bootstrap_examples(self, examples):
         import dspy
-        import random
         student = self.student
         predictor_cache = {}
-        predictor2name = {id(pred): name for pred, name in student.named_predictors()}
-
+        predictor2name = {
+            predictor: name for name, predictor in self.student.named_predictors()
+        }
         bootstrapped_examples = []
 
-        for example in examples:
+        logger.info(f"Bootstrapping {len(examples)} examples")
+
+        for idx, example in enumerate(examples):
             bootstrapped_example = {'raw': example}
             name2traces = {}  # clear traces for new example bootstrapping
+
+            logger.info(f"Bootstrapping example no. {idx + 1}/{len(examples)}")
 
             try:
                 with dspy.settings.context(trace=[]):
@@ -881,8 +889,7 @@ class ClusterFewshotv2(Teleprompter):
                 predictor, inputs, outputs = step
                 demo = dspy.Example(augmented=True, **inputs, **outputs)
 
-                predictor_name = predictor2name[id(predictor)]
-                name2traces[predictor_name].append(demo)
+                name2traces.setdefault(predictor2name[predictor], []).append(demo)
 
             for name, demos in name2traces.items():
                 from datasets.fingerprint import Hasher
@@ -898,7 +905,29 @@ class ClusterFewshotv2(Teleprompter):
 
                 name2traces[name] = demos
 
-            bootstrapped_example.extend(name2traces)
+            bootstrapped_example.update(name2traces)
             bootstrapped_examples.append(bootstrapped_example)
+            self.trainset_by_hash[self.get_example_hash(bootstrapped_example)] = bootstrapped_example
 
         return bootstrapped_examples
+
+    def _normalize_example(self, obj):
+        if isinstance(obj, Example):
+            # Convert to dict using both inputs and outputs
+            return dict(obj)
+        elif isinstance(obj, list):
+            return [dict(obj_item) for obj_item in obj]
+        elif isinstance(obj, dict):
+            return {k: self._normalize_example(v) for k, v in obj.items()}
+        else:
+            return obj  # Return primitives or other serializables as-is
+
+    def get_example_hash(self, example_obj):
+        """
+        Computes a stable string hash (via JSON dump) for an example object.
+        Supports:
+        - validation examples: `Example`
+        - training examples: `{'raw': Example, name1: Example, ...}`
+        """
+        normalized = self._normalize_example(example_obj)
+        return json.dumps(normalized, sort_keys=True)
