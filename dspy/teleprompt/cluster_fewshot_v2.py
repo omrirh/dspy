@@ -8,8 +8,10 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from datasets.fingerprint import Hasher
 from dspy.primitives import Program, Example
 from sklearn.metrics import silhouette_score
+from dspy.utils.parallelizer import ParallelExecutor
 from sentence_transformers import SentenceTransformer
 from transformers import (
     AutoTokenizer,
@@ -155,8 +157,10 @@ class ClusterFewshotv2(Teleprompter):
             self.pick_best_fewshot_subset()
 
         # Update student LM predictors with optimized few-shot subset
-        for _, predictor in self.student.named_predictors():
-            predictor.demos = self.final_fewshot_subset
+        for name, predictor in self.student.named_predictors():
+            predictor.demos = [
+                ex for demo in self.final_fewshot_subset for ex in demo[name]
+            ]
 
         self.student._compiled = True
 
@@ -194,7 +198,8 @@ class ClusterFewshotv2(Teleprompter):
         self.examples2embeddings.update({
             self.get_example_hash(example): np.array(example_embeddings)
             for example, example_embeddings
-            in zip(self.trainset if train else data, examples_embeddings)  # TODO: assuming self.trainset and data are ordered the same.
+            in zip(self.trainset if train else data, examples_embeddings)
+            # TODO: assuming self.trainset and data are ordered the same.
         })
         self.embeddings2examples.update({
             str(example_embeddings): example
@@ -382,7 +387,8 @@ class ClusterFewshotv2(Teleprompter):
 
         for idx, ex in enumerate(self.trainset):
             logger.info(f"\n\nEvaluating example {idx + 1}/{trainset_size}")
-            self.ranked_examples[self.get_example_hash(ex)] = self._evaluate_example_as_demo(ex, evaluator, student_copy)
+            self.ranked_examples[self.get_example_hash(ex)] = self._evaluate_example_as_demo(ex, evaluator,
+                                                                                             student_copy)
 
         logger.info(f"Ordering {len(self.ranked_examples)} demonstrations "
                     f"by {len(set(self.ranked_examples.values()))} different ranks...")
@@ -539,7 +545,9 @@ class ClusterFewshotv2(Teleprompter):
             fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
 
             for name, predictor in student.named_predictors():
-                predictor.demos = [demo[name] for demo in fewshot_subset]
+                predictor.demos = [
+                    ex for demo in fewshot_subset for ex in demo[name]
+                ]
 
             fewshot_subset_score = evaluator(student)
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
@@ -713,15 +721,15 @@ class ClusterFewshotv2(Teleprompter):
         return best_embeddings, best_labels, best_k
 
     def soft_select(
-        self,
-        N: int,
-        steps: int = 1000,
-        log_step: int = 100,
-        lr: float = 1e-1,
-        device: str = "cpu",
-        verbose: bool = True,
-        min_lambda: float = 10,
-        max_lambda: float = np.inf,
+            self,
+            N: int,
+            steps: int = 1000,
+            log_step: int = 100,
+            lr: float = 1e-1,
+            device: str = "cpu",
+            verbose: bool = True,
+            min_lambda: float = 10,
+            max_lambda: float = np.inf,
     ):
         """
         Differentiable “soft” selection of a final N-shot subset.
@@ -839,20 +847,17 @@ class ClusterFewshotv2(Teleprompter):
 
     def bootstrap_examples(self, examples):
         import dspy
+
         student = self.student
-        predictor_cache = {}
         predictor2name = {
             predictor: name for name, predictor in self.student.named_predictors()
         }
-        bootstrapped_examples = []
 
         logger.info(f"Bootstrapping {len(examples)} examples")
 
-        for idx, example in enumerate(examples):
-            bootstrapped_example = {'raw': example}
-            name2traces = {}  # clear traces for new example bootstrapping
-
-            logger.info(f"Bootstrapping example no. {idx + 1}/{len(examples)}")
+        def process_example(example):
+            predictor_cache = {}
+            name2traces = {}
 
             try:
                 with dspy.settings.context(trace=[]):
@@ -867,47 +872,56 @@ class ClusterFewshotv2(Teleprompter):
                         for name, predictor in student.named_predictors():
                             predictor.demos = predictor_cache[name]
 
-                    # if self.metric:
-                    #     metric_val = self.metric(example, prediction, trace)
-                    #     if self.metric_threshold:
-                    #         success = metric_val >= self.metric_threshold
-                    #     else:
-                    #         success = metric_val
-                    # else:
-                    #     success = True
+                        if self.metric:
+                            metric_val = self.metric(example, prediction, trace)
+                            if self.metric_threshold:
+                                success = metric_val >= self.metric_threshold
+                            else:
+                                success = metric_val
+                        else:
+                            success = True
             except Exception as e:
-                success = False
-                with self.error_lock:
-                    self.error_count += 1
-                    current_error_count = self.error_count
-                if current_error_count >= self.max_errors:
-                    raise e
-                logger.error(f"Failed to run or to evaluate example {example} with {self.metric} due to {e}.")
+                raise RuntimeError(f"Bootstrapping failed for example {example} due to {e}")
 
-            # if success:
-            for step in trace:
-                predictor, inputs, outputs = step
-                demo = dspy.Example(augmented=True, **inputs, **outputs)
+            if success:
+                for step in trace:
+                    predictor, inputs, outputs = step
+                    demo = dspy.Example(augmented=True, **inputs, **outputs)
+                    name2traces.setdefault(predictor2name[predictor], []).append(demo)
 
-                name2traces.setdefault(predictor2name[predictor], []).append(demo)
+                for name, demos in name2traces.items():
+                    if len(demos) > 1:
+                        rng = random.Random(Hasher.hash(tuple(demos)))
+                        if rng.random() < 0.5:
+                            demos = [rng.choice(demos[:-1])]
+                        else:
+                            demos = [demos[-1]]
+                    name2traces[name] = demos
 
-            for name, demos in name2traces.items():
-                from datasets.fingerprint import Hasher
+                bootstrapped = {'raw': example}
+                bootstrapped.update(name2traces)
+                return bootstrapped
 
-                # If there are multiple traces for the same predictor in the sample example,
-                # sample 50/50 from the first N-1 traces or the last trace.
-                if len(demos) > 1:
-                    rng = random.Random(Hasher.hash(tuple(demos)))
-                    if rng.random() < 0.5:
-                        demos = [rng.choice(demos[:-1])]
-                    else:
-                        demos = [demos[-1]]
+            return None  # Misleading bootstrapped example considered as non useful
 
-                name2traces[name] = demos
+        # Use the same settings as Evaluate
+        executor = ParallelExecutor(
+            num_threads=min(12, len(examples)),
+            disable_progress_bar=False,
+            max_errors=0,
+            provide_traceback=True,
+            compare_results=False,
+        )
 
-            bootstrapped_example.update(name2traces)
-            bootstrapped_examples.append(bootstrapped_example)
-            self.trainset_by_hash[self.get_example_hash(bootstrapped_example)] = bootstrapped_example
+        bootstrapped_results = executor.execute(process_example, examples)
+
+        bootstrapped_examples = []
+        for bootstrapped in bootstrapped_results:
+            if bootstrapped:
+                self.trainset_by_hash[self.get_example_hash(bootstrapped)] = bootstrapped
+                bootstrapped_examples.append(bootstrapped)
+
+        logger.info(f"{len(bootstrapped_examples)}/{len(examples)} remaining after bootstrapping")
 
         return bootstrapped_examples
 

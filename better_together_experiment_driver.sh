@@ -87,7 +87,7 @@ nohup python3.11 better_together_experiment.py \
     --strategy "$STRATEGY" \
     --model "$MODEL" 2>&1 | tee "$EXPERIMENT_LOG_FILE" &
 
-echo "BetterTogether Experiment"
+echo -e "\nBetterTogether Experiment"
 echo "-------------------------"
 echo "Dataset: $DATASET"
 echo "Prompt Optimizer: $PROMPT_OPTIMIZER"
