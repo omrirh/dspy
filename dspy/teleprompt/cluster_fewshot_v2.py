@@ -221,7 +221,7 @@ class ClusterFewshotv2(Teleprompter):
             num_clusters=k,
             data_type=data_type,
             save_path=f"{data_type}_clusters.png",
-            silhouette=silhouette_score(examples_embeddings, cluster_labels)
+            silhouette=silhouette_score(examples_embeddings, cluster_labels) if len(set(cluster_labels)) > 1 else 0
         )
 
         logger.info(f"{data_type} clustering completed with K={k}.")

@@ -1,0 +1,411 @@
+nohup: ignoring input
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'fields' has been removed
+  warnings.warn(message, UserWarning)
+2025/06/29 13:52:23 INFO dspy.datasets.iris: Iris dataset seed: 1751205143
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 1 - Strategy 'p' ##########
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: trainset size: 50
+2025/06/29 13:52:23 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/06/29 13:52:23 INFO dspy.teleprompt.cluster_fewshot_v2: Bootstrapping 15 examples
+
+  0%|          | 0/15 [00:00<?, ?it/s]
+Processed 0 / 15 examples:   0%|          | 0/15 [00:00<?, ?it/s]
+Processed 1 / 15 examples:   7%|▋         | 1/15 [00:02<00:32,  2.29s/it]
+Processed 1 / 15 examples:  13%|█▎        | 2/15 [00:02<00:14,  1.15s/it]
+Processed 2 / 15 examples:  13%|█▎        | 2/15 [00:02<00:14,  1.15s/it]
+Processed 2 / 15 examples:  20%|██        | 3/15 [00:02<00:13,  1.15s/it]
+Processed 3 / 15 examples:  27%|██▋       | 4/15 [00:02<00:12,  1.15s/it]
+Processed 4 / 15 examples:  33%|███▎      | 5/15 [00:02<00:11,  1.15s/it]
+Processed 4 / 15 examples:  40%|████      | 6/15 [00:02<00:03,  2.56it/s]
+Processed 4 / 15 examples:  40%|████      | 6/15 [00:03<00:03,  2.56it/s]
+Processed 4 / 15 examples:  47%|████▋     | 7/15 [00:03<00:02,  2.77it/s]
+Processed 4 / 15 examples:  47%|████▋     | 7/15 [00:04<00:02,  2.77it/s]
+Processed 4 / 15 examples:  53%|█████▎    | 8/15 [00:04<00:05,  1.38it/s]
+Processed 4 / 15 examples:  53%|█████▎    | 8/15 [00:05<00:05,  1.38it/s]
+Processed 5 / 15 examples:  60%|██████    | 9/15 [00:06<00:04,  1.38it/s]
+Processed 5 / 15 examples:  67%|██████▋   | 10/15 [00:06<00:03,  1.55it/s]
+Processed 5 / 15 examples:  67%|██████▋   | 10/15 [00:06<00:03,  1.55it/s]
+Processed 5 / 15 examples:  73%|███████▎  | 11/15 [00:06<00:02,  1.55it/s]
+Processed 5 / 15 examples:  80%|████████  | 12/15 [00:06<00:01,  2.19it/s]
+Processed 5 / 15 examples:  80%|████████  | 12/15 [00:06<00:01,  2.19it/s]
+Processed 5 / 15 examples:  87%|████████▋ | 13/15 [00:06<00:00,  2.44it/s]
+Processed 5 / 15 examples:  87%|████████▋ | 13/15 [00:07<00:00,  2.44it/s]
+Processed 5 / 15 examples:  93%|█████████▎| 14/15 [00:07<00:00,  1.98it/s]
+Processed 5 / 15 examples:  93%|█████████▎| 14/15 [00:11<00:00,  1.98it/s]
+Processed 5 / 15 examples: 100%|██████████| 15/15 [00:11<00:00,  1.30s/it]
+Processed 5 / 15 examples: 100%|██████████| 15/15 [00:11<00:00,  1.35it/s]2025/06/29 13:52:34 INFO dspy.teleprompt.cluster_fewshot_v2: 5/15 remaining after bootstrapping
+2025/06/29 13:52:34 INFO dspy.teleprompt.cluster_fewshot_v2: Compiling the student program using ClusteFewshotv2 optimizer...
+2025/06/29 13:52:34 INFO dspy.teleprompt.cluster_fewshot_v2: Performing PCA dimensionality reduction for visualization...
+2025/06/29 13:52:34 INFO dspy.teleprompt.cluster_fewshot_v2: Cluster visualization saved to training_clusters.png.
+2025/06/29 13:52:34 INFO dspy.teleprompt.cluster_fewshot_v2: training clustering completed with K=2.
+2025/06/29 13:52:34 INFO dspy.teleprompt.cluster_fewshot_v2: Performing PCA dimensionality reduction for visualization...
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: Cluster visualization saved to validation_clusters.png.
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: validation clustering completed with K=3.
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: Sampling 3 questions from cluster 1 (size=9)
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: Sampling 3 questions from cluster 2 (size=14)
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: Sampling 3 questions from cluster 3 (size=12)
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: EAD set PCA plot saved to ead_set.png
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: EAD evaluation set assembled with 9 questions.
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: Sorting examples-as-demos from training set (5 examples)
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 1/5
+2025/06/29 13:52:35 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+sepal_length: 4.4, sepal_width: 3.0, petal_length: 1.3, petal_width: 0.2 --> setosa
+
+
+  0%|          | 0/9 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/9 [00:02<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  11%|█         | 1/9 [00:02<00:16,  2.05s/it]
+Average Metric: 0.00 / 2 (0.0%):  11%|█         | 1/9 [00:02<00:16,  2.05s/it]
+Average Metric: 0.00 / 3 (0.0%):  22%|██▏       | 2/9 [00:02<00:14,  2.05s/it]
+Average Metric: 1.00 / 4 (25.0%):  33%|███▎      | 3/9 [00:02<00:12,  2.05s/it]
+Average Metric: 1.00 / 5 (20.0%):  44%|████▍     | 4/9 [00:02<00:10,  2.05s/it]
+Average Metric: 1.00 / 5 (20.0%):  56%|█████▌    | 5/9 [00:02<00:01,  2.87it/s]
+Average Metric: 1.00 / 6 (16.7%):  56%|█████▌    | 5/9 [00:02<00:01,  2.87it/s]
+Average Metric: 1.00 / 7 (14.3%):  67%|██████▋   | 6/9 [00:02<00:01,  2.87it/s]
+Average Metric: 1.00 / 7 (14.3%):  78%|███████▊  | 7/9 [00:02<00:00,  3.93it/s]
+Average Metric: 1.00 / 8 (12.5%):  78%|███████▊  | 7/9 [00:02<00:00,  3.93it/s]
+Average Metric: 1.00 / 9 (11.1%):  89%|████████▉ | 8/9 [00:02<00:00,  3.93it/s]
+Average Metric: 1.00 / 9 (11.1%): 100%|██████████| 9/9 [00:02<00:00,  4.39it/s]
+Average Metric: 1.00 / 9 (11.1%): 100%|██████████| 9/9 [00:02<00:00,  3.21it/s]2025/06/29 13:52:38 INFO dspy.evaluate.evaluate: Average Metric: 1 / 9 (11.1%)
+2025/06/29 13:52:38 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 2/5
+2025/06/29 13:52:38 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+sepal_length: 4.9, sepal_width: 3.0, petal_length: 1.4, petal_width: 0.2 --> setosa
+
+
+  0%|          | 0/9 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/9 [00:02<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  11%|█         | 1/9 [00:02<00:20,  2.53s/it]
+Average Metric: 0.00 / 2 (0.0%):  11%|█         | 1/9 [00:02<00:20,  2.53s/it]
+Average Metric: 0.00 / 3 (0.0%):  22%|██▏       | 2/9 [00:02<00:17,  2.53s/it]
+Average Metric: 0.00 / 3 (0.0%):  33%|███▎      | 3/9 [00:02<00:04,  1.42it/s]
+Average Metric: 0.00 / 4 (0.0%):  33%|███▎      | 3/9 [00:02<00:04,  1.42it/s]
+Average Metric: 0.00 / 5 (0.0%):  44%|████▍     | 4/9 [00:02<00:03,  1.42it/s]
+Average Metric: 0.00 / 6 (0.0%):  56%|█████▌    | 5/9 [00:02<00:02,  1.42it/s]
+Average Metric: 0.00 / 6 (0.0%):  67%|██████▋   | 6/9 [00:02<00:00,  3.08it/s]
+Average Metric: 0.00 / 7 (0.0%):  67%|██████▋   | 6/9 [00:03<00:00,  3.08it/s]
+Average Metric: 1.00 / 8 (12.5%):  78%|███████▊  | 7/9 [00:03<00:00,  3.08it/s]
+Average Metric: 1.00 / 8 (12.5%):  89%|████████▉ | 8/9 [00:03<00:00,  3.78it/s]
+Average Metric: 1.00 / 9 (11.1%):  89%|████████▉ | 8/9 [00:03<00:00,  3.78it/s]
+Average Metric: 1.00 / 9 (11.1%): 100%|██████████| 9/9 [00:03<00:00,  3.83it/s]
+Average Metric: 1.00 / 9 (11.1%): 100%|██████████| 9/9 [00:03<00:00,  2.58it/s]2025/06/29 13:52:41 INFO dspy.evaluate.evaluate: Average Metric: 1 / 9 (11.1%)
+2025/06/29 13:52:41 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 3/5
+2025/06/29 13:52:41 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+sepal_length: 5.0, sepal_width: 2.0, petal_length: 3.5, petal_width: 1.0 --> versicolor
+
+
+  0%|          | 0/9 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/9 [00:04<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  11%|█         | 1/9 [00:04<00:39,  4.94s/it]
+Average Metric: 2.00 / 2 (100.0%):  11%|█         | 1/9 [00:04<00:39,  4.94s/it]
+Average Metric: 3.00 / 3 (100.0%):  22%|██▏       | 2/9 [00:05<00:34,  4.94s/it]
+Average Metric: 3.00 / 3 (100.0%):  33%|███▎      | 3/9 [00:05<00:08,  1.44s/it]
+Average Metric: 4.00 / 4 (100.0%):  33%|███▎      | 3/9 [00:05<00:08,  1.44s/it]
+Average Metric: 4.00 / 4 (100.0%):  44%|████▍     | 4/9 [00:05<00:04,  1.02it/s]
+Average Metric: 5.00 / 5 (100.0%):  44%|████▍     | 4/9 [00:05<00:04,  1.02it/s]
+Average Metric: 6.00 / 6 (100.0%):  56%|█████▌    | 5/9 [00:05<00:03,  1.02it/s]
+Average Metric: 6.00 / 6 (100.0%):  67%|██████▋   | 6/9 [00:05<00:01,  1.86it/s]
+Average Metric: 6.00 / 7 (85.7%):  67%|██████▋   | 6/9 [00:05<00:01,  1.86it/s]
+Average Metric: 6.00 / 7 (85.7%):  78%|███████▊  | 7/9 [00:05<00:00,  2.36it/s]
+Average Metric: 6.00 / 8 (75.0%):  78%|███████▊  | 7/9 [00:06<00:00,  2.36it/s]
+Average Metric: 6.00 / 8 (75.0%):  89%|████████▉ | 8/9 [00:06<00:00,  2.59it/s]
+Average Metric: 6.00 / 9 (66.7%):  89%|████████▉ | 8/9 [00:06<00:00,  2.59it/s]
+Average Metric: 6.00 / 9 (66.7%): 100%|██████████| 9/9 [00:06<00:00,  1.48it/s]2025/06/29 13:52:47 INFO dspy.evaluate.evaluate: Average Metric: 6 / 9 (66.7%)
+2025/06/29 13:52:47 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 4/5
+2025/06/29 13:52:47 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+sepal_length: 5.1, sepal_width: 3.8, petal_length: 1.9, petal_width: 0.4 --> setosa
+
+
+  0%|          | 0/9 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/9 [00:01<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  11%|█         | 1/9 [00:01<00:14,  1.79s/it]
+Average Metric: 0.00 / 2 (0.0%):  11%|█         | 1/9 [00:02<00:14,  1.79s/it]
+Average Metric: 0.00 / 2 (0.0%):  22%|██▏       | 2/9 [00:02<00:06,  1.15it/s]
+Average Metric: 0.00 / 3 (0.0%):  22%|██▏       | 2/9 [00:02<00:06,  1.15it/s]
+Average Metric: 0.00 / 4 (0.0%):  33%|███▎      | 3/9 [00:02<00:05,  1.15it/s]
+Average Metric: 0.00 / 4 (0.0%):  44%|████▍     | 4/9 [00:02<00:01,  2.76it/s]
+Average Metric: 0.00 / 5 (0.0%):  44%|████▍     | 4/9 [00:02<00:01,  2.76it/s]
+Average Metric: 0.00 / 5 (0.0%):  56%|█████▌    | 5/9 [00:02<00:01,  2.62it/s]
+Average Metric: 0.00 / 6 (0.0%):  56%|█████▌    | 5/9 [00:02<00:01,  2.62it/s]
+Average Metric: 0.00 / 7 (0.0%):  67%|██████▋   | 6/9 [00:02<00:01,  2.62it/s]
+Average Metric: 0.00 / 8 (0.0%):  78%|███████▊  | 7/9 [00:02<00:00,  2.62it/s]
+Average Metric: 1.00 / 9 (11.1%):  89%|████████▉ | 8/9 [00:03<00:00,  2.62it/s]
+Average Metric: 1.00 / 9 (11.1%): 100%|██████████| 9/9 [00:03<00:00,  4.78it/s]
+Average Metric: 1.00 / 9 (11.1%): 100%|██████████| 9/9 [00:03<00:00,  2.99it/s]2025/06/29 13:52:50 INFO dspy.evaluate.evaluate: Average Metric: 1 / 9 (11.1%)
+2025/06/29 13:52:50 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 5/5
+2025/06/29 13:52:50 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+sepal_length: 4.8, sepal_width: 3.4, petal_length: 1.6, petal_width: 0.2 --> setosa
+
+
+  0%|          | 0/9 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/9 [00:02<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  11%|█         | 1/9 [00:02<00:19,  2.40s/it]
+Average Metric: 0.00 / 2 (0.0%):  11%|█         | 1/9 [00:02<00:19,  2.40s/it]
+Average Metric: 0.00 / 3 (0.0%):  22%|██▏       | 2/9 [00:02<00:16,  2.40s/it]
+Average Metric: 0.00 / 3 (0.0%):  33%|███▎      | 3/9 [00:02<00:04,  1.38it/s]
+Average Metric: 0.00 / 4 (0.0%):  33%|███▎      | 3/9 [00:02<00:04,  1.38it/s]
+Average Metric: 0.00 / 5 (0.0%):  44%|████▍     | 4/9 [00:02<00:03,  1.38it/s]
+Average Metric: 0.00 / 6 (0.0%):  56%|█████▌    | 5/9 [00:02<00:02,  1.38it/s]
+Average Metric: 0.00 / 6 (0.0%):  67%|██████▋   | 6/9 [00:02<00:00,  3.10it/s]
+Average Metric: 0.00 / 7 (0.0%):  67%|██████▋   | 6/9 [00:02<00:00,  3.10it/s]
+Average Metric: 0.00 / 8 (0.0%):  78%|███████▊  | 7/9 [00:03<00:00,  3.10it/s]
+Average Metric: 0.00 / 8 (0.0%):  89%|████████▉ | 8/9 [00:03<00:00,  4.03it/s]
+Average Metric: 0.00 / 9 (0.0%):  89%|████████▉ | 8/9 [00:03<00:00,  4.03it/s]
+Average Metric: 0.00 / 9 (0.0%): 100%|██████████| 9/9 [00:03<00:00,  3.27it/s]
+Average Metric: 0.00 / 9 (0.0%): 100%|██████████| 9/9 [00:03<00:00,  2.47it/s]2025/06/29 13:52:54 INFO dspy.evaluate.evaluate: Average Metric: 0 / 9 (0.0%)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Ordering 5 demonstrations by 3 different ranks...
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: EAD scores distribution saved to ead_scores_distribution.png
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Performing PCA dimensionality reduction for visualization...
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Unique EAD scores: {0.0, 66.67, 11.11}
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Cluster visualization saved to embeddings_to_ead_ranks.png.
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Demonstrations are sorted in descending order.
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Collecting candidate few-shot using 'top_n' sampling strategy (classification task optimization)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: 1/2 slots given to cluster 1 (size=4)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: 1/2 slots given to cluster 2 (size=1)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: Collecting candidate few-shot using 'best_in_cluster' sampling strategy (classification task optimization)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: 1/2 slots given to cluster 1 (size=4)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2: 1/2 slots given to cluster 2 (size=1)
+2025/06/29 13:52:54 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Testing 'top_n' sampled few-shot subset
+
+
+  0%|          | 0/35 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/35 [00:05<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   3%|▎         | 1/35 [00:05<03:08,  5.54s/it]
+Average Metric: 2.00 / 2 (100.0%):   3%|▎         | 1/35 [00:05<03:08,  5.54s/it]
+Average Metric: 3.00 / 3 (100.0%):   6%|▌         | 2/35 [00:05<03:02,  5.54s/it]
+Average Metric: 3.00 / 3 (100.0%):   9%|▊         | 3/35 [00:05<00:47,  1.47s/it]
+Average Metric: 3.00 / 4 (75.0%):   9%|▊         | 3/35 [00:05<00:47,  1.47s/it]
+Average Metric: 3.00 / 5 (60.0%):  11%|█▏        | 4/35 [00:05<00:45,  1.47s/it]
+Average Metric: 3.00 / 5 (60.0%):  14%|█▍        | 5/35 [00:05<00:22,  1.33it/s]
+Average Metric: 4.00 / 6 (66.7%):  14%|█▍        | 5/35 [00:05<00:22,  1.33it/s]
+Average Metric: 5.00 / 7 (71.4%):  17%|█▋        | 6/35 [00:06<00:21,  1.33it/s]
+Average Metric: 5.00 / 7 (71.4%):  20%|██        | 7/35 [00:06<00:14,  1.92it/s]
+Average Metric: 6.00 / 8 (75.0%):  20%|██        | 7/35 [00:06<00:14,  1.92it/s]
+Average Metric: 6.00 / 8 (75.0%):  23%|██▎       | 8/35 [00:06<00:11,  2.30it/s]
+Average Metric: 6.00 / 9 (66.7%):  23%|██▎       | 8/35 [00:06<00:11,  2.30it/s]
+Average Metric: 6.00 / 9 (66.7%):  26%|██▌       | 9/35 [00:06<00:10,  2.50it/s]
+Average Metric: 7.00 / 10 (70.0%):  26%|██▌       | 9/35 [00:10<00:10,  2.50it/s]
+Average Metric: 7.00 / 10 (70.0%):  29%|██▊       | 10/35 [00:10<00:34,  1.37s/it]
+Average Metric: 8.00 / 11 (72.7%):  29%|██▊       | 10/35 [00:10<00:34,  1.37s/it]
+Average Metric: 9.00 / 12 (75.0%):  31%|███▏      | 11/35 [00:10<00:32,  1.37s/it]
+Average Metric: 9.00 / 12 (75.0%):  34%|███▍      | 12/35 [00:10<00:18,  1.23it/s]
+Average Metric: 10.00 / 13 (76.9%):  34%|███▍      | 12/35 [00:11<00:18,  1.23it/s]
+Average Metric: 10.00 / 13 (76.9%):  37%|███▋      | 13/35 [00:11<00:15,  1.40it/s]
+Average Metric: 11.00 / 14 (78.6%):  37%|███▋      | 13/35 [00:11<00:15,  1.40it/s]
+Average Metric: 11.00 / 14 (78.6%):  40%|████      | 14/35 [00:11<00:12,  1.63it/s]
+Average Metric: 12.00 / 15 (80.0%):  40%|████      | 14/35 [00:11<00:12,  1.63it/s]
+Average Metric: 12.00 / 15 (80.0%):  43%|████▎     | 15/35 [00:11<00:10,  1.88it/s]
+Average Metric: 12.00 / 16 (75.0%):  43%|████▎     | 15/35 [00:12<00:10,  1.88it/s]
+Average Metric: 12.00 / 16 (75.0%):  46%|████▌     | 16/35 [00:12<00:08,  2.33it/s]
+Average Metric: 12.00 / 17 (70.6%):  46%|████▌     | 16/35 [00:12<00:08,  2.33it/s]
+Average Metric: 12.00 / 17 (70.6%):  49%|████▊     | 17/35 [00:12<00:06,  2.71it/s]
+Average Metric: 12.00 / 18 (66.7%):  49%|████▊     | 17/35 [00:12<00:06,  2.71it/s]
+Average Metric: 12.00 / 18 (66.7%):  51%|█████▏    | 18/35 [00:12<00:05,  3.21it/s]
+Average Metric: 12.00 / 19 (63.2%):  51%|█████▏    | 18/35 [00:16<00:05,  3.21it/s]
+Average Metric: 12.00 / 19 (63.2%):  54%|█████▍    | 19/35 [00:16<00:22,  1.42s/it]
+Average Metric: 13.00 / 20 (65.0%):  54%|█████▍    | 19/35 [00:16<00:22,  1.42s/it]
+Average Metric: 13.00 / 20 (65.0%):  57%|█████▋    | 20/35 [00:16<00:15,  1.05s/it]
+Average Metric: 13.00 / 21 (61.9%):  57%|█████▋    | 20/35 [00:16<00:15,  1.05s/it]
+Average Metric: 13.00 / 21 (61.9%):  60%|██████    | 21/35 [00:16<00:10,  1.28it/s]
+Average Metric: 14.00 / 22 (63.6%):  60%|██████    | 21/35 [00:17<00:10,  1.28it/s]
+Average Metric: 14.00 / 22 (63.6%):  63%|██████▎   | 22/35 [00:17<00:08,  1.53it/s]
+Average Metric: 14.00 / 23 (60.9%):  63%|██████▎   | 22/35 [00:17<00:08,  1.53it/s]
+Average Metric: 14.00 / 23 (60.9%):  66%|██████▌   | 23/35 [00:17<00:06,  1.94it/s]
+Average Metric: 15.00 / 24 (62.5%):  66%|██████▌   | 23/35 [00:17<00:06,  1.94it/s]
+Average Metric: 15.00 / 24 (62.5%):  69%|██████▊   | 24/35 [00:17<00:04,  2.40it/s]
+Average Metric: 16.00 / 25 (64.0%):  69%|██████▊   | 24/35 [00:17<00:04,  2.40it/s]
+Average Metric: 16.00 / 25 (64.0%):  71%|███████▏  | 25/35 [00:17<00:03,  2.68it/s]
+Average Metric: 17.00 / 26 (65.4%):  71%|███████▏  | 25/35 [00:18<00:03,  2.68it/s]
+Average Metric: 17.00 / 26 (65.4%):  74%|███████▍  | 26/35 [00:18<00:03,  2.88it/s]
+Average Metric: 18.00 / 27 (66.7%):  74%|███████▍  | 26/35 [00:18<00:03,  2.88it/s]
+Average Metric: 18.00 / 27 (66.7%):  77%|███████▋  | 27/35 [00:18<00:03,  2.35it/s]
+Average Metric: 19.00 / 28 (67.9%):  77%|███████▋  | 27/35 [00:21<00:03,  2.35it/s]
+Average Metric: 19.00 / 28 (67.9%):  80%|████████  | 28/35 [00:21<00:08,  1.21s/it]
+Average Metric: 19.00 / 29 (65.5%):  80%|████████  | 28/35 [00:22<00:08,  1.21s/it]
+Average Metric: 19.00 / 29 (65.5%):  83%|████████▎ | 29/35 [00:22<00:06,  1.00s/it]
+Average Metric: 20.00 / 30 (66.7%):  83%|████████▎ | 29/35 [00:22<00:06,  1.00s/it]
+Average Metric: 20.00 / 31 (64.5%):  86%|████████▌ | 30/35 [00:22<00:05,  1.00s/it]
+Average Metric: 20.00 / 31 (64.5%):  89%|████████▊ | 31/35 [00:22<00:02,  1.59it/s]
+Average Metric: 20.00 / 32 (62.5%):  89%|████████▊ | 31/35 [00:22<00:02,  1.59it/s]
+Average Metric: 20.00 / 32 (62.5%):  91%|█████████▏| 32/35 [00:22<00:01,  1.95it/s]
+Average Metric: 20.00 / 33 (60.6%):  91%|█████████▏| 32/35 [00:22<00:01,  1.95it/s]
+Average Metric: 21.00 / 34 (61.8%):  94%|█████████▍| 33/35 [00:23<00:01,  1.95it/s]
+Average Metric: 21.00 / 34 (61.8%):  97%|█████████▋| 34/35 [00:23<00:00,  2.34it/s]
+Average Metric: 21.00 / 35 (60.0%):  97%|█████████▋| 34/35 [00:23<00:00,  2.34it/s]
+Average Metric: 21.00 / 35 (60.0%): 100%|██████████| 35/35 [00:23<00:00,  2.56it/s]
+Average Metric: 21.00 / 35 (60.0%): 100%|██████████| 35/35 [00:23<00:00,  1.48it/s]2025/06/29 13:53:18 INFO dspy.evaluate.evaluate: Average Metric: 21 / 35 (60.0%)
+2025/06/29 13:53:18 INFO dspy.teleprompt.cluster_fewshot_v2: 'top_n' few-shot subset scored 60.00% on the validation set with 2 demonstrations.
+2025/06/29 13:53:18 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Testing 'best_in_cluster' sampled few-shot subset
+
+
+  0%|          | 0/35 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/35 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):   3%|▎         | 1/35 [00:00<00:00, 457.05it/s]
+Average Metric: 2.00 / 3 (66.7%):   6%|▌         | 2/35 [00:00<00:00, 869.47it/s]
+Average Metric: 3.00 / 4 (75.0%):   9%|▊         | 3/35 [00:00<00:00, 1256.53it/s]
+Average Metric: 4.00 / 5 (80.0%):  11%|█▏        | 4/35 [00:00<00:00, 1620.52it/s]
+Average Metric: 4.00 / 6 (66.7%):  14%|█▍        | 5/35 [00:00<00:00, 1960.87it/s]
+Average Metric: 4.00 / 7 (57.1%):  17%|█▋        | 6/35 [00:00<00:00, 2283.86it/s]
+Average Metric: 5.00 / 8 (62.5%):  20%|██        | 7/35 [00:00<00:00, 2590.45it/s]
+Average Metric: 5.00 / 9 (55.6%):  23%|██▎       | 8/35 [00:00<00:00, 2880.95it/s]
+Average Metric: 6.00 / 10 (60.0%):  26%|██▌       | 9/35 [00:00<00:00, 3154.93it/s]
+Average Metric: 6.00 / 11 (54.5%):  29%|██▊       | 10/35 [00:00<00:00, 3416.11it/s]
+Average Metric: 7.00 / 12 (58.3%):  31%|███▏      | 11/35 [00:00<00:00, 3655.60it/s]
+Average Metric: 8.00 / 13 (61.5%):  34%|███▍      | 12/35 [00:00<00:00, 1643.91it/s]
+Average Metric: 9.00 / 14 (64.3%):  37%|███▋      | 13/35 [00:00<00:00, 1356.37it/s]
+Average Metric: 10.00 / 15 (66.7%):  40%|████      | 14/35 [00:00<00:00, 1444.71it/s]
+Average Metric: 11.00 / 16 (68.8%):  43%|████▎     | 15/35 [00:00<00:00, 1533.83it/s]
+Average Metric: 12.00 / 17 (70.6%):  46%|████▌     | 16/35 [00:00<00:00, 1622.44it/s]
+Average Metric: 13.00 / 18 (72.2%):  49%|████▊     | 17/35 [00:00<00:00, 1710.15it/s]
+Average Metric: 14.00 / 19 (73.7%):  51%|█████▏    | 18/35 [00:00<00:00, 1795.29it/s]
+Average Metric: 15.00 / 20 (75.0%):  54%|█████▍    | 19/35 [00:00<00:00, 1874.84it/s]
+Average Metric: 15.00 / 21 (71.4%):  57%|█████▋    | 20/35 [00:00<00:00, 1957.90it/s]
+Average Metric: 16.00 / 22 (72.7%):  60%|██████    | 21/35 [00:00<00:00, 2040.17it/s]
+Average Metric: 16.00 / 23 (69.6%):  63%|██████▎   | 22/35 [00:00<00:00, 2122.04it/s]
+Average Metric: 17.00 / 24 (70.8%):  66%|██████▌   | 23/35 [00:00<00:00, 2202.39it/s]
+Average Metric: 17.00 / 25 (68.0%):  69%|██████▊   | 24/35 [00:00<00:00, 2281.79it/s]
+Average Metric: 18.00 / 26 (69.2%):  71%|███████▏  | 25/35 [00:00<00:00, 2360.17it/s]
+Average Metric: 19.00 / 27 (70.4%):  74%|███████▍  | 26/35 [00:00<00:00, 2437.57it/s]
+Average Metric: 19.00 / 28 (67.9%):  77%|███████▋  | 27/35 [00:00<00:00, 2513.79it/s]
+Average Metric: 19.00 / 29 (65.5%):  80%|████████  | 28/35 [00:00<00:00, 2588.68it/s]
+Average Metric: 19.00 / 30 (63.3%):  83%|████████▎ | 29/35 [00:00<00:00, 2661.30it/s]
+Average Metric: 20.00 / 31 (64.5%):  86%|████████▌ | 30/35 [00:00<00:00, 2734.35it/s]
+Average Metric: 20.00 / 32 (62.5%):  89%|████████▊ | 31/35 [00:00<00:00, 2800.12it/s]
+Average Metric: 20.00 / 33 (60.6%):  91%|█████████▏| 32/35 [00:00<00:00, 2071.90it/s]
+Average Metric: 20.00 / 34 (58.8%):  94%|█████████▍| 33/35 [00:00<00:00, 2118.82it/s]
+Average Metric: 21.00 / 35 (60.0%):  97%|█████████▋| 34/35 [00:00<00:00, 2126.17it/s]
+Average Metric: 21.00 / 35 (60.0%): 100%|██████████| 35/35 [00:00<00:00, 2165.49it/s]2025/06/29 13:53:18 INFO dspy.evaluate.evaluate: Average Metric: 21 / 35 (60.0%)
+2025/06/29 13:53:18 INFO dspy.teleprompt.cluster_fewshot_v2: 'best_in_cluster' few-shot subset scored 60.00% on the validation set with 2 demonstrations.
+2025/06/29 13:53:18 INFO dspy.teleprompt.cluster_fewshot_v2: Best few-shot subset sampled according to 'top_n' strategy (60.0% accuracy on the validation set)
+2025/06/29 13:53:18 INFO dspy.teleprompt.cluster_fewshot_v2: Student program compiled successfully.
+2025/06/29 13:53:18 INFO dspy.clients.huggingface: No running server to kill.
+2025/06/29 13:53:18 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+
+[BetterTogether x iris x mistralai/Mistral-7B-Instruct-v0.2 x p x CLUSTERFSV2]
+Demonstrations collected (2 in total):
+
+'generate_answer.predict' predictor demos: [Example({'augmented': True, 'petal_length': 1.3, 'petal_width': 0.2, 'sepal_length': 4.4, 'sepal_width': 3.0, 'reasoning': 'The given measurements have petal length of 1.3 cm, petal width of 0.2 cm, sepal length of 4.4 cm, and sepal width of 3.0 cm. Based on the Iris dataset, a petal length of 1.3 cm and petal width of 0.2 cm are typical for the species "setosa". Therefore, the reasoning is that the given measurements are consistent with the setosa iris species.', 'answer': 'setosa'}) (input_keys=None), Example({'augmented': True, 'petal_length': 3.5, 'petal_width': 1.0, 'sepal_length': 5.0, 'sepal_width': 2.0, 'reasoning': 'The given measurements have petal length of 3.5 cm, petal width of 1.0 cm, sepal length of 5.0 cm, and sepal width of 2.0 cm. Based on these measurements, the iris species can be determined by comparing the values to the mean measurements for each species in the Iris dataset.\n\nSetosa iris has the smallest petal length (mean = 4.3 cm) and the smallest sepal length (mean = 4.9 cm). Versicolor iris has a larger petal length (mean = 5.4 cm) and a larger sepal length (mean = 5.8 cm) than setosa. Virginica iris has the largest petal length (mean = 6.9 cm) and the largest sepal length (mean = 6.7 cm) of all three species.\n\nGiven the measurements provided, the petal length (3.5 cm) is smaller than the mean petal length for versicolor and virginica, but it is smaller than the mean petal length for setosa as well. However, the sepal length (5.0 cm) is larger than the mean sepal length for setosa, which indicates that the measurements are more likely to belong to versicolor or virginica.\n\nThe petal width (1.0 cm) is smaller than the mean petal width for all three species. The sepal width (2.0 cm) is smaller than the mean sepal width for versicolor and virginica, but it is larger than the mean sepal width for setosa.\n\nBased on these considerations, it is most likely that the measurements correspond to the versicolor iris species.', 'answer': 'versicolor'}) (input_keys=None)]
+
+[BetterTogether x iris x mistralai/Mistral-7B-Instruct-v0.2 x p x CLUSTERFSV2]
+Calculating experiment program results...
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/50 [00:03<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   2%|▏         | 1/50 [00:03<03:15,  4.00s/it]
+Average Metric: 1.00 / 2 (50.0%):   2%|▏         | 1/50 [00:05<03:15,  4.00s/it]
+Average Metric: 1.00 / 2 (50.0%):   4%|▍         | 2/50 [00:05<01:48,  2.26s/it]
+Average Metric: 1.00 / 3 (33.3%):   4%|▍         | 2/50 [00:05<01:48,  2.26s/it]
+Average Metric: 1.00 / 3 (33.3%):   6%|▌         | 3/50 [00:05<01:01,  1.31s/it]
+Average Metric: 2.00 / 4 (50.0%):   6%|▌         | 3/50 [00:05<01:01,  1.31s/it]
+Average Metric: 2.00 / 4 (50.0%):   8%|▊         | 4/50 [00:05<00:42,  1.07it/s]
+Average Metric: 3.00 / 5 (60.0%):   8%|▊         | 4/50 [00:05<00:42,  1.07it/s]
+Average Metric: 4.00 / 6 (66.7%):  10%|█         | 5/50 [00:06<00:41,  1.07it/s]
+Average Metric: 4.00 / 6 (66.7%):  12%|█▏        | 6/50 [00:06<00:26,  1.68it/s]
+Average Metric: 5.00 / 7 (71.4%):  12%|█▏        | 6/50 [00:06<00:26,  1.68it/s]
+Average Metric: 6.00 / 8 (75.0%):  14%|█▍        | 7/50 [00:06<00:25,  1.68it/s]
+Average Metric: 6.00 / 8 (75.0%):  16%|█▌        | 8/50 [00:06<00:17,  2.40it/s]
+Average Metric: 6.00 / 9 (66.7%):  16%|█▌        | 8/50 [00:10<00:17,  2.40it/s]
+Average Metric: 6.00 / 9 (66.7%):  18%|█▊        | 9/50 [00:10<00:47,  1.16s/it]
+Average Metric: 7.00 / 10 (70.0%):  18%|█▊        | 9/50 [00:10<00:47,  1.16s/it]
+Average Metric: 7.00 / 10 (70.0%):  20%|██        | 10/50 [00:10<00:40,  1.00s/it]
+Average Metric: 8.00 / 11 (72.7%):  20%|██        | 10/50 [00:10<00:40,  1.00s/it]
+Average Metric: 8.00 / 11 (72.7%):  22%|██▏       | 11/50 [00:10<00:29,  1.31it/s]
+Average Metric: 8.00 / 12 (66.7%):  22%|██▏       | 11/50 [00:11<00:29,  1.31it/s]
+Average Metric: 8.00 / 12 (66.7%):  24%|██▍       | 12/50 [00:11<00:25,  1.50it/s]
+Average Metric: 9.00 / 13 (69.2%):  24%|██▍       | 12/50 [00:11<00:25,  1.50it/s]
+Average Metric: 10.00 / 14 (71.4%):  26%|██▌       | 13/50 [00:11<00:24,  1.50it/s]
+Average Metric: 10.00 / 14 (71.4%):  28%|██▊       | 14/50 [00:11<00:14,  2.51it/s]
+Average Metric: 10.00 / 15 (66.7%):  28%|██▊       | 14/50 [00:11<00:14,  2.51it/s]
+Average Metric: 10.00 / 15 (66.7%):  30%|███       | 15/50 [00:11<00:14,  2.39it/s]
+Average Metric: 11.00 / 16 (68.8%):  30%|███       | 15/50 [00:12<00:14,  2.39it/s]
+Average Metric: 11.00 / 16 (68.8%):  32%|███▏      | 16/50 [00:12<00:14,  2.40it/s]
+Average Metric: 11.00 / 17 (64.7%):  32%|███▏      | 16/50 [00:15<00:14,  2.40it/s]
+Average Metric: 11.00 / 17 (64.7%):  34%|███▍      | 17/50 [00:15<00:38,  1.16s/it]
+Average Metric: 12.00 / 18 (66.7%):  34%|███▍      | 17/50 [00:15<00:38,  1.16s/it]
+Average Metric: 12.00 / 18 (66.7%):  36%|███▌      | 18/50 [00:15<00:29,  1.07it/s]
+Average Metric: 13.00 / 19 (68.4%):  36%|███▌      | 18/50 [00:16<00:29,  1.07it/s]
+Average Metric: 13.00 / 19 (68.4%):  38%|███▊      | 19/50 [00:16<00:25,  1.23it/s]
+Average Metric: 14.00 / 20 (70.0%):  38%|███▊      | 19/50 [00:16<00:25,  1.23it/s]
+Average Metric: 14.00 / 20 (70.0%):  40%|████      | 20/50 [00:16<00:19,  1.58it/s]
+Average Metric: 15.00 / 21 (71.4%):  40%|████      | 20/50 [00:17<00:19,  1.58it/s]
+Average Metric: 15.00 / 21 (71.4%):  42%|████▏     | 21/50 [00:17<00:18,  1.59it/s]
+Average Metric: 16.00 / 22 (72.7%):  42%|████▏     | 21/50 [00:17<00:18,  1.59it/s]
+Average Metric: 16.00 / 22 (72.7%):  44%|████▍     | 22/50 [00:17<00:13,  2.09it/s]
+Average Metric: 16.00 / 23 (69.6%):  44%|████▍     | 22/50 [00:17<00:13,  2.09it/s]
+Average Metric: 16.00 / 23 (69.6%):  46%|████▌     | 23/50 [00:17<00:10,  2.53it/s]
+Average Metric: 16.00 / 24 (66.7%):  46%|████▌     | 23/50 [00:18<00:10,  2.53it/s]
+Average Metric: 16.00 / 24 (66.7%):  48%|████▊     | 24/50 [00:18<00:15,  1.71it/s]
+Average Metric: 17.00 / 25 (68.0%):  48%|████▊     | 24/50 [00:20<00:15,  1.71it/s]
+Average Metric: 17.00 / 25 (68.0%):  50%|█████     | 25/50 [00:20<00:28,  1.12s/it]
+Average Metric: 18.00 / 26 (69.2%):  50%|█████     | 25/50 [00:21<00:28,  1.12s/it]
+Average Metric: 18.00 / 26 (69.2%):  52%|█████▏    | 26/50 [00:21<00:21,  1.14it/s]
+Average Metric: 18.00 / 27 (66.7%):  52%|█████▏    | 26/50 [00:21<00:21,  1.14it/s]
+Average Metric: 18.00 / 27 (66.7%):  54%|█████▍    | 27/50 [00:21<00:18,  1.23it/s]
+Average Metric: 19.00 / 28 (67.9%):  54%|█████▍    | 27/50 [00:22<00:18,  1.23it/s]
+Average Metric: 19.00 / 28 (67.9%):  56%|█████▌    | 28/50 [00:22<00:14,  1.47it/s]
+Average Metric: 19.00 / 29 (65.5%):  56%|█████▌    | 28/50 [00:22<00:14,  1.47it/s]
+Average Metric: 20.00 / 30 (66.7%):  58%|█████▊    | 29/50 [00:22<00:14,  1.47it/s]
+Average Metric: 20.00 / 30 (66.7%):  60%|██████    | 30/50 [00:22<00:09,  2.03it/s]
+Average Metric: 20.00 / 31 (64.5%):  60%|██████    | 30/50 [00:23<00:09,  2.03it/s]
+Average Metric: 20.00 / 31 (64.5%):  62%|██████▏   | 31/50 [00:23<00:11,  1.69it/s]
+Average Metric: 21.00 / 32 (65.6%):  62%|██████▏   | 31/50 [00:24<00:11,  1.69it/s]
+Average Metric: 21.00 / 32 (65.6%):  64%|██████▍   | 32/50 [00:24<00:14,  1.29it/s]
+Average Metric: 22.00 / 33 (66.7%):  64%|██████▍   | 32/50 [00:25<00:14,  1.29it/s]
+Average Metric: 22.00 / 33 (66.7%):  66%|██████▌   | 33/50 [00:25<00:14,  1.19it/s]
+Average Metric: 22.00 / 34 (64.7%):  66%|██████▌   | 33/50 [00:27<00:14,  1.19it/s]
+Average Metric: 22.00 / 34 (64.7%):  68%|██████▊   | 34/50 [00:27<00:15,  1.02it/s]
+Average Metric: 23.00 / 35 (65.7%):  68%|██████▊   | 34/50 [00:27<00:15,  1.02it/s]
+Average Metric: 24.00 / 36 (66.7%):  70%|███████   | 35/50 [00:28<00:14,  1.02it/s]
+Average Metric: 24.00 / 36 (66.7%):  72%|███████▏  | 36/50 [00:28<00:10,  1.35it/s]
+Average Metric: 24.00 / 37 (64.9%):  72%|███████▏  | 36/50 [00:28<00:10,  1.35it/s]
+Average Metric: 24.00 / 37 (64.9%):  74%|███████▍  | 37/50 [00:28<00:07,  1.65it/s]
+Average Metric: 25.00 / 38 (65.8%):  74%|███████▍  | 37/50 [00:28<00:07,  1.65it/s]
+Average Metric: 25.00 / 38 (65.8%):  76%|███████▌  | 38/50 [00:28<00:05,  2.08it/s]
+Average Metric: 25.00 / 39 (64.1%):  76%|███████▌  | 38/50 [00:28<00:05,  2.08it/s]
+Average Metric: 25.00 / 39 (64.1%):  78%|███████▊  | 39/50 [00:28<00:04,  2.49it/s]
+Average Metric: 26.00 / 40 (65.0%):  78%|███████▊  | 39/50 [00:29<00:04,  2.49it/s]
+Average Metric: 26.00 / 40 (65.0%):  80%|████████  | 40/50 [00:29<00:05,  1.80it/s]
+Average Metric: 26.00 / 41 (63.4%):  80%|████████  | 40/50 [00:31<00:05,  1.80it/s]
+Average Metric: 26.00 / 41 (63.4%):  82%|████████▏ | 41/50 [00:31<00:09,  1.02s/it]
+Average Metric: 27.00 / 42 (64.3%):  82%|████████▏ | 41/50 [00:32<00:09,  1.02s/it]
+Average Metric: 27.00 / 42 (64.3%):  84%|████████▍ | 42/50 [00:32<00:07,  1.12it/s]
+Average Metric: 28.00 / 43 (65.1%):  84%|████████▍ | 42/50 [00:32<00:07,  1.12it/s]
+Average Metric: 28.00 / 43 (65.1%):  86%|████████▌ | 43/50 [00:32<00:05,  1.25it/s]
+Average Metric: 29.00 / 44 (65.9%):  86%|████████▌ | 43/50 [00:33<00:05,  1.25it/s]
+Average Metric: 29.00 / 44 (65.9%):  88%|████████▊ | 44/50 [00:33<00:04,  1.38it/s]
+Average Metric: 30.00 / 45 (66.7%):  88%|████████▊ | 44/50 [00:33<00:04,  1.38it/s]
+Average Metric: 31.00 / 46 (67.4%):  90%|█████████ | 45/50 [00:33<00:03,  1.38it/s]
+Average Metric: 31.00 / 46 (67.4%):  92%|█████████▏| 46/50 [00:33<00:01,  2.20it/s]
+Average Metric: 32.00 / 47 (68.1%):  92%|█████████▏| 46/50 [00:34<00:01,  2.20it/s]
+Average Metric: 32.00 / 47 (68.1%):  94%|█████████▍| 47/50 [00:34<00:01,  1.85it/s]
+Average Metric: 32.00 / 48 (66.7%):  94%|█████████▍| 47/50 [00:35<00:01,  1.85it/s]
+Average Metric: 32.00 / 48 (66.7%):  96%|█████████▌| 48/50 [00:35<00:01,  1.44it/s]
+Average Metric: 33.00 / 49 (67.3%):  96%|█████████▌| 48/50 [00:36<00:01,  1.44it/s]
+Average Metric: 33.00 / 49 (67.3%):  98%|█████████▊| 49/50 [00:36<00:00,  1.30it/s]
+Average Metric: 34.00 / 50 (68.0%):  98%|█████████▊| 49/50 [00:37<00:00,  1.30it/s]
+Average Metric: 34.00 / 50 (68.0%): 100%|██████████| 50/50 [00:37<00:00,  1.44it/s]
+Average Metric: 34.00 / 50 (68.0%): 100%|██████████| 50/50 [00:37<00:00,  1.35it/s]
+
+2025/06/29 13:53:55 INFO dspy.evaluate.evaluate: Average Metric: 34 / 50 (68.0%)
+
+
+Score:	68.0
