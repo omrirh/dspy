@@ -125,7 +125,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
-            use_target_model_embeddings=(strategy[0] == 'w'),
+            use_target_model_embeddings=("w -> p" in strategy),
         )
 
     if prompt_optimizer_name == "miprov2":
@@ -153,8 +153,11 @@ def main(dataset, prompt_optimizer, strategy, model):
     experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
 
     # Report collected demonstrations
-    final_fewshot = optimized_program.named_predictors()[0][1].demos
-    print(f"{experiment_header}\nDemonstrations collected ({len(final_fewshot)} in total):\n{final_fewshot}\n\n")
+
+    final_fewshot_size = len(optimized_program.named_predictors()[0][1].demos)
+    print(f"{experiment_header}\nDemonstrations collected ({final_fewshot_size} in total):\n")
+    for name, predictor in optimized_program.named_predictors():
+        print(f"'{name}' predictor demos: {predictor.demos}\n")
 
     # Evaluate accuracy and output the results
     print(f"{experiment_header}\nCalculating experiment program results...")
@@ -176,9 +179,9 @@ if __name__ == "__main__":
 
     # # for debugging
     # dataset = "hotpotqa"
-    # prompt_optimizer = "bfrs"
+    # prompt_optimizer = "clusterfsv2"
     # strategy = "p"
-    # model = "mistralai/Mistral-7B-Instruct-v0.2"
+    # model = "Qwen/Qwen2.5-7B-Instruct"
 
     # main(dataset, prompt_optimizer, strategy, model)
 

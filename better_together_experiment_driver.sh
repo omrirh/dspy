@@ -77,6 +77,9 @@ MODEL_ID="_$(basename "$MODEL")"
 # Set log file
 EXPERIMENT_LOG_FILE="better_together_experiment_run_${DATASET}${MODEL_ID}${LOG_PARAMS}_$(date +'%Y-%m-%d').log"
 
+# PATCH: set higher number of open files limit to prevent LiteLLM database limit reach
+ulimit -n 65535
+
 # Run experiment
 nohup python3.11 better_together_experiment.py \
     --dataset "$DATASET" \
@@ -84,7 +87,7 @@ nohup python3.11 better_together_experiment.py \
     --strategy "$STRATEGY" \
     --model "$MODEL" 2>&1 | tee "$EXPERIMENT_LOG_FILE" &
 
-echo "BetterTogether Experiment"
+echo -e "\nBetterTogether Experiment"
 echo "-------------------------"
 echo "Dataset: $DATASET"
 echo "Prompt Optimizer: $PROMPT_OPTIMIZER"
