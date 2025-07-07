@@ -21,6 +21,23 @@ class BasicMH(dspy.Module):
         answer = self.generate_answer(context=context, question=question).copy(context=context)
         return answer
 
+class BasicMHSecondChance(dspy.Module):
+    def __init__(self, passages_per_hop=3, num_hops=2):
+        super().__init__()
+        self.num_hops = num_hops
+        self.retrieve = dspy.Retrieve(k=passages_per_hop)
+        self.generate_query = [dspy.ChainOfThought("context, question -> search_query") for _ in range(self.num_hops)]
+        self.generate_answer = dspy.ChainOfThought("context, question, correct_label -> answer")
+
+    def forward(self, question, correct_label):
+        context = []
+        for hop in range(self.num_hops):
+            search_query = self.generate_query[hop](context=context, question=question).search_query
+            passages = self.retrieve(search_query).passages
+            context = deduplicate(context + passages)
+        answer = self.generate_answer(context=context, question=question, correct_label=correct_label).copy(context=context)
+        return answer
+
 
 class CoT(dspy.Module):
     def __init__(self):

@@ -19,7 +19,8 @@ from transformers import (
 )
 from programs import (
     BasicMH,
-    CoT
+    CoT,
+    BasicMHSecondChance,
 )
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
@@ -711,15 +712,15 @@ class ClusterFewshotv2(Teleprompter):
         return best_embeddings, best_labels, best_k
 
     def soft_select(
-        self,
-        N: int,
-        steps: int = 1000,
-        log_step: int = 100,
-        lr: float = 1e-1,
-        device: str = "cpu",
-        verbose: bool = True,
-        min_lambda: float = 10,
-        max_lambda: float = np.inf,
+            self,
+            N: int,
+            steps: int = 1000,
+            log_step: int = 100,
+            lr: float = 1e-1,
+            device: str = "cpu",
+            verbose: bool = True,
+            min_lambda: float = 10,
+            max_lambda: float = np.inf,
     ):
         """
         Differentiable “soft” selection of a final N-shot subset.
@@ -839,8 +840,11 @@ class ClusterFewshotv2(Teleprompter):
         import dspy
 
         student = self.student
+        fallback_student = BasicMHSecondChance()
         predictor2name = {
-            predictor: name for name, predictor in self.student.named_predictors()
+            predictor: name
+            for student_prog in [self.student, fallback_student]
+            for name, predictor in student_prog.named_predictors()
         }
 
         logger.info(f"Bootstrapping {len(examples)} examples")
@@ -888,9 +892,54 @@ class ClusterFewshotv2(Teleprompter):
                             demos = [demos[-1]]
                     name2traces[name] = demos
 
-                bootstrapped = {'raw': example}
+                bootstrapped = {'raw': example, 'second_chance': False}
                 bootstrapped.update(name2traces)
                 return bootstrapped
+            else:
+                example._input_keys = {'question', 'correct_label'}
+                example.correct_label = example.answer
+                try:
+                    with dspy.settings.context(trace=[]):
+                        with dspy.settings.context():
+                            for name, predictor in student.named_predictors():
+                                predictor_cache[name] = predictor.demos
+                                predictor.demos = [x for x in predictor.demos if x != example]
+
+                            prediction = fallback_student(**example.inputs())
+                            trace = dspy.settings.trace
+
+                            for name, predictor in student.named_predictors():
+                                predictor.demos = predictor_cache[name]
+
+                            if self.metric:
+                                metric_val = self.metric(example, prediction, trace)
+                                if self.metric_threshold:
+                                    success = metric_val >= self.metric_threshold
+                                else:
+                                    success = metric_val
+                            else:
+                                success = True
+                except Exception as e:
+                    raise RuntimeError(f"Bootstrapping failed for example {example} due to {e}")
+
+                if success:
+                    for step in trace:
+                        predictor, inputs, outputs = step
+                        demo = dspy.Example(augmented=True, **inputs, **outputs)
+                        name2traces.setdefault(predictor2name[predictor], []).append(demo)
+
+                    for name, demos in name2traces.items():
+                        if len(demos) > 1:
+                            rng = random.Random(Hasher.hash(tuple(demos)))
+                            if rng.random() < 0.5:
+                                demos = [rng.choice(demos[:-1])]
+                            else:
+                                demos = [demos[-1]]
+                        name2traces[name] = demos
+
+                    bootstrapped = {'raw': example, 'second_chance': True}
+                    bootstrapped.update(name2traces)
+                    return bootstrapped
 
             return None  # Misleading bootstrapped example considered as non useful
 
