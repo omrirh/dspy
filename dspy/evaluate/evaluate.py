@@ -148,16 +148,20 @@ class Evaluate:
         )
 
         def process_item(example):
-            prediction = program(**example.inputs())
-            score = metric(example, prediction)
+            try:
+                prediction = program(**example.inputs())
+                score = metric(example, prediction)
 
-            # Increment assert and suggest failures to program's attributes
-            if hasattr(program, "_assert_failures"):
-                program._assert_failures += dspy.settings.get("assert_failures")
-            if hasattr(program, "_suggest_failures"):
-                program._suggest_failures += dspy.settings.get("suggest_failures")
+                # Increment assert and suggest failures to program's attributes
+                if hasattr(program, "_assert_failures"):
+                    program._assert_failures += dspy.settings.get("assert_failures")
+                if hasattr(program, "_suggest_failures"):
+                    program._suggest_failures += dspy.settings.get("suggest_failures")
 
-            return prediction, score
+                return prediction, score
+            except Exception as ex:
+                logger.info(f"Failed to process example {example}: {ex}")
+                return None
 
         results = executor.execute(process_item, devset)
         assert len(devset) == len(results)
