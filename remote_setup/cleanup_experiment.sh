@@ -20,5 +20,6 @@ fi
 rm -rf ~/.dspy_cache
 rm -rf meta-llama/
 rm -rf mistralai/
+rm -rf Qwen/
 
 echo "Cleanup DSPy experiment cache is done."

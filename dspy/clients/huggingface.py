@@ -111,6 +111,9 @@ class HFProvider(Provider):
         #     load_in_8bit=True,
         # )
 
+        if "Qwen" in model:
+            logger.warning("Sliding Window Attention is not applied — this is safe due to short context lengths in GSM8K/Iris/HotPotQA.")
+
         tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(model)
         base_model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
             model,
