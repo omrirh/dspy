@@ -19,8 +19,11 @@ from transformers import (
 )
 from programs import (
     BasicMH,
-    CoT,
     BasicMHSecondChance,
+    CoT,
+    CoTSecondChance,
+    IrisProgram,
+    IrisProgramSecondChance,
 )
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
@@ -41,6 +44,12 @@ CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
 ]
+
+SECOND_CHANCE_PROGRAM_MAPPING = {
+    BasicMH: BasicMHSecondChance,
+    CoT: CoTSecondChance,
+    IrisProgram: IrisProgramSecondChance,
+}
 
 
 class ClusterFewshotv2(Teleprompter):
@@ -160,7 +169,9 @@ class ClusterFewshotv2(Teleprompter):
         # Update student LM predictors with optimized few-shot subset
         for name, predictor in self.student.named_predictors():
             predictor.demos = [
-                ex for demo in self.final_fewshot_subset for ex in demo[name]
+                ex
+                for demo in self.final_fewshot_subset
+                for ex in (demo[name] if name in demo else [demo["raw"]])
             ]
 
         self.student._compiled = True
@@ -433,13 +444,13 @@ class ClusterFewshotv2(Teleprompter):
         logger.info(
             f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
             f"using the following demonstration:\n"
-            f"{example_visual}"
+            f"{example_visual}\nDemonstration type: {'labeled' if list(example.keys()) == ['raw', 'second_chance'] else 'second chance bootstrapped' if example['second_chance'] else 'regular bootstrapped'}"
         )
 
         cached_demos = [pred.demos for _, pred in student.named_predictors()]
 
         for name, predictor in student.named_predictors():
-            predictor.demos = example[name]  # Test as one-shot demonstration
+            predictor.demos = example.get(name, example['raw']) # Test as one-shot demonstration
 
         student_score = evaluator(program=student)
 
@@ -537,7 +548,7 @@ class ClusterFewshotv2(Teleprompter):
 
             for name, predictor in student.named_predictors():
                 predictor.demos = [
-                    ex for demo in fewshot_subset for ex in demo[name]
+                    ex for demo in fewshot_subset for ex in demo.get(name, demo['raw'])
                 ]
 
             fewshot_subset_score = evaluator(student)
@@ -840,10 +851,10 @@ class ClusterFewshotv2(Teleprompter):
         import dspy
 
         student = self.student
-        fallback_student = BasicMHSecondChance()
+        second_chance_student = SECOND_CHANCE_PROGRAM_MAPPING[type(student)]()
         predictor2name = {
             predictor: name
-            for student_prog in [self.student, fallback_student]
+            for student_prog in [self.student, second_chance_student]
             for name, predictor in student_prog.named_predictors()
         }
 
@@ -896,7 +907,7 @@ class ClusterFewshotv2(Teleprompter):
                 bootstrapped.update(name2traces)
                 return bootstrapped
             else:
-                example._input_keys = {'question', 'correct_label'}
+                example._input_keys.add('correct_label')
                 example.correct_label = example.answer
                 try:
                     with dspy.settings.context(trace=[]):
@@ -905,7 +916,7 @@ class ClusterFewshotv2(Teleprompter):
                                 predictor_cache[name] = predictor.demos
                                 predictor.demos = [x for x in predictor.demos if x != example]
 
-                            prediction = fallback_student(**example.inputs())
+                            prediction = second_chance_student(**example.inputs())
                             trace = dspy.settings.trace
 
                             for name, predictor in student.named_predictors():
@@ -919,6 +930,8 @@ class ClusterFewshotv2(Teleprompter):
                                     success = metric_val
                             else:
                                 success = True
+
+                    example._input_keys.discard('correct_label')
                 except Exception as e:
                     raise RuntimeError(f"Bootstrapping failed for example {example} due to {e}")
 
@@ -941,7 +954,7 @@ class ClusterFewshotv2(Teleprompter):
                     bootstrapped.update(name2traces)
                     return bootstrapped
 
-            return None  # Misleading bootstrapped example considered as non useful
+            return {'raw': example, 'second_chance': False} # Non-solvable examples will be used as demonstrations by label
 
         # Use the same settings as Evaluate
         executor = ParallelExecutor(
@@ -960,7 +973,7 @@ class ClusterFewshotv2(Teleprompter):
                 self.trainset_by_hash[self.get_example_hash(bootstrapped)] = bootstrapped
                 bootstrapped_examples.append(bootstrapped)
 
-        logger.info(f"{len(bootstrapped_examples)}/{len(examples)} remaining after bootstrapping")
+        # logger.info(f"{len(bootstrapped_examples)}/{len(examples)} remaining after bootstrapping")
 
         return bootstrapped_examples
 

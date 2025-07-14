@@ -21,6 +21,7 @@ class BasicMH(dspy.Module):
         answer = self.generate_answer(context=context, question=question).copy(context=context)
         return answer
 
+
 class BasicMHSecondChance(dspy.Module):
     def __init__(self, passages_per_hop=3, num_hops=2):
         super().__init__()
@@ -35,7 +36,8 @@ class BasicMHSecondChance(dspy.Module):
             search_query = self.generate_query[hop](context=context, question=question).search_query
             passages = self.retrieve(search_query).passages
             context = deduplicate(context + passages)
-        answer = self.generate_answer(context=context, question=question, correct_label=correct_label).copy(context=context)
+        answer = self.generate_answer(context=context, question=question, correct_label=correct_label).copy(
+            context=context)
         return answer
 
 
@@ -46,6 +48,15 @@ class CoT(dspy.Module):
 
     def forward(self, question):
         return self.prog(question=question)
+
+
+class CoTSecondChance(dspy.Module):
+    def __init__(self):
+        super().__init__()
+        self.prog = dspy.ChainOfThought("question, correct_label -> answer")
+
+    def forward(self, question, correct_label):
+        return self.prog(question=question, correct_label=correct_label)
 
 
 class IrisSignature(dspy.Signature):
@@ -69,6 +80,32 @@ class IrisProgram(dspy.Module):
             petal_width=petal_width,
             sepal_length=sepal_length,
             sepal_width=sepal_width
+        )
+
+
+class IrisSignatureSecondChance(dspy.Signature):
+    """
+    Given the petal and sepal dimensions in cm and the correct label, predict the iris species.
+    """
+    petal_length = dspy.InputField()
+    petal_width = dspy.InputField()
+    sepal_length = dspy.InputField()
+    sepal_width = dspy.InputField()
+    correct_label = dspy.InputField()
+    answer = dspy.OutputField(desc='setosa, versicolor or virginica')
+
+
+class IrisProgramSecondChance(dspy.Module):
+    def __init__(self):
+        self.generate_answer = dspy.ChainOfThought(IrisSignatureSecondChance)
+
+    def forward(self, petal_length, petal_width, sepal_length, sepal_width, correct_label):
+        return self.generate_answer(
+            petal_length=petal_length,
+            petal_width=petal_width,
+            sepal_length=sepal_length,
+            sepal_width=sepal_width,
+            correct_label=correct_label
         )
 
 # TODO: experiment with this!
