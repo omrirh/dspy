@@ -153,9 +153,9 @@ def main(dataset, prompt_optimizer, strategy, model):
     experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
 
     # Report collected demonstrations
-
     final_fewshot_size = len(optimized_program.named_predictors()[0][1].demos)
-    print(f"{experiment_header}\nDemonstrations collected ({final_fewshot_size} in total):\n")
+    num_predictors = len(optimized_program.named_predictors())
+    print(f"{experiment_header}\nDemonstrations collected ({final_fewshot_size} in total for {num_predictors} predictors):\n")
     for name, predictor in optimized_program.named_predictors():
         print(f"'{name}' predictor demos: {predictor.demos}\n")
 
