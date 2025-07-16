@@ -21,5 +21,6 @@ rm -rf ~/.dspy_cache
 rm -rf meta-llama/
 rm -rf mistralai/
 rm -rf Qwen/
+rm -rf deepseek-ai/
 
 echo "Cleanup DSPy experiment cache is done."

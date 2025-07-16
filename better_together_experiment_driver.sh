@@ -14,7 +14,7 @@ MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
 VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "clusterfsv2" "miprov2")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p" "p -> p" "p -> p -> p")
-VALID_MODELS=("meta-llama/Llama-2-7b-chat-hf" "meta-llama/Meta-Llama-3-8B-Instruct" "mistralai/Mistral-7B-Instruct-v0.2" "Qwen/Qwen2.5-7B-Instruct")
+VALID_MODELS=("meta-llama/Llama-2-7b-chat-hf" "meta-llama/Meta-Llama-3-8B-Instruct" "mistralai/Mistral-7B-Instruct-v0.2" "Qwen/Qwen2.5-7B-Instruct" "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B")
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
