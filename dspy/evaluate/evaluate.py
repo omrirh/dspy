@@ -160,7 +160,7 @@ class Evaluate:
 
                 return prediction, score
             except Exception as ex:
-                logger.info(f"Failed to process example {example}: {ex}")
+                # logger.info(f"Failed to process example {example}: {ex}")
                 return None
 
         results = executor.execute(process_item, devset)

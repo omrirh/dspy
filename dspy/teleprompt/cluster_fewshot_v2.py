@@ -871,7 +871,8 @@ class ClusterFewshotv2(Teleprompter):
                         else:
                             success = True
             except Exception as e:
-                raise RuntimeError(f"Bootstrapping failed for example {example} due to {e}")
+                return None
+                # raise RuntimeError(f"Bootstrapping failed for example {example} due to {e}")
 
             if success:
                 for step in trace:
