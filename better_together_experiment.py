@@ -73,13 +73,19 @@ def main(dataset, prompt_optimizer, strategy, model):
         testset = [x.with_inputs('question') for x in dataset.test if
                    not any(ex in x.question for ex in exclude_examples)][:test_size]
 
-    sglang_port = 7501
-    sglang_url = f"http://localhost:{sglang_port}/v1"
-    lm = assign_local_lm(
-        model=model,
-        api_base=sglang_url,
-        provider=HFProvider(validation_set=devset, validation_metric=metric)
-    )
+    if model in dspy.clients.huggingface._HF_MODELS:
+        sglang_port = 7501
+        sglang_url = f"http://localhost:{sglang_port}/v1"
+        lm = assign_local_lm(
+            model=model,
+            api_base=sglang_url,
+            provider=HFProvider(validation_set=devset, validation_metric=metric)
+        )
+    else:  # Currently supports Gemini via API
+        import os
+
+        lm = dspy.LM(model, api_key=os.getenv("GEMINI_API_KEY"))
+        dspy.configure(lm=lm)
 
     # Set up the metric and evaluation tool
     evaluate_test = Evaluate(

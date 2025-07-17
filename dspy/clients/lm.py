@@ -112,9 +112,9 @@ class LM(BaseLM):
         # Make the request and handle LRU & disk caching.
         if cache_in_memory:
             completion = cached_litellm_completion if self.model_type == "chat" else cached_litellm_text_completion
-
+            model_prefix = "openai/" if "gemini" not in self.model else ""
             response = completion(
-                request=dict(model=f"openai/{self.model}", messages=messages, **kwargs),
+                request=dict(model=f"{model_prefix}{self.model}", messages=messages, **kwargs),
                 num_retries=self.num_retries,
             )
         else:
