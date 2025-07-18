@@ -21,9 +21,9 @@ done
 source vm_vars.env
 source dspy_venv/bin/activate
 
-# Setup SGLang & flashinfer-python (updated requirements.txt takes care of all)
-pip install flashinfer-python==0.2.5 torch==2.5.1 --extra-index-url https://flashinfer.ai/whl/cu124/torch2.5/ --no-deps
-pip install "sglang==0.4.3"
+# Setup SGLang & flashinfer-python
+uv pip install flashinfer-python==0.2.5 torch==2.6.0+cu124 --extra-index-url https://flashinfer.ai/whl/cu124/torch2.6/ --no-deps
+uv pip install "sglang==0.4.6.post4"
 
 # Make sure Nvidia driver is present on machine
 command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are missing."; exit 1; }
@@ -31,10 +31,21 @@ command -v nvidia-smi >/dev/null 2>&1 || { echo >&2 "ERROR: NVIDIA drivers are m
 # Login with huggingface-cli
 huggingface-cli login --token "$HF_TOKEN"
 
+SERVER_CMD="python -m sglang.launch_server \
+  --model-path \"$MODEL_NAME\" \
+  --port 7501"
+
+# Conditionally append reasoning parser for Qwen3
+if [[ "$MODEL_NAME" == "Qwen/Qwen3-8B" ]]; then
+  echo -e "Using a dedicated reasoning parser for $MODEL_NAME model"
+  SERVER_CMD+=" --reasoning-parser qwen3"
+fi
+
 # Spin up the local sglang model persistently
 nohup env \
   CUDA_VISIBLE_DEVICES=0 \
   HF_TOKEN="$HF_TOKEN" \
-  python -m sglang.launch_server \
-  --model-path "$MODEL_NAME" \
-  --port 7501 | tee "sglang_run.log" &
+  CUDA_HOME=/usr/local/cuda-12.4 \
+  PATH=$CUDA_HOME/bin:$PATH \
+  LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH \
+  bash -c "$SERVER_CMD" | tee "sglang_run.log" &

@@ -35,6 +35,7 @@ _HF_MODELS = [
     "mistralai/Mistral-7B-Instruct-v0.2",
     "Qwen/Qwen2.5-7B-Instruct",
     "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+    "Qwen/Qwen3-8B",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

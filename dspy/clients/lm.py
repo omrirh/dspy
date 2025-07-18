@@ -112,7 +112,7 @@ class LM(BaseLM):
         # Make the request and handle LRU & disk caching.
         if cache_in_memory:
             completion = cached_litellm_completion if self.model_type == "chat" else cached_litellm_text_completion
-            model_prefix = "openai/" if "gemini" not in self.model else ""
+            model_prefix = "openai/" if self.model in dspy.clients.huggingface._HF_MODELS else ""
             response = completion(
                 request=dict(model=f"{model_prefix}{self.model}", messages=messages, **kwargs),
                 num_retries=self.num_retries,
@@ -185,7 +185,7 @@ class LM(BaseLM):
 
         thread = threading.Thread(target=thread_function_wrapper)
         train_kwargs = train_kwargs or self.train_kwargs
-        model_to_finetune = self.finetuning_model or self.model 
+        model_to_finetune = self.finetuning_model or self.model
         job = self.provider.TrainingJob(
             thread=thread,
             model=model_to_finetune,
@@ -248,7 +248,7 @@ class LM(BaseLM):
                 new_instance.kwargs[key] = value
 
         return new_instance
-    
+
     def dump_state(self):
         state_keys = ["model", "model_type", "cache", "cache_in_memory", "num_retries", "finetuning_model", "launch_kwargs", "train_kwargs"]
         return { key: getattr(self, key) for key in state_keys } | self.kwargs

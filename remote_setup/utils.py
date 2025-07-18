@@ -174,7 +174,7 @@ def deploy_sglang_model(model_path: str, log_file: str, port: int = 7501, cuda_d
     """
     logger.info(f"Deploying {model_path} model...")
     command = f"nohup env CUDA_VISIBLE_DEVICES={cuda_device} python -m sglang.launch_server " \
-              f"--model-path {model_path} --port {port} > {log_file} 2>&1 &"
+              f"--model-path {model_path} {'--reasoning-parser qwen3' if 'Qwen3' in model_path else ''} --port {port} > {log_file} 2>&1 &"
     subprocess.Popen(command, shell=True)
 
     # Wait for the server to start

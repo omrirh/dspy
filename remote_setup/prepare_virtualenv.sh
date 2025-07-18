@@ -16,13 +16,9 @@ sudo apt install -y python3.11 python3.11-venv python3.11-dev
 python3.11 -m venv dspy_venv
 source dspy_venv/bin/activate
 pip install --upgrade pip
+pip install uv
+uv pip install --upgrade pip
 
-# Install poetry dependencies
-cd dspy
-pip install poetry
-poetry env use python3.11
-poetry install
-
-# Install pip dependencies
-pip install --upgrade pip
-pip install -r remote_setup/requirements.txt
+# Install torch packages from cuda 12.4 wheel independently (core dependency)
+uv pip install torch==2.6.0+cu124 torchvision==0.21.0+cu124  --extra-index-url https://download.pytorch.org/whl/cu124
+uv pip install -r dspy/remote_setup/requirements.txt
