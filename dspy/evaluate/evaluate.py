@@ -114,15 +114,15 @@ class Evaluate:
 
         Returns:
             The evaluation results are returned in different formats based on the flags:
-            
+
             - Base return: A float percentage score (e.g., 67.30) representing overall performance
-            
+
             - With `return_all_scores=True`:
-                Returns (overall_score, individual_scores) where individual_scores is a list of 
+                Returns (overall_score, individual_scores) where individual_scores is a list of
                 float scores for each example in devset
-            
+
             - With `return_outputs=True`:
-                Returns (overall_score, result_triples) where result_triples is a list of 
+                Returns (overall_score, result_triples) where result_triples is a list of
                 (example, prediction, score) tuples for each example in devset
 
             - With both flags=True:
@@ -160,8 +160,8 @@ class Evaluate:
 
                 return prediction, score
             except Exception as ex:
-                # logger.info(f"Failed to process example {example}: {ex}")
-                return None
+                # Handling as failed prediction
+                return dspy.Prediction(), self.failure_score
 
         results = executor.execute(process_item, devset)
         assert len(devset) == len(results)
@@ -171,7 +171,7 @@ class Evaluate:
         ncorrect, ntotal = sum(score for *_, score in results), len(devset)
 
         logger.info(f"Average Metric: {ncorrect} / {ntotal} ({round(100 * ncorrect / ntotal, 1)}%)")
-            
+
         def prediction_is_dictlike(prediction):
             # Downstream logic for displaying dictionary-like predictions depends solely on the predictions
             # having a method called `items()` for iterating through key/value pairs

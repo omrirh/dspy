@@ -21,6 +21,7 @@ VALID_MODELS=(
   "Qwen/Qwen2.5-7B-Instruct"
   "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
   "gemini/gemini-2.5-flash"
+  "gemini/gemini-2.5-pro"
   "Qwen/Qwen3-8B"
 )
 
