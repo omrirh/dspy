@@ -45,8 +45,11 @@ class ChatAdapter(Adapter):
                 # On context window exceeded error, we don't want to retry with a different adapter.
                 raise e
             # fallback to JSONAdapter
-            return JSONAdapter()(lm, lm_kwargs, signature, demos, inputs)
-    
+            try:
+                return JSONAdapter()(lm, lm_kwargs, signature, demos, inputs)
+            except Exception as ex:
+                return [{'answer': None}]  # If all failed to yield a valid response, fallback to None answer
+
     def format(self, signature: Type[Signature], demos: list[dict[str, Any]], inputs: dict[str, Any]) -> list[dict[str, Any]]:
         messages: list[dict[str, Any]] = []
 

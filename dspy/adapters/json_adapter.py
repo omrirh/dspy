@@ -96,16 +96,15 @@ class JSONAdapter(Adapter):
         return messages
 
     def parse(self, signature: Type[Signature], completion: str) -> dict[str, Any]:
+        if not completion:
+            return {}
         fields = json_repair.loads(completion)
         if isinstance(fields, str):
             return None
         elif isinstance(fields, list):
             fields = fields[0]
-            if isinstance(fields, dict):
-                return fields
-
-            print(f"Got fields as list of lists: {fields}")
-            return {}
+            if not isinstance(fields, dict):
+                return {}
 
         fields = {k: v for k, v in fields.items() if k in signature.output_fields}
         # attempt to cast each value to type signature.output_fields[k].annotation
@@ -113,7 +112,7 @@ class JSONAdapter(Adapter):
             if k in signature.output_fields:
                 fields[k] = parse_value(v, signature.output_fields[k].annotation)
 
-        if fields.keys() != signature.output_fields.keys():
+        if fields and fields.keys() != signature.output_fields.keys():
             raise ValueError(f"Expected {signature.output_fields.keys()} but got {fields.keys()}")
 
         return fields

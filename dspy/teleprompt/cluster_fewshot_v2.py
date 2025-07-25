@@ -105,7 +105,7 @@ class ClusterFewshotv2(Teleprompter):
         self.training_clusters = None
         self.validation_clusters = None
         self.trainset = None
-        self.ead_set = None  # extracted from validation clusters for example-as-demo testing
+        self.os_test = None  # extracted from validation clusters for example-as-demo testing
         self.ranked_examples = None
         self.global_sorted_examples = None
         self._sum_of_clusters_strength = None
@@ -147,7 +147,7 @@ class ClusterFewshotv2(Teleprompter):
 
         # exit(0)
 
-        self._sample_ead_evaluation_set()
+        self._sample_one_shot_evaluation_set()
         self._sort_examples_as_demos()
 
         if self._soft_select:
@@ -252,7 +252,7 @@ class ClusterFewshotv2(Teleprompter):
             np_scores = np.array(scores)
 
             color_values = np_scores
-            color_label = "EAD Score"
+            color_label = "One-shot Score"
 
             # Choose a colormap that works well with continuous values
             cmap = "coolwarm" if len(set(np_scores)) <= 5 else "viridis"
@@ -278,8 +278,8 @@ class ClusterFewshotv2(Teleprompter):
         cbar.set_label(color_label)
 
         if show_ranks:
-            logger.info(f"Unique EAD scores: {set(scores)}")
-            plt.title(f"PCA of {data_type.title()} EAD ranks\n"
+            logger.info(f"Unique one-shot scores: {set(scores)}")
+            plt.title(f"PCA of {data_type.title()} One-shot Ranks\n"
                       f"Rank mean={np.mean(np_scores):.2f}\n"
                       f"Rank std={np.std(np_scores):.2f}")
         else:
@@ -301,15 +301,15 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Cluster visualization saved to {save_path}.")
 
-    def visualize_ead_scores_distribution(self, save_path="ead_scores_distribution.png"):
+    def visualize_one_shot_scores_distribution(self, save_path="one_shot_scores_distribution.png"):
         """
-        Visualizes the distribution of one-shot evaluation scores (EAD ranks).
+        Visualizes the distribution of one-shot evaluation scores (one-shot ranks).
         Each score reflects how well an example performed when used as a one-shot demonstration.
         """
         from collections import Counter
 
         if not self.ranked_examples:
-            logger.warning("No ranked examples found. Skipping EAD score visualization.")
+            logger.warning("No ranked examples found. Skipping one-shot score visualization.")
             return
 
         score_counts = Counter(self.ranked_examples.values())
@@ -321,13 +321,13 @@ class ClusterFewshotv2(Teleprompter):
         plt.bar(scores, counts, color='skyblue', edgecolor='black')
         plt.xlabel("One-shot Evaluation Score")
         plt.ylabel("Score frequency")
-        plt.title("Distribution of EAD (Example-As-Demo) Scores")
+        plt.title("Distribution of One-shot Scores")
         plt.grid(axis='y', linestyle='--', alpha=0.6)
         plt.tight_layout()
         plt.savefig(save_path)
         plt.close()
 
-        logger.info(f"EAD scores distribution saved to {save_path}")
+        logger.info(f"One-shot scores distribution saved to {save_path}")
 
     def visualize_reasoning_distribution(self):
         # Extract ranks based on whether the example has reasoning
@@ -350,11 +350,11 @@ class ClusterFewshotv2(Teleprompter):
         plt.tight_layout()
         plt.savefig("reasoning_ranks_distribution.png")
 
-    def _sample_ead_evaluation_set(self):
+    def _sample_one_shot_evaluation_set(self):
         """
-        Selects examples from each validation cluster to form the EAD testing set.
+        Selects examples from each validation cluster to form the one-shot testing set.
         """
-        self.ead_set = []
+        self.os_test = []
         samples_per_cluster = 3
 
         for cluster_id, examples in self.validation_clusters.items():
@@ -364,19 +364,19 @@ class ClusterFewshotv2(Teleprompter):
             logger.info(
                 f"Sampling {sample_size} questions from cluster {cluster_id + 1} (size={len(examples)})")
 
-            self.ead_set.extend(selected)
+            self.os_test.extend(selected)
 
-        self.visualize_ead_set()
-        logger.info(f"EAD evaluation set assembled with {len(self.ead_set)} questions.")
+        self.visualize_os_test()
+        logger.info(f"One-shot evaluation set assembled with {len(self.os_test)} questions.")
 
     def _sort_examples_as_demos(self):
         """
         Sorts examples based on their impact when used as one-shot demonstrations.
         """
         evaluator = Evaluate(
-            devset=self.ead_set,
+            devset=self.os_test,
             metric=self.metric,
-            num_threads=min(12, len(self.ead_set)),
+            num_threads=min(12, len(self.os_test)),
             display_progress=True,
         )
         student_copy = self.student.deepcopy()
@@ -411,11 +411,11 @@ class ClusterFewshotv2(Teleprompter):
             for cluster_id, cluster_examples in self.training_clusters.items()
         }
 
-        self.visualize_ead_scores_distribution()
+        self.visualize_one_shot_scores_distribution()
         self._visualize_examples(
             embeddings=[self.examples2embeddings[self.get_example_hash(ex)] for ex in self.trainset],
             embedding_model=self.embedding_model_name,
-            save_path=f"embeddings_to_ead_ranks.png",
+            save_path=f"embeddings_to_one_shot_ranks.png",
             data_type="training",
             show_ranks=True,
         )
@@ -430,7 +430,7 @@ class ClusterFewshotv2(Teleprompter):
         example_visual = f"{', '.join([f'{input_key}: {input_val}' for input_key, input_val in dict(example['raw'].inputs()).items()])} --> {example['raw'].answer}"
 
         logger.info(
-            f"Conducting example-as-demo test ({len(self.ead_set)} questions) "
+            f"Conducting example-as-demo test ({len(self.os_test)} questions) "
             f"using the following demonstration:\n"
             f"{example_visual}"
         )
@@ -723,14 +723,14 @@ class ClusterFewshotv2(Teleprompter):
     ):
         """
         Differentiable “soft” selection of a final N-shot subset.
-        Balances one-shot impact (EAD ranks) against semantic redundancy.
+        Balances one-shot impact (One-shot ranks) against semantic redundancy.
         """
         import math
 
         trainset = self.trainset
         M = len(trainset)
 
-        ead_scores = torch.tensor(
+        one_shot_scores = torch.tensor(
             [score for _, score in self.ranked_examples.items()],
             dtype=torch.float32,
             device=device
@@ -759,7 +759,7 @@ class ClusterFewshotv2(Teleprompter):
             lambda_ = log_lambda.exp()
 
             # Loss: negative impact + diversity penalty
-            loss = - (p * ead_scores).sum() + lambda_ * (p @ S @ p)
+            loss = - (p * one_shot_scores).sum() + lambda_ * (p @ S @ p)
             loss_val = loss.item()
             lambda_val = lambda_.item()
 
@@ -808,7 +808,7 @@ class ClusterFewshotv2(Teleprompter):
 
         logger.info(f"Soft selection PCA plot saved to {save_path}")
 
-    def visualize_ead_set(self, save_path="ead_set.png"):
+    def visualize_os_test(self, save_path="one_shot_test.png"):
         """
         PCA plot of all validation embeddings, highlighting selected few-shot examples.
         """
@@ -817,7 +817,7 @@ class ClusterFewshotv2(Teleprompter):
             self.examples2embeddings[self.get_example_hash(ex)]
             for ex in all_examples
         ])
-        selected_set = set(self.ead_set)
+        selected_set = set(self.os_test)
 
         pca = PCA(n_components=2)
         reduced = pca.fit_transform(embs)
@@ -826,14 +826,14 @@ class ClusterFewshotv2(Teleprompter):
 
         plt.figure(figsize=(8, 6))
         plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
-        plt.title(f"PCA of Validation Embeddings with Selected EAD questions set (Red)")
+        plt.title(f"PCA of Validation Embeddings with Selected One-shot test questions (Red)")
         plt.xlabel("PCA Dimension 1")
         plt.ylabel("PCA Dimension 2")
         plt.tight_layout()
         plt.savefig(save_path)
         plt.close()
 
-        logger.info(f"EAD set PCA plot saved to {save_path}")
+        logger.info(f"One-shot test set PCA plot saved to {save_path}")
 
     def bootstrap_examples(self, examples):
         import dspy

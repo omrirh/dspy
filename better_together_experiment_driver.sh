@@ -23,6 +23,8 @@ VALID_MODELS=(
   "gemini/gemini-2.5-flash"
   "gemini/gemini-2.5-pro"
   "Qwen/Qwen3-8B"
+  "google/gemma-3-4b-it"
+  "Qwen/Qwen2-7B-Instruct"
 )
 
 # Parse arguments

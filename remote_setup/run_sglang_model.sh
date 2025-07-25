@@ -35,10 +35,13 @@ SERVER_CMD="python -m sglang.launch_server \
   --model-path \"$MODEL_NAME\" \
   --port 7501"
 
-# Conditionally append reasoning parser for Qwen3
+# Conditionally apply model-specific tweaks
 if [[ "$MODEL_NAME" == "Qwen/Qwen3-8B" ]]; then
   echo -e "Using a dedicated reasoning parser for $MODEL_NAME model"
   SERVER_CMD+=" --reasoning-parser qwen3"
+elif [[ "$MODEL_NAME" == "google/gemma-3-4b-it" ]]; then
+  echo -e "Applying memory-friendly settings for $MODEL_NAME"
+  SERVER_CMD+=" --context-length 8192"
 fi
 
 # Spin up the local sglang model persistently

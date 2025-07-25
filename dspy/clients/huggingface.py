@@ -36,6 +36,8 @@ _HF_MODELS = [
     "Qwen/Qwen2.5-7B-Instruct",
     "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
     "Qwen/Qwen3-8B",
+    "google/gemma-3-4b-it",
+    "Qwen/Qwen2-7B-Instruct",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
