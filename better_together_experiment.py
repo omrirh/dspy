@@ -122,7 +122,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         )
 
     if prompt_optimizer_name == "clusterfs":
-        prompt_optimizer = ClusterFewshotv2(
+        prompt_optimizer = ClusterFewshot(
             metric=metric,
             task_type=task_type,
             use_target_model_embeddings=("w -> p" in strategy),
