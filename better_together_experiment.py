@@ -9,7 +9,6 @@ from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.bettertogether import BetterTogether
 from dspy.teleprompt.cluster_fewshot import ClusterFewshot
-from dspy.teleprompt.cluster_fewshot_v2 import ClusterFewshotv2
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 
@@ -123,11 +122,6 @@ def main(dataset, prompt_optimizer, strategy, model):
         )
 
     if prompt_optimizer_name == "clusterfs":
-        prompt_optimizer = ClusterFewshot(
-            metric=metric,
-        )
-
-    if prompt_optimizer_name == "clusterfsv2":
         prompt_optimizer = ClusterFewshotv2(
             metric=metric,
             task_type=task_type,
