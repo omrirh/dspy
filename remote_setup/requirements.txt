@@ -24,7 +24,7 @@ cuda-bindings==12.9.0
 cuda-python==12.9.0
 cupy-cuda12x==13.5.1
 cycler==0.12.1
-datasets==2.21.0
+datasets==4.0.0
 decorator==5.2.1
 decord==0.6.0
 depyf==0.18.0

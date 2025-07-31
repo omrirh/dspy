@@ -125,6 +125,7 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = ClusterFewshot(
             metric=metric,
             task_type=task_type,
+            soft_select=True,
             use_target_model_embeddings=("w -> p" in strategy),
         )
 

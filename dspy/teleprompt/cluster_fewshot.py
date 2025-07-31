@@ -24,10 +24,13 @@ from programs import (
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
 
+import umap.umap_ as umap
+import hdbscan
+
 logger = logging.getLogger(__name__)
 
 MIN_CLUSTERS: int = 3
-MAX_CLUSTERS: int = 3
+MAX_CLUSTERS: int = 10
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n", "best_in_cluster"],
@@ -36,6 +39,9 @@ TASK_2_SAMPLINGS = {
 }
 
 CANDIDATE_EMBEDDING_MODELS = [
+    "intfloat/e5-large-v2",
+    "sentence-transformers/gtr-t5-large",
+    "BAAI/bge-large-en-v1.5",
     "sentence-transformers/all-MiniLM-L6-v2",
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
@@ -667,59 +673,73 @@ class ClusterFewshot(Teleprompter):
         examples_texts = [ex.question for ex in examples]
 
         if not self.embedding_model:
+            # TRAINING CLUSTERING — loop over candidate models
             for model_id in CANDIDATE_EMBEDDING_MODELS:
                 logger.info(f"Encoding examples with model: {model_id}")
-
                 embedding_model = SentenceTransformer(model_id, device=device)
                 embeddings = embedding_model.encode(examples_texts, convert_to_numpy=True)
 
-                for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
-                    kmeans = KMeans(n_clusters=k, n_init=10, random_state=42)
-                    labels = kmeans.fit_predict(embeddings)
-                    score = silhouette_score(embeddings, labels)
+                # Apply UMAP + HDBSCAN
+                reduced = umap.UMAP(n_neighbors=15, n_components=10, metric='cosine').fit_transform(embeddings)
+                hdb = hdbscan.HDBSCAN(min_cluster_size=15, prediction_data=True)
+                labels = hdb.fit_predict(reduced)
 
-                    logger.info(f"K={k}, Silhouette Score={score:.3f}")
+                # Replace -1 with a fallback cluster ID
+                if -1 in labels:
+                    fallback_cluster = max(labels) + 1
+                    labels = [label if label != -1 else fallback_cluster for label in labels]
+
+                num_clusters = len(set(labels))
+                if num_clusters >= 2:
+                    score = silhouette_score(reduced, labels)
+                    logger.info(f"[{model_id}] HDBSCAN, Silhouette Score={score:.3f} with {num_clusters} clusters")
 
                     if score > best_score:
                         best_score = score
-                        best_k = k
+                        best_k = num_clusters
                         best_labels = labels
                         best_embedding_model_name = model_id
                         best_embedding_model = embedding_model
                         best_embeddings = embeddings
 
+            # Save selected model for validation consistency
             self.embedding_model = best_embedding_model
             self.embedding_model_name = best_embedding_model_name
         else:
+            # VALIDATION CLUSTERING — reuse training embedding model
             embeddings = self.embedding_model.encode(examples_texts, convert_to_numpy=True)
 
-            for k in range(MIN_CLUSTERS, MAX_CLUSTERS + 1):
-                kmeans = KMeans(n_clusters=k, n_init=10, random_state=42)
-                labels = kmeans.fit_predict(embeddings)
-                score = silhouette_score(embeddings, labels)
+            reduced = umap.UMAP(n_neighbors=15, n_components=10, metric='cosine').fit_transform(embeddings)
+            hdb = hdbscan.HDBSCAN(min_cluster_size=15, prediction_data=True)
+            labels = hdb.fit_predict(reduced)
 
-                logger.info(f"K={k}, Silhouette Score={score:.3f}")
+            if -1 in labels:
+                fallback_cluster = max(labels) + 1
+                labels = [label if label != -1 else fallback_cluster for label in labels]
+
+            num_clusters = len(set(labels))
+            if num_clusters >= 2:
+                score = silhouette_score(reduced, labels)
+                logger.info(f"HDBSCAN Silhouette Score={score:.3f} with {num_clusters} clusters")
 
                 if score > best_score:
                     best_score = score
-                    best_k = k
+                    best_k = num_clusters
                     best_labels = labels
 
             best_embeddings = embeddings
 
-        logger.info(f"Selected model: {self.embedding_model_name} with K={best_k} (silhouette={best_score:.3f})")
+        logger.info(f"Selected model: {self.embedding_model_name} with HDBSCAN (silhouette={best_score:.3f})")
         return best_embeddings, best_labels, best_k
 
     def soft_select(
         self,
         N: int,
-        steps: int = 1000,
+        steps: int = 5000,
         log_step: int = 100,
         lr: float = 1e-1,
         device: str = "cpu",
         verbose: bool = True,
-        min_lambda: float = 10,
-        max_lambda: float = np.inf,
     ):
         """
         Differentiable “soft” selection of a final N-shot subset.
@@ -729,16 +749,24 @@ class ClusterFewshot(Teleprompter):
 
         trainset = self.trainset
         M = len(trainset)
+        one_shot_scores = [score for _, score in self.ranked_examples.items()]
 
-        one_shot_scores = torch.tensor(
-            [score for _, score in self.ranked_examples.items()],
+        # Setting lambda adaptively around one-shot scores median,
+        # for meaningful one-shot utility and semantic diversity trade-off
+        median_score = np.median(one_shot_scores)
+        lambda_init = median_score / 2
+        min_lambda = lambda_init / 2
+        max_lambda = lambda_init * 5
+
+        one_shot_scores_tensor = torch.tensor(
+            one_shot_scores,
             dtype=torch.float32,
             device=device
         )  # shape (M,)
 
         # Build embedding matrix
         embs = torch.stack([
-            torch.tensor(self.examples2embeddings[self.get_example_hash(ex)], device=device, dtype=torch.float32)
+            torch.tensor(self.examples2embeddings[ex], device=device, dtype=torch.float32)
             for ex, _ in self.ranked_examples.items()
         ]).to(device)  # shape (M, D)
 
@@ -748,7 +776,7 @@ class ClusterFewshot(Teleprompter):
 
         # Initialize learnable logits and diversity log‐lambda
         logits = torch.zeros(M, device=device, requires_grad=True)
-        log_lambda = torch.zeros(1, device=device, requires_grad=True)
+        log_lambda = torch.tensor([math.log(lambda_init)], device=device, requires_grad=True)
 
         optimizer = torch.optim.Adam([logits, log_lambda], lr=lr)
 
@@ -759,25 +787,38 @@ class ClusterFewshot(Teleprompter):
             lambda_ = log_lambda.exp()
 
             # Loss: negative impact + diversity penalty
-            loss = - (p * one_shot_scores).sum() + lambda_ * (p @ S @ p)
+            loss = - (p * one_shot_scores_tensor).sum() + lambda_ * (p @ S @ p)
             loss_val = loss.item()
             lambda_val = lambda_.item()
 
-            if verbose and step % log_step == 0:
-                logger.info(f"loss: {loss_val:.4f}, λ: {lambda_val:.4f}, step: {step}")
-
-            optimizer.zero_grad()
-            loss.backward()
             with torch.no_grad():
                 # clip λ to [min, max] for diversity control
                 log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
+
+            if verbose and step % log_step == 0:
+                entropy = - (p * p.log()).sum().item()
+                diversity_penalty = (p @ S @ p).item()
+                logger.info(f"loss: {loss_val:.4f}, "
+                            f"λ: {lambda_val:.4f}, "
+                            f"step: {step}, "
+                            f"similarity: {diversity_penalty}, "
+                            f"certainty: {entropy}")
+
+            optimizer.zero_grad()
+            loss.backward()
+
             optimizer.step()
 
         # Pick top‐N examples by final p probabilities
         soft_scores = F.softmax(logits, dim=0)
         topn = torch.topk(soft_scores, N).indices.tolist()
-        candidate_examples = list(self.ranked_examples)
+        candidate_examples = [self.trainset_by_hash[ex_hash] for ex_hash in list(self.ranked_examples)]
         self.final_fewshot_subset = [candidate_examples[i] for i in topn]
+
+        for idx in topn:
+            ex = candidate_examples[idx]
+            score = one_shot_scores[idx].item()
+            logger.info(f"Selected example #{idx}: score={score:.4f}, Example: {ex}\n\n")
 
         self.visualize_soft_selection(div_lambda=log_lambda.exp().item())
 
@@ -787,10 +828,10 @@ class ClusterFewshot(Teleprompter):
         """
         all_examples = list(self.ranked_examples)
         embs = np.stack([
-            self.examples2embeddings[self.get_example_hash(ex)]
+            self.examples2embeddings[ex]
             for ex in all_examples
         ])
-        selected_set = set(self.final_fewshot_subset)
+        selected_set = set([self.get_example_hash(ex) for ex in self.final_fewshot_subset])
 
         pca = PCA(n_components=2)
         reduced = pca.fit_transform(embs)
