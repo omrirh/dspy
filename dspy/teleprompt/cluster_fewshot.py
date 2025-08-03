@@ -42,7 +42,6 @@ CANDIDATE_EMBEDDING_MODELS = [
     "intfloat/e5-large-v2",
     "sentence-transformers/gtr-t5-large",
     "BAAI/bge-large-en-v1.5",
-    "sentence-transformers/all-MiniLM-L6-v2",
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
 ]
@@ -184,22 +183,21 @@ class ClusterFewshot(Teleprompter):
         examples_embeddings = None
 
         # TODO: think of a better way to generalize that (only supports Iris for now)
-        if self.task_type == "classification":
-            examples_embeddings = np.array(
-                [
+        iris_feature_vect = [
                     [input_val for _, input_val in dict(example.inputs()).items()]
                     for example in data
                 ]
-            )
-
+        if self.task_type == "classification":
+            examples_embeddings = np.array(iris_feature_vect)
             self.embedding_model_name = "N/A"  # No model was used to create embeddings
 
             kinds = sorted(set(ex.answer for ex in data))
             k = len(kinds)
             cluster_labels = [kinds.index(example.answer) for example in data]
+            silhouette = silhouette_score(examples_embeddings, cluster_labels)
         else:
             logger.info(f"Generating {len(data)} {data_type} examples embeddings")
-            examples_embeddings, cluster_labels, k = self.generate_embeddings_func(examples=data)
+            examples_embeddings, cluster_labels, k, silhouette = self.generate_embeddings_func(examples=data)
 
         self.examples2embeddings.update({
             self.get_example_hash(example): np.array(example_embeddings)
@@ -227,7 +225,7 @@ class ClusterFewshot(Teleprompter):
             num_clusters=k,
             data_type=data_type,
             save_path=f"{data_type}_clusters.png",
-            silhouette=silhouette_score(examples_embeddings, cluster_labels) if len(set(cluster_labels)) > 1 else 0
+            silhouette=silhouette,
         )
 
         logger.info(f"{data_type} clustering completed with K={k}.")
@@ -721,16 +719,16 @@ class ClusterFewshot(Teleprompter):
             if num_clusters >= 2:
                 score = silhouette_score(reduced, labels)
                 logger.info(f"HDBSCAN Silhouette Score={score:.3f} with {num_clusters} clusters")
+            else:
+                score = 0
 
-                if score > best_score:
-                    best_score = score
-                    best_k = num_clusters
-                    best_labels = labels
-
+            best_score = score
+            best_k = num_clusters
+            best_labels = labels
             best_embeddings = embeddings
 
         logger.info(f"Selected model: {self.embedding_model_name} with HDBSCAN (silhouette={best_score:.3f})")
-        return best_embeddings, best_labels, best_k
+        return best_embeddings, best_labels, best_k, best_score
 
     def soft_select(
         self,
@@ -817,7 +815,7 @@ class ClusterFewshot(Teleprompter):
 
         for idx in topn:
             ex = candidate_examples[idx]
-            score = one_shot_scores[idx].item()
+            score = one_shot_scores_tensor[idx].item()
             logger.info(f"Selected example #{idx}: score={score:.4f}, Example: {ex}\n\n")
 
         self.visualize_soft_selection(div_lambda=log_lambda.exp().item())
