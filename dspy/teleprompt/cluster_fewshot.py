@@ -39,11 +39,8 @@ TASK_2_SAMPLINGS = {
 }
 
 CANDIDATE_EMBEDDING_MODELS = [
-    "intfloat/e5-large-v2",
-    "sentence-transformers/gtr-t5-large",
-    "BAAI/bge-large-en-v1.5",
+    "sentence-transformers/gtr-t5-base",
     "sentence-transformers/all-mpnet-base-v2",
-    "sentence-transformers/gtr-t5-base"
 ]
 
 
@@ -157,6 +154,7 @@ class ClusterFewshot(Teleprompter):
 
         if self._soft_select:
             self.soft_select(N=self.N)
+            self.pick_best_fewshot_subset()
         else:
             self.collect_fewshot_subsets()
             self.pick_best_fewshot_subset()
@@ -518,14 +516,13 @@ class ClusterFewshot(Teleprompter):
         return sampled_examples
 
     def pick_best_fewshot_subset(self):
-        sampling_strategies = TASK_2_SAMPLINGS[self.task_type]
+        # sampling_strategies = TASK_2_SAMPLINGS[self.task_type]
 
-        if len(sampling_strategies) == 1:
-            sampling_strategy = sampling_strategies[0]
-            self.final_fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
-            return
-
-        ranked_sampling_strategies = {}
+        # if len(sampling_strategies) == 1:
+        #     sampling_strategy = sampling_strategies[0]
+        #     self.final_fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
+        #     return
+        fewshot_subsets_ranks = []
         evaluator = Evaluate(
             devset=self.valset,
             metric=self.metric,
@@ -534,9 +531,9 @@ class ClusterFewshot(Teleprompter):
         )
         student = self.student.deepcopy()
 
-        for sampling_strategy in sampling_strategies:
-            logger.info(f"\n\nTesting '{sampling_strategy}' sampled few-shot subset")
-            fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
+        for idx, fewshot_subset in enumerate(self.candidate_fewshot_subsets):
+            # logger.info(f"\n\nTesting '{sampling_strategy}' sampled few-shot subset")
+            # fewshot_subset = self.candidate_fewshot_subsets[sampling_strategy]
 
             for name, predictor in student.named_predictors():
                 predictor.demos = [
@@ -544,16 +541,17 @@ class ClusterFewshot(Teleprompter):
                 ]
 
             fewshot_subset_score = evaluator(student)
-            ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
-            logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% "
+            fewshot_subsets_ranks.append(fewshot_subset_score)
+            logger.info(f"Seed {idx} few-shot subset scored {fewshot_subset_score:.2f}% "
                         f"on the validation set with {len(fewshot_subset)} demonstrations.")
 
-        best_strategy = max(ranked_sampling_strategies, key=ranked_sampling_strategies.get)
-        self.final_fewshot_subset = self.candidate_fewshot_subsets[best_strategy]
+        best_seed = int(np.argmax(fewshot_subsets_ranks))
+        self.final_fewshot_subset = self.candidate_fewshot_subsets[best_seed]
 
         logger.info(
-            f"Best few-shot subset sampled according to '{best_strategy}' strategy "
-            f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
+            f"Best few-shot subset sampled according to soft selection with seed {best_seed} "
+            f"({fewshot_subsets_ranks[best_seed]:.2f}% accuracy on the validation set)"
+        )
 
     def get_central_examples(self, examples, sample_size):
         embeddings = [self.examples2embeddings[self.get_example_hash(ex)] for ex in examples]
@@ -679,7 +677,7 @@ class ClusterFewshot(Teleprompter):
 
                 # Apply UMAP + HDBSCAN
                 reduced = umap.UMAP(n_neighbors=15, n_components=10, metric='cosine').fit_transform(embeddings)
-                hdb = hdbscan.HDBSCAN(min_cluster_size=15, prediction_data=True)
+                hdb = hdbscan.HDBSCAN(min_cluster_size=min(15, len(examples_texts) // 4), prediction_data=True)
                 labels = hdb.fit_predict(reduced)
 
                 # Replace -1 with a fallback cluster ID
@@ -708,7 +706,7 @@ class ClusterFewshot(Teleprompter):
             embeddings = self.embedding_model.encode(examples_texts, convert_to_numpy=True)
 
             reduced = umap.UMAP(n_neighbors=15, n_components=10, metric='cosine').fit_transform(embeddings)
-            hdb = hdbscan.HDBSCAN(min_cluster_size=15, prediction_data=True)
+            hdb = hdbscan.HDBSCAN(min_cluster_size=min(15, len(examples_texts) // 4), prediction_data=True)
             labels = hdb.fit_predict(reduced)
 
             if -1 in labels:
@@ -733,103 +731,104 @@ class ClusterFewshot(Teleprompter):
     def soft_select(
         self,
         N: int,
-        steps: int = 5000,
+        steps: int = 1000,
         log_step: int = 100,
-        lr: float = 1e-1,
         device: str = "cpu",
         verbose: bool = True,
     ):
         """
-        Differentiable “soft” selection of a final N-shot subset.
-        Balances one-shot impact (One-shot ranks) against semantic redundancy.
+        Differentiable soft selection of a final N-shot subset.
+        Balances one-shot impact against semantic redundancy via differentiable SGD.
         """
         import math
 
         trainset = self.trainset
         M = len(trainset)
-        one_shot_scores = [score for _, score in self.ranked_examples.items()]
 
-        # Setting lambda adaptively around one-shot scores median,
-        # for meaningful one-shot utility and semantic diversity trade-off
-        median_score = np.median(one_shot_scores)
-        lambda_init = median_score / 2
-        min_lambda = lambda_init / 2
-        max_lambda = lambda_init * 5
+        # Normalize one-shot scores to [0, 1]
+        raw_scores = [score for _, score in self.ranked_examples.items()]
+        raw_scores_tensor = torch.tensor(raw_scores, dtype=torch.float32, device=device)
+        min_score, max_score = raw_scores_tensor.min(), raw_scores_tensor.max()
+        one_shot_scores_tensor = (raw_scores_tensor - min_score) / (max_score - min_score + 1e-8)
 
-        one_shot_scores_tensor = torch.tensor(
-            one_shot_scores,
-            dtype=torch.float32,
-            device=device
-        )  # shape (M,)
-
-        # Build embedding matrix
+        # Embeddings + Cosine matrix
         embs = torch.stack([
             torch.tensor(self.examples2embeddings[ex], device=device, dtype=torch.float32)
             for ex, _ in self.ranked_examples.items()
-        ]).to(device)  # shape (M, D)
-
-        # Build cosine-similarity matrix
+        ])
         embs = embs / (embs.norm(dim=1, keepdim=True).clamp(min=1e-8))
-        S = embs @ embs.t()  # shape (M, M)
+        S = embs @ embs.T  # cosine similarity matrix
 
-        # Initialize learnable logits and diversity log‐lambda
-        logits = torch.zeros(M, device=device, requires_grad=True)
-        log_lambda = torch.tensor([math.log(lambda_init)], device=device, requires_grad=True)
+        # λ initialization (adaptive to score scale)
+        median_score = one_shot_scores_tensor.median().item()
+        lambda_init = max(median_score / 2, 1e-4)
+        min_lambda = lambda_init / 2
+        max_lambda = lambda_init * 5
 
-        optimizer = torch.optim.Adam([logits, log_lambda], lr=lr)
+        # Learning rates
+        logits_lr = 5e-2
+        log_lambda_lr = 1e-3
 
-        logger.info(f"Learning {N} potential few-shot candidates from {M} examples")
+        self.candidate_fewshot_subsets = []
+        logger.info(f"Learning {N} few-shot candidates from {M} examples, init λ: {lambda_init}")
 
-        for step in range(steps):
-            p = F.softmax(logits, dim=0)
-            lambda_ = log_lambda.exp()
+        for seed in range(3):
+            logger.info(f"Learning few-shot logits, seed: {seed}")
+            torch.manual_seed(seed)
 
-            # Loss: negative impact + diversity penalty
-            loss = - (p * one_shot_scores_tensor).sum() + lambda_ * (p @ S @ p)
-            loss_val = loss.item()
-            lambda_val = lambda_.item()
+            logits = torch.randn(M, device=device, requires_grad=True)
+            log_lambda = torch.tensor([math.log(lambda_init)], device=device, requires_grad=True)
+            optimizer = torch.optim.Adam([
+                {'params': [logits], 'lr': logits_lr},
+                {'params': [log_lambda], 'lr': log_lambda_lr}
+            ])
 
-            with torch.no_grad():
-                # clip λ to [min, max] for diversity control
-                log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
+            for step in range(steps):
+                p = F.softmax(logits, dim=0)
+                lambda_ = log_lambda.exp()
 
-            if verbose and step % log_step == 0:
-                entropy = - (p * p.log()).sum().item()
-                diversity_penalty = (p @ S @ p).item()
-                logger.info(f"loss: {loss_val:.4f}, "
-                            f"λ: {lambda_val:.4f}, "
-                            f"step: {step}, "
-                            f"similarity: {diversity_penalty}, "
-                            f"certainty: {entropy}")
+                reward_term = - (p * one_shot_scores_tensor).sum()
+                diversity_term = (p @ S @ p)
+                loss = reward_term + lambda_ * diversity_term
 
-            optimizer.zero_grad()
-            loss.backward()
+                # with torch.no_grad():
+                #     log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
 
-            optimizer.step()
+                if verbose and step % log_step == 0:
+                    entropy = - (p * p.log()).sum().item()
+                    logger.info(
+                        f"loss: {loss.item():.4f}, "
+                        f"λ: {lambda_.item():.4f}, "
+                        f"step: {step}, "
+                        f"reward: {-reward_term.item():.4f}, "
+                        f"diversity: {diversity_term.item():.4f}, "
+                        f"entropy: {entropy:.4f}"
+                    )
 
-        # Pick top‐N examples by final p probabilities
-        soft_scores = F.softmax(logits, dim=0)
-        topn = torch.topk(soft_scores, N).indices.tolist()
-        candidate_examples = [self.trainset_by_hash[ex_hash] for ex_hash in list(self.ranked_examples)]
-        self.final_fewshot_subset = [candidate_examples[i] for i in topn]
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
 
-        for idx in topn:
-            ex = candidate_examples[idx]
-            score = one_shot_scores_tensor[idx].item()
-            logger.info(f"Selected example #{idx}: score={score:.4f}, Example: {ex}\n\n")
+            # Final top-N soft selection
+            soft_scores = F.softmax(logits, dim=0)
+            topn = torch.topk(soft_scores, N).indices.tolist()
+            candidate_examples = [self.trainset_by_hash[ex_hash] for ex_hash in list(self.ranked_examples)]
+            self.candidate_fewshot_subsets.append([candidate_examples[i] for i in topn])
+            logger.info(f"Top-{N} indices selected (seed={seed}): {topn}")
 
-        self.visualize_soft_selection(div_lambda=log_lambda.exp().item())
+            self.visualize_soft_selection(div_lambda=log_lambda.exp().item(), seed=seed)
 
-    def visualize_soft_selection(self, div_lambda, save_path="soft_selection_pca.png"):
+    def visualize_soft_selection(self, div_lambda, seed):
         """
         PCA plot of all training embeddings, highlighting selected few-shot examples.
         """
+        save_path = f"soft_selection_pca_seed_{seed}.png"
         all_examples = list(self.ranked_examples)
         embs = np.stack([
             self.examples2embeddings[ex]
             for ex in all_examples
         ])
-        selected_set = set([self.get_example_hash(ex) for ex in self.final_fewshot_subset])
+        selected_set = set([self.get_example_hash(ex) for ex in self.candidate_fewshot_subsets[seed]])
 
         pca = PCA(n_components=2)
         reduced = pca.fit_transform(embs)
@@ -838,7 +837,7 @@ class ClusterFewshot(Teleprompter):
 
         plt.figure(figsize=(8, 6))
         plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
-        plt.title(f"PCA of Training Embeddings with Selected Few-shot (Red)\nDiversity λ={div_lambda:.3f}")
+        plt.title(f"PCA of Training Embeddings with Selected Few-shot (Red)\nDiversity λ={div_lambda:.3f}\nLogits seed: {seed}")
         plt.xlabel("PCA Dimension 1")
         plt.ylabel("PCA Dimension 2")
         plt.tight_layout()
