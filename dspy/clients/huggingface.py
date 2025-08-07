@@ -38,6 +38,7 @@ _HF_MODELS = [
     "Qwen/Qwen3-8B",
     "google/gemma-3-4b-it",
     "Qwen/Qwen2-7B-Instruct",
+    "mistralai/Mistral-7B-Instruct-v0.3",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

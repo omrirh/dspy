@@ -18,6 +18,7 @@ VALID_MODELS=(
   "meta-llama/Llama-2-7b-chat-hf"
   "meta-llama/Meta-Llama-3-8B-Instruct"
   "mistralai/Mistral-7B-Instruct-v0.2"
+  "mistralai/Mistral-7B-Instruct-v0.3"
   "Qwen/Qwen2.5-7B-Instruct"
   "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
   "gemini/gemini-2.5-flash"
