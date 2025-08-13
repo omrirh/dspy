@@ -31,6 +31,15 @@ class CoT(dspy.Module):
         return self.prog(question=question)
 
 
+class CoTQuestionClassifier(dspy.Module):
+    def __init__(self, task_type):
+        super().__init__()
+        self.prog = dspy.ChainOfThought(f"question -> type_of_{task_type}_skills_labels")
+
+    def forward(self, question):
+        return self.prog(question=question)
+
+
 class IrisSignature(dspy.Signature):
     """
     Given the petal and sepal dimensions in cm, predict the iris species.

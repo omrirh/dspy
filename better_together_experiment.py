@@ -126,7 +126,7 @@ def main(dataset, prompt_optimizer, strategy, model):
             metric=metric,
             task_type=task_type,
             soft_select=True,
-            use_target_model_embeddings=("w -> p" in strategy),
+            use_target_model_embeddings=False,
         )
 
     if prompt_optimizer_name == "miprov2":
@@ -179,10 +179,10 @@ if __name__ == "__main__":
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
     # # for debugging
-    # dataset = "hotpotqa"
-    # prompt_optimizer = "clusterfsv2"
+    # dataset = "gsm8k"
+    # prompt_optimizer = "clusterfs"
     # strategy = "p"
-    # model = "Qwen/Qwen2.5-7B-Instruct"
+    # model = "meta-llama/Meta-Llama-3-8B-Instruct"
 
     # main(dataset, prompt_optimizer, strategy, model)
 
