@@ -19,7 +19,8 @@ from transformers import (
 )
 from programs import (
     BasicMH,
-    CoT
+    CoT,
+    CoTQuestionClassifier,
 )
 from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
@@ -30,7 +31,7 @@ import hdbscan
 logger = logging.getLogger(__name__)
 
 MIN_CLUSTERS: int = 3
-MAX_CLUSTERS: int = 10
+MAX_CLUSTERS: int = 4
 
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n", "best_in_cluster"],
@@ -41,12 +42,15 @@ TASK_2_SAMPLINGS = {
 CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/gtr-t5-base",
     "sentence-transformers/all-mpnet-base-v2",
+    "sentence-transformers/all-MiniLM-L6-v2",
 ]
 
+QUESTION_LABELS_OUTPUT = lambda task_type: f"type_of_{task_type}_skills_labels_comma_separated"
 
 class ClusterFewshot(Teleprompter):
     def __init__(
             self,
+            num_few_shot: int,
             task_type: str,
             metric=None,
             metric_threshold=None,
@@ -116,13 +120,26 @@ class ClusterFewshot(Teleprompter):
         self.candidate_fewshot_subsets = None
         self.final_fewshot_subset = None
 
+        self.N = num_few_shot
+
     def compile(self, student: Program, trainset: List[Example], *, valset):
         """
         Compiles the ClusterFewshot optimizer.
         """
         self.student = student.deepcopy()
         self.trainset = self.bootstrap_examples(trainset)
-        self.valset = valset
+
+        # Extracting required skills labels from examples as semantic representation (rather than using question).
+        # TODO: come up with a better way to do this / handle this conditional labeling somewhere else
+        if self.task_type != "classification":
+            self.trainset = self.get_examples_skills_labels(self.trainset, data_type="training")
+            self.valset = self.get_examples_skills_labels(valset, data_type="validation")
+        else:
+            self.valset = [{'raw': ex} for ex in valset]
+
+        # Map example hashes to trainset
+        self.trainset_by_hash = {self.get_example_hash(example_obj=ex): ex for ex in self.trainset}
+
 
         # This code assumes the base model LM is shared across all predictors
         if self.use_target_model_embeddings:
@@ -156,6 +173,7 @@ class ClusterFewshot(Teleprompter):
             self.soft_select(N=self.N)
             self.pick_best_fewshot_subset()
         else:
+            # TODO: currently not supported
             self.collect_fewshot_subsets()
             self.pick_best_fewshot_subset()
 
@@ -174,43 +192,46 @@ class ClusterFewshot(Teleprompter):
     def _cluster_examples(self, train=True):
         """
         Clustering the given examples into semantic groups.
-        It performs semantic embeddings & K search to find clusters that maximizes the silhouette metric.
+        It searches for a sentence-transformer such that maximizes the silhouette metric with HDBSCAN clusters.
         """
-        data = [ex['raw'] for ex in self.trainset] if train else self.valset
+        data = self.trainset if train else self.valset
         data_type = 'training' if train else 'validation'
         examples_embeddings = None
 
         # TODO: think of a better way to generalize that (only supports Iris for now)
-        iris_feature_vect = [
-                    [input_val for _, input_val in dict(example.inputs()).items()]
-                    for example in data
-                ]
         if self.task_type == "classification":
+            raw_data = [ex['raw'] for ex in data]
+            iris_feature_vect = [
+                    [input_val for _, input_val in dict(example.inputs()).items()]
+                    for example in raw_data
+                ]
             examples_embeddings = np.array(iris_feature_vect)
-            self.embedding_model_name = "N/A"  # No model was used to create embeddings
+            self.embedding_model_name = "N/A"  # Using Iris feature vectors directly
 
             kinds = sorted(set(ex.answer for ex in data))
             k = len(kinds)
             cluster_labels = [kinds.index(example.answer) for example in data]
             silhouette = silhouette_score(examples_embeddings, cluster_labels)
         else:
-            logger.info(f"Generating {len(data)} {data_type} examples embeddings")
-            examples_embeddings, cluster_labels, k, silhouette = self.generate_embeddings_func(examples=data)
+            # For other reasoning methods, we cluster by the question's required skills labels determined by the target model
+            raw_data = [ex['skills_labels'] for ex in data]
+
+            logger.info(f"Generating {len(raw_data)} {data_type} examples embeddings")
+            examples_embeddings, cluster_labels, k, silhouette = self.generate_embeddings_func(examples=raw_data)
 
         self.examples2embeddings.update({
             self.get_example_hash(example): np.array(example_embeddings)
             for example, example_embeddings
-            in zip(self.trainset if train else data, examples_embeddings)
-            # TODO: assuming self.trainset and data are ordered the same.
+            in zip(data, examples_embeddings)
         })
         self.embeddings2examples.update({
             str(example_embeddings): example
             for example_embeddings, example
-            in zip(examples_embeddings, self.trainset if train else data)
+            in zip(examples_embeddings, data)
         })
 
-        if train:
-            self.N = k  # Used as hyperparameter for few-shot sampling
+        # if train:
+        #     self.N = k  # Used as hyperparameter for few-shot sampling
 
         clusters = {i: [] for i in range(k)}
         for idx, label in enumerate(cluster_labels):
@@ -376,7 +397,7 @@ class ClusterFewshot(Teleprompter):
         Sorts examples based on their impact when used as one-shot demonstrations.
         """
         evaluator = Evaluate(
-            devset=self.os_test,
+            devset=[ex['raw'] for ex in self.os_test],
             metric=self.metric,
             num_threads=min(12, len(self.os_test)),
             display_progress=True,
@@ -524,7 +545,7 @@ class ClusterFewshot(Teleprompter):
         #     return
         fewshot_subsets_ranks = []
         evaluator = Evaluate(
-            devset=self.valset,
+            devset=[ex['raw'] for ex in self.valset],
             metric=self.metric,
             num_threads=9,
             display_progress=True,
@@ -666,7 +687,8 @@ class ClusterFewshot(Teleprompter):
         best_embedding_model = None
         best_embedding_model_name = None
 
-        examples_texts = [ex.question for ex in examples]
+        # examples are being passed as skills_labels directly
+        examples_texts = examples
 
         if not self.embedding_model:
             # TRAINING CLUSTERING — loop over candidate models
@@ -709,6 +731,7 @@ class ClusterFewshot(Teleprompter):
             hdb = hdbscan.HDBSCAN(min_cluster_size=min(15, len(examples_texts) // 4), prediction_data=True)
             labels = hdb.fit_predict(reduced)
 
+            # TODO: should we remove this? it might noise up the clusters structure
             if -1 in labels:
                 fallback_cluster = max(labels) + 1
                 labels = [label if label != -1 else fallback_cluster for label in labels]
@@ -758,6 +781,7 @@ class ClusterFewshot(Teleprompter):
         ])
         embs = embs / (embs.norm(dim=1, keepdim=True).clamp(min=1e-8))
         S = embs @ embs.T  # cosine similarity matrix
+        S.fill_diagonal_(0.0)  # Do not "punish" over
 
         # λ initialization (adaptive to score scale)
         median_score = one_shot_scores_tensor.median().item()
@@ -791,8 +815,8 @@ class ClusterFewshot(Teleprompter):
                 diversity_term = (p @ S @ p)
                 loss = reward_term + lambda_ * diversity_term
 
-                # with torch.no_grad():
-                #     log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
+                with torch.no_grad():
+                    log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
 
                 if verbose and step % log_step == 0:
                     entropy = - (p * p.log()).sum().item()
@@ -855,12 +879,11 @@ class ClusterFewshot(Teleprompter):
             self.examples2embeddings[self.get_example_hash(ex)]
             for ex in all_examples
         ])
-        selected_set = set(self.os_test)
 
         pca = PCA(n_components=2)
         reduced = pca.fit_transform(embs)
 
-        colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
+        colors = ['red' if ex in self.os_test else 'gray' for ex in all_examples]
 
         plt.figure(figsize=(8, 6))
         plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
@@ -947,7 +970,6 @@ class ClusterFewshot(Teleprompter):
         bootstrapped_examples = []
         for bootstrapped in bootstrapped_results:
             if bootstrapped:
-                self.trainset_by_hash[self.get_example_hash(bootstrapped)] = bootstrapped
                 bootstrapped_examples.append(bootstrapped)
 
         logger.info(f"{len(bootstrapped_examples)}/{len(examples)} remaining after bootstrapping")
@@ -969,8 +991,41 @@ class ClusterFewshot(Teleprompter):
         """
         Computes a stable string hash (via JSON dump) for an example object.
         Supports:
-        - validation examples: `Example`
-        - training examples: `{'raw': Example, name1: Example, ...}`
+        - validation examples: `{'raw': Example, 'skills_labels': '...' }
+        - training examples: `{'raw': Example, 'skills_labels': '...', predictor_name1: Example, ...}`
         """
         normalized = self._normalize_example(example_obj)
         return json.dumps(normalized, sort_keys=True)
+
+    def get_examples_skills_labels(self, examples, data_type):
+        logger.info(f"Generating required skills labels from {len(examples)} {data_type} examples")
+        skills_labels_identifier = CoTQuestionClassifier(task_type=self.task_type)
+
+        def process_example(example):
+            if isinstance(example,Example):
+                pred_skills_labels = skills_labels_identifier(**example.inputs())[QUESTION_LABELS_OUTPUT(task_type=self.task_type)]
+
+                return {'raw': example, 'skills_labels': pred_skills_labels}
+
+            elif isinstance(example, dict):
+                pred_skills_labels = skills_labels_identifier(**example['raw'].inputs())[QUESTION_LABELS_OUTPUT(task_type=self.task_type)]
+                example.update({'skills_labels': pred_skills_labels})
+
+                return example
+
+            else:
+                raise ValueError(f"Example is not in the expected format: type {type(example)}")
+
+        executor = ParallelExecutor(
+            num_threads=min(12, len(examples)),
+            disable_progress_bar=False,
+            max_errors=0,
+            provide_traceback=True,
+            compare_results=False,
+        )
+
+        examples_with_skills_labels = executor.execute(process_example, examples)
+
+        logger.info(f"example of skills_labels for {data_type} examples:\n{[ex['skills_labels'] for ex in examples_with_skills_labels][:4]}")
+
+        return examples_with_skills_labels

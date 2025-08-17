@@ -3,7 +3,6 @@ import torch
 import numpy as np
 from dspy.dsp.utils.utils import deduplicate
 
-
 class BasicMH(dspy.Module):
     def __init__(self, passages_per_hop=3, num_hops=2):
         super().__init__()
@@ -33,8 +32,10 @@ class CoT(dspy.Module):
 
 class CoTQuestionClassifier(dspy.Module):
     def __init__(self, task_type):
+        from dspy.teleprompt.cluster_fewshot import QUESTION_LABELS_OUTPUT
+
         super().__init__()
-        self.prog = dspy.ChainOfThought(f"question -> type_of_{task_type}_skills_labels")
+        self.prog = dspy.ChainOfThought(f"question -> {QUESTION_LABELS_OUTPUT(task_type=task_type)}")
 
     def forward(self, question):
         return self.prog(question=question)
