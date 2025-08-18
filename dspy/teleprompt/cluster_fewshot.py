@@ -42,7 +42,6 @@ TASK_2_SAMPLINGS = {
 CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/gtr-t5-base",
     "sentence-transformers/all-mpnet-base-v2",
-    "sentence-transformers/all-MiniLM-L6-v2",
 ]
 
 QUESTION_LABELS_OUTPUT = lambda task_type: f"type_of_{task_type}_skills_labels_comma_separated"
@@ -1003,7 +1002,8 @@ class ClusterFewshot(Teleprompter):
 
         def process_example(example):
             if isinstance(example,Example):
-                pred_skills_labels = skills_labels_identifier(**example.inputs())[QUESTION_LABELS_OUTPUT(task_type=self.task_type)]
+                # TODO: in cases where the model fails to yield a sufficient answer, how should we define the skills labels?
+                pred_skills_labels = skills_labels_identifier(**example.inputs()).get(QUESTION_LABELS_OUTPUT(task_type=self.task_type), '')
 
                 return {'raw': example, 'skills_labels': pred_skills_labels}
 
