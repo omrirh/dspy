@@ -38,6 +38,8 @@ _HF_MODELS = [
     "Qwen/Qwen3-8B",
     "google/gemma-3-4b-it",
     "Qwen/Qwen2-7B-Instruct",
+    "meta-llama/Llama-3.1-8B-Instruct",
+    "meta-llama/Llama-3.2-3B-Instruct",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
