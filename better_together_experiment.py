@@ -126,6 +126,7 @@ def main(dataset, prompt_optimizer, strategy, model):
             metric=metric,
             task_type=task_type,
             soft_select=True,
+            num_few_shot=3,
             use_target_model_embeddings=False,
         )
 

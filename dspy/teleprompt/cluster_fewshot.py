@@ -42,6 +42,7 @@ TASK_2_SAMPLINGS = {
 CANDIDATE_EMBEDDING_MODELS = [
     "sentence-transformers/gtr-t5-base",
     "sentence-transformers/all-mpnet-base-v2",
+    "sentence-transformers/all-MiniLM-L6-v2"
 ]
 
 QUESTION_LABELS_OUTPUT = lambda task_type: f"type_of_{task_type}_skills_labels_comma_separated"
@@ -207,9 +208,9 @@ class ClusterFewshot(Teleprompter):
             examples_embeddings = np.array(iris_feature_vect)
             self.embedding_model_name = "N/A"  # Using Iris feature vectors directly
 
-            kinds = sorted(set(ex.answer for ex in data))
+            kinds = sorted(set(ex.answer for ex in raw_data))
             k = len(kinds)
-            cluster_labels = [kinds.index(example.answer) for example in data]
+            cluster_labels = [kinds.index(example.answer) for example in raw_data]
             silhouette = silhouette_score(examples_embeddings, cluster_labels)
         else:
             # For other reasoning methods, we cluster by the question's required skills labels determined by the target model
