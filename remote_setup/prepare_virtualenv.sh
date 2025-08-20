@@ -22,3 +22,7 @@ uv pip install --upgrade pip
 # Install torch packages from cuda 12.4 wheel independently (core dependency)
 uv pip install torch==2.6.0+cu124 torchvision==0.21.0+cu124  --extra-index-url https://download.pytorch.org/whl/cu124
 uv pip install -r dspy/remote_setup/requirements.txt
+
+# PATCH: Downgrade datasets version for HotPotQA compatibility
+uv pip uninstall datasets
+uv pip install datasets==2.21.0
