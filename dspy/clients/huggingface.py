@@ -40,6 +40,7 @@ _HF_MODELS = [
     "Qwen/Qwen2-7B-Instruct",
     "meta-llama/Llama-3.1-8B-Instruct",
     "meta-llama/Llama-3.2-3B-Instruct",
+    "openai/gpt-oss-20b",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

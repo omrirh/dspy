@@ -113,7 +113,8 @@ class LM(BaseLM):
         if cache_in_memory:
             completion = cached_litellm_completion if self.model_type == "chat" else cached_litellm_text_completion
             model_name = self.model[:-8] if self.model.endswith("-trained") else self.model
-            model_prefix = "openai/" if model_name in dspy.clients.huggingface._HF_MODELS else ""
+            openai_prefix = "openai/"
+            model_prefix = openai_prefix if model_name in dspy.clients.huggingface._HF_MODELS and openai_prefix not in model_name else ""
             response = completion(
                 request=dict(model=f"{model_prefix}{self.model}", messages=messages, **kwargs),
                 num_retries=self.num_retries,
