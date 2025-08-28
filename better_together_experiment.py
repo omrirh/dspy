@@ -142,6 +142,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     )
 
     # Run the BetterTogether optimization
+    start_time = time.time()
     with dspy.context(lm=lm, rm=retriever):
         optimized_program = better_together.compile(
             student=student,
@@ -149,6 +150,9 @@ def main(dataset, prompt_optimizer, strategy, model):
             strategy=strategy,
             valset_ratio=0.1
         )
+
+    end_time = time.time()
+    runtime = end_time - start_time
 
     experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
 
@@ -162,7 +166,8 @@ def main(dataset, prompt_optimizer, strategy, model):
     # Evaluate accuracy and output the results
     print(f"{experiment_header}\nCalculating experiment program results...")
     accuracy_test = evaluate_test(optimized_program)
-    print(f"\nScore:\t{accuracy_test}")
+    print(f"\nScore:\t{accuracy_test}\n"
+          f"Runtime:\t{runtime:.2f}")
 
 
 if __name__ == "__main__":
