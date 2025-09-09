@@ -36,7 +36,7 @@ TASK_2_SAMPLINGS = {
 }
 
 CANDIDATE_EMBEDDING_MODELS = [
-    "sentence-transformers/all-MiniLM-L6-v2",
+    "Qwen/Qwen3-Embedding-0.6B",
     "sentence-transformers/all-mpnet-base-v2",
     "sentence-transformers/gtr-t5-base"
 ]

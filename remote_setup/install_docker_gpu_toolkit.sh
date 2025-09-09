@@ -1,7 +1,6 @@
 #!/bin/bash
 
-sudo bash
-apt install -y docker
+apt install -y docker.io
 
 # repo & key
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \

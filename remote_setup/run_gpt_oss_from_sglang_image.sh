@@ -13,7 +13,7 @@ GPU_ARCH="$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -n1 
 [[ -z "${GPU_ARCH:-}" ]] && GPU_ARCH="8.0"   # sane default (A100)
 
 # Pre-pull (resumes if previously interrupted)
-docker pull "$IMAGE_TAG" >/dev/null
+docker pull "$IMAGE_TAG"
 
 # Clean up any old container
 if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
@@ -55,4 +55,4 @@ docker run -d --name "$CONTAINER_NAME" \
   '
 
 echo "Container started: $CONTAINER_NAME"
-echo "View logs: docker logs -f $CONTAINER_NAME"
+docker logs -f $CONTAINER_NAME
