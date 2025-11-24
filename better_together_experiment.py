@@ -95,8 +95,8 @@ def main(dataset, prompt_optimizer, strategy, model):
         display_table=False
     )
 
-    # Retriever model as ColBERTv2
-    COLBERT_V2_ENDPOINT = "http://20.102.90.50:2017/wiki17_abstracts"
+    # Retriever model as local ColBERTv2
+    COLBERT_V2_ENDPOINT = "http://localhost:8893/api/search"
     retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
     dspy.configure(rm=retriever)
 
