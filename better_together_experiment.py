@@ -131,7 +131,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     if prompt_optimizer_name == "miprov2":
         prompt_optimizer = MIPROv2(
             metric=metric,
-            auto="light",
+            auto="medium",
         )
 
     better_together = BetterTogether(
