@@ -171,24 +171,24 @@ def main(dataset, prompt_optimizer, strategy, model):
 
 
 if __name__ == "__main__":
-    import argparse
+    # import argparse
 
-    parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
-    parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
-    parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
-    parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
-    parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(description="BetterTogether experiment argument parser")
+    # parser.add_argument("--dataset", type=str, required=True, help="Name of the dataset")
+    # parser.add_argument("--prompt-optimizer", type=str, required=True, help="Name of the prompt optimizer")
+    # parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
+    # parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
+    # args = parser.parse_args()
 
-    main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
+    # main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
-    # # for debugging
-    # dataset = "hotpotqa"
-    # prompt_optimizer = "clusterfsv2"
-    # strategy = "p"
-    # model = "Qwen/Qwen2.5-7B-Instruct"
+    # for debugging
+    dataset = "gsm8k"
+    prompt_optimizer = "clusterfs"
+    strategy = "p"
+    model = "meta-llama/Llama-3.2-3B-Instruct"
 
-    # main(dataset, prompt_optimizer, strategy, model)
+    main(dataset, prompt_optimizer, strategy, model)
 
     """
     Demonstrations set selected by ClusterFewshot achieving 82.11% accuracy on GSM8K (standalone mode):

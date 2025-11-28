@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from datasets.fingerprint import Hasher
-from dspy.primitives import Program, Example
+from dspy.primitives import Module, Example
 from sklearn.metrics import silhouette_score
 from dspy.utils.parallelizer import ParallelExecutor
 from sentence_transformers import SentenceTransformer
@@ -114,7 +114,7 @@ class ClusterFewshot(Teleprompter):
         self.candidate_fewshot_subsets = None
         self.final_fewshot_subset = None
 
-    def compile(self, student: Program, trainset: List[Example], *, valset):
+    def compile(self, student: Module, trainset: List[Example], *, valset):
         """
         Compiles the ClusterFewshot optimizer.
         """
