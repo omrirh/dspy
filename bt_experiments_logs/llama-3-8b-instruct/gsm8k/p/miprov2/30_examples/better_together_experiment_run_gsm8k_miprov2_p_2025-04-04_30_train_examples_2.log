@@ -1,0 +1,161 @@
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'fields' has been removed
+  warnings.warn(message, UserWarning)
+100%|█████████████████████████████████████████████████████████████████████████████████████| 7473/7473 [00:00<00:00, 16978.75it/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████| 1319/1319 [00:00<00:00, 16724.11it/s]
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 1 - Strategy 'p' ##########
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/04/04 17:27:26 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/04/04 17:27:26 INFO dspy.teleprompt.mipro_optimizer_v2:
+RUNNING WITH THE FOLLOWING LIGHT AUTO RUN SETTINGS:
+num_trials: 7
+minibatch: False
+num_candidates: 5
+valset size: 15
+
+Projected Language Model (LM) Calls
+
+Based on the parameters you have set, the maximum number of LM calls is projected as follows:
+
+- Prompt Generation: 10 data summarizer calls + 5 * 1 lm calls in program + (2) lm calls in program-aware proposer = 17 prompt model calls
+- Program Evaluation: 15 examples in val set * 7 batches = 105 LM program calls
+
+Estimated Cost Calculation:
+
+Total Cost = (Number of calls to task model * (Avg Input Token Length per Call * Task Model Price per Input Token + Avg Output Token Length per Call * Task Model Price per Output Token)
+            + (Number of program calls * (Avg Input Token Length per Call * Task Prompt Price per Input Token + Avg Output Token Length per Call * Prompt Model Price per Output Token).
+
+For a preliminary estimate of potential costs, we recommend you perform your own calculations based on the task
+and prompt models you intend to use. If the projected costs exceed your budget or expectations, you may consider:
+
+- Reducing the number of trials (`num_trials`), the size of the valset, or the number of LM calls in your program.
+- Using a cheaper task model to optimize the prompt.
+- Setting `minibatch=True` if you haven't already.
+
+To proceed with the execution of this program, please confirm by typing 'y' for yes or 'n' for no.
+
+If you would like to bypass this confirmation step in future executions, set the `requires_permission_to_run` flag to `False` when calling compile.
+
+Awaiting your input...
+
+Do you wish to continue? (y/n): y
+2025/04/04 17:28:05 INFO dspy.teleprompt.mipro_optimizer_v2:
+==> STEP 1: BOOTSTRAP FEWSHOT EXAMPLES <==
+2025/04/04 17:28:05 INFO dspy.teleprompt.mipro_optimizer_v2: These will be used as few-shot example candidates for our program and for creating instructions.
+
+2025/04/04 17:28:05 INFO dspy.teleprompt.mipro_optimizer_v2: Bootstrapping N=5 sets of demonstrations...
+Bootstrapping set 1/5
+Bootstrapping set 2/5
+Bootstrapping set 3/5
+ 87%|███████████████████████████████████████████████████████████████████████████████▋            | 13/15 [00:12<00:01,  1.03it/s]
+Bootstrapped 4 full traces after 13 examples for up to 1 rounds, amounting to 13 attempts.
+Bootstrapping set 4/5
+  7%|██████▏                                                                                      | 1/15 [00:01<00:16,  1.17s/it]
+Bootstrapped 1 full traces after 1 examples for up to 1 rounds, amounting to 1 attempts.
+Bootstrapping set 5/5
+ 20%|██████████████████▌                                                                          | 3/15 [00:01<00:06,  1.75it/s]
+Bootstrapped 1 full traces after 3 examples for up to 1 rounds, amounting to 3 attempts.
+2025/04/04 17:28:20 INFO dspy.teleprompt.mipro_optimizer_v2:
+==> STEP 2: PROPOSE INSTRUCTION CANDIDATES <==
+2025/04/04 17:28:20 INFO dspy.teleprompt.mipro_optimizer_v2: We will use the few-shot examples from the previous step, a generated dataset summary, a summary of the program code, and a randomly selected prompting tip to propose instructions.
+2025/04/04 17:28:39 INFO dspy.teleprompt.mipro_optimizer_v2:
+Proposing instructions...
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: Proposed Instructions for Predictor 0:
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: 0: Given the fields `question`, produce the fields `answer`.
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: 1: Generate a step-by-step reasoning and answer for a given mathematical problem, using natural language processing and machine learning techniques to produce a detailed explanation of the steps taken to solve the problem, and the final solution.
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: 2: Given a mathematical problem, generate a step-by-step reasoning process and the corresponding answer.
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: 3: Provide a step-by-step reasoning and the answer for a given mathematical problem question, using logical thinking and calculation to solve the problem.
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: 4: Generate a step-by-step reasoning process and produce an answer to the given question.
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2:
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: ==> STEP 3: FINDING OPTIMAL PROMPT PARAMETERS <==
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: We will evaluate the program over a series of trials with different combinations of instructions and few-shot examples to find the optimal combination using Bayesian Optimization.
+
+2025/04/04 17:28:57 INFO dspy.teleprompt.mipro_optimizer_v2: == Trial 1 / 7 - Full Evaluation of Default Program ==
+Average Metric: 11.00 / 15 (73.3%): 100%|████████████████████████████████████████████████████████| 15/15 [00:06<00:00,  2.32it/s]
+2025/04/04 17:29:04 INFO dspy.evaluate.evaluate: Average Metric: 11 / 15 (73.3%)
+2025/04/04 17:29:04 INFO dspy.teleprompt.mipro_optimizer_v2: Default program score: 73.33
+
+/home/obarhaim/dspy_venv/lib/python3.11/site-packages/optuna/samplers/_tpe/sampler.py:319: ExperimentalWarning: ``multivariate`` option is an experimental feature. The interface can change in the future.
+  warnings.warn(
+2025/04/04 17:29:04 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 2 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:02<00:00,  5.26it/s]
+2025/04/04 17:29:07 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:29:07 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 1', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:29:07 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0]
+2025/04/04 17:29:07 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:29:07 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:29:07 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 3 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:02<00:00,  5.05it/s]
+2025/04/04 17:29:10 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:29:10 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 2', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:29:10 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0]
+2025/04/04 17:29:10 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:29:10 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:29:10 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 4 / 7 =====
+Average Metric: 5.00 / 15 (33.3%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:02<00:00,  5.59it/s]
+2025/04/04 17:29:13 INFO dspy.evaluate.evaluate: Average Metric: 5 / 15 (33.3%)
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 33.33 with parameters ['Predictor 0: Instruction 4', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 33.33]
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 5 / 7 =====
+Average Metric: 6.00 / 15 (40.0%): 100%|████████████████████████████████████████████████████████| 15/15 [00:00<00:00, 172.08it/s]
+2025/04/04 17:29:13 INFO dspy.evaluate.evaluate: Average Metric: 6 / 15 (40.0%)
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 40.0 with parameters ['Predictor 0: Instruction 2', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 33.33, 40.0]
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 73.33
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:29:13 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 6 / 7 =====
+Average Metric: 12.00 / 15 (80.0%): 100%|████████████████████████████████████████████████████████| 15/15 [00:05<00:00,  2.83it/s]
+2025/04/04 17:29:19 INFO dspy.evaluate.evaluate: Average Metric: 12 / 15 (80.0%)
+2025/04/04 17:29:19 INFO dspy.teleprompt.mipro_optimizer_v2: Best full score so far! Score: 80.0
+2025/04/04 17:29:19 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 80.0 with parameters ['Predictor 0: Instruction 4', 'Predictor 0: Few-Shot Set 3'].
+2025/04/04 17:29:19 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 33.33, 40.0, 80.0]
+2025/04/04 17:29:19 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 80.0
+2025/04/04 17:29:19 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:29:19 INFO dspy.teleprompt.mipro_optimizer_v2: ===== Trial 7 / 7 =====
+Average Metric: 3.00 / 15 (20.0%): 100%|█████████████████████████████████████████████████████████| 15/15 [00:02<00:00,  6.33it/s]
+2025/04/04 17:29:21 INFO dspy.evaluate.evaluate: Average Metric: 3 / 15 (20.0%)
+2025/04/04 17:29:21 INFO dspy.teleprompt.mipro_optimizer_v2: Score: 20.0 with parameters ['Predictor 0: Instruction 0', 'Predictor 0: Few-Shot Set 1'].
+2025/04/04 17:29:21 INFO dspy.teleprompt.mipro_optimizer_v2: Scores so far: [73.33, 40.0, 40.0, 33.33, 40.0, 80.0, 20.0]
+2025/04/04 17:29:21 INFO dspy.teleprompt.mipro_optimizer_v2: Best score so far: 80.0
+2025/04/04 17:29:21 INFO dspy.teleprompt.mipro_optimizer_v2: =======================
+
+
+2025/04/04 17:29:21 INFO dspy.teleprompt.mipro_optimizer_v2: Returning best identified program with score 80.0!
+2025/04/04 17:29:21 INFO dspy.clients.huggingface: No running server to kill.
+2025/04/04 17:29:21 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x MIPROV2]
+Demonstrations collected:
+[Example({'augmented': True, 'question': 'A third of the contestants at a singing competition are female, and the rest are male. If there are 18 contestants in total, how many of them are male?', 'reasoning': 'If a third of the contestants are female, then 2/3 of the contestants are male. Since there are 18 contestants in total, 2/3 of 18 is 12, which means there are 12 male contestants.', 'answer': '12'}) (input_keys=None), Example({'question': 'Hammond carves life-sized statues out of marble. His latest set of four statues started with an 80-pound block of marble. The first statue he carved weighed 10 pounds. The second statue weighed 18. The remaining two statues weighed the same amount. The marble he discarded after carving it off the statues weighed 22 pounds. How much did each of the remaining statues Hammond carved weigh?', 'gold_reasoning': 'Hammond’s statues weighed 80 - 22 = <<80-22=58>>58 pounds after the discarded marble was carved off. Minus the first statue, the statues weighed 58 - 10 = <<58-10=48>>48 pounds. Minus the second statue, the statues weighed 48 - 18 = <<48-18=30>>30 pounds. The remaining two statues weighed the same amount, so each weighed 30 / 2 = <<30/2=15>>15 pounds.', 'answer': '15'}) (input_keys={'question'}), Example({'question': 'In 2004, there were some kids at a cookout. In 2005, half the number of kids came to the cookout as compared to 2004. In 2006, 2/3 as many kids came to the cookout as in 2005. If there were 20 kids at the cookout in 2006, how many kids came to the cookout in 2004?', 'gold_reasoning': 'In 2005, 20/2*3=<<20/2*3=30>>30 kids came to the cookout. In 2004, 30*2=<<30*2=60>>60 kids came to the cookout.', 'answer': '60'}) (input_keys={'question'}), Example({'question': 'A gumball machine has red, green, and blue gumballs. The machine has half as many blue gumballs as red gumballs. For each blue gumball, the machine has 4 times as many green gumballs. If the machine has 16 red gumballs how many gumballs are in the machine?', 'gold_reasoning': 'There are 16/2=<<16/2=8>>8 blue gumballs. There are 8*4=<<8*4=32>>32 green gumballs. There are 16+32+8=<<16+32+8=56>>56 total gumballs.', 'answer': '56'}) (input_keys={'question'}), Example({'question': "Tom's rabbit can run at 25 miles per hour.  His cat can run 20 miles per hour.  The cat gets a 15-minute head start.  In hours, how long will it take for the rabbit to catch up?", 'gold_reasoning': 'The cat got a 15/60=<<15/60=.25>>.25 hour head start That means it ran 20*.25=<<20*.25=5>>5 miles The rabbit goes 25-20=<<25-20=5>>5 mph faster than the cat So it takes 5/5=<<5/5=1>>1 hour for the rabbit to catch up', 'answer': '1'}) (input_keys={'question'}), Example({'question': 'Delaney has to catch a bus that leaves at 8:00. a.m to school every day. He always takes 30 minutes to reach the pick-up point from his home. One day he woke up late and left his home at 7:50. How much time did he miss the bus by when he reached the pick-up point?', 'gold_reasoning': 'If he left his home at 7:50 a.m. and the distance to the pick-up point is 30 minutes away, he arrived at the pick-up point at 7:50 + 30 minutes = 8:20 a.m. If the bus leaves at 8:00 a.m. every day, then Delaney was 8:20 a.m. - 8:00 a.m. = <<820-800=20>>20 minutes late when the bus had already left.', 'answer': '20'}) (input_keys={'question'}), Example({'question': 'Betty and Dora started making some cupcakes at the same time. Betty makes 10 cupcakes every hour and Dora makes 8 every hour. If Betty took a two-hour break, what is the difference between the number of cupcakes they made after 5 hours?', 'gold_reasoning': 'Dora made 8 cupcakes per hour for 5 hours for a total of 8*5 = <<8*5=40>>40 cupcakes Betty took a 2-hour break so she spent 5-2 = <<5-2=3>>3 hours making cupcakes Betty made 10 cupcakes per hour for 3 hours for a total of 10*3 = <<10*3=30>>30 cupcakes The difference between the number of cupcakes they made is 40-30 = <<40-30=10>>10 cupcakes', 'answer': '10'}) (input_keys={'question'}), Example({'question': 'A tank contains 6000 liters of water, 2000 liters evaporated, and then 3500 liters were drained by Bob. How many liters are in the tank if it now rains for 30 minutes and every 10 minutes 350 liters of rain are added to the tank?', 'gold_reasoning': 'After the first evaporation, the water tank has 6000 liters - 2000 liters = <<6000-2000=4000>>4000 liters. After the second extraction, the water tank has 4000 liters - 3500 liters= <<4000-3500=500>>500 liters The tank is refilled with rain 30 minutes / 10 minutes = <<30/10=3>>3 times The amount of water refilled with rain is 3 times * 350 liters per time = <<3*350=1050>>1050 liters. With the additional rainwater, the water tank has 500 liters + 1050 liters = <<500+1050=1550>>1550 liters.', 'answer': '1550'}) (input_keys={'question'}), Example({'question': 'Megan pays $16 for a shirt that costs $22 before sales. What is the amount of the discount?', 'gold_reasoning': 'Let x be the amount of the discount. We have, 22 - x = $16 We change the writing of the equation: 22 - x + x = 16 + x So, 22 = 16 + x We then Remove 16 from both sides: 22 - 16 = 16 + x - 16 So, 22 - 16 = x So, the amount of the discount is x = $<<6=6>>6.', 'answer': '6'}) (input_keys={'question'}), Example({'question': 'Nancy bought a pie sliced it into 8 pieces. She gave 1/2 to Joe and Darcy, and she gave 1/4 to Carl. How many slices were left?', 'gold_reasoning': 'The total number of slices she gave to Joe and Darcy is 1/2 x 8 = <<1/2*8=4>>4. The total slice she gave to Carl is 1/4 x 8 = <<1/4*8=2>>2. Therefore, the total slices left is 8 - 4 - 2 = <<8-4-2=2>>2.', 'answer': '2'}) (input_keys={'question'}), Example({'question': 'John needs to replace his shoes so he decides to buy a $150 pair of Nikes and a $120 pair of work boots.  Tax is 10%.  How much did he pay for everything?', 'gold_reasoning': 'The shoes cost $150 + $120 = $<<150+120=270>>270 The tax was $270 * .1 = $<<270*.1=27>>27 So the total cost was $270 + $27 = $<<270+27=297>>297', 'answer': '297'}) (input_keys={'question'}), Example({'question': "The average score on last week's Spanish test was 90.  Marco scored 10% less than the average test score and Margaret received 5 more points than Marco.  What score did Margaret receive on her test?", 'gold_reasoning': 'The average test score was 90 and Marco scored 10% less so 90*.10 = <<90*.10=9>>9 points lower The average test score was 90 and Marco scored 9 points less so his test score was 90-9 = <<90-9=81>>81 Margret received 5 more points than Marco whose test score was 81 so she made 5+81 = <<5+81=86>>86 on her test', 'answer': '86'}) (input_keys={'question'}), Example({'question': 'A YouTube video got 3000 likes and 100 more than half as many dislikes. If the video gets 1000 more dislikes and 0 more likes how many dislikes does the video have?', 'gold_reasoning': 'half as many as 3000 is 3000/2=<<3000/2=1500>>1500 dislikes 100 more than 1500 is 1500+100=<<1500+100=1600>>1600 dislikes 1000 more dislikes is 1600+1000=2600 dislikes', 'answer': '2600'}) (input_keys={'question'}), Example({'question': 'A cafe has 9 indoor tables and 11 outdoor tables. Each indoor table has 10 chairs, and each outdoor table has 3 chairs. How many chairs are there in all?', 'gold_reasoning': 'There are 9 indoor tables * 10 chairs = <<9*10=90>>90 chairs. There are 11 outdoor tables * 3 chairs = <<11*3=33>>33 chairs. The total number of chairs is 90 chairs + 33 chairs = <<90+33=123>>123 chairs.', 'answer': '123'}) (input_keys={'question'}), Example({'question': 'John takes 3 days off of streaming per week.  On the days he does stream, he streams for 4 hours at a time and makes $10 an hour.  How much does he make a week?', 'gold_reasoning': 'He streams for 7-3=<<7-3=4>>4 days a week So he streams 4*4=<<4*4=16>>16 hours a week That means he makes 16*10=$<<16*10=160>>160 a week', 'answer': '160'}) (input_keys={'question'})]
+
+
+[BetterTogether x gsm8k x meta-llama/Meta-Llama-3-8B-Instruct x p x MIPROV2]
+Calculating experiment program results...
+Average Metric: 943.00 / 1318 (71.5%): 100%|█████████████████████████████████████████████████| 1318/1318 [04:18<00:00,  5.11it/s]
+2025/04/04 17:33:40 INFO dspy.evaluate.evaluate: Average Metric: 943 / 1318 (71.5%)
+
+Score:  71.55

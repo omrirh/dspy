@@ -1,0 +1,490 @@
+UserWarning: Valid config keys have changed in V2:
+* 'fields' has been removed
+  warnings.warn(message, UserWarning)
+2025/07/03 21:55:06 INFO dspy.datasets.hotpotqa: HotPotQA training/test seed: 1751579706
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 2 - Strategy 'p' ##########
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: trainset size: 1000
+2025/07/03 21:55:10 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/07/03 21:55:10 INFO dspy.teleprompt.cluster_fewshot_v2: Bootstrapping 100 examples
+Processed 39 / 100 examples: 100%|██████████████████████████████████████████████████████████████████████| 100/100 [00:50<00:00,  1.99it/s]
+2025/07/03 21:56:00 INFO dspy.teleprompt.cluster_fewshot_v2: 39/100 remaining after bootstrapping
+2025/07/03 21:56:00 INFO dspy.teleprompt.cluster_fewshot_v2: Compiling the student program using ClusteFewshotv2 optimizer...
+2025/07/03 21:56:00 INFO dspy.teleprompt.cluster_fewshot_v2: Generating 39 training examples embeddings
+2025/07/03 21:56:00 INFO dspy.teleprompt.cluster_fewshot_v2: Encoding examples with model: sentence-transformers/all-MiniLM-L6-v2
+2025/07/03 21:56:02 INFO dspy.teleprompt.cluster_fewshot_v2: K=3, Silhouette Score=0.042
+2025/07/03 21:56:02 INFO dspy.teleprompt.cluster_fewshot_v2: Encoding examples with model: sentence-transformers/all-mpnet-base-v2
+2025/07/03 21:56:07 INFO dspy.teleprompt.cluster_fewshot_v2: K=3, Silhouette Score=0.035
+2025/07/03 21:56:07 INFO dspy.teleprompt.cluster_fewshot_v2: Encoding examples with model: sentence-transformers/gtr-t5-base
+2025/07/03 21:56:10 INFO dspy.teleprompt.cluster_fewshot_v2: K=3, Silhouette Score=0.022
+2025/07/03 21:56:10 INFO dspy.teleprompt.cluster_fewshot_v2: Selected model: sentence-transformers/all-MiniLM-L6-v2 with K=3 (silhouette=0.042)
+2025/07/03 21:56:10 INFO dspy.teleprompt.cluster_fewshot_v2: Performing PCA dimensionality reduction for visualization...
+2025/07/03 21:56:10 INFO dspy.teleprompt.cluster_fewshot_v2: Cluster visualization saved to training_clusters.png.
+2025/07/03 21:56:10 INFO dspy.teleprompt.cluster_fewshot_v2: training clustering completed with K=3.
+2025/07/03 21:56:10 INFO dspy.teleprompt.cluster_fewshot_v2: Generating 250 validation examples embeddings
+2025/07/03 21:56:11 INFO dspy.teleprompt.cluster_fewshot_v2: K=3, Silhouette Score=0.031
+2025/07/03 21:56:11 INFO dspy.teleprompt.cluster_fewshot_v2: Selected model: sentence-transformers/all-MiniLM-L6-v2 with K=3 (silhouette=0.031)
+2025/07/03 21:56:13 INFO dspy.teleprompt.cluster_fewshot_v2: Performing PCA dimensionality reduction for visualization...
+2025/07/03 21:56:15 INFO dspy.teleprompt.cluster_fewshot_v2: Cluster visualization saved to validation_clusters.png.
+2025/07/03 21:56:15 INFO dspy.teleprompt.cluster_fewshot_v2: validation clustering completed with K=3.
+2025/07/03 21:56:15 INFO dspy.teleprompt.cluster_fewshot_v2: Sampling 3 questions from cluster 1 (size=101)
+2025/07/03 21:56:15 INFO dspy.teleprompt.cluster_fewshot_v2: Sampling 3 questions from cluster 2 (size=66)
+2025/07/03 21:56:15 INFO dspy.teleprompt.cluster_fewshot_v2: Sampling 3 questions from cluster 3 (size=83)
+2025/07/03 21:56:16 INFO dspy.teleprompt.cluster_fewshot_v2: EAD set PCA plot saved to ead_set.png
+2025/07/03 21:56:16 INFO dspy.teleprompt.cluster_fewshot_v2: EAD evaluation set assembled with 9 questions.
+2025/07/03 21:56:16 INFO dspy.teleprompt.cluster_fewshot_v2: Sorting examples-as-demos from training set (39 examples)
+2025/07/03 21:56:16 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 1/39
+2025/07/03 21:56:16 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What is the name of the a Japanese convenience store franchise chain in south korea that has a store accessible inside in Damuqiao Road Station? --> CU
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.64it/s]
+2025/07/03 21:56:22 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:56:22 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 2/39
+2025/07/03 21:56:22 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Cho Yangho is the chairman of what airline whose headquarters is located in Seoul, Republic of Korea? --> Korean Air
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  2.04it/s]
+2025/07/03 21:56:26 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:56:26 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 3/39
+2025/07/03 21:56:26 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which city 10 miles south of downtown Minneapolis is home to a musician who wrote "Stand under None"? --> Bloomington, Minnesota
+Average Metric: 1.00 / 9 (11.1%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:08<00:00,  1.07it/s]
+2025/07/03 21:56:35 INFO dspy.evaluate.evaluate: Average Metric: 1 / 9 (11.1%)
+2025/07/03 21:56:35 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 4/39
+2025/07/03 21:56:35 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Dorsa Whiston was named after which English theologian? --> William Whiston
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.64it/s]
+2025/07/03 21:56:40 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:56:40 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 5/39
+2025/07/03 21:56:40 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: "Glassheart" is a song conceptualised by Leona Lewis and a frequent collaborator who is the lead vocalist for what pop rock band? --> OneRepublic
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.63it/s]
+2025/07/03 21:56:46 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:56:46 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 6/39
+2025/07/03 21:56:46 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Where is the investment holding company of Milwaukee Electric Tool Corporation based? --> Hong Kong
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.61it/s]
+2025/07/03 21:56:51 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:56:51 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 7/39
+2025/07/03 21:56:51 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Who was the Spelling Bee that we held in 2011 at the hotel along the shores of the Potomac? --> Sukanya Roy
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.79it/s]
+2025/07/03 21:56:56 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:56:56 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 8/39
+2025/07/03 21:56:56 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What airline does the airline alliance Oneworld share their terminal with at the The Heathrow Airport? --> Virgin Atlantic
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.53it/s]
+2025/07/03 21:57:02 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:57:02 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 9/39
+2025/07/03 21:57:02 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: How far from Sydney was Marie Cornish born at? --> 362 km
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.77it/s]
+2025/07/03 21:57:07 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:57:08 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 10/39
+2025/07/03 21:57:08 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Fawad Khan has starred in Numm and also won numerous awards including 6 what? --> Hum Awards
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  1.94it/s]
+2025/07/03 21:57:12 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:57:12 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 11/39
+2025/07/03 21:57:12 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Trevor Knight was replaced on the Atlanta Falcons by whom? --> Baker Mayfield
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  1.90it/s]
+2025/07/03 21:57:17 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:57:17 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 12/39
+2025/07/03 21:57:17 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which Norwegian actress and model starred in a 1972 British comedy film directed by Jim Clark? --> Julie Ege
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.52it/s]
+2025/07/03 21:57:23 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:57:23 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 13/39
+2025/07/03 21:57:23 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What percussionist accompanies Duke Special and plays an instrument that traditionally works on a system of bellows? --> Chip Bailey
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.57it/s]
+2025/07/03 21:57:29 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:57:29 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 14/39
+2025/07/03 21:57:29 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Mauro Ranallo was a Showtime broadcaster for the bout that was known as what? --> The Money Fight
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.75it/s]
+2025/07/03 21:57:34 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:57:34 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 15/39
+2025/07/03 21:57:34 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What was the first single from a major label for an American rock band out of Winter Haven, Florida which split in 2014?? --> Feel Good Drag"
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.58it/s]
+2025/07/03 21:57:40 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:57:40 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 16/39
+2025/07/03 21:57:40 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which writer and journalist contributing to "The New Yorker" writes about subjects such as the Art Deco-style skyscraper, the Chrysler Building? --> Claudia Roth Pierpont
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.75it/s]
+2025/07/03 21:57:45 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:57:45 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 17/39
+2025/07/03 21:57:45 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which social media site did Lily Allen use to gain publicity and BBC airplay for her songs prior to the release of her debut album, "Alright, Still"? --> Myspace
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  1.92it/s]
+2025/07/03 21:57:50 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:57:50 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 18/39
+2025/07/03 21:57:50 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which star of "Get on Up" was also in "The Blues Brothers"? --> Dan Aykroyd
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:06<00:00,  1.50it/s]
+2025/07/03 21:57:56 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:57:56 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 19/39
+2025/07/03 21:57:56 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What large gulf of the Atlantic Ocean does the Baboosic Brooke ultimately flow to? --> Gulf of Maine
+Average Metric: 1.00 / 9 (11.1%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.78it/s]
+2025/07/03 21:58:01 INFO dspy.evaluate.evaluate: Average Metric: 1 / 9 (11.1%)
+2025/07/03 21:58:01 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 20/39
+2025/07/03 21:58:01 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question:  Facta Loquuntur was the first full length album ever released by a National Socialist black metal band sometimes called what? --> Aryan black metal or neo-Nazi black metal
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.74it/s]
+2025/07/03 21:58:06 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:58:06 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 21/39
+2025/07/03 21:58:06 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which film premiered first, Pokémon: Arceus and the Jewel of Life or The Secret of Kells? --> The Secret of Kells
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.63it/s]
+2025/07/03 21:58:12 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:58:12 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 22/39
+2025/07/03 21:58:12 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Wilhelm Wiegand is best known for and his publications involving a man that was King of Prussia beginning in what year? --> 1740
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:07<00:00,  1.21it/s]
+2025/07/03 21:58:19 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:58:19 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 23/39
+2025/07/03 21:58:19 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Frank Spring played hockey for which team that was a relocation of the California Golden Seals? --> Cleveland Barons
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.66it/s]
+2025/07/03 21:58:25 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:58:25 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 24/39
+2025/07/03 21:58:25 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Colour Me Free! features guest appearances by which American percussionist, singer, author, and actress born on December 12, 1957? --> Sheila E.
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.71it/s]
+2025/07/03 21:58:30 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:58:30 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 25/39
+2025/07/03 21:58:30 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Who led the Calvary at the Battle where Major Joel H. Elliott was a casualty ? --> Lt. Col. George Armstrong Custer
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  1.88it/s]
+2025/07/03 21:58:35 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:58:35 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 26/39
+2025/07/03 21:58:35 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What is the name of Hassan Khomeini's grandfather --> Ruhollah Khomeini
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.71it/s]
+2025/07/03 21:58:40 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:58:40 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 27/39
+2025/07/03 21:58:40 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What distinctive surface is the historic Merton Street, that runs parallel to High Street in the southeastern university city of Oxford, England? --> cobbled
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  1.80it/s]
+2025/07/03 21:58:45 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:58:45 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 28/39
+2025/07/03 21:58:45 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Who was the director of the 2009 movie featuring Peter Outerbridge as William Easton? --> Kevin Greutert
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:06<00:00,  1.49it/s]
+2025/07/03 21:58:51 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:58:51 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 29/39
+2025/07/03 21:58:51 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What is the four-letter code published in the International Civil Aviation Organization for Broumov Airport? --> LKBR
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:04<00:00,  2.05it/s]
+2025/07/03 21:58:56 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:58:56 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 30/39
+2025/07/03 21:58:56 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Danny Hugh Freeze Jr. coached Michael Oher and which other former American football defensive end born on July 28, 1988? --> Greg Hardy
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:06<00:00,  1.48it/s]
+2025/07/03 21:59:02 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:59:02 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 31/39
+2025/07/03 21:59:02 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: How long was the reign of the king whose court Paon de Roet became attached to? --> 50 years
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.66it/s]
+2025/07/03 21:59:07 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:59:07 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 32/39
+2025/07/03 21:59:07 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What movie does Ed Skrein act in that is a french action film? --> The Transporter Refueled
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.56it/s]
+2025/07/03 21:59:13 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:59:13 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 33/39
+2025/07/03 21:59:13 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Who is the French physicist that Coulometry is named after? --> Charles-Augustin de Coulomb
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.62it/s]
+2025/07/03 21:59:19 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:59:19 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 34/39
+2025/07/03 21:59:19 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which documentary is older, Hacking Democracy or Raw Opium? --> Hacking Democracy
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.62it/s]
+2025/07/03 21:59:25 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:59:25 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 35/39
+2025/07/03 21:59:25 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: The band The National released what album on 4AD that included the song "I need my girl" on May 17, 2013?  --> Trouble Will Find Me
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.73it/s]
+2025/07/03 21:59:30 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:59:30 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 36/39
+2025/07/03 21:59:30 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Which Air Force Base is located in Biloxi, Mississippi, and isthe home of the 403d Wing? --> Keesler Air Force Base
+Average Metric: 3.00 / 9 (33.3%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.78it/s]
+2025/07/03 21:59:35 INFO dspy.evaluate.evaluate: Average Metric: 3 / 9 (33.3%)
+2025/07/03 21:59:35 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 37/39
+2025/07/03 21:59:35 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: The Hills Have Thighs was based on the movie The HIlls Have Eyes that was released on what date?  --> 22 July 1977
+Average Metric: 1.00 / 9 (11.1%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:06<00:00,  1.37it/s]
+2025/07/03 21:59:42 INFO dspy.evaluate.evaluate: Average Metric: 1 / 9 (11.1%)
+2025/07/03 21:59:42 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 38/39
+2025/07/03 21:59:42 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: Where does Michael Matricciani play his home matches?  --> Newton Village Sports Complex
+Average Metric: 4.00 / 9 (44.4%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:05<00:00,  1.67it/s]
+2025/07/03 21:59:47 INFO dspy.evaluate.evaluate: Average Metric: 4 / 9 (44.4%)
+2025/07/03 21:59:47 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Evaluating example 39/39
+2025/07/03 21:59:47 INFO dspy.teleprompt.cluster_fewshot_v2: Conducting example-as-demo test (9 questions) using the following demonstration:
+question: What nationality is the man who wrote the foreword for Rogue Leaders: The Story of LucasArts? --> American
+Average Metric: 2.00 / 9 (22.2%): 100%|█████████████████████████████████████████████████████████████████████| 9/9 [00:06<00:00,  1.30it/s]
+2025/07/03 21:59:54 INFO dspy.evaluate.evaluate: Average Metric: 2 / 9 (22.2%)
+2025/07/03 21:59:54 INFO dspy.teleprompt.cluster_fewshot_v2: Ordering 39 demonstrations by 4 different ranks...
+2025/07/03 21:59:54 INFO dspy.teleprompt.cluster_fewshot_v2: EAD scores distribution saved to ead_scores_distribution.png
+2025/07/03 21:59:54 INFO dspy.teleprompt.cluster_fewshot_v2: Performing PCA dimensionality reduction for visualization...
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: Unique EAD scores: {33.33, 11.11, 44.44, 22.22}
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: Cluster visualization saved to embeddings_to_ead_ranks.png.
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: Demonstrations are sorted in descending order.
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: Collecting candidate few-shot using 'top_n' sampling strategy (multihop task optimization)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: 2/3 slots given to cluster 1 (size=11)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: 1/3 slots given to cluster 2 (size=21)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: 0/3 slots given to cluster 3 (size=7)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: Collecting candidate few-shot using 'best_in_cluster' sampling strategy (multihop task optimization)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: 1/3 slots given to cluster 1 (size=11)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: 1/3 slots given to cluster 2 (size=21)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2: 1/3 slots given to cluster 3 (size=7)
+2025/07/03 21:59:55 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Testing 'top_n' sampled few-shot subset
+Average Metric: 108.00 / 250 (43.2%): 100%|█████████████████████████████████████████████████████████████| 250/250 [02:18<00:00,  1.81it/s]
+2025/07/03 22:02:14 INFO dspy.evaluate.evaluate: Average Metric: 108 / 250 (43.2%)
+2025/07/03 22:02:14 INFO dspy.teleprompt.cluster_fewshot_v2: 'top_n' few-shot subset scored 43.20% on the validation set with 3 demonstrations.
+2025/07/03 22:02:14 INFO dspy.teleprompt.cluster_fewshot_v2:
+
+Testing 'best_in_cluster' sampled few-shot subset
+Average Metric: 120.00 / 250 (48.0%): 100%|█████████████████████████████████████████████████████████████| 250/250 [02:23<00:00,  1.75it/s]
+2025/07/03 22:04:37 INFO dspy.evaluate.evaluate: Average Metric: 120 / 250 (48.0%)
+2025/07/03 22:04:37 INFO dspy.teleprompt.cluster_fewshot_v2: 'best_in_cluster' few-shot subset scored 48.00% on the validation set with 3 demonstrations.
+2025/07/03 22:04:37 INFO dspy.teleprompt.cluster_fewshot_v2: Best few-shot subset sampled according to 'best_in_cluster' strategy (48.0% accuracy on the validation set)
+2025/07/03 22:04:37 INFO dspy.teleprompt.cluster_fewshot_v2: Student program compiled successfully.
+2025/07/03 22:04:37 INFO dspy.teleprompt.bettertogether:
+########## Step 2 of 2 - Strategy 'p -> w' ##########
+2025/07/03 22:04:37 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/07/03 22:04:37 INFO dspy.teleprompt.bettertogether: Preparing for weight optimization...
+2025/07/03 22:04:37 INFO dspy.teleprompt.bettertogether: Compiling the weight optimizer...
+2025/07/03 22:04:37 INFO dspy.teleprompt.bootstrap_finetune: Preparing the student and teacher programs...
+2025/07/03 22:04:37 INFO dspy.teleprompt.bootstrap_finetune: Bootstrapping data...
+Average Metric: 456.00 / 1000 (45.6%): 100%|██████████████████████████████████████████████████████████████| 1000/1000 [09:33<00:00,  1.74it/s]
+2025/07/03 22:14:10 INFO dspy.evaluate.evaluate: Average Metric: 456 / 1000 (45.6%)
+2025/07/03 22:14:11 INFO dspy.teleprompt.bootstrap_finetune: Preparing the train data...
+2025/07/03 22:14:11 INFO dspy.teleprompt.bootstrap_finetune: Collected data for 1000 examples
+2025/07/03 22:14:11 INFO dspy.teleprompt.bootstrap_finetune: After filtering with the metric, 456 examples remain
+2025/07/03 22:14:19 INFO dspy.teleprompt.bootstrap_finetune: Using 1368 data points for fine-tuning the model: meta-llama/Meta-Llama-3-8B-Instruct
+2025/07/03 22:14:19 INFO dspy.teleprompt.bootstrap_finetune: Starting LM fine-tuning...
+2025/07/03 22:14:19 INFO dspy.teleprompt.bootstrap_finetune: 1 fine-tuning job(s) to start
+2025/07/03 22:14:19 INFO dspy.teleprompt.bootstrap_finetune: Starting 1 fine-tuning job(s)...
+2025/07/03 22:14:19 INFO dspy.teleprompt.bootstrap_finetune: Calling lm.kill() on the LM to be fine-tuned to free up resources. This won't have any effect if the LM is not running.
+2025/07/03 22:14:19 INFO dspy.clients.huggingface: No running server to kill.
+2025/07/03 22:14:19 INFO dspy.clients.huggingface: [HF Provider] Data format TrainDataFormat.CHAT validated
+2025/07/03 22:14:19 INFO dspy.clients.huggingface: [HF Provider] Finetuning 'meta-llama/Meta-Llama-3-8B-Instruct' with LoRA
+2025/07/03 22:14:33 INFO dspy.clients.huggingface: [HF Provider] Using device: cuda
+Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████| 4/4 [00:28<00:00,  7.23s/it]
+2025/07/03 22:15:03 INFO dspy.clients.huggingface: Adding pad token to tokenizer
+trainable params: 13,631,488 || all params: 8,043,892,736 || trainable%: 0.1695
+Map: 100%|█████████████████████████████████████████████████████████████████████████████████████████| 1368/1368 [00:13<00:00, 99.22 examples/s]
+Filter: 100%|████████████████████████████████████████████████████████████████████████████████████| 1368/1368 [00:01<00:00, 1232.49 examples/s]
+Converting train dataset to ChatML: 100%|████████████████████████████████████████████████████████| 1368/1368 [00:00<00:00, 2561.73 examples/s]
+Applying chat template to train dataset: 100%|███████████████████████████████████████████████████| 1368/1368 [00:00<00:00, 1468.36 examples/s]
+Truncating train dataset: 100%|███████████████████████████████████████████████████████████████████| 1368/1368 [00:01<00:00, 704.84 examples/s]
+No label_names provided for model class `PeftModelForCausalLM`. Since `PeftModel` hides base models input arguments, if label_names is not given, label_names can't be set automatically within `Trainer`. Note that empty label_names list will be used instead.
+2025/07/03 22:15:24 INFO dspy.clients.huggingface: [HF Provider] Applying LoRA fine-tuning
+2025/07/03 22:15:24 INFO dspy.clients.huggingface: [HF Provider] Training started
+{'loss': 2.1243, 'grad_norm': 1.0832931995391846, 'learning_rate': 3.846153846153847e-06, 'mean_token_accuracy': 0.5764662638306618, 'epoch': 0.06}
+{'loss': 2.0786, 'grad_norm': 0.736626923084259, 'learning_rate': 7.692307692307694e-06, 'mean_token_accuracy': 0.5765151396393776, 'epoch': 0.12}
+{'loss': 2.0299, 'grad_norm': 1.370153546333313, 'learning_rate': 9.951749095295537e-06, 'mean_token_accuracy': 0.5758064389228821, 'epoch': 0.18}
+{'loss': 1.8173, 'grad_norm': 0.7576372623443604, 'learning_rate': 9.83112183353438e-06, 'mean_token_accuracy': 0.632172529399395, 'epoch': 0.23}
+{'loss': 1.7379, 'grad_norm': 0.6588000655174255, 'learning_rate': 9.710494571773221e-06, 'mean_token_accuracy': 0.6642472982406616, 'epoch': 0.29}
+{'loss': 1.7511, 'grad_norm': 0.5837749242782593, 'learning_rate': 9.589867310012064e-06, 'mean_token_accuracy': 0.6584921598434448, 'epoch': 0.35}
+{'loss': 1.6529, 'grad_norm': 0.5877801775932312, 'learning_rate': 9.469240048250905e-06, 'mean_token_accuracy': 0.6745723128318787, 'epoch': 0.41}
+{'loss': 1.7148, 'grad_norm': 0.47938618063926697, 'learning_rate': 9.348612786489746e-06, 'mean_token_accuracy': 0.6593963623046875, 'epoch': 0.47}
+{'loss': 1.5643, 'grad_norm': 0.4194660186767578, 'learning_rate': 9.22798552472859e-06, 'mean_token_accuracy': 0.6895283624529839, 'epoch': 0.53}
+{'loss': 1.5957, 'grad_norm': 0.33347466588020325, 'learning_rate': 9.107358262967432e-06, 'mean_token_accuracy': 0.6812194749712944, 'epoch': 0.58}
+{'loss': 1.554, 'grad_norm': 0.35952433943748474, 'learning_rate': 8.986731001206273e-06, 'mean_token_accuracy': 0.6881842821836471, 'epoch': 0.64}
+{'loss': 1.4757, 'grad_norm': 0.280309796333313, 'learning_rate': 8.866103739445116e-06, 'mean_token_accuracy': 0.7024193733930588, 'epoch': 0.7}
+{'loss': 1.4078, 'grad_norm': 0.26897433400154114, 'learning_rate': 8.745476477683957e-06, 'mean_token_accuracy': 0.7162512362003326, 'epoch': 0.76}
+{'loss': 1.5837, 'grad_norm': 0.3031880557537079, 'learning_rate': 8.6248492159228e-06, 'mean_token_accuracy': 0.6761241555213928, 'epoch': 0.82}
+{'loss': 1.4859, 'grad_norm': 0.2870759069919586, 'learning_rate': 8.50422195416164e-06, 'mean_token_accuracy': 0.6948802620172501, 'epoch': 0.88}
+{'loss': 1.4255, 'grad_norm': 0.23194622993469238, 'learning_rate': 8.383594692400483e-06, 'mean_token_accuracy': 0.7075391054153443, 'epoch': 0.94}
+{'loss': 1.4081, 'grad_norm': 0.2692823112010956, 'learning_rate': 8.262967430639325e-06, 'mean_token_accuracy': 0.7094208210706711, 'epoch': 0.99}
+{'loss': 1.3763, 'grad_norm': 0.2703422009944916, 'learning_rate': 8.142340168878167e-06, 'mean_token_accuracy': 0.7113880723714828, 'epoch': 1.05}
+{'loss': 1.3767, 'grad_norm': 0.3423490822315216, 'learning_rate': 8.021712907117008e-06, 'mean_token_accuracy': 0.7088709622621536, 'epoch': 1.11}
+{'loss': 1.311, 'grad_norm': 0.29466184973716736, 'learning_rate': 7.901085645355851e-06, 'mean_token_accuracy': 0.7228983283042908, 'epoch': 1.17}
+{'loss': 1.3567, 'grad_norm': 0.3410852551460266, 'learning_rate': 7.780458383594694e-06, 'mean_token_accuracy': 0.7109603941440582, 'epoch': 1.23}
+{'loss': 1.2344, 'grad_norm': 0.3396187424659729, 'learning_rate': 7.659831121833535e-06, 'mean_token_accuracy': 0.7357771158218384, 'epoch': 1.29}
+{'loss': 1.2811, 'grad_norm': 0.34960976243019104, 'learning_rate': 7.539203860072377e-06, 'mean_token_accuracy': 0.7260752692818642, 'epoch': 1.35}
+{'loss': 1.1726, 'grad_norm': 0.39401498436927795, 'learning_rate': 7.418576598311219e-06, 'mean_token_accuracy': 0.7457844540476799, 'epoch': 1.4}
+{'loss': 1.1516, 'grad_norm': 0.3320273756980896, 'learning_rate': 7.297949336550061e-06, 'mean_token_accuracy': 0.7488391995429993, 'epoch': 1.46}
+{'loss': 1.1761, 'grad_norm': 0.353834331035614, 'learning_rate': 7.177322074788903e-06, 'mean_token_accuracy': 0.7432795763015747, 'epoch': 1.52}
+{'loss': 1.0238, 'grad_norm': 0.33166441321372986, 'learning_rate': 7.056694813027745e-06, 'mean_token_accuracy': 0.7797776147723198, 'epoch': 1.58}
+{'loss': 1.0317, 'grad_norm': 0.43194258213043213, 'learning_rate': 6.936067551266587e-06, 'mean_token_accuracy': 0.7797653928399086, 'epoch': 1.64}
+{'loss': 1.0212, 'grad_norm': 0.5974266529083252, 'learning_rate': 6.815440289505429e-06, 'mean_token_accuracy': 0.7816593408584595, 'epoch': 1.7}
+{'loss': 0.9556, 'grad_norm': 0.4193028211593628, 'learning_rate': 6.69481302774427e-06, 'mean_token_accuracy': 0.7965909093618393, 'epoch': 1.75}
+{'loss': 0.9436, 'grad_norm': 0.43229225277900696, 'learning_rate': 6.5741857659831135e-06, 'mean_token_accuracy': 0.7975928530097007, 'epoch': 1.81}
+{'loss': 0.8081, 'grad_norm': 0.5128605365753174, 'learning_rate': 6.453558504221955e-06, 'mean_token_accuracy': 0.8291544422507287, 'epoch': 1.87}
+{'loss': 0.7845, 'grad_norm': 0.6220916509628296, 'learning_rate': 6.3329312424607965e-06, 'mean_token_accuracy': 0.8299975723028183, 'epoch': 1.93}
+{'loss': 0.6861, 'grad_norm': 0.567065954208374, 'learning_rate': 6.2123039806996385e-06, 'mean_token_accuracy': 0.8503665789961815, 'epoch': 1.99}
+{'loss': 0.6742, 'grad_norm': 0.6989007592201233, 'learning_rate': 6.09167671893848e-06, 'mean_token_accuracy': 0.8508308827877045, 'epoch': 2.05}
+{'loss': 0.5559, 'grad_norm': 0.7342813014984131, 'learning_rate': 5.971049457177322e-06, 'mean_token_accuracy': 0.8796187669038773, 'epoch': 2.11}
+{'loss': 0.4783, 'grad_norm': 0.7967748641967773, 'learning_rate': 5.850422195416164e-06, 'mean_token_accuracy': 0.89662756472826, 'epoch': 2.16}
+{'loss': 0.4268, 'grad_norm': 0.782499372959137, 'learning_rate': 5.729794933655006e-06, 'mean_token_accuracy': 0.9125366538763047, 'epoch': 2.22}
+{'loss': 0.3513, 'grad_norm': 0.5828255414962769, 'learning_rate': 5.609167671893848e-06, 'mean_token_accuracy': 0.9340664744377136, 'epoch': 2.28}
+{'loss': 0.31, 'grad_norm': 0.765387773513794, 'learning_rate': 5.48854041013269e-06, 'mean_token_accuracy': 0.9437805414199829, 'epoch': 2.34}
+{'loss': 0.2644, 'grad_norm': 0.5984146595001221, 'learning_rate': 5.367913148371532e-06, 'mean_token_accuracy': 0.9532380104064941, 'epoch': 2.4}
+{'loss': 0.231, 'grad_norm': 0.5313002467155457, 'learning_rate': 5.247285886610375e-06, 'mean_token_accuracy': 0.9586754441261292, 'epoch': 2.46}
+{'loss': 0.2084, 'grad_norm': 0.38732609152793884, 'learning_rate': 5.126658624849217e-06, 'mean_token_accuracy': 0.9652492463588714, 'epoch': 2.51}
+{'loss': 0.1835, 'grad_norm': 0.36722105741500854, 'learning_rate': 5.006031363088059e-06, 'mean_token_accuracy': 0.9696969777345658, 'epoch': 2.57}
+{'loss': 0.1656, 'grad_norm': 0.3975880444049835, 'learning_rate': 4.885404101326901e-06, 'mean_token_accuracy': 0.9729838877916336, 'epoch': 2.63}
+{'loss': 0.1581, 'grad_norm': 0.3010578751564026, 'learning_rate': 4.764776839565743e-06, 'mean_token_accuracy': 0.9747556388378144, 'epoch': 2.69}
+{'loss': 0.1449, 'grad_norm': 0.2696097791194916, 'learning_rate': 4.644149577804585e-06, 'mean_token_accuracy': 0.9769306138157845, 'epoch': 2.75}
+{'loss': 0.1285, 'grad_norm': 0.33794769644737244, 'learning_rate': 4.523522316043426e-06, 'mean_token_accuracy': 0.980144202709198, 'epoch': 2.81}
+{'loss': 0.1245, 'grad_norm': 0.23839637637138367, 'learning_rate': 4.402895054282268e-06, 'mean_token_accuracy': 0.9803030461072921, 'epoch': 2.87}
+{'loss': 0.1202, 'grad_norm': 0.32398107647895813, 'learning_rate': 4.2822677925211105e-06, 'mean_token_accuracy': 0.9808528974652291, 'epoch': 2.92}
+{'loss': 0.1038, 'grad_norm': 0.21630944311618805, 'learning_rate': 4.161640530759952e-06, 'mean_token_accuracy': 0.9847874045372009, 'epoch': 2.98}
+{'loss': 0.1059, 'grad_norm': 0.29031407833099365, 'learning_rate': 4.041013268998794e-06, 'mean_token_accuracy': 0.9842619895935059, 'epoch': 3.04}
+{'loss': 0.1049, 'grad_norm': 0.3541470468044281, 'learning_rate': 3.920386007237636e-06, 'mean_token_accuracy': 0.9841764539480209, 'epoch': 3.1}
+{'loss': 0.0965, 'grad_norm': 0.29786217212677, 'learning_rate': 3.799758745476478e-06, 'mean_token_accuracy': 0.9853372573852539, 'epoch': 3.16}
+{'loss': 0.0939, 'grad_norm': 0.27562785148620605, 'learning_rate': 3.6791314837153198e-06, 'mean_token_accuracy': 0.9860092997550964, 'epoch': 3.22}
+{'loss': 0.0867, 'grad_norm': 0.2103019654750824, 'learning_rate': 3.558504221954162e-06, 'mean_token_accuracy': 0.9881476163864136, 'epoch': 3.27}
+{'loss': 0.085, 'grad_norm': 0.20069822669029236, 'learning_rate': 3.437876960193004e-06, 'mean_token_accuracy': 0.9880498647689819, 'epoch': 3.33}
+{'loss': 0.0824, 'grad_norm': 0.2644975185394287, 'learning_rate': 3.317249698431846e-06, 'mean_token_accuracy': 0.9878665804862976, 'epoch': 3.39}
+{'loss': 0.082, 'grad_norm': 0.22554196417331696, 'learning_rate': 3.1966224366706876e-06, 'mean_token_accuracy': 0.9886363744735718, 'epoch': 3.45}
+{'loss': 0.08, 'grad_norm': 0.1585911363363266, 'learning_rate': 3.0759951749095295e-06, 'mean_token_accuracy': 0.9887585639953613, 'epoch': 3.51}
+{'loss': 0.08, 'grad_norm': 0.18136389553546906, 'learning_rate': 2.955367913148372e-06, 'mean_token_accuracy': 0.9886119365692139, 'epoch': 3.57}
+{'loss': 0.0739, 'grad_norm': 0.15740826725959778, 'learning_rate': 2.834740651387214e-06, 'mean_token_accuracy': 0.9899193644523621, 'epoch': 3.63}
+{'loss': 0.0746, 'grad_norm': 0.2589508295059204, 'learning_rate': 2.7141133896260558e-06, 'mean_token_accuracy': 0.9895039200782776, 'epoch': 3.68}
+{'loss': 0.0689, 'grad_norm': 0.1150493249297142, 'learning_rate': 2.5934861278648977e-06, 'mean_token_accuracy': 0.9902859330177307, 'epoch': 3.74}
+{'loss': 0.0732, 'grad_norm': 0.14349067211151123, 'learning_rate': 2.4728588661037397e-06, 'mean_token_accuracy': 0.9897849559783936, 'epoch': 3.8}
+{'loss': 0.0677, 'grad_norm': 0.23023830354213715, 'learning_rate': 2.3522316043425816e-06, 'mean_token_accuracy': 0.9908602237701416, 'epoch': 3.86}
+{'loss': 0.0765, 'grad_norm': 0.42523837089538574, 'learning_rate': 2.2316043425814236e-06, 'mean_token_accuracy': 0.9887830018997192, 'epoch': 3.92}
+{'loss': 0.066, 'grad_norm': 0.23301401734352112, 'learning_rate': 2.1109770808202655e-06, 'mean_token_accuracy': 0.9910557270050049, 'epoch': 3.98}
+{'loss': 0.0594, 'grad_norm': 0.22021231055259705, 'learning_rate': 1.9903498190591075e-06, 'mean_token_accuracy': 0.9924364686012268, 'epoch': 4.04}
+{'loss': 0.0703, 'grad_norm': 0.13484516739845276, 'learning_rate': 1.8697225572979494e-06, 'mean_token_accuracy': 0.9898582682013511, 'epoch': 4.09}
+{'loss': 0.0712, 'grad_norm': 0.1370999813079834, 'learning_rate': 1.7490952955367916e-06, 'mean_token_accuracy': 0.9898216128349304, 'epoch': 4.15}
+{'loss': 0.0627, 'grad_norm': 0.177993506193161, 'learning_rate': 1.6284680337756333e-06, 'mean_token_accuracy': 0.991287887096405, 'epoch': 4.21}
+{'loss': 0.0722, 'grad_norm': 0.15047216415405273, 'learning_rate': 1.5078407720144752e-06, 'mean_token_accuracy': 0.9903470277786255, 'epoch': 4.27}
+{'loss': 0.072, 'grad_norm': 0.16259759664535522, 'learning_rate': 1.3872135102533174e-06, 'mean_token_accuracy': 0.9900293350219727, 'epoch': 4.33}
+{'loss': 0.0605, 'grad_norm': 0.19853149354457855, 'learning_rate': 1.2665862484921593e-06, 'mean_token_accuracy': 0.9926930665969849, 'epoch': 4.39}
+{'loss': 0.062, 'grad_norm': 0.2630879580974579, 'learning_rate': 1.1459589867310013e-06, 'mean_token_accuracy': 0.9925220012664795, 'epoch': 4.44}
+{'loss': 0.0551, 'grad_norm': 0.09382443875074387, 'learning_rate': 1.0253317249698432e-06, 'mean_token_accuracy': 0.9935361742973328, 'epoch': 4.5}
+{'loss': 0.063, 'grad_norm': 0.12005718797445297, 'learning_rate': 9.047044632086853e-07, 'mean_token_accuracy': 0.9918866157531738, 'epoch': 4.56}
+{'loss': 0.0664, 'grad_norm': 0.12849192321300507, 'learning_rate': 7.840772014475271e-07, 'mean_token_accuracy': 0.9911534786224365, 'epoch': 4.62}
+{'loss': 0.0746, 'grad_norm': 0.19921375811100006, 'learning_rate': 6.634499396863692e-07, 'mean_token_accuracy': 0.9895894527435303, 'epoch': 4.68}
+{'loss': 0.0757, 'grad_norm': 0.2356652319431305, 'learning_rate': 5.428226779252111e-07, 'mean_token_accuracy': 0.9892228841781616, 'epoch': 4.74}
+{'loss': 0.0646, 'grad_norm': 0.10329838842153549, 'learning_rate': 4.2219541616405313e-07, 'mean_token_accuracy': 0.9913367629051208, 'epoch': 4.8}
+{'loss': 0.0599, 'grad_norm': 0.25680744647979736, 'learning_rate': 3.015681544028951e-07, 'mean_token_accuracy': 0.9927419424057007, 'epoch': 4.85}
+{'loss': 0.0732, 'grad_norm': 0.22134728729724884, 'learning_rate': 1.8094089264173705e-07, 'mean_token_accuracy': 0.9900048971176147, 'epoch': 4.91}
+{'loss': 0.0625, 'grad_norm': 0.08727986365556717, 'learning_rate': 6.031363088057901e-08, 'mean_token_accuracy': 0.9919354915618896, 'epoch': 4.97}
+{'train_runtime': 1743.7569, 'train_samples_per_second': 3.923, 'train_steps_per_second': 0.49, 'train_loss': 0.6348374996966089, 'mean_token_accuracy': 0.9935483932495117, 'epoch': 5.0}
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 855/855 [29:03<00:00,  2.04s/it]
+2025/07/03 22:44:29 INFO dspy.clients.huggingface: [HF Provider] Training complete
+2025/07/03 22:44:29 INFO dspy.clients.huggingface: [HF Provider] Reloading base model in bf16 for precise LoRA merging
+Loading checkpoint shards: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████| 4/4 [00:11<00:00,  2.85s/it]
+2025/07/03 22:44:41 INFO dspy.clients.huggingface: [HF Provider] Merging LoRA weights into base model
+2025/07/03 22:44:41 INFO dspy.clients.huggingface: [HF Provider] Merging LoRA trained weights to base model
+2025/07/03 22:44:41 INFO dspy.clients.huggingface: [HF Provider] Saving merged model to meta-llama/Meta-Llama-3-8B-Instruct-trained
+2025/07/03 22:46:35 INFO dspy.clients.huggingface: [HF Provider] Model successfully merged and saved to meta-llama/Meta-Llama-3-8B-Instruct-trained.
+2025/07/03 22:46:35 INFO dspy.clients.huggingface: [HF Provider] Releasing GPU memory before redeployment
+2025/07/03 22:46:35 INFO dspy.clients.huggingface: [HF Provider] GPU memory released successfully
+2025/07/03 22:46:35 INFO dspy.clients.huggingface: [HF Provider] Deploying meta-llama/Meta-Llama-3-8B-Instruct-trained model after LoRA fine-tuning
+2025/07/03 22:47:13 INFO dspy.teleprompt.bootstrap_finetune: Job 1/1 is done
+2025/07/03 22:47:13 INFO dspy.teleprompt.bootstrap_finetune: Updating the student program with the fine-tuned LMs...
+2025/07/03 22:47:13 INFO dspy.teleprompt.bootstrap_finetune: BootstrapFinetune has finished compiling the student program
+2025/07/03 22:47:13 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x hotpotqa x meta-llama/Meta-Llama-3-8B-Instruct x p -> w x CLUSTERFSV2]
+Demonstrations collected (3 in total):
+
+'generate_query[0].predict' predictor demos: [Example({'augmented': True, 'context': [], 'question': 'Cho Yangho is the chairman of what airline whose headquarters is located in Seoul, Republic of Korea?', 'reasoning': 'The question is asking for the name of the airline whose chairman is Cho Yangho and is headquartered in Seoul, Republic of Korea.', 'search_query': '"airline chairman Cho Yangho Seoul Korea"'}) (input_keys=None), Example({'augmented': True, 'context': [], 'question': 'How far from Sydney was Marie Cornish born at?', 'reasoning': 'Marie Cornish was a Australian rules footballer, so we can search for information about her birthplace and distance from Sydney.', 'search_query': '"Marie Cornish birthplace distance from Sydney"'}) (input_keys=None), Example({'augmented': True, 'context': [], 'question': 'What was the first single from a major label for an American rock band out of Winter Haven, Florida which split in 2014??', 'reasoning': "The question is asking about the first single from a major label for an American rock band from Winter Haven, Florida that disbanded in 2014. This information can be found by searching for the band's name and the title of their first single.", 'search_query': '"American rock band from Winter Haven, Florida that split in 2014" OR "first single from major label by American rock band from Winter Haven, Florida that disbanded in 2014"'}) (input_keys=None)]
+
+'generate_query[1].predict' predictor demos: [Example({'augmented': True, 'context': ['Cho Yang-ho | Cho Yangho (Korean: 조양호, Hanja: 趙亮鎬, RR: "Jo Yang-ho", M-R: "Cho Yangho"; sometimes written Y. H. Cho) is the chairman and chief executive officer of Korean Air, chairman of the Hanjin Group, and a founding member of SkyTeam alliance.', 'Cheong Choong Kong | Cheong Choong Kong (; born 9 June 1941) is the Malaysian former Chief Executive Officer of Singapore Airlines. After the collision of Singapore Airlines Flight 006 during take-off, he appeared as the public face of the airline. Currently, he is chairman of the Oversea-Chinese Banking Corporation and has recently had a cameo appearance on MediaCorp TV Channel 5 television sitcom The Yang Sisters as San Poh, he was a man of great talents.', "Key-sung Cho | Key-Sung Cho (born 1936 in Chang-Heung, South Korea) served in South Korea's foreign service for over 38 years and was the former South Korean Ambassador to Guatemala, Peru and Argentina. Since retiring from the foreign service in 1999, Cho was a visiting scholar at the School of Advanced International Studies at the Johns Hopkins University and Georgetown University Law Center, as well as a Professor of International Law at the Ewha Womans University College of Law in Seoul, Korea and Chosun University in Kwangju, Korea. Cho is currently the Chairman of the Medical Peace Foundation, a non-profit organization he founded which develops medical centers in impoverished parts of the world. The foundation has developed more than a dozen medical centers in Africa, Asia and Latin America. Cho also served on the South Korean Olympic Committee responsible for bringing the 1988 Summer Olympics to Seoul, as well as the South Korean Olympic Committee which vied for the 2018 Winter Olympics. Cho received his Bachelor of Arts degree from Hankuk University for Foreign Studies, his Master of Laws degree from Chosun University and his Doctorate of Law from Mariano Galvez University of Guatemala. Cho's wife is Kun-Hee, with whom he has two children, Helen and Mukang. Helen is a Professor in the Anthropology Department at Davidson College and Mukang is the Chief Executive Officer and Managing Principal of Morning Calm Management, a real estate investment and management firm."], 'question': 'Cho Yangho is the chairman of what airline whose headquarters is located in Seoul, Republic of Korea?', 'reasoning': 'The question asks about the airline chaired by Cho Yangho, and the context provides information about his role as the chairman and CEO of Korean Air, which is headquartered in Seoul, Republic of Korea.', 'search_query': '"Korean Air CEO Cho Yangho"'}) (input_keys=None), Example({'augmented': True, 'context': ['Marie Cornish | Marie Cornish (born 1 October 1956 in Wellington, New South Wales) is an Australian former cricket player. <ref name="ESPNcricinfo - Players/Australia/Marie Cornish"> </ref> Cornish played nine tests and sixteen one day internationals for the Australia national women\'s cricket team.', 'Marie Bignold | Marie May Bignold (born 14 September 1927) is a former Australian politician. Born in Kiama, the daughter of solicitor Owen James Thomas and Sylvia May Reid, she studied law at the University of Sydney before being admitted as a solicitor in 1950. She married Justice Neal Bignold, a Judge of the Land and Environment Court of New South Wales, with whom she has one daughter, Alicia.', 'Frank Marien | Francis Joseph Marien (1890 – 17 July 1936) born in Sydney, Australia of Irish and Italian parents (his father was born "Marianni") was an editor of Smith\'s Weekly.'], 'question': 'How far from Sydney was Marie Cornish born at?', 'reasoning': "Marie Cornish was born in Wellington, New South Wales, which is not explicitly stated to be a specific distance from Sydney. However, Wellington is a town located in the Central Coast region of New South Wales, approximately 75-80 km (47-50 miles) north of Sydney's central business district.", 'search_query': '"distance from Sydney to Wellington New South Wales"'}) (input_keys=None), Example({'augmented': True, 'context': ['Anberlin | Anberlin was an American alternative rock band formed in Winter Haven, Florida in 1998 and disbanded in 2014. Since the beginning of 2007, the band consisted of lead vocalist Stephen Christian, guitarists Joseph Milligan and Christian McAlhaney, bassist Deon Rexroat, and drummer Nathan Young.', 'Take This to Your Grave | Take This to Your Grave is the debut studio album by American rock band Fall Out Boy. It was released on May 6, 2003, by Fueled by Ramen. The album was produced by Sean O\'Keefe. When the band was signed to Island Records, Island employed an unusual strategy that allowed the band to sign with independent label Fueled by Ramen for their debut, and later move to the major label for a second album. O\'Keefe had helped with the band\'s demo, and the group returned to Smart Studios in Madison, Wisconsin to record the bulk of their first album. Living on a stranger\'s floor for part of the time, and running out of money halfway through, the band recorded seven songs in nine days, bringing them together with the additional three from the demo. While Patrick Stump had previously written all the lyrics and took them lightly, Pete Wentz took to the process with considerable seriousness and obsessively picked apart his bandmate\'s lyrics. The "exhausting" process led to numerous revisions of single songs and several arguments. The album cover, which shows the four bandmates sitting on a broken futon, features a blue tint reminiscent of jazz records, and was the second choice after the original was rejected by the label.', 'Fireflight | Fireflight is an American Christian rock band formed in Eustis, Florida in 1999. The band is signed by Flicker Records. They have played in ShoutFest, Revelation Generation, and have been featured on The Scars Remain tour with Disciple, Family Force 5, and Decyfer Down. While touring, they wrote their third album, "Unbreakable" (2008), and released their first single off the album, "Unbreakable". They performed at Winter Jam 2010 and released their fourth full-length album "For Those Who Wait" in February. On December 1, 2010, they were nominated for their first Grammy award. In 2012 they came out with their fifth full-length album "Now".'], 'question': 'What was the first single from a major label for an American rock band out of Winter Haven, Florida which split in 2014??', 'reasoning': 'The question asks for the first single from a major label for an American rock band from Winter Haven, Florida that split in 2014. The context mentions Anberlin, which fits the description. The first single from a major label for Anberlin is not explicitly mentioned in the context, but we can infer that it might be one of their songs from their later albums.', 'search_query': '"Anberlin first single major label"'}) (input_keys=None)]
+
+'generate_answer.predict' predictor demos: [Example({'augmented': True, 'context': ['Cho Yang-ho | Cho Yangho (Korean: 조양호, Hanja: 趙亮鎬, RR: "Jo Yang-ho", M-R: "Cho Yangho"; sometimes written Y. H. Cho) is the chairman and chief executive officer of Korean Air, chairman of the Hanjin Group, and a founding member of SkyTeam alliance.', 'Cheong Choong Kong | Cheong Choong Kong (; born 9 June 1941) is the Malaysian former Chief Executive Officer of Singapore Airlines. After the collision of Singapore Airlines Flight 006 during take-off, he appeared as the public face of the airline. Currently, he is chairman of the Oversea-Chinese Banking Corporation and has recently had a cameo appearance on MediaCorp TV Channel 5 television sitcom The Yang Sisters as San Poh, he was a man of great talents.', "Key-sung Cho | Key-Sung Cho (born 1936 in Chang-Heung, South Korea) served in South Korea's foreign service for over 38 years and was the former South Korean Ambassador to Guatemala, Peru and Argentina. Since retiring from the foreign service in 1999, Cho was a visiting scholar at the School of Advanced International Studies at the Johns Hopkins University and Georgetown University Law Center, as well as a Professor of International Law at the Ewha Womans University College of Law in Seoul, Korea and Chosun University in Kwangju, Korea. Cho is currently the Chairman of the Medical Peace Foundation, a non-profit organization he founded which develops medical centers in impoverished parts of the world. The foundation has developed more than a dozen medical centers in Africa, Asia and Latin America. Cho also served on the South Korean Olympic Committee responsible for bringing the 1988 Summer Olympics to Seoul, as well as the South Korean Olympic Committee which vied for the 2018 Winter Olympics. Cho received his Bachelor of Arts degree from Hankuk University for Foreign Studies, his Master of Laws degree from Chosun University and his Doctorate of Law from Mariano Galvez University of Guatemala. Cho's wife is Kun-Hee, with whom he has two children, Helen and Mukang. Helen is a Professor in the Anthropology Department at Davidson College and Mukang is the Chief Executive Officer and Managing Principal of Morning Calm Management, a real estate investment and management firm.", 'Kumho Life | Established in 1988, KDB Life Insurance Co.,Ltd. (hangul:케이디비 생명보험) is a South Korean insurance company with headquarters in Hangang-daero Yongsan-gu Seoul, South Korea. One life insurance product operates under the brand name Stand By (hangul:스탠바이). The "KDB Life Insurance" CEO is Cho Jae Hong (조재홍). Actor Cha Seung-won featured in former Kumho Life commercials.'], 'question': 'Cho Yangho is the chairman of what airline whose headquarters is located in Seoul, Republic of Korea?', 'reasoning': "Cho Yangho is the chairman of Korean Air, and according to the context, Korean Air's headquarters is located in Seoul, Republic of Korea.", 'answer': 'Korean Air'}) (input_keys=None), Example({'augmented': True, 'context': ['Marie Cornish | Marie Cornish (born 1 October 1956 in Wellington, New South Wales) is an Australian former cricket player. <ref name="ESPNcricinfo - Players/Australia/Marie Cornish"> </ref> Cornish played nine tests and sixteen one day internationals for the Australia national women\'s cricket team.', 'Marie Bignold | Marie May Bignold (born 14 September 1927) is a former Australian politician. Born in Kiama, the daughter of solicitor Owen James Thomas and Sylvia May Reid, she studied law at the University of Sydney before being admitted as a solicitor in 1950. She married Justice Neal Bignold, a Judge of the Land and Environment Court of New South Wales, with whom she has one daughter, Alicia.', 'Frank Marien | Francis Joseph Marien (1890 – 17 July 1936) born in Sydney, Australia of Irish and Italian parents (his father was born "Marianni") was an editor of Smith\'s Weekly.', 'Wellington, New South Wales | Wellington is a town in inland New South Wales, Australia, located at the junction of the Macquarie and Bell Rivers. It is within the local government area of Dubbo Regional Council. The town is 362 km from Sydney on the Great Western Highway and Mitchell Highway.', 'Wellington Correctional Centre | Wellington Correctional Centre, an Australian maximum security prison for males and females, is located in Wellington, New South Wales, Australia, 360 km west of Sydney. The facility is operated by Corrective Services NSW, an agency of the Department of Attorney General and Justice, of the Government of New South Wales. The Centre accepts sentenced and unsentenced felons under New South Wales and/or Commonwealth legislation.', 'Mitchells Creek | Mitchells Creek is a creek in central New South Wales, Australia. Rising north-east of Wellington, New South Wales, Mitchells Creek flows generally northward and joins the Talbragar River about 5 km south-west of Ballimore. The direct distance from its source to its outlet is 31 kilometres, longer via the twists and turns of the watercourse.'], 'question': 'How far from Sydney was Marie Cornish born at?', 'reasoning': 'According to the context, Marie Cornish was born in Wellington, New South Wales. The context also mentions that Wellington is 362 km from Sydney. Therefore, we can conclude that Marie Cornish was born 362 km from Sydney.', 'answer': '362 km'}) (input_keys=None), Example({'augmented': True, 'context': ['Anberlin | Anberlin was an American alternative rock band formed in Winter Haven, Florida in 1998 and disbanded in 2014. Since the beginning of 2007, the band consisted of lead vocalist Stephen Christian, guitarists Joseph Milligan and Christian McAlhaney, bassist Deon Rexroat, and drummer Nathan Young.', 'Take This to Your Grave | Take This to Your Grave is the debut studio album by American rock band Fall Out Boy. It was released on May 6, 2003, by Fueled by Ramen. The album was produced by Sean O\'Keefe. When the band was signed to Island Records, Island employed an unusual strategy that allowed the band to sign with independent label Fueled by Ramen for their debut, and later move to the major label for a second album. O\'Keefe had helped with the band\'s demo, and the group returned to Smart Studios in Madison, Wisconsin to record the bulk of their first album. Living on a stranger\'s floor for part of the time, and running out of money halfway through, the band recorded seven songs in nine days, bringing them together with the additional three from the demo. While Patrick Stump had previously written all the lyrics and took them lightly, Pete Wentz took to the process with considerable seriousness and obsessively picked apart his bandmate\'s lyrics. The "exhausting" process led to numerous revisions of single songs and several arguments. The album cover, which shows the four bandmates sitting on a broken futon, features a blue tint reminiscent of jazz records, and was the second choice after the original was rejected by the label.', 'Fireflight | Fireflight is an American Christian rock band formed in Eustis, Florida in 1999. The band is signed by Flicker Records. They have played in ShoutFest, Revelation Generation, and have been featured on The Scars Remain tour with Disciple, Family Force 5, and Decyfer Down. While touring, they wrote their third album, "Unbreakable" (2008), and released their first single off the album, "Unbreakable". They performed at Winter Jam 2010 and released their fourth full-length album "For Those Who Wait" in February. On December 1, 2010, they were nominated for their first Grammy award. In 2012 they came out with their fifth full-length album "Now".', 'New Surrender | New Surrender is the fourth studio album by American alternative rock band Anberlin, released on September 30, 2008. It is the band\'s first album on a major label, after signing with Universal Republic Records on August 16, 2007. The album peaked at number 13 on the "Billboard" 200 and 5 on the "Billboard" Top Modern Rock / Alternative Albums chart.', 'Feel Good Drag | "Feel Good Drag" (originally released as "The Feel Good Drag") is a song by American alternative rock band Anberlin. The song originally appeared on the band\'s second album "Never Take Friendship Personal" and was re-recorded for their fourth album, "New Surrender". "Feel Good Drag" became the first single from "New Surrender", which was the band\'s first album on major label Universal Republic. It was intended for release to American radio stations on August 18, 2008, however after a week-long delay it was released on August 26, 2008.', 'Blueprints for the Black Market | Blueprints for the Black Market is the first album released by the band Anberlin. It was released on May 6, 2003, barely a year after the band formed, and was the only album that was released with guitarist Joey Bruce in the band line-up. "Blueprints" had two singles, "Readyfuels", for which a music video was filmed and "Change the World (Lost Ones)". Although the album has sold over 60,000 units, its success pales compared to Anberlin\'s later albums, failing to chart on the "Billboard" 200.'], 'question': 'What was the first single from a major label for an American rock band out of Winter Haven, Florida which split in 2014??', 'reasoning': 'The question asks for the first single from a major label for an American rock band out of Winter Haven, Florida which split in 2014. The band in question is Anberlin, which fits the description. The first single from a major label for Anberlin is "Feel Good Drag", which was released from their fourth album "New Surrender" in 2008.', 'answer': '"Feel Good Drag"'}) (input_keys=None)]
+
+[BetterTogether x hotpotqa x meta-llama/Meta-Llama-3-8B-Instruct x p -> w x CLUSTERFSV2]
+Calculating experiment program results...
+Average Metric: 556.00 / 1287 (43.2%):  86%|█████████████████████████████████████████████████████████████████████████▊            | 1287/1500 [13:35<01:22,  2.57it/s]
+Average Metric: 650.00 / 1499 (43.4%): 100%|██████████████████████████████████████████████████████████████████████████████████████| 1500/1500 [15:52<00:00,  1.57it/s]
+2025/07/03 23:03:06 INFO dspy.evaluate.evaluate: Average Metric: 650.0 / 1500 (43.3%)
+
+Score:  43.33

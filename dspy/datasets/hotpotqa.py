@@ -2,6 +2,10 @@ import random
 
 from dspy.datasets.dataset import Dataset
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class HotPotQA(Dataset):
     def __init__(
@@ -41,7 +45,12 @@ class HotPotQA(Dataset):
 
                 official_train.append(example)
 
-        rng = random.Random(0)
+        import time
+        seed = int(time.time())
+
+        logger.info(f"HotPotQA training/test seed: {seed}")
+
+        rng = random.Random(seed)
         rng.shuffle(official_train)
 
         self._train = official_train[: len(official_train) * 75 // 100]
@@ -64,6 +73,7 @@ class HotPotQA(Dataset):
                 del example["supporting_facts"]
             test.append(example)
 
+        rng.shuffle(test)
         self._test = test
 
 

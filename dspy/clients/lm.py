@@ -13,6 +13,8 @@ import dspy
 from dspy.clients.cache import request_cache
 from dspy.clients.openai import OpenAIProvider
 from dspy.clients.provider import Provider, ReinforceJob, TrainingJob
+from dspy.clients.huggingface import HFProvider
+from dspy.clients.provider import Provider, TrainingJob
 from dspy.clients.utils_finetune import TrainDataFormat
 from dspy.dsp.utils.settings import settings
 from dspy.utils.callback import BaseCallback
@@ -155,8 +157,12 @@ class LM(BaseLM):
             completion = litellm_responses_completion
         completion, litellm_cache_args = self._get_cached_completion_fn(completion, cache)
 
+        model_name = self.model[:-8] if self.model.endswith("-trained") else self.model
+        openai_prefix = "openai/"
+        model_prefix = openai_prefix if model_name in dspy.clients.huggingface._HF_MODELS and openai_prefix not in model_name else ""
+
         results = completion(
-            request=dict(model=self.model, messages=messages, **kwargs),
+            request=dict(model=f"{model_prefix}{self.model}", messages=messages, **kwargs),
             num_retries=self.num_retries,
             cache=litellm_cache_args,
         )
@@ -274,6 +280,8 @@ class LM(BaseLM):
     def infer_provider(self) -> Provider:
         if OpenAIProvider.is_provider_model(self.model):
             return OpenAIProvider()
+        if HFProvider.is_provider_model(self.model):
+            return HFProvider()
         return Provider()
 
     def dump_state(self):

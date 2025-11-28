@@ -13,6 +13,8 @@ from dspy.teleprompt.bootstrap_finetune import (
     prepare_student,
 )
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
+from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.teleprompt import Teleprompter
 
 logger = logging.getLogger(__name__)
@@ -40,12 +42,14 @@ class BetterTogether(Teleprompter):
         self.prompt_optimizer = prompt_optimizer if prompt_optimizer else BootstrapFewShotWithRandomSearch(metric=metric)
         self.weight_optimizer = weight_optimizer if weight_optimizer else BootstrapFinetune(metric=metric)
 
-        is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch)
+        is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch) \
+            or isinstance(self.prompt_optimizer, MIPROv2) \
+            or isinstance(self.prompt_optimizer, ClusterFewshot)
         is_supported_weight = isinstance(self.weight_optimizer, BootstrapFinetune)
         if not is_supported_prompt or not is_supported_weight:
             raise ValueError(
                 "The BetterTogether optimizer only supports the following optimizers for now: BootstrapFinetune, "
-                "BootstrapFewShotWithRandomSearch."
+                "BootstrapFewShotWithRandomSearch, ClusterFewshot, and MIPROv2"
             )
 
         self.rng = random.Random(seed)
@@ -128,9 +132,20 @@ class BetterTogether(Teleprompter):
         # Sampling a validation set from the trainset for the prompt optimizer
         # We drop the hints for prompt optimization
         trainset = [x.with_inputs(*list(set(x.inputs().keys()) - {"hint"})) for x in trainset]
-        num_val = int(valset_ratio * len(trainset))
-        prompt_valset = trainset[:num_val]
-        prompt_trainset = trainset[num_val:]
+
+        # according to BetterTogether papers, 100 and 250 were sub-sampled for training/validation
+        # from the original training set for prompts optimization on GSM8K/HotPotQA.
+        # For Iris, 15 and 35 were sub-sampled for training/validation.
+        logger.info(f"trainset size: {len(trainset)}")
+        if len(trainset) > 50:
+            num_train = 100
+            num_val = 250
+        else:
+            num_train = 15
+            num_val = 35
+
+        prompt_trainset = trainset[:num_train]
+        prompt_valset = trainset[num_train:num_train + num_val]
 
         # TODO: To make this optimizer general, we need to ensure that all the
         # prompt optimizers are accepting a valset or encode a way to check if

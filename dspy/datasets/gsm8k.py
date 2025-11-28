@@ -2,6 +2,9 @@ import random
 
 import tqdm
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class GSM8K:
     def __init__(self):
@@ -38,14 +41,19 @@ class GSM8K:
 
             official_test.append({"question": question, "gold_reasoning": gold_reasoning, "answer": answer})
 
-        rng = random.Random(0)
+        import time
+        seed = int(time.time())
+
+        logger.info(f"GSM8K training set seed: {seed}")
+
+        rng = random.Random(seed)
         rng.shuffle(official_train)
 
         rng = random.Random(0)
         rng.shuffle(official_test)
 
-        trainset = official_train[:200]
-        devset = official_train[200:500]
+        trainset = official_train[:]
+        devset = official_train[:]
         testset = official_test[:]
 
         import dspy
