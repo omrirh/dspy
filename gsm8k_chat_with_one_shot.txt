@@ -1,0 +1,58 @@
+Role - system:
+-------------
+Your input fields are:
+1. `question` (str)
+
+Your output fields are:
+1. `reasoning` (str)
+2. `answer` (str)
+
+All interactions will be structured in the following way, with the appropriate values filled in.
+
+[[ ## question ## ]]
+{question}
+
+[[ ## reasoning ## ]]
+{reasoning}
+
+[[ ## answer ## ]]
+{answer}
+
+[[ ## completed ## ]]
+
+In adhering to this structure, your objective is:
+        Given the fields `question`, produce the fields `answer`.
+
+Role - user (one-shot question):
+-------------------------------
+[[ ## question ## ]]
+Annie goes to school. Today is her birthday, so Annie decided to buy some sweets for her colleagues.
+Every classmate got 2 candies. In the end, Annie got left with 12 candies.
+If there are 35 people in Annie's class in total, how much did Annie spend on candies, if one candy costs $0.1?
+
+Respond with the corresponding output fields, starting with the field `[[ ## reasoning ## ]]`,
+then `[[ ## answer ## ]]`, and then ending with the marker for `[[ ## completed ## ]]`.
+
+Role - assistant (one-shot reasoning + answer):
+-----------------------------------------------
+[[ ## reasoning ## ]]
+Annie started with some candies and gave 2 candies to each of her 35 classmates.
+Since she was left with 12 candies, she must have given away 35 * 2 = 70 candies.
+So, she gave away 70 candies and was left with 12. This means she had 70 + 12 = 82 candies initially.
+Since each candy costs $0.1, she spent 82 * 0.1 = 8.2 dollars.
+
+[[ ## answer ## ]]
+8.2
+
+[[ ## completed ## ]]
+
+Role - user (actual question):
+------------------------------
+[[ ## question ## ]]
+Michelle is bringing sandwiches to work to give to her co-workers.
+She gives 4 sandwiches to one of her co-workers and keeps twice this amount for herself.
+If she had originally made 20 sandwiches, how many sandwiches does she have left to give to her other co-workers?
+
+Respond with the corresponding output fields, starting with the field `[[ ## reasoning ## ]]`,
+then `[[ ## answer ## ]]`, and then ending with the marker for `[[ ## completed ## ]]`.
+
