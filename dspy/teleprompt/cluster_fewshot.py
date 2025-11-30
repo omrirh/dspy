@@ -445,7 +445,7 @@ class ClusterFewshot(Teleprompter):
         for (_, predictor), demos in zip(student.named_predictors(), cached_demos):
             predictor.demos = demos
 
-        return student_score
+        return student_score.score  # DSPy 3.0 supports only EvaluationResult objects with score attribute.
 
     def collect_fewshot_subsets(self):
         """
@@ -539,7 +539,8 @@ class ClusterFewshot(Teleprompter):
                     ex for demo in fewshot_subset for ex in demo[name]
                 ]
 
-            fewshot_subset_score = evaluator(student)
+            fewshot_subset_score = evaluator(
+                student).score  # DSPy 3.0 supports only EvaluationResult objects with score attribute.
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
             logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% "
                         f"on the validation set with {len(fewshot_subset)} demonstrations.")
