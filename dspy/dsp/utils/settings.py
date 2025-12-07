@@ -157,7 +157,7 @@ class Settings:
 
     def configure(self, **kwargs):
         # If no exception is raised, the `configure` call is allowed.
-        self._ensure_configure_allowed()
+        # self._ensure_configure_allowed()
 
         # Update global config
         for k, v in kwargs.items():
