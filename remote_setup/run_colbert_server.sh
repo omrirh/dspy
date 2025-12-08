@@ -48,6 +48,9 @@ uv tool install colbert-server
 # Ensure uv-installed binaries are on PATH for this shell
 export PATH="$HOME/.local/share/uv/tools/colbert-server/bin:$PATH"
 
+# Ensure colbert-server is ready for running
+colbert-server doctor
+
 #############################################
 # 4. Prepare assets folder
 #############################################
@@ -73,5 +76,5 @@ nohup env CUDA_VISIBLE_DEVICES=$GPU_DEVICE colbert-server serve \
     --port "$PORT" \
     > "$LOGFILE" 2>&1 &
 
-echo "[INFO] colbert-server started in background."
-echo "[INFO] Tail logs using: tail -f $LOGFILE"
+echo "[INFO] colbert-server started."
+tail -f "$LOGFILE"
