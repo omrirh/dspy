@@ -60,8 +60,7 @@ mkdir -p "$ASSETS_DIR"
 #############################################
 # 5. Run colbert-server in nohup sticky mode
 #############################################
-GPU_DEVICE=1
-echo "[INFO] Starting colbert-server on GPU $GPU_DEVICE..."
+echo "[INFO] Starting colbert-server"
 echo "[INFO] Logs will be written to: $LOGFILE"
 
 # Kill any existing colbert-server on this port (optional)
@@ -70,7 +69,7 @@ if lsof -iTCP:$PORT -sTCP:LISTEN >/dev/null 2>&1; then
     kill -9 "$(lsof -t -i:$PORT)"
 fi
 
-nohup env CUDA_VISIBLE_DEVICES=$GPU_DEVICE colbert-server serve \
+nohup colbert-server serve \
     --download-archives "$ASSETS_DIR" \
     --extract \
     --port "$PORT" \
