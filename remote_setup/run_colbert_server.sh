@@ -69,7 +69,7 @@ if lsof -iTCP:$PORT -sTCP:LISTEN >/dev/null 2>&1; then
     kill -9 "$(lsof -t -i:$PORT)"
 fi
 
-nohup colbert-server serve \
+CUDA_VISIBLE_DEVICES="" nohup colbert-server serve \
     --download-archives "$ASSETS_DIR" \
     --extract \
     --port "$PORT" \
