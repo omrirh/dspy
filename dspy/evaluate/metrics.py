@@ -2,6 +2,7 @@
 
 import re
 import string
+import inspect
 import unicodedata
 from collections import Counter
 
@@ -346,3 +347,22 @@ def answer_passage_match(example, pred, trace=None):
         return _passage_match(pred.context, example.answer)
 
     raise ValueError(f"Invalid answer type: {type(example.answer)}")
+
+
+def as_gepa_metric(metric_fn):
+    sig = inspect.signature(metric_fn)
+    accepts_trace = "trace" in sig.parameters
+
+    def gepa_metric(
+        gold,
+        pred,
+        trace=None,
+        pred_name=None,
+        pred_trace=None,
+    ):
+        # Keep underlying metric behavior; just forward trace if it supports it.
+        if accepts_trace:
+            return metric_fn(gold, pred, trace=trace)
+        return metric_fn(gold, pred)
+
+    return gepa_metric

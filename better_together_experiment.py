@@ -1,6 +1,7 @@
 import time
 import dspy
 from dspy.evaluate import Evaluate
+from dspy.teleprompt.gepa import GEPA
 from programs import CoT, BasicMH, IrisProgram
 from dspy.datasets import HotPotQA, IrisDataset
 from remote_setup.utils import assign_local_lm
@@ -132,16 +133,18 @@ def main(dataset, prompt_optimizer, strategy, model):
         prompt_optimizer = MIPROv2(
             metric=metric,
             auto="medium",
-            # TODO: should we add num_threads=6?
+            max_bootstrapped_demos=3,
+            max_labeled_demos=3,
+            num_threads=6,
         )
 
     if prompt_optimizer_name == "gepa":
-        prompt_optimizer = dspy.GEPA(
-            metric=metric,
-            auto="medium",
+        prompt_optimizer = GEPA(
+            metric=dspy.evaluate.as_gepa_metric(metric),
+            auto="light",
             reflection_lm=lm,
             instruction_proposer=None,
-            # TODO: should we add num_threads=6?
+            num_threads=6,
         )
 
     better_together = BetterTogether(

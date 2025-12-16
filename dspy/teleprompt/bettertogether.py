@@ -16,6 +16,7 @@ from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 from dspy.teleprompt.cluster_fewshot import ClusterFewshot
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.teleprompt import Teleprompter
+from dspy.teleprompt.gepa import GEPA
 
 logger = logging.getLogger(__name__)
 
@@ -44,12 +45,13 @@ class BetterTogether(Teleprompter):
 
         is_supported_prompt = isinstance(self.prompt_optimizer, BootstrapFewShotWithRandomSearch) \
             or isinstance(self.prompt_optimizer, MIPROv2) \
-            or isinstance(self.prompt_optimizer, ClusterFewshot)
+            or isinstance(self.prompt_optimizer, ClusterFewshot) \
+            or isinstance(self.prompt_optimizer, GEPA)
         is_supported_weight = isinstance(self.weight_optimizer, BootstrapFinetune)
         if not is_supported_prompt or not is_supported_weight:
             raise ValueError(
                 "The BetterTogether optimizer only supports the following optimizers for now: BootstrapFinetune, "
-                "BootstrapFewShotWithRandomSearch, ClusterFewshot, and MIPROv2"
+                "BootstrapFewShotWithRandomSearch, ClusterFewshot, MIPROv2 and GEPA"
             )
 
         self.rng = random.Random(seed)
