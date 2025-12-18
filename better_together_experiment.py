@@ -144,7 +144,6 @@ def main(dataset, prompt_optimizer, strategy, model):
             auto="light",
             reflection_lm=lm,
             instruction_proposer=None,
-            reflection_minibatch_size=10,
             num_threads=6,
         )
 
