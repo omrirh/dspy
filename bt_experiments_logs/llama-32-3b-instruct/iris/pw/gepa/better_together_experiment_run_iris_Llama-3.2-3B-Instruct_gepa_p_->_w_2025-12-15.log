@@ -1,0 +1,2411 @@
+nohup: ignoring input
+2025/12/15 10:43:28 INFO dspy.datasets.iris: Iris dataset seed: 1765795408
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 2 - Strategy 'p' ##########
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: trainset size: 50
+2025/12/15 10:43:28 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/12/15 10:43:28 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 520 metric calls of the program. This amounts to 10.40 full evals on the train+val set.
+2025/12/15 10:43:28 INFO dspy.teleprompt.gepa.gepa: Using 35 examples for tracking Pareto scores. You can consider using a smaller sample of the valset to allow GEPA to explore more diverse solutions within the same budget. GEPA requires you to provide the smallest valset that is just large enough to match your downstream task distribution, while providing as large trainset as possible.
+
+GEPA Optimization:   0%|          | 0/520 [00:00<?, ?rollouts/s]2025/12/15 10:43:34 INFO dspy.evaluate.evaluate: Average Metric: 16 / 35 (45.7%)
+2025/12/15 10:43:34 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.45714285714285713 over 35 / 35 examples
+
+GEPA Optimization:   7%|▋         | 35/520 [00:06<01:30,  5.36rollouts/s]2025/12/15 10:43:34 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.45714285714285713
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.24it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.24it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.24it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.52it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.10it/s]2025/12/15 10:43:35 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:43:38 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for generate_answer.predict: ## Task: Predict Iris Species Based on Petal and Sepal Dimensions
+
+### Task Description
+Predict the Iris species (setosa, virginica, or versicolor) based on the given petal and sepal dimensions in centimeters.
+
+### Input Format
+The inputs should be provided in the following format:
+```markdown
+## Inputs
+### petal_length
+{value}
+
+### petal_width
+{value}
+
+### sepal_length
+{value}
+
+### sepal_width
+{value}
+```
+Where {value} is the actual petal and sepal dimension in cm.
+
+### Assumptions and Limitations
+The assistant's classification model is trained on the Iris dataset and is able to accurately predict the species based on the given dimensions. However, the classification model's performance may be affected by edge cases or outliers in the data.
+
+### Statistical Boundaries
+The predicted species is based on the statistical boundaries of the Iris dataset:
+- Setosa: petal length > 1.5 cm, petal width < 1 cm, sepal length < 5 cm, sepal width < 2.5 cm
+- Virginica: petal length > 1.5 cm, petal width > 1 cm, sepal length > 5 cm, sepal width > 2.5 cm
+- Versicolor: petal length > 1 cm, petal width > 1 cm, sepal length > 5 cm, sepal width > 2.5 cm
+
+### Classification Model
+The assistant's classification model is able to predict the species based on the given dimensions. However, the accuracy of the prediction may depend on the specific implementation of the model and the quality of the training data.
+
+### Output Format
+The predicted species should be provided in the following format:
+```markdown
+### answer
+{species} (e.g. setosa, virginica, versicolor)
+```
+Where {species} is the predicted Iris species.
+
+### Feedback
+The assistant's performance on this task will be evaluated based on the accuracy of the predicted species and the feedback provided.
+
+### Additional Information
+This task is based on the Iris dataset, a classic multiclass classification problem. The dataset consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica, and Iris versicolor). The features are the length and width of the sepal and petals in cm, and the target variable is the species of the Iris flower.
+2025/12/15 10:43:40 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:43:40 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 0 is not better than old score 0, skipping
+
+GEPA Optimization:   8%|▊         | 41/520 [00:12<02:44,  2.91rollouts/s]2025/12/15 10:43:40 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:00,  3.22it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00,  3.22it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.24it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  4.24it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  6.06it/s]2025/12/15 10:43:41 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:43:45 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Proposed new text for generate_answer.predict: ## Task Instruction
+
+Predict the iris species based on the given petal and sepal dimensions.
+
+### Input Format
+
+The input should be a dictionary with the following keys:
+- `petal_length`: the length of the petal in centimeters
+- `petal_width`: the width of the petal in centimeters
+- `sepal_length`: the length of the sepal in centimeters
+- `sepal_width`: the width of the sepal in centimeters
+
+### Task Description
+
+The task is to classify the iris species into one of the three species: Setosa, Versicolor, or Virginica, based on the given petal and sepal dimensions. The dimensions should be compared to the characteristics of each species in the Iris dataset to determine the correct species.
+
+### Constraints
+
+- The petal length and width should be greater than zero.
+- The sepal length and width should be greater than zero.
+- The petal length and width should be less than or equal to the sepal length and width, respectively.
+- The petal length and width should be less than 10 cm.
+- The sepal length and width should be less than 7 cm.
+
+### Reasoning
+
+The reasoning for predicting the iris species is based on the petal and sepal dimensions. The dimensions should be compared to the characteristics of each species in the Iris dataset to determine the correct species.
+
+### Answer Format
+
+The answer should be in the format "Setosa", "Versicolor", or "Virginica", representing the predicted iris species.
+
+### Feedback
+
+The feedback should be based on the accuracy of the predicted species. A score of True indicates that the predicted species is correct, while a score of False indicates that the predicted species is incorrect.
+
+### Example Inputs
+
+- Example 1: `petal_length=4.5`, `petal_width=1.7`, `sepal_length=4.9`, `sepal_width=2.5` (predicted species: "Versicolor")
+- Example 2: `petal_length=1.5`, `petal_width=0.2`, `sepal_length=5.0`, `sepal_width=3.4` (predicted species: "Setosa")
+- Example 3: `petal_length=4.1`, `petal_width=1.0`, `sepal_length=5.8`, `sepal_width=2.7` (predicted species: "Setosa")
+
+### Notes
+
+- The Iris dataset is a multiclass classification problem, where each instance belongs to one of three classes: Setosa, Versicolor, or Virginica.
+- The characteristics of each species in the Iris dataset are as follows:
+  - Setosa: sepal length (4.3-5.1 cm), sepal width (2.7-3.5 cm), petal length (1.1-4.5 cm), petal width (0.1-1.3 cm)
+  - Versicolor: sepal length (5.1-7.0 cm), sepal width (2.1-3.5 cm), petal length (4.9-6.4 cm), petal width (2.1-4.5 cm)
+  - Virginica: sepal length (6.9-7.9 cm), sepal width (2.1-3.5 cm), petal length (6.9-7.9 cm), petal width (2.1-4.0 cm)
+2025/12/15 10:43:47 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:43:47 INFO dspy.teleprompt.gepa.gepa: Iteration 2: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:   9%|▉         | 47/520 [00:19<04:05,  1.93rollouts/s]2025/12/15 10:43:47 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.36it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.36it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.36it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  6.11it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  5.27it/s]2025/12/15 10:43:48 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:43:50 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+"""
+2025/12/15 10:43:51 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:43:51 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 10:43:58 INFO dspy.evaluate.evaluate: Average Metric: 7 / 35 (20.0%)
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Valset score for new program: 0.2 (coverage 35 / 35)
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Val aggregate for new program: 0.2
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Individual valset scores for new program: {0: True, 1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: False, 8: False, 9: False, 10: False, 11: False, 12: False, 13: True, 14: False, 15: False, 16: False, 17: False, 18: False, 19: False, 20: False, 21: True, 22: True, 23: False, 24: False, 25: False, 26: True, 27: False, 28: True, 29: False, 30: False, 31: False, 32: True, 33: False, 34: False}
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New valset pareto front scores: {0: True, 1: False, 2: False, 3: True, 4: True, 5: False, 6: False, 7: True, 8: False, 9: True, 10: True, 11: True, 12: True, 13: True, 14: False, 15: False, 16: False, 17: True, 18: True, 19: False, 20: False, 21: True, 22: True, 23: False, 24: False, 25: False, 26: True, 27: False, 28: True, 29: False, 30: True, 31: False, 32: True, 33: True, 34: True}
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Valset pareto front aggregate score: 0.5428571428571428
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Updated valset pareto front programs: {0: {0, 1}, 1: {0, 1}, 2: {0, 1}, 3: {0}, 4: {0}, 5: {0, 1}, 6: {0, 1}, 7: {0}, 8: {0, 1}, 9: {0}, 10: {0}, 11: {0}, 12: {0}, 13: {0, 1}, 14: {0, 1}, 15: {0, 1}, 16: {0, 1}, 17: {0}, 18: {0}, 19: {0, 1}, 20: {0, 1}, 21: {1}, 22: {0, 1}, 23: {0, 1}, 24: {0, 1}, 25: {0, 1}, 26: {0, 1}, 27: {0, 1}, 28: {1}, 29: {0, 1}, 30: {0}, 31: {0, 1}, 32: {1}, 33: {0}, 34: {0}}
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Best valset aggregate score so far: 0.45714285714285713
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Best program as per aggregate score on valset: 0
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Best score on valset: 0.45714285714285713
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Linear pareto front program index: 0
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New program candidate index: 1
+
+GEPA Optimization:  17%|█▋        | 88/520 [00:29<02:27,  2.92rollouts/s]2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 4: No merge candidates found
+2025/12/15 10:43:58 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Selected program 1 score: 0.2
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.18it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.18it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:01<00:00,  1.18it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:01<00:00,  3.04it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:01<00:00,  2.63it/s]2025/12/15 10:43:59 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:44:03 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+
+Classification Criteria for Setosa Species:
+- Optimal petal length range: (1, 4) cm
+- Optimal petal width range: (0.5, 2) cm
+- Optimal sepal length range: (3, 5) cm
+- Optimal sepal width range: (1.5, 4) cm
+
+Classification Criteria for Versicolor Species:
+- No specific numerical ranges are provided, however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm.
+
+Classification Criteria for Virginica Species:
+- Optimal petal length range: (4, 6) cm
+- Optimal petal width range: (2, 3.5) cm
+- Optimal sepal length range: (5.5, 7) cm
+- Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the Iris dataset.
+"""
+2025/12/15 10:44:04 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:44:04 INFO dspy.teleprompt.gepa.gepa: Iteration 4: New subsample score 2 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 10:44:12 INFO dspy.evaluate.evaluate: Average Metric: 20 / 35 (57.1%)
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Found a better program on the valset with score 0.5714285714285714.
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Valset score for new program: 0.5714285714285714 (coverage 35 / 35)
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Val aggregate for new program: 0.5714285714285714
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Individual valset scores for new program: {0: False, 1: False, 2: True, 3: True, 4: True, 5: False, 6: False, 7: True, 8: False, 9: True, 10: False, 11: False, 12: True, 13: False, 14: True, 15: True, 16: True, 17: False, 18: True, 19: False, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: False, 27: True, 28: False, 29: False, 30: True, 31: True, 32: True, 33: True, 34: False}
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: New valset pareto front scores: {0: True, 1: False, 2: True, 3: True, 4: True, 5: False, 6: False, 7: True, 8: False, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: False, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: False, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Valset pareto front aggregate score: 0.8
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Updated valset pareto front programs: {0: {0, 1}, 1: {0, 1, 2}, 2: {2}, 3: {0, 2}, 4: {0, 2}, 5: {0, 1, 2}, 6: {0, 1, 2}, 7: {0, 2}, 8: {0, 1, 2}, 9: {0, 2}, 10: {0}, 11: {0}, 12: {0, 2}, 13: {0, 1}, 14: {2}, 15: {2}, 16: {2}, 17: {0}, 18: {0, 2}, 19: {0, 1, 2}, 20: {2}, 21: {1, 2}, 22: {0, 1, 2}, 23: {2}, 24: {2}, 25: {0, 1, 2}, 26: {0, 1}, 27: {2}, 28: {1}, 29: {0, 1, 2}, 30: {0, 2}, 31: {2}, 32: {1, 2}, 33: {0, 2}, 34: {0}}
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Best program as per aggregate score on valset: 2
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Best score on valset: 0.5714285714285714
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Linear pareto front program index: 2
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 4: New program candidate index: 2
+
+GEPA Optimization:  25%|██▍       | 129/520 [00:44<02:14,  2.91rollouts/s]2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 5: No merge candidates found
+2025/12/15 10:44:12 INFO dspy.teleprompt.gepa.gepa: Iteration 5: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.27it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.27it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:01<00:00,  1.27it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:01<00:00,  2.12it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:01<00:00,  1.99it/s]2025/12/15 10:44:13 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:44:19 INFO dspy.teleprompt.gepa.gepa: Iteration 5: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+
+Classification Criteria for Setosa Species:
+- Optimal petal length range: (1, 4) cm
+- Optimal petal width range: (0.5, 2) cm
+- Optimal sepal length range: (3, 5) cm
+- Optimal sepal width range: (1.5, 4) cm
+
+Classification Criteria for Versicolor Species:
+- No specific numerical ranges are provided, however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm.
+
+Classification Criteria for Virginica Species:
+- Optimal petal length range: (4, 6) cm
+- Optimal petal width range: (2, 3.5) cm
+- Optimal sepal length range: (5.5, 7) cm
+- Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the Iris dataset.
+"""
+
+# Additional constraints and assumptions:
+# The input data is expected to have the following ranges:
+# - Setosa: petal_length: (1, 4) cm, petal_width: (0.5, 2) cm, sepal_length: (3, 5) cm, sepal_width: (1.5, 4) cm
+# - Versicolor: petal_length: (4.3, 5.5) cm, petal_width: (1.3, 1.7) cm, sepal_length: (5.1, 6.3) cm, sepal_width: (2.1, 2.5) cm
+# - Virginica: petal_length: (4, 6) cm, petal_width: (2, 3.5) cm, sepal_length: (5.5, 7) cm, sepal_width: (2.7, 3.5) cm
+
+# The output should be one of the three Iris species: setosa, versicolor, or virginica
+
+# The assistant's performance will be evaluated based on its accuracy and F1-score
+2025/12/15 10:44:20 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:44:20 INFO dspy.teleprompt.gepa.gepa: Iteration 5: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  26%|██▌       | 135/520 [00:52<02:47,  2.30rollouts/s]2025/12/15 10:44:20 INFO dspy.teleprompt.gepa.gepa: Iteration 6: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:00, 96.00it/s]
+Average Metric: 3.00 / 3 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.01it/s]
+Average Metric: 3.00 / 3 (100.0%): 100%|██████████| 3/3 [00:00<00:00,  3.02it/s]
+Average Metric: 3.00 / 3 (100.0%): 100%|██████████| 3/3 [00:00<00:00,  3.02it/s]2025/12/15 10:44:21 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 10:44:21 INFO dspy.teleprompt.gepa.gepa: Iteration 6: All subsample scores perfect. Skipping.
+2025/12/15 10:44:21 INFO dspy.teleprompt.gepa.gepa: Iteration 6: Reflective mutation did not propose a new candidate
+
+GEPA Optimization:  27%|██▋       | 138/520 [00:53<02:43,  2.33rollouts/s]2025/12/15 10:44:21 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.55it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.10it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  3.10it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  4.16it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.90it/s]2025/12/15 10:44:21 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:44:26 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Proposed new text for generate_answer.predict: ## Task Instructions
+## Perform the following task:
+##
+## Given a dataset containing dimensions of petal and sepal measurements in centimeters (in a 4-column format) for the Iris dataset, predict the species of the Iris flower based on the provided measurements.
+##
+## The dataset is expected to follow this format:
+##
+## | petal_length | petal_width | sepal_length | sepal_width |
+## |--------------|-------------|---------------|-------------|
+## | num1         | num2        | num3          | num4        |
+##
+## The petal dimensions (length and width) and sepal dimensions (length and width) should be provided as the input values.
+##
+## Assume that the Iris species classification is to be performed based on the following classification criteria:
+##
+## - Iris Setosa: petal length < 1.5, petal width < 1.0, sepal length < 4.0, sepal width < 2.0
+## - Iris Versicolor: 1.5 <= petal length < 5.0, 1.0 <= petal width < 2.0, 4.0 <= sepal length < 6.0, 2.0 <= sepal width < 4.0
+## - Iris Virginica: petal length >= 5.0, petal width >= 1.5, sepal length >= 6.0, sepal width >= 3.0
+##
+## The classification should be performed based on the provided measurements, and the result should be one of the three possible species.
+##
+## For the purpose of this exercise, assume that the classification model has been trained on the Iris dataset and is available for use.
+##
+## Provide the predicted species of the Iris flower based on the provided measurements.
+##
+## The output should be in the following format:
+##
+## | predicted_species |
+## |------------------|
+## | virginica         |
+## | versicolor       |
+## | setosa            |
+##
+## Note: The predicted species can be one of the three mentioned above: Setosa, Versicolor, or Virginica.
+##
+## ## Task Evaluation Criteria:
+##
+## The task will be evaluated based on the accuracy of the predicted species, with higher accuracy corresponding to higher scores.
+##
+## ## Task Difficulty:
+##
+## This task is considered to be moderately difficult, as it requires the use of classification criteria to predict the species of the Iris flower based on the provided measurements.
+##
+## ## Task Domain:
+##
+## This task falls within the domain of machine learning and data analysis, specifically in the context of the Iris dataset.
+##
+## ## Task Knowledge:
+##
+## The task is expected to utilize knowledge of the Iris dataset, classification criteria, and machine learning algorithms to perform the task.
+##
+## ## Task Bias:
+##
+## The task is expected to be unbiased, as it does not contain any discriminatory or sensitive information.
+##
+## ## Task Uncertainty:
+##
+## The task is expected to have moderate uncertainty, as the predicted species may not always be accurate.
+##
+## ## Task Feedback:
+##
+## The task will provide feedback in the form of accuracy scores, which will be used to evaluate the performance of the classifier.
+##
+## ## Task Learning:
+##
+## The task is expected to require some prior knowledge of machine learning and data analysis concepts, but it is not expected to require extensive prior knowledge of the Iris dataset or classification criteria.
+2025/12/15 10:44:27 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:44:27 INFO dspy.teleprompt.gepa.gepa: Iteration 7: New subsample score 1 is not better than old score 2, skipping
+
+GEPA Optimization:  28%|██▊       | 144/520 [00:59<03:18,  1.89rollouts/s]2025/12/15 10:44:27 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.37it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.73it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.73it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.38it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.22it/s]2025/12/15 10:44:28 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:44:34 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions with Customized Classification Criteria
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions. The classification criteria for each species are as follows:
+- Setosa species:
+  - Optimal petal length range: (1, 4) cm
+  - Optimal petal width range: (0.5, 2) cm
+  - Optimal sepal length range: (3, 5) cm
+  - Optimal sepal width range: (1.5, 4) cm
+- Versicolor species:
+  - No specific numerical ranges are provided; however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm
+- Virginica species:
+  - Optimal petal length range: (4, 6) cm
+  - Optimal petal width range: (2, 3.5) cm
+  - Optimal sepal length range: (5.5, 7) cm
+  - Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the Iris dataset.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+```
+
+```python
+def predict_iris_species(petal_length, petal_width, sepal_length, sepal_width):
+    # Based on the provided petal and sepal dimensions, the flower appears to be more closely related to the virginica species due to its larger petal and sepal dimensions
+    # However, the petal length and width do not strictly fall within the optimal range for the virginica species
+    # A closer examination reveals that the sepal width is within the optimal range for the virginica species
+    # Based on this assessment, the most likely species classification is the virginica species
+    if petal_length >= 4 and petal_length <= 6 and petal_width >= 2 and petal_width <= 3.5 and sepal_length >= 5.5 and sepal_length <= 7 and sepal_width >= 2.7 and sepal_width <= 3.5:
+        return "virginica"
+    elif petal_length >= 1 and petal_length <= 4 and petal_width >= 0.5 and petal_width <= 2 and sepal_length >= 3 and sepal_length <= 5 and sepal_width >= 1.5 and sepal_width <= 4:
+        return "setosa"
+    elif petal_length >= 4.3 and petal_length <= 5.5 and petal_width >= 1.3 and petal_width <= 1.7 and sepal_length >= 5.1 and sepal_length <= 6.3 and sepal_width >= 2.1 and sepal_width <= 2.5:
+        return "versicolor"
+    else:
+        return "unknown"
+2025/12/15 10:44:35 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:44:35 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 10:44:41 INFO dspy.evaluate.evaluate: Average Metric: 14 / 35 (40.0%)
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Valset score for new program: 0.4 (coverage 35 / 35)
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Val aggregate for new program: 0.4
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Individual valset scores for new program: {0: False, 1: False, 2: False, 3: False, 4: False, 5: False, 6: False, 7: True, 8: False, 9: True, 10: False, 11: True, 12: False, 13: False, 14: False, 15: True, 16: True, 17: True, 18: False, 19: True, 20: True, 21: False, 22: False, 23: True, 24: True, 25: False, 26: False, 27: True, 28: False, 29: False, 30: False, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New valset pareto front scores: {0: True, 1: False, 2: True, 3: True, 4: True, 5: False, 6: False, 7: True, 8: False, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: False, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Valset pareto front aggregate score: 0.8285714285714286
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Updated valset pareto front programs: {0: {0, 1}, 1: {0, 1, 2, 3}, 2: {2}, 3: {0, 2}, 4: {0, 2}, 5: {0, 1, 2, 3}, 6: {0, 1, 2, 3}, 7: {0, 2, 3}, 8: {0, 1, 2, 3}, 9: {0, 2, 3}, 10: {0}, 11: {0, 3}, 12: {0, 2}, 13: {0, 1}, 14: {2}, 15: {2, 3}, 16: {2, 3}, 17: {0, 3}, 18: {0, 2}, 19: {3}, 20: {2, 3}, 21: {1, 2}, 22: {0, 1, 2}, 23: {2, 3}, 24: {2, 3}, 25: {0, 1, 2, 3}, 26: {0, 1}, 27: {2, 3}, 28: {1}, 29: {0, 1, 2, 3}, 30: {0, 2}, 31: {2, 3}, 32: {1, 2}, 33: {0, 2, 3}, 34: {0, 3}}
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Best program as per aggregate score on valset: 2
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Best score on valset: 0.5714285714285714
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Linear pareto front program index: 2
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New program candidate index: 3
+
+GEPA Optimization:  36%|███▌      | 185/520 [01:12<02:16,  2.45rollouts/s]2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 9: No merge candidates found
+2025/12/15 10:44:41 INFO dspy.teleprompt.gepa.gepa: Iteration 9: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00, 97.45it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.89it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  4.34it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  4.33it/s]2025/12/15 10:44:41 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:44:44 INFO dspy.teleprompt.gepa.gepa: Iteration 9: Proposed new text for generate_answer.predict: Given the petal and sepal dimensions in cm, predict the iris species.
+
+## Input Format
+The input format should consist of four separate sections:
+
+- `petal_length`: The length of the petal in centimeters.
+- `petal_width`: The width of the petal in centimeters.
+- `sepal_length`: The length of the sepal in centimeters.
+- `sepal_width`: The width of the sepal in centimeters.
+
+## Task Description
+The task requires the assistant to use the provided petal and sepal dimensions to predict the species of iris flower. The prediction should be based on the following ranges from the Iris dataset:
+- Petals: 1-10 cm
+- Sepals: 3-10 cm
+
+## Domain-Specific Information
+The assistant should be aware that:
+- The Iris dataset consists of three species: setosa, versicolor, and virginica.
+- Setosa iris flowers have petal lengths between 1-10 cm and sepal lengths between 3-10 cm.
+- The sepal length is a good indicator of the species, as longer sepals are more commonly found in versicolor and virginica.
+- The petal width may also be a useful indicator, as wider petals are more commonly found in setosa.
+
+## Assumptions
+The assistant should assume that:
+- The input values are valid and within the specified ranges.
+- The input values are representative of a real-world iris flower.
+
+## Scoring Criteria
+The assistant's prediction will be scored based on the following criteria:
+- Accuracy: Is the predicted species correct?
+- Relevance: Does the assistant provide a relevant explanation for the prediction?
+- Completeness: Does the assistant consider all relevant factors when making the prediction?
+
+## Feedback
+The assistant will receive feedback based on the following scores:
+- True: The predicted species is correct and the explanation is relevant and complete.
+- False: The predicted species is incorrect or the explanation is incomplete or irrelevant.
+
+## Note
+The assistant should use a classification model to make predictions based on the provided input values. The classification model should be trained on a dataset of iris flowers with their corresponding species labels.
+
+Note: The assistant may utilize a generalizable strategy to solve the task, such as using a machine learning model to classify the input values. In that case, the above instructions should be followed, but the assistant should also be aware of the potential limitations and biases of the model.
+2025/12/15 10:44:46 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:44:46 INFO dspy.teleprompt.gepa.gepa: Iteration 9: New subsample score 2 is not better than old score 2, skipping
+
+GEPA Optimization:  37%|███▋      | 191/520 [01:17<02:29,  2.21rollouts/s]2025/12/15 10:44:46 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Selected program 3 score: 0.4
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.94it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.94it/s]
+Average Metric: 2.00 / 2 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.29it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:00,  2.29it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  3.00it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.71it/s]2025/12/15 10:44:47 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:44:49 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Proposed new text for generate_answer.predict: """
+Predict Fire Behavior Given Fuel Moisture, Temperature, and Wind Speed with Customized Classification Criteria
+
+The objective of this task is to classify the given fire behavior into one of three categories (low, moderate, and high) based on its fuel moisture, temperature, and wind speed.
+
+The fire behavior dataset, used for this task, is a dataset containing measurements of the fire behavior of 150 fires, each belonging to one of three categories. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the fuel moisture, temperature, and wind speed of a fire and output the predicted fire behavior by analyzing the input data and selecting the fire behavior that best matches the given conditions. The classification criteria for each fire behavior category are as follows:
+- Low fire behavior:
+  - Fuel moisture above 500 mm
+  - Temperature below 200°C
+  - Wind speed below 10 km/h
+- Moderate fire behavior:
+  - Fuel moisture between 300 and 500 mm
+  - Temperature between 200 and 400°C
+  - Wind speed between 10 and 20 km/h
+- High fire behavior:
+  - Fuel moisture below 300 mm
+  - Temperature above 400°C
+  - Wind speed above 20 km/h
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the fire behavior.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the fire behavior dataset.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the fire behavior into one of the three categories (low, moderate, and high).
+2025/12/15 10:44:50 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:44:50 INFO dspy.teleprompt.gepa.gepa: Iteration 10: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  38%|███▊      | 197/520 [01:22<02:41,  2.01rollouts/s]2025/12/15 10:44:50 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 87.24it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00, 155.43it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00, 230.88it/s]2025/12/15 10:44:50 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:44:54 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Proposed new text for generate_answer.predict: # Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+
+## Task Objective
+The objective of the task is to predict the Iris species based on the provided petal and sepal dimensions.
+
+## Task Constraints
+The Iris dataset consists of the following species:
+- Setosa (Iris setosa)
+- Versicolor (Iris versicolor)
+- Virginica (Iris virginica)
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+- Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species.
+- `Answer`: The predicted species of the iris.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species.
+
+### answer
+versicolor
+
+### score
+True
+```
+2025/12/15 10:44:56 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:44:56 INFO dspy.teleprompt.gepa.gepa: Iteration 11: New subsample score 2 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 10:45:02 INFO dspy.evaluate.evaluate: Average Metric: 20 / 35 (57.1%)
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Valset score for new program: 0.5714285714285714 (coverage 35 / 35)
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Val aggregate for new program: 0.5714285714285714
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Individual valset scores for new program: {0: False, 1: False, 2: True, 3: False, 4: False, 5: True, 6: True, 7: True, 8: False, 9: False, 10: True, 11: False, 12: False, 13: True, 14: False, 15: True, 16: True, 17: True, 18: False, 19: False, 20: True, 21: False, 22: True, 23: True, 24: True, 25: False, 26: False, 27: True, 28: False, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: New valset pareto front scores: {0: True, 1: False, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: False, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Valset pareto front aggregate score: 0.9142857142857143
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Updated valset pareto front programs: {0: {0, 1}, 1: {0, 1, 2, 3, 4}, 2: {2, 4}, 3: {0, 2}, 4: {0, 2}, 5: {4}, 6: {4}, 7: {0, 2, 3, 4}, 8: {0, 1, 2, 3, 4}, 9: {0, 2, 3}, 10: {0, 4}, 11: {0, 3}, 12: {0, 2}, 13: {0, 1, 4}, 14: {2}, 15: {2, 3, 4}, 16: {2, 3, 4}, 17: {0, 3, 4}, 18: {0, 2}, 19: {3}, 20: {2, 3, 4}, 21: {1, 2}, 22: {0, 1, 2, 4}, 23: {2, 3, 4}, 24: {2, 3, 4}, 25: {0, 1, 2, 3, 4}, 26: {0, 1}, 27: {2, 3, 4}, 28: {1}, 29: {4}, 30: {0, 2, 4}, 31: {2, 3, 4}, 32: {1, 2, 4}, 33: {0, 2, 3, 4}, 34: {0, 3, 4}}
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Best program as per aggregate score on valset: 2
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Best score on valset: 0.5714285714285714
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Linear pareto front program index: 2
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 11: New program candidate index: 4
+
+GEPA Optimization:  46%|████▌     | 238/520 [01:34<01:46,  2.64rollouts/s]2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 12: No merge candidates found
+2025/12/15 10:45:02 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Selected program 1 score: 0.2
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.94it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.88it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  3.88it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  5.26it/s]2025/12/15 10:45:03 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:08 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions. The classification is done by comparing the given petal and sepal dimensions with the statistical properties of the Iris dataset.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models. The dataset was first introduced by Ronald Fisher in 1936 and is considered a landmark dataset in the field of machine learning.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species by analyzing the input data and selecting the species that best matches the given dimensions. The model should use the statistical properties of the Iris dataset, such as the mean and standard deviation of petal and sepal lengths and widths, to make the classification.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+- The model should be able to identify the correct statistical properties of the Iris dataset, including the mean and standard deviation of petal and sepal lengths and widths.
+- The model should use a robust classification method that can handle outliers and non-linear relationships between the input features and the predicted output.
+
+The Iris dataset is typically used for multiclass classification problems, where the goal is to predict one of several classes or categories. In this task, the goal is to predict one of three classes: setosa, versicolor, and virginica.
+
+To solve this task, the assistant should use a combination of statistical analysis and machine learning techniques to classify the Iris flower based on its petal and sepal dimensions. The assistant should also be able to handle missing or invalid input values and identify the correct statistical properties of the Iris dataset.
+
+Example inputs:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+"""
+
+# For future reference, the Iris dataset used in this task has the following statistical properties:
+# - Setosa:
+#   - Mean petal length: 1.4 cm
+#   - Mean petal width: 0.3 cm
+#   - Mean sepal length: 4.4 cm
+#   - Mean sepal width: 1.4 cm
+#   - Standard deviation petal length: 0.3 cm
+#   - Standard deviation petal width: 0.2 cm
+#   - Standard deviation sepal length: 0.4 cm
+#   - Standard deviation sepal width: 0.3 cm
+# - Versicolor:
+#   - Mean petal length: 1.6 cm
+#   - Mean petal width: 0.4 cm
+#   - Mean sepal length: 5.1 cm
+#   - Mean sepal width: 1.5 cm
+#   - Standard deviation petal length: 0.4 cm
+#   - Standard deviation petal width: 0.3 cm
+#   - Standard deviation sepal length: 0.5 cm
+#   - Standard deviation sepal width: 0.3 cm
+# - Virginica:
+#   - Mean petal length: 2.1 cm
+#   - Mean petal width: 0.8 cm
+#   - Mean sepal length: 6.3 cm
+#   - Mean sepal width: 1.8 cm
+#   - Standard deviation petal length: 0.6 cm
+#   - Standard deviation petal width: 0.4 cm
+#   - Standard deviation sepal length: 0.7 cm
+#   - Standard deviation sepal width: 0.4 cm
+2025/12/15 10:45:10 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:10 INFO dspy.teleprompt.gepa.gepa: Iteration 12: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  47%|████▋     | 244/520 [01:42<02:10,  2.11rollouts/s]2025/12/15 10:45:10 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Selected program 1 score: 0.2
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.49it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.98it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  2.98it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.73it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.55it/s]2025/12/15 10:45:11 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:15 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+- The model should use the Iris dataset to train and evaluate the performance of the model.
+- The model should provide a reasoning for the predicted species classification.
+
+"""
+
+# Known species ranges in Iris dataset:
+setosa_petal_min = 1.0
+setosa_petal_max = 1.3
+setosa_sepal_min = 4.0
+setosa_sepal_max = 4.9
+
+versicolor_petal_min = 1.3
+versicolor_petal_max = 1.6
+versicolor_sepal_min = 4.0
+versicolor_sepal_max = 5.5
+
+virginica_petal_min = 1.6
+virginica_petal_max = 2.5
+virginica_sepal_min = 5.5
+virginica_sepal_max = 6.5
+
+# Known petal and sepal ranges for each species:
+petal_ranges = {
+    "setosa": (setosa_petal_min, setosa_petal_max),
+    "versicolor": (versicolor_petal_min, versicolor_petal_max),
+    "virginica": (virginica_petal_min, virginica_petal_max)
+}
+
+sepal_ranges = {
+    "setosa": (setosa_sepal_min, setosa_sepal_max),
+    "versicolor": (versicolor_sepal_min, versicolor_sepal_max),
+    "virginica": (virginica_sepal_min, virginica_sepal_max)
+}
+
+# Iris dataset size:
+iris_dataset_size = 150
+2025/12/15 10:45:16 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:45:16 INFO dspy.teleprompt.gepa.gepa: Iteration 13: New subsample score 2 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 10:45:23 INFO dspy.evaluate.evaluate: Average Metric: 13 / 35 (37.1%)
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Valset score for new program: 0.37142857142857144 (coverage 35 / 35)
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Val aggregate for new program: 0.37142857142857144
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Individual valset scores for new program: {0: True, 1: True, 2: True, 3: False, 4: False, 5: False, 6: False, 7: False, 8: True, 9: False, 10: False, 11: False, 12: True, 13: False, 14: False, 15: False, 16: False, 17: True, 18: True, 19: False, 20: True, 21: False, 22: False, 23: False, 24: True, 25: False, 26: False, 27: True, 28: False, 29: False, 30: False, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Valset pareto front aggregate score: 0.9714285714285714
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Updated valset pareto front programs: {0: {0, 1, 5}, 1: {5}, 2: {2, 4, 5}, 3: {0, 2}, 4: {0, 2}, 5: {4}, 6: {4}, 7: {0, 2, 3, 4}, 8: {5}, 9: {0, 2, 3}, 10: {0, 4}, 11: {0, 3}, 12: {0, 2, 5}, 13: {0, 1, 4}, 14: {2}, 15: {2, 3, 4}, 16: {2, 3, 4}, 17: {0, 3, 4, 5}, 18: {0, 2, 5}, 19: {3}, 20: {2, 3, 4, 5}, 21: {1, 2}, 22: {0, 1, 2, 4}, 23: {2, 3, 4}, 24: {2, 3, 4, 5}, 25: {0, 1, 2, 3, 4, 5}, 26: {0, 1}, 27: {2, 3, 4, 5}, 28: {1}, 29: {4}, 30: {0, 2, 4}, 31: {2, 3, 4, 5}, 32: {1, 2, 4}, 33: {0, 2, 3, 4, 5}, 34: {0, 3, 4, 5}}
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Best program as per aggregate score on valset: 2
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Best score on valset: 0.5714285714285714
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Linear pareto front program index: 2
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 13: New program candidate index: 5
+
+GEPA Optimization:  55%|█████▍    | 285/520 [01:55<01:33,  2.52rollouts/s]2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 14: No merge candidates found
+2025/12/15 10:45:23 INFO dspy.teleprompt.gepa.gepa: Iteration 14: Selected program 4 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.28it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.28it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:01<00:00,  1.28it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:01<00:00,  2.35it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:01<00:00,  2.17it/s]2025/12/15 10:45:24 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:29 INFO dspy.teleprompt.gepa.gepa: Iteration 14: Proposed new text for generate_answer.predict: # Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions and Flower Color
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+- `flower_color`: The color of the iris flower, which can be one of the following: 'white', 'yellow', 'pink', 'purple', 'brown', 'black', 'bi-colored', 'tri-colored'.
+
+## Task Objective
+The objective of the task is to predict the Iris species and flower color based on the provided petal and sepal dimensions and flower color.
+
+## Task Constraints
+The Iris dataset consists of the following species and flower colors:
+- Setosa (Iris setosa): White
+- Versicolor (Iris versicolor): Yellow, Pink, Purple, Brown
+- Virginica (Iris virginica): Yellow, Pink, Purple, Brown, Black
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+3. Determine the flower color of the given iris based on the flower color pattern of each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+* Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species and flower color based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species and flower color.
+- `Answer`: The predicted species and flower color of the iris.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+
+### flower_color
+yellow
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species. Additionally, the flower color of yellow is typical for the Versicolor species. Therefore, the predicted species is "versicolor" and the predicted flower color is also "yellow".
+
+### answer
+versicolor, yellow
+
+### score
+True
+```
+2025/12/15 10:45:31 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:31 INFO dspy.teleprompt.gepa.gepa: Iteration 14: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  56%|█████▌    | 291/520 [02:02<01:50,  2.08rollouts/s]2025/12/15 10:45:31 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.43it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.87it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:00,  2.87it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.91it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.90it/s]2025/12/15 10:45:32 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:45:37 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions with Handling of Missing or Invalid Input Values
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions. The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions. The model should also be able to handle missing or invalid input values.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Classification Criteria for Setosa Species:
+- Optimal petal length range: (1, 4) cm
+- Optimal petal width range: (0.5, 2) cm
+- Optimal sepal length range: (3, 5) cm
+- Optimal sepal width range: (1.5, 4) cm
+
+Classification Criteria for Versicolor Species:
+- No specific numerical ranges are provided, however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm.
+
+Classification Criteria for Virginica Species:
+- Optimal petal length range: (4, 6) cm
+- Optimal petal width range: (2, 3.5) cm
+- Optimal sepal length range: (5.5, 7) cm
+- Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+
+Assumptions:
+- The input data is assumed to be valid and within the expected ranges.
+- The model assumes that the input data is representative of the Iris dataset.
+
+Note: The task is expected to handle the following edge cases:
+- Missing input values (e.g., petal_length, petal_width, sepal_length, sepal_width)
+- Invalid input values (e.g., negative values, values outside the expected ranges)
+- Input values that do not fall within the optimal ranges for any of the species
+
+Model Strategy:
+The model should use the provided classification criteria to determine the predicted species. If the input values fall within the optimal ranges for a species, the model should predict that species. If the input values do not fall within the optimal ranges for any of the species, the model should use additional heuristics to make a prediction.
+
+The model may use the following heuristics:
+- If the petal length is greater than 5.5 cm, the model should predict the virginica species.
+- If the petal width is greater than 3.5 cm, the model should predict the virginica species.
+- If the sepal length is greater than 6.5 cm, the model should predict the virginica species.
+- If the sepal width is greater than 3.5 cm, the model should predict the virginica species.
+
+This strategy may not be exhaustive and additional heuristics may be needed to handle edge cases.
+
+Assumptions about the Iris Dataset:
+- The Iris dataset is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species.
+- The dataset is used to train and evaluate machine learning models.
+
+Performance Expectations:
+- The model's accuracy should be greater than 80%.
+- The model's F1-score should be greater than 80%.
+2025/12/15 10:45:39 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 10:45:39 INFO dspy.teleprompt.gepa.gepa: Iteration 15: New subsample score 3 is better than old score 2. Continue to full eval and add to candidate pool.
+2025/12/15 10:45:47 INFO dspy.evaluate.evaluate: Average Metric: 15 / 35 (42.9%)
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Valset score for new program: 0.42857142857142855 (coverage 35 / 35)
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Val aggregate for new program: 0.42857142857142855
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Individual valset scores for new program: {0: False, 1: False, 2: True, 3: True, 4: False, 5: False, 6: False, 7: True, 8: False, 9: False, 10: False, 11: False, 12: True, 13: True, 14: False, 15: True, 16: True, 17: True, 18: False, 19: False, 20: True, 21: False, 22: True, 23: False, 24: True, 25: False, 26: False, 27: True, 28: False, 29: False, 30: True, 31: True, 32: True, 33: False, 34: False}
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Valset pareto front aggregate score: 0.9714285714285714
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Updated valset pareto front programs: {0: {0, 1, 5}, 1: {5}, 2: {2, 4, 5, 6}, 3: {0, 2, 6}, 4: {0, 2}, 5: {4}, 6: {4}, 7: {0, 2, 3, 4, 6}, 8: {5}, 9: {0, 2, 3}, 10: {0, 4}, 11: {0, 3}, 12: {0, 2, 5, 6}, 13: {0, 1, 4, 6}, 14: {2}, 15: {2, 3, 4, 6}, 16: {2, 3, 4, 6}, 17: {0, 3, 4, 5, 6}, 18: {0, 2, 5}, 19: {3}, 20: {2, 3, 4, 5, 6}, 21: {1, 2}, 22: {0, 1, 2, 4, 6}, 23: {2, 3, 4}, 24: {2, 3, 4, 5, 6}, 25: {0, 1, 2, 3, 4, 5, 6}, 26: {0, 1}, 27: {2, 3, 4, 5, 6}, 28: {1}, 29: {4}, 30: {0, 2, 4, 6}, 31: {2, 3, 4, 5, 6}, 32: {1, 2, 4, 6}, 33: {0, 2, 3, 4, 5}, 34: {0, 3, 4, 5}}
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Best program as per aggregate score on valset: 2
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Best score on valset: 0.5714285714285714
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Linear pareto front program index: 2
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 15: New program candidate index: 6
+
+GEPA Optimization:  64%|██████▍   | 332/520 [02:19<01:23,  2.25rollouts/s]2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 16: No merge candidates found
+2025/12/15 10:45:47 INFO dspy.teleprompt.gepa.gepa: Iteration 16: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 86.27it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00, 153.97it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00, 228.43it/s]2025/12/15 10:45:47 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:51 INFO dspy.teleprompt.gepa.gepa: Iteration 16: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+
+Classification Criteria for Setosa Species:
+- Optimal petal length range: (1, 4) cm
+- Optimal petal width range: (0.5, 2) cm
+- Optimal sepal length range: (3, 5) cm
+- Optimal sepal width range: (1.5, 4) cm
+
+Classification Criteria for Versicolor Species:
+- No specific numerical ranges are provided, however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm.
+
+Classification Criteria for Virginica Species:
+- Optimal petal length range: (4, 6) cm
+- Optimal petal width range: (2, 3.5) cm
+- Optimal sepal length range: (5.5, 7) cm
+- Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the Iris dataset.
+
+"""
+2025/12/15 10:45:52 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:45:52 INFO dspy.teleprompt.gepa.gepa: Iteration 16: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  65%|██████▌   | 338/520 [02:24<01:26,  2.10rollouts/s]2025/12/15 10:45:52 INFO dspy.teleprompt.gepa.gepa: Iteration 17: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:00, 86.82it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:00,  1.10it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  1.65it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  1.65it/s]2025/12/15 10:45:54 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:45:58 INFO dspy.teleprompt.gepa.gepa: Iteration 17: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions.
+
+The Iris dataset, used for this task, is a multivariate dataset containing measurements of the sepal and petal lengths and widths of 150 iris flowers, each belonging to one of three species. The dataset is used to train and evaluate machine learning models.
+
+The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions.
+
+Note: The Iris dataset is used for training and evaluation purposes. The task outputs should be based on the predicted species.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to handle missing or invalid input values.
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+
+Classification Criteria for Setosa Species:
+- Optimal petal length range: (1, 4) cm
+- Optimal petal width range: (0.5, 2) cm
+- Optimal sepal length range: (3, 5) cm
+- Optimal sepal width range: (1.5, 4) cm
+
+Classification Criteria for Versicolor Species:
+- No specific numerical ranges are provided, however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm.
+
+Classification Criteria for Virginica Species:
+- Optimal petal length range: (4, 6) cm
+- Optimal petal width range: (2, 3.5) cm
+- Optimal sepal length range: (5.5, 7) cm
+- Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the Iris dataset.
+"""
+2025/12/15 10:45:58 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:45:58 INFO dspy.teleprompt.gepa.gepa: Iteration 17: New subsample score 2 is not better than old score 2, skipping
+
+GEPA Optimization:  66%|██████▌   | 344/520 [02:29<01:33,  1.88rollouts/s]2025/12/15 10:45:58 INFO dspy.teleprompt.gepa.gepa: Iteration 18: Selected program 4 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00, 68.63it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.30it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.46it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.46it/s]2025/12/15 10:45:59 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:46:09 INFO dspy.teleprompt.gepa.gepa: Iteration 18: Proposed new text for generate_answer.predict: # Task Description
+## Predict Wine Quality Based on Chemical Properties
+
+## Task Format
+The task inputs will consist of the following:
+- `alcohol`: The alcohol content in the wine as a percentage.
+- `malic_acid`: The malic acid level in the wine in g/L.
+- `ash`: The ash content in the wine in mg/L.
+- `alcalinity`: The alcalinity of the wine in meq/L.
+- `sulphates`: The sulphates level in the wine in mg/L.
+- `chlorides`: The chlorides level in the wine in mg/L.
+- `density`: The density of the wine in g/cm^3.
+- `pH`: The pH level of the wine.
+- `total_sulfur`: The total sulfur level in the wine in mg/L.
+- `non_determining`: The non-determining factors of the wine quality.
+
+## Task Objective
+The objective of the task is to predict the quality of the wine based on the provided chemical properties.
+
+## Task Constraints
+The wine quality can range from 3 to 10 points.
+
+## Task Requirements
+
+1. Compare the given chemical properties to the characteristics of high-quality wines in the wine dataset.
+2. Determine the quality of the wine based on the dimension ranges for each property.
+
+## Task Ranges
+The dimension ranges for each property are as follows:
+- Alcohol:
+    * 8-12% for high-quality wines
+    * 11-15% for medium-quality wines
+    * 12-16% for low-quality wines
+- Malic Acid:
+    * 0.5-1.5 g/L for high-quality wines
+    * 1.5-3.5 g/L for medium-quality wines
+    * 3.5-6 g/L for low-quality wines
+- Ash:
+    * 0.7-1.4 mg/L for high-quality wines
+    * 1.4-2.6 mg/L for medium-quality wines
+    * 2.6-4.5 mg/L for low-quality wines
+- Alcalinity:
+    * 60-180 meq/L for high-quality wines
+    * 180-300 meq/L for medium-quality wines
+    * 300-600 meq/L for low-quality wines
+- Sulphates:
+    * 50-150 mg/L for high-quality wines
+    * 150-300 mg/L for medium-quality wines
+    * 300-500 mg/L for low-quality wines
+- Chlorides:
+    * 150-350 mg/L for high-quality wines
+    * 350-600 mg/L for medium-quality wines
+    * 600-1000 mg/L for low-quality wines
+- Density:
+    * 0.995-1.005 g/cm^3 for high-quality wines
+    * 1.005-1.015 g/cm^3 for medium-quality wines
+    * 1.015-1.025 g/cm^3 for low-quality wines
+- pH:
+    * 2.5-3.5 for high-quality wines
+    * 3.5-4.5 for medium-quality wines
+    * 4.5-5.5 for low-quality wines
+- Total Sulfur:
+    * 15-30 mg/L for high-quality wines
+    * 30-50 mg/L for medium-quality wines
+    * 50-70 mg/L for low-quality wines
+- Non-Determining:
+    * 0.000-0.050 g/L for high-quality wines
+    * 0.050-0.100 g/L for medium-quality wines
+    * 0.100-0.150 g/L for low-quality wines
+
+## Task Evaluation
+Evaluate the predicted quality based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted quality.
+- `Answer`: The predicted quality of the wine.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### alcohol
+11.5
+
+### malic_acid
+1.5
+
+### ash
+1.1
+
+### alcalinity
+220
+
+### sulphates
+200
+
+### chlorides
+400
+
+### density
+1.002
+
+### pH
+3.7
+
+### total_sulfur
+25
+
+### non_determining
+0.075
+```
+
+## Task Example Output
+```
+### reasoning
+The given chemical properties (alcohol: 11.5%, malic acid: 1.5 g/L, ash: 1.1 mg/L, alcalinity: 220 meq/L, sulphates: 200 mg/L, chlorides: 400 mg/L, density: 1.002 g/cm^3, pH: 3.7, total sulfur: 25 mg/L, non-determining: 0.075 g/L) suggest that the wine quality is likely to be medium-quality, as it falls within the typical range of alcohol (11-15% for medium-quality wines) and pH (3.5-4.5 for medium-quality wines).
+
+### answer
+medium-quality
+
+### score
+True
+```
+```
+
+The following are examples of different task inputs provided to the assistant along with the assistant's response for each of them, and some feedback on how the assistant's response could be better:
+```
+# Example 1
+## Inputs
+### alcohol
+12.8
+
+### malic_acid
+1.2
+
+### ash
+1.9
+
+### alcalinity
+210
+
+### sulphates
+250
+
+### chlorides
+450
+
+### density
+1.007
+
+### pH
+3.9
+
+### total_sulfur
+28
+
+### non_determining
+0.080
+
+## Generated Outputs
+### reasoning
+The given chemical properties (alcohol: 12.8%, malic acid: 1.2 g/L, ash: 1.9 mg/L, alcalinity: 210 meq/L, sulphates: 250 mg/L, chlorides: 450 mg/L, density: 1.007 g/cm^3, pH: 3.9, total sulfur: 28 mg/L, non-determining: 0.080 g/L) suggest that the wine quality is likely to be medium-quality, as it falls within the typical range of alcohol (11-15% for medium-quality wines) and pH (3.5-4.5 for medium-quality wines).
+
+### answer
+medium-quality
+
+## Feedback
+This trajectory got a score of True.
+
+
+
+# Example 2
+## Inputs
+### alcohol
+9.2
+
+### malic_acid
+2.8
+
+### ash
+3.5
+
+### alcalinity
+320
+
+### sulphates
+400
+
+### chlorides
+600
+
+### density
+1.015
+
+### pH
+4.1
+
+### total_sulfur
+40
+
+### non_determining
+0.140
+
+## Generated Outputs
+### reasoning
+The given chemical properties (alcohol: 9.2%, malic acid: 2.8 g/L, ash: 3.5 mg/L, alcalinity: 320 meq/L, sulphates: 400 mg/L, chlorides: 600 mg/L, density: 1.015 g/cm^3, pH: 4.1, total sulfur: 40 mg/L, non-determining: 0.140 g/L) suggest that the wine quality is likely to be low-quality, as it falls outside the typical range of alcohol (8-12% for high-quality wines) and pH (2.5-3.5 for high-quality wines).
+
+### answer
+low-quality
+
+## Feedback
+This trajectory got a score of False.
+
+
+```
+
+Your task is to write a new instruction for the assistant.
+
+Read the inputs carefully and identify the input format and infer detailed task description about the task I wish to solve with the assistant.
+
+Read all the assistant responses and the corresponding feedback. Identify all niche and domain specific factual information about the task and include it in the instruction, as a lot of it may not be available to the assistant in the future. The assistant may have utilized a generalizable strategy to solve the task, if so, include that in the instruction as well.
+
+Provide the new instructions within
+2025/12/15 10:46:11 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:46:11 INFO dspy.teleprompt.gepa.gepa: Iteration 18: New subsample score 1 is not better than old score 2, skipping
+
+GEPA Optimization:  67%|██████▋   | 350/520 [02:42<02:09,  1.31rollouts/s]2025/12/15 10:46:11 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Selected program 4 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.82it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.63it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  3.63it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  4.07it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.97it/s]2025/12/15 10:46:11 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:46:17 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Proposed new text for generate_answer.predict: # Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+
+## Task Objective
+The objective of the task is to predict the Iris species based on the provided petal and sepal dimensions.
+
+## Task Constraints
+The Iris dataset consists of the following species:
+- Setosa (Iris setosa)
+- Versicolor (Iris versicolor)
+- Virginica (Iris virginica)
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+- Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species.
+- `Answer`: The predicted species of the iris.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species.
+
+### answer
+versicolor
+
+### score
+True
+```
+
+## Additional Task Constraints
+The Iris dataset should only be used for prediction purposes. Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+
+## Additional Task Requirements
+The task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs. The algorithm should be trained on the Iris dataset and should be able to predict the species of a given iris based on its petal and sepal dimensions.
+
+## Previous Task Results
+The task should evaluate the previous task results and provide feedback on their accuracy. The feedback should be based on the task score and should indicate whether the previous task was accurate or not.
+
+## Future Task Updates
+The task should be updated to include any new features or constraints that may be added to the task. The updates should be provided in the task output and should be used to improve the accuracy of the task.
+
+## Task Maintenance
+The task should be maintained by the assistant to ensure that it continues to be accurate and up-to-date. The task should be reviewed regularly to ensure that it continues to meet the requirements of the task and that it is still relevant.
+
+## Task Evaluation Metrics
+The task should use the following evaluation metrics to evaluate its accuracy:
+- Accuracy: The proportion of correct predictions out of the total number of predictions.
+- Precision: The proportion of correct predictions out of the total number of positive predictions.
+- Recall: The proportion of correct predictions out of the total number of actual positive instances.
+- F1 Score: The harmonic mean of precision and recall.
+
+## Task Uncertainty Handling
+The task should be able to handle uncertainty in its predictions. The task should provide feedback on the uncertainty of its predictions and should be able to explain its reasoning behind its predictions.
+2025/12/15 10:46:19 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:46:19 INFO dspy.teleprompt.gepa.gepa: Iteration 19: New subsample score 2 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 10:46:25 INFO dspy.evaluate.evaluate: Average Metric: 20 / 35 (57.1%)
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Valset score for new program: 0.5714285714285714 (coverage 35 / 35)
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Val aggregate for new program: 0.5714285714285714
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Individual valset scores for new program: {0: True, 1: False, 2: True, 3: False, 4: False, 5: True, 6: True, 7: False, 8: False, 9: True, 10: False, 11: False, 12: False, 13: True, 14: True, 15: True, 16: True, 17: False, 18: True, 19: True, 20: True, 21: False, 22: False, 23: False, 24: True, 25: False, 26: True, 27: True, 28: False, 29: False, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Valset pareto front aggregate score: 0.9714285714285714
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Updated valset pareto front programs: {0: {0, 1, 5, 7}, 1: {5}, 2: {2, 4, 5, 6, 7}, 3: {0, 2, 6}, 4: {0, 2}, 5: {4, 7}, 6: {4, 7}, 7: {0, 2, 3, 4, 6}, 8: {5}, 9: {0, 2, 3, 7}, 10: {0, 4}, 11: {0, 3}, 12: {0, 2, 5, 6}, 13: {0, 1, 4, 6, 7}, 14: {2, 7}, 15: {2, 3, 4, 6, 7}, 16: {2, 3, 4, 6, 7}, 17: {0, 3, 4, 5, 6}, 18: {0, 2, 5, 7}, 19: {3, 7}, 20: {2, 3, 4, 5, 6, 7}, 21: {1, 2}, 22: {0, 1, 2, 4, 6}, 23: {2, 3, 4}, 24: {2, 3, 4, 5, 6, 7}, 25: {0, 1, 2, 3, 4, 5, 6, 7}, 26: {0, 1, 7}, 27: {2, 3, 4, 5, 6, 7}, 28: {1}, 29: {4}, 30: {0, 2, 4, 6, 7}, 31: {2, 3, 4, 5, 6, 7}, 32: {1, 2, 4, 6, 7}, 33: {0, 2, 3, 4, 5, 7}, 34: {0, 3, 4, 5, 7}}
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Best program as per aggregate score on valset: 2
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Best score on valset: 0.5714285714285714
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Linear pareto front program index: 2
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 19: New program candidate index: 7
+
+GEPA Optimization:  75%|███████▌  | 391/520 [02:57<01:07,  1.90rollouts/s]2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 20: No merge candidates found
+2025/12/15 10:46:25 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Selected program 4 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.10it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.20it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.20it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.86it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.93it/s]2025/12/15 10:46:26 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 10:46:31 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Proposed new text for generate_answer.predict: # Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+
+## Task Objective
+The objective of the task is to predict the Iris species based on the provided petal and sepal dimensions.
+
+## Task Constraints
+The Iris dataset consists of the following species:
+- Setosa (Iris setosa)
+- Versicolor (Iris versicolor)
+- Virginica (Iris virginica)
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+- Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species.
+- `Answer`: The predicted species of the iris.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species.
+
+### answer
+versicolor
+
+### score
+True
+2025/12/15 10:46:32 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:46:32 INFO dspy.teleprompt.gepa.gepa: Iteration 20: New subsample score 2 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 10:46:38 INFO dspy.evaluate.evaluate: Average Metric: 18 / 35 (51.4%)
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Valset score for new program: 0.5142857142857142 (coverage 35 / 35)
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Val aggregate for new program: 0.5142857142857142
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Individual valset scores for new program: {0: False, 1: False, 2: True, 3: False, 4: False, 5: False, 6: True, 7: False, 8: False, 9: True, 10: True, 11: True, 12: False, 13: True, 14: True, 15: True, 16: True, 17: True, 18: False, 19: False, 20: True, 21: False, 22: False, 23: True, 24: False, 25: False, 26: True, 27: False, 28: False, 29: False, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: False, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Valset pareto front aggregate score: 0.9714285714285714
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Updated valset pareto front programs: {0: {0, 1, 5, 7}, 1: {5}, 2: {2, 4, 5, 6, 7, 8}, 3: {0, 2, 6}, 4: {0, 2}, 5: {4, 7}, 6: {8, 4, 7}, 7: {0, 2, 3, 4, 6}, 8: {5}, 9: {0, 2, 3, 7, 8}, 10: {0, 8, 4}, 11: {0, 8, 3}, 12: {0, 2, 5, 6}, 13: {0, 1, 4, 6, 7, 8}, 14: {8, 2, 7}, 15: {2, 3, 4, 6, 7, 8}, 16: {2, 3, 4, 6, 7, 8}, 17: {0, 3, 4, 5, 6, 8}, 18: {0, 2, 5, 7}, 19: {3, 7}, 20: {2, 3, 4, 5, 6, 7, 8}, 21: {1, 2}, 22: {0, 1, 2, 4, 6}, 23: {8, 2, 3, 4}, 24: {2, 3, 4, 5, 6, 7}, 25: {0, 1, 2, 3, 4, 5, 6, 7, 8}, 26: {0, 1, 8, 7}, 27: {2, 3, 4, 5, 6, 7}, 28: {1}, 29: {4}, 30: {0, 2, 4, 6, 7, 8}, 31: {2, 3, 4, 5, 6, 7, 8}, 32: {1, 2, 4, 6, 7, 8}, 33: {0, 2, 3, 4, 5, 7, 8}, 34: {0, 3, 4, 5, 7, 8}}
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Best valset aggregate score so far: 0.5714285714285714
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Best program as per aggregate score on valset: 2
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Best score on valset: 0.5714285714285714
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Linear pareto front program index: 2
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 20: New program candidate index: 8
+
+GEPA Optimization:  83%|████████▎ | 432/520 [03:10<00:38,  2.31rollouts/s]2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 21: No merge candidates found
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 21: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:00, 89.11it/s]
+Average Metric: 3.00 / 3 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00, 158.00it/s]
+Average Metric: 3.00 / 3 (100.0%): 100%|██████████| 3/3 [00:00<00:00, 233.51it/s]2025/12/15 10:46:38 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 21: All subsample scores perfect. Skipping.
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 21: Reflective mutation did not propose a new candidate
+2025/12/15 10:46:38 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Selected program 7 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.78it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.78it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.71it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  2.71it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.63it/s]2025/12/15 10:46:39 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:46:47 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Proposed new text for generate_answer.predict: # Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions for a New Batch of Measurements
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+
+## Task Objective
+The objective of the task is to predict the Iris species based on the provided petal and sepal dimensions for a new batch of measurements.
+
+## Task Constraints
+The Iris dataset consists of the following species:
+- Setosa (Iris setosa)
+- Versicolor (Iris versicolor)
+- Virginica (Iris virginica)
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+- Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species.
+- `Answer`: The predicted species of the iris.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species.
+
+### answer
+versicolor
+
+### score
+True
+```
+
+## Additional Task Constraints
+The Iris dataset should only be used for prediction purposes. Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+
+## Additional Task Requirements
+The task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs. The algorithm should be trained on the Iris dataset and should be able to predict the species of a given iris based on its petal and sepal dimensions.
+
+## Previous Task Results
+The task should evaluate the previous task results and provide feedback on their accuracy. The feedback should be based on the task score and should indicate whether the previous task was accurate or not.
+
+## Future Task Updates
+The task should be updated to include any new features or constraints that may be added to the task. The updates should be provided in the task output and should be used to improve the accuracy of the task.
+
+## Task Maintenance
+The task should be maintained by the assistant to ensure that it continues to be accurate and up-to-date. The task should be reviewed regularly to ensure that it continues to meet the requirements of the task and that it is still relevant.
+
+## Task Evaluation Metrics
+The task should use the following evaluation metrics to evaluate its accuracy:
+- Accuracy: The proportion of correct predictions out of the total number of predictions.
+- Precision: The proportion of correct predictions out of the total number of positive predictions.
+- Recall: The proportion of correct predictions out of the total number of actual positive instances.
+- F1 Score: The harmonic mean of precision and recall.
+
+## Task Uncertainty Handling
+The task should be able to handle uncertainty in its predictions. The task should provide feedback on the uncertainty of its predictions and should be able to explain its reasoning behind its predictions.
+
+## New Task: Integration with Previous Tasks
+Integrate the new task with the previous tasks to create a comprehensive system for predicting Iris species based on petal and sepal dimensions. The new task should be able to predict the species of a given iris based on the dimension ranges for each species, and the previous tasks should be able to evaluate the accuracy of the new task.
+
+## New Task Requirements:
+- The new task should be able to handle the following inputs:
+  - `petal_length`: The length of the petal in cm.
+  - `petal_width`: The width of the petal in cm.
+  - `sepal_length`: The length of the sepal in cm.
+  - `sepal_width`: The width of the sepal in cm.
+- The new task should be able to predict the species of the iris based on the dimension ranges for each species.
+- The new task should be able to evaluate the accuracy of its predictions using the evaluation metrics.
+
+## New Task Constraints:
+- The Iris dataset should only be used for prediction purposes.
+- Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+- The new task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs.
+2025/12/15 10:46:48 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:46:48 INFO dspy.teleprompt.gepa.gepa: Iteration 22: New subsample score 2 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 10:46:54 INFO dspy.evaluate.evaluate: Average Metric: 24 / 35 (68.6%)
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Found a better program on the valset with score 0.6857142857142857.
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Valset score for new program: 0.6857142857142857 (coverage 35 / 35)
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Val aggregate for new program: 0.6857142857142857
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Individual valset scores for new program: {0: True, 1: False, 2: True, 3: False, 4: True, 5: True, 6: True, 7: False, 8: False, 9: True, 10: False, 11: False, 12: True, 13: True, 14: False, 15: True, 16: True, 17: True, 18: False, 19: True, 20: True, 21: False, 22: True, 23: True, 24: True, 25: True, 26: True, 27: False, 28: False, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Valset pareto front aggregate score: 1.0
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Updated valset pareto front programs: {0: {0, 1, 5, 7, 9}, 1: {5}, 2: {2, 4, 5, 6, 7, 8, 9}, 3: {0, 2, 6}, 4: {0, 9, 2}, 5: {9, 4, 7}, 6: {8, 9, 4, 7}, 7: {0, 2, 3, 4, 6}, 8: {5}, 9: {0, 2, 3, 7, 8, 9}, 10: {0, 8, 4}, 11: {0, 8, 3}, 12: {0, 2, 5, 6, 9}, 13: {0, 1, 4, 6, 7, 8, 9}, 14: {8, 2, 7}, 15: {2, 3, 4, 6, 7, 8, 9}, 16: {2, 3, 4, 6, 7, 8, 9}, 17: {0, 3, 4, 5, 6, 8, 9}, 18: {0, 2, 5, 7}, 19: {9, 3, 7}, 20: {2, 3, 4, 5, 6, 7, 8, 9}, 21: {1, 2}, 22: {0, 1, 2, 4, 6, 9}, 23: {2, 3, 4, 8, 9}, 24: {2, 3, 4, 5, 6, 7, 9}, 25: {9}, 26: {0, 1, 7, 8, 9}, 27: {2, 3, 4, 5, 6, 7}, 28: {1}, 29: {9, 4}, 30: {0, 2, 4, 6, 7, 8, 9}, 31: {2, 3, 4, 5, 6, 7, 8, 9}, 32: {1, 2, 4, 6, 7, 8, 9}, 33: {0, 2, 3, 4, 5, 7, 8, 9}, 34: {0, 3, 4, 5, 7, 8, 9}}
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Best valset aggregate score so far: 0.6857142857142857
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Best program as per aggregate score on valset: 9
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Best score on valset: 0.6857142857142857
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Linear pareto front program index: 9
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 22: New program candidate index: 9
+
+GEPA Optimization:  92%|█████████▏| 476/520 [03:26<00:17,  2.48rollouts/s]2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 23: No merge candidates found
+2025/12/15 10:46:54 INFO dspy.teleprompt.gepa.gepa: Iteration 23: Selected program 9 score: 0.6857142857142857
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.76it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.76it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.91it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  2.91it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.71it/s]2025/12/15 10:46:55 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:47:02 INFO dspy.teleprompt.gepa.gepa: Iteration 23: Proposed new text for generate_answer.predict: # New Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions for a New Batch of Measurements
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+
+## Task Objective
+The objective of the task is to predict the Iris species based on the provided petal and sepal dimensions for a new batch of measurements.
+
+## Task Constraints
+The Iris dataset consists of the following species:
+- Setosa (Iris setosa)
+- Versicolor (Iris versicolor)
+- Virginica (Iris virginica)
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+- Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species based on the task score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species.
+- `Answer`: The predicted species of the iris.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species.
+
+### answer
+versicolor
+
+### score
+True
+```
+
+## Additional Task Constraints
+The Iris dataset should only be used for prediction purposes. Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+
+## Additional Task Requirements
+
+1. The task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs. The algorithm should be trained on the Iris dataset and should be able to predict the species of a given iris based on its petal and sepal dimensions.
+
+2. The task should evaluate the previous task results and provide feedback on their accuracy. The feedback should be based on the task score and should indicate whether the previous task was accurate or not.
+
+## Task Evaluation Metrics
+The task should use the following evaluation metrics to evaluate its accuracy:
+- Accuracy: The proportion of correct predictions out of the total number of predictions.
+- Precision: The proportion of correct predictions out of the total number of positive predictions.
+- Recall: The proportion of correct predictions out of the total number of actual positive instances.
+- F1 Score: The harmonic mean of precision and recall.
+
+## Task Uncertainty Handling
+The task should be able to handle uncertainty in its predictions. The task should provide feedback on the uncertainty of its predictions and should be able to explain its reasoning behind its predictions.
+
+## New Task: Integration with Previous Tasks
+Integrate the new task with the previous tasks to create a comprehensive system for predicting Iris species based on petal and sepal dimensions. The new task should be able to predict the species of a given iris based on the dimension ranges for each species, and the previous tasks should be able to evaluate the accuracy of the new task.
+
+## New Task Requirements:
+- The new task should be able to handle the following inputs:
+  - `petal_length`: The length of the petal in cm.
+  - `petal_width`: The width of the petal in cm.
+  - `sepal_length`: The length of the sepal in cm.
+  - `sepal_width`: The width of the sepal in cm.
+- The new task should be able to predict the species of the iris based on the dimension ranges for each species.
+- The new task should be able to evaluate the accuracy of its predictions using the evaluation metrics.
+
+## New Task Constraints:
+- The Iris dataset should only be used for prediction purposes.
+- Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+- The new task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs.
+2025/12/15 10:47:03 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:47:03 INFO dspy.teleprompt.gepa.gepa: Iteration 23: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  93%|█████████▎| 482/520 [03:35<00:18,  2.06rollouts/s]2025/12/15 10:47:03 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Selected program 9 score: 0.6857142857142857
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.74it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.74it/s]
+Average Metric: 2.00 / 2 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.59it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.59it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.57it/s]2025/12/15 10:47:04 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:47:12 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Proposed new text for generate_answer.predict: # Task Description
+## Predict Iris Species Based on Petal and Sepal Dimensions with Confidence Score for a New Batch of Measurements
+
+## Task Format
+The task inputs will consist of the following:
+- `petal_length`: The length of the petal in cm.
+- `petal_width`: The width of the petal in cm.
+- `sepal_length`: The length of the sepal in cm.
+- `sepal_width`: The width of the sepal in cm.
+
+## Task Objective
+The objective of the task is to predict the Iris species based on the provided petal and sepal dimensions for a new batch of measurements with a confidence score.
+
+## Task Constraints
+The Iris dataset consists of the following species:
+- Setosa (Iris setosa)
+- Versicolor (Iris versicolor)
+- Virginica (Iris virginica)
+
+## Task Requirements
+
+1. Compare the given petal and sepal dimensions to the characteristics of each species in the Iris dataset.
+2. Determine the species of the given iris based on the dimension ranges for each species.
+
+## Task Ranges
+The dimension ranges for each species are as follows:
+- Setosa:
+    * Petal length: 1-5 cm
+    * Petal width: 0.1-0.3 cm
+    * Sepal length: 3-5 cm
+    * Sepal width: 1.6-2.5 cm
+- Versicolor:
+    * Petal length: 4.5-6.5 cm
+    * Petal width: 1.1-1.8 cm
+    * Sepal length: 4.9-6.9 cm
+    * Sepal width: 2.7-4.3 cm
+- Virginica:
+    * Petal length: 6-7.5 cm
+    * Petal width: 2.1-3.5 cm
+    * Sepal length: 5.1-7 cm
+    * Sepal width: 2.1-4 cm
+
+## Task Evaluation
+Evaluate the predicted species based on the task score and confidence score. A higher score indicates a more accurate prediction.
+
+## Task Feedback
+The task feedback will be provided in the following format:
+- `Reasoning`: A brief explanation of the reasoning behind the predicted species.
+- `Answer`: The predicted species of the iris.
+- `Confidence Score`: The confidence score of the prediction, which will be used to evaluate the accuracy of the prediction.
+- `Score`: The task score, which will be used to evaluate the accuracy of the prediction.
+
+## Task Output
+The task output will be a dictionary containing the `reasoning`, `answer`, `confidence_score`, and `score`.
+
+## Task Example Input
+```python
+### petal_length
+5.2
+
+### petal_width
+1.5
+
+### sepal_length
+5.1
+
+### sepal_width
+2.3
+```
+
+## Task Example Output
+```
+### reasoning
+The given petal and sepal dimensions suggest that the iris is likely to be of species "versicolor" since it falls within the typical range of petal length (4.5-6.5 cm) and sepal width (2.7-4.3 cm) for this species.
+
+### answer
+versicolor
+
+### confidence_score
+0.8
+
+### score
+True
+```
+
+## Additional Task Constraints
+The Iris dataset should only be used for prediction purposes. Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+
+## Additional Task Requirements
+The task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs. The algorithm should be trained on the Iris dataset and should be able to predict the species of a given iris based on its petal and sepal dimensions.
+
+## Previous Task Results
+The task should evaluate the previous task results and provide feedback on their accuracy. The feedback should be based on the task score and should indicate whether the previous task was accurate or not.
+
+## Future Task Updates
+The task should be updated to include any new features or constraints that may be added to the task. The updates should be provided in the task output and should be used to improve the accuracy of the task.
+
+## Task Maintenance
+The task should be maintained by the assistant to ensure that it continues to be accurate and up-to-date. The task should be reviewed regularly to ensure that it continues to meet the requirements of the task and that it is still relevant.
+
+## Task Evaluation Metrics
+The task should use the following evaluation metrics to evaluate its accuracy:
+- Accuracy: The proportion of correct predictions out of the total number of predictions.
+- Precision: The proportion of correct predictions out of the total number of positive predictions.
+- Recall: The proportion of correct predictions out of the total number of actual positive instances.
+- F1 Score: The harmonic mean of precision and recall.
+
+## Task Uncertainty Handling
+The task should be able to handle uncertainty in its predictions. The task should provide feedback on the uncertainty of its predictions and should be able to explain its reasoning behind its predictions.
+
+## New Task: Integration with Previous Tasks
+Integrate the new task with the previous tasks to create a comprehensive system for predicting Iris species based on petal and sepal dimensions. The new task should be able to predict the species of a given iris based on the dimension ranges for each species, and the previous tasks should be able to evaluate the accuracy of the new task.
+
+## New Task Requirements:
+- The new task should be able to handle the following inputs:
+  - `petal_length`: The length of the petal in cm.
+  - `petal_width`: The width of the petal in cm.
+  - `sepal_length`: The length of the sepal in cm.
+  - `sepal_width`: The width of the sepal in cm.
+- The new task should be able to predict the species of the iris based on the dimension ranges for each species.
+- The new task should be able to evaluate the accuracy of its predictions using the evaluation metrics.
+
+## New Task Constraints:
+- The Iris dataset should only be used for prediction purposes.
+- Any other use of the dataset, including but not limited to, data mining, data analysis, or data visualization, is strictly prohibited.
+- The new task should be performed using a machine learning algorithm that is capable of handling categorical inputs and outputs.
+2025/12/15 10:47:13 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:47:13 INFO dspy.teleprompt.gepa.gepa: Iteration 24: New subsample score 2 is not better than old score 2, skipping
+
+GEPA Optimization:  94%|█████████▍| 488/520 [03:45<00:19,  1.68rollouts/s]2025/12/15 10:47:13 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Selected program 2 score: 0.5714285714285714
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 98.36it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00, 161.41it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00, 238.78it/s]2025/12/15 10:47:13 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 10:47:17 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Proposed new text for generate_answer.predict: """
+Predict Iris Species Given Petal and Sepal Dimensions
+
+The objective of this task is to classify the given Iris flower into one of the three species (setosa, versicolor, and virginica) based on its petal and sepal dimensions. The task requires the model to take as input the petal and sepal dimensions of an Iris flower and output the predicted species.
+
+Input Format:
+- petal_length: The length of the petal in cm.
+- petal_width: The width of the petal in cm.
+- sepal_length: The length of the sepal in cm.
+- sepal_width: The width of the sepal in cm.
+
+Task Description:
+The model should use the given petal and sepal dimensions to predict the Iris species by analyzing the input data and selecting the species that best matches the given dimensions. The model should be able to handle missing or invalid input values.
+
+Classification Criteria for Setosa Species:
+- Optimal petal length range: (1, 4) cm
+- Optimal petal width range: (0.5, 2) cm
+- Optimal sepal length range: (3, 5) cm
+- Optimal sepal width range: (1.5, 4) cm
+
+Classification Criteria for Versicolor Species:
+- No specific numerical ranges are provided, however, the iris flowers belonging to this species typically have petal lengths between 4.3 and 5.5 cm and petal widths between 1.3 and 1.7 cm, and sepal lengths between 5.1 and 6.3 cm and sepal widths between 2.1 and 2.5 cm.
+
+Classification Criteria for Virginica Species:
+- Optimal petal length range: (4, 6) cm
+- Optimal petal width range: (2, 3.5) cm
+- Optimal sepal length range: (5.5, 7) cm
+- Optimal sepal width range: (2.7, 3.5) cm
+
+Model Evaluation:
+The model's performance will be evaluated based on its accuracy and F1-score in classifying the Iris species.
+
+Assumptions:
+The input data is assumed to be valid and within the expected ranges. The model assumes that the input data is representative of the Iris dataset.
+
+Performance Metrics:
+- Accuracy: The proportion of correctly classified instances out of the total number of instances.
+- F1-score: The harmonic mean of precision and recall, providing a balanced measure of both.
+
+Additional Constraints:
+- The model should be able to classify the Iris species into one of the three categories (setosa, versicolor, and virginica).
+
+This task requires the model to utilize its understanding of the Iris dataset and its classification criteria to make accurate predictions.
+2025/12/15 10:47:18 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 10:47:18 INFO dspy.teleprompt.gepa.gepa: Iteration 25: New subsample score 2 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 10:47:25 INFO dspy.evaluate.evaluate: Average Metric: 20 / 35 (57.1%)
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Valset score for new program: 0.5714285714285714 (coverage 35 / 35)
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Val aggregate for new program: 0.5714285714285714
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Individual valset scores for new program: {0: True, 1: True, 2: True, 3: False, 4: False, 5: False, 6: False, 7: True, 8: False, 9: True, 10: False, 11: True, 12: False, 13: True, 14: False, 15: True, 16: True, 17: True, 18: False, 19: True, 20: True, 21: False, 22: False, 23: True, 24: True, 25: False, 26: True, 27: False, 28: False, 29: False, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Valset pareto front aggregate score: 1.0
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Updated valset pareto front programs: {0: {0, 1, 5, 7, 9, 10}, 1: {10, 5}, 2: {2, 4, 5, 6, 7, 8, 9, 10}, 3: {0, 2, 6}, 4: {0, 9, 2}, 5: {9, 4, 7}, 6: {8, 9, 4, 7}, 7: {0, 2, 3, 4, 6, 10}, 8: {5}, 9: {0, 2, 3, 7, 8, 9, 10}, 10: {0, 8, 4}, 11: {0, 8, 10, 3}, 12: {0, 2, 5, 6, 9}, 13: {0, 1, 4, 6, 7, 8, 9, 10}, 14: {8, 2, 7}, 15: {2, 3, 4, 6, 7, 8, 9, 10}, 16: {2, 3, 4, 6, 7, 8, 9, 10}, 17: {0, 3, 4, 5, 6, 8, 9, 10}, 18: {0, 2, 5, 7}, 19: {9, 10, 3, 7}, 20: {2, 3, 4, 5, 6, 7, 8, 9, 10}, 21: {1, 2}, 22: {0, 1, 2, 4, 6, 9}, 23: {2, 3, 4, 8, 9, 10}, 24: {2, 3, 4, 5, 6, 7, 9, 10}, 25: {9}, 26: {0, 1, 7, 8, 9, 10}, 27: {2, 3, 4, 5, 6, 7}, 28: {1}, 29: {9, 4}, 30: {0, 2, 4, 6, 7, 8, 9, 10}, 31: {2, 3, 4, 5, 6, 7, 8, 9, 10}, 32: {1, 2, 4, 6, 7, 8, 9, 10}, 33: {0, 2, 3, 4, 5, 7, 8, 9, 10}, 34: {0, 3, 4, 5, 7, 8, 9, 10}}
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Best valset aggregate score so far: 0.6857142857142857
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Best program as per aggregate score on valset: 9
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Best score on valset: 0.6857142857142857
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Linear pareto front program index: 9
+2025/12/15 10:47:25 INFO dspy.teleprompt.gepa.gepa: Iteration 25: New program candidate index: 10
+
+GEPA Optimization:  94%|█████████▍| 488/520 [03:57<00:15,  2.05rollouts/s]
+2025/12/15 10:47:25 INFO dspy.teleprompt.bettertogether:
+########## Step 2 of 2 - Strategy 'p -> w' ##########
+2025/12/15 10:47:25 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/12/15 10:47:25 INFO dspy.teleprompt.bettertogether: Preparing for weight optimization...
+2025/12/15 10:47:25 INFO dspy.teleprompt.bettertogether: Compiling the weight optimizer...
+2025/12/15 10:47:25 INFO dspy.teleprompt.bootstrap_finetune: Preparing the student and teacher programs...
+2025/12/15 10:47:25 INFO dspy.teleprompt.bootstrap_finetune: Bootstrapping data...
+
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):   2%|▏         | 1/50 [00:00<00:00, 56.25it/s]
+Average Metric: 3.00 / 3 (100.0%):   4%|▍         | 2/50 [00:00<00:00, 111.58it/s]
+Average Metric: 3.00 / 4 (75.0%):   6%|▌         | 3/50 [00:00<00:00, 126.74it/s]
+Average Metric: 4.00 / 5 (80.0%):   8%|▊         | 4/50 [00:00<00:00, 168.08it/s]
+Average Metric: 5.00 / 6 (83.3%):  10%|█         | 5/50 [00:00<00:00, 132.34it/s]
+Average Metric: 5.00 / 7 (71.4%):  12%|█▏        | 6/50 [00:00<00:00, 101.54it/s]
+Average Metric: 5.00 / 8 (62.5%):  14%|█▍        | 7/50 [00:00<00:00, 118.17it/s]
+Average Metric: 6.00 / 9 (66.7%):  16%|█▌        | 8/50 [00:00<00:00, 127.38it/s]
+Average Metric: 6.00 / 10 (60.0%):  18%|█▊        | 9/50 [00:00<00:00, 143.00it/s]
+Average Metric: 7.00 / 11 (63.6%):  20%|██        | 10/50 [00:00<00:00, 158.41it/s]
+Average Metric: 8.00 / 12 (66.7%):  22%|██▏       | 11/50 [00:00<00:00, 162.08it/s]
+Average Metric: 9.00 / 13 (69.2%):  24%|██▍       | 12/50 [00:00<00:00, 160.02it/s]
+Average Metric: 9.00 / 14 (64.3%):  26%|██▌       | 13/50 [00:00<00:00, 173.04it/s]
+Average Metric: 10.00 / 15 (66.7%):  28%|██▊       | 14/50 [00:00<00:00, 169.84it/s]
+Average Metric: 11.00 / 16 (68.8%):  30%|███       | 15/50 [00:00<00:00, 157.13it/s]
+Average Metric: 12.00 / 17 (70.6%):  32%|███▏      | 16/50 [00:00<00:00, 141.48it/s]
+Average Metric: 12.00 / 17 (70.6%):  34%|███▍      | 17/50 [00:00<00:00, 150.17it/s]
+Average Metric: 13.00 / 18 (72.2%):  34%|███▍      | 17/50 [00:00<00:00, 150.17it/s]
+Average Metric: 14.00 / 19 (73.7%):  36%|███▌      | 18/50 [00:00<00:00, 150.17it/s]
+Average Metric: 14.00 / 20 (70.0%):  38%|███▊      | 19/50 [00:00<00:00, 150.17it/s]
+Average Metric: 15.00 / 21 (71.4%):  40%|████      | 20/50 [00:00<00:00, 150.17it/s]
+Average Metric: 16.00 / 22 (72.7%):  42%|████▏     | 21/50 [00:00<00:00, 150.17it/s]
+Average Metric: 17.00 / 23 (73.9%):  44%|████▍     | 22/50 [00:00<00:00, 150.17it/s]
+Average Metric: 17.00 / 24 (70.8%):  46%|████▌     | 23/50 [00:00<00:00, 150.17it/s]
+Average Metric: 17.00 / 25 (68.0%):  48%|████▊     | 24/50 [00:00<00:00, 150.17it/s]
+Average Metric: 18.00 / 26 (69.2%):  50%|█████     | 25/50 [00:00<00:00, 150.17it/s]
+Average Metric: 18.00 / 27 (66.7%):  52%|█████▏    | 26/50 [00:00<00:00, 150.17it/s]
+Average Metric: 19.00 / 28 (67.9%):  54%|█████▍    | 27/50 [00:00<00:00, 150.17it/s]
+Average Metric: 19.00 / 29 (65.5%):  56%|█████▌    | 28/50 [00:00<00:00, 150.17it/s]
+Average Metric: 19.00 / 30 (63.3%):  58%|█████▊    | 29/50 [00:00<00:00, 150.17it/s]
+Average Metric: 19.00 / 31 (61.3%):  60%|██████    | 30/50 [00:00<00:00, 150.17it/s]
+Average Metric: 20.00 / 32 (62.5%):  62%|██████▏   | 31/50 [00:00<00:00, 150.17it/s]
+Average Metric: 21.00 / 33 (63.6%):  64%|██████▍   | 32/50 [00:00<00:00, 150.17it/s]
+Average Metric: 22.00 / 34 (64.7%):  66%|██████▌   | 33/50 [00:00<00:00, 150.17it/s]
+Average Metric: 22.00 / 34 (64.7%):  68%|██████▊   | 34/50 [00:00<00:00, 150.63it/s]
+Average Metric: 23.00 / 35 (65.7%):  68%|██████▊   | 34/50 [00:00<00:00, 150.63it/s]
+Average Metric: 23.00 / 36 (63.9%):  70%|███████   | 35/50 [00:00<00:00, 150.63it/s]
+Average Metric: 23.00 / 37 (62.2%):  72%|███████▏  | 36/50 [00:00<00:00, 150.63it/s]
+Average Metric: 24.00 / 38 (63.2%):  74%|███████▍  | 37/50 [00:00<00:00, 150.63it/s]
+Average Metric: 24.00 / 39 (61.5%):  76%|███████▌  | 38/50 [00:00<00:00, 150.63it/s]
+Average Metric: 25.00 / 40 (62.5%):  78%|███████▊  | 39/50 [00:00<00:00, 150.63it/s]
+Average Metric: 26.00 / 41 (63.4%):  80%|████████  | 40/50 [00:00<00:00, 150.63it/s]
+Average Metric: 27.00 / 42 (64.3%):  82%|████████▏ | 41/50 [00:00<00:00, 150.63it/s]
+Average Metric: 28.00 / 43 (65.1%):  84%|████████▍ | 42/50 [00:00<00:00, 150.63it/s]
+Average Metric: 29.00 / 44 (65.9%):  86%|████████▌ | 43/50 [00:00<00:00, 150.63it/s]
+Average Metric: 30.00 / 45 (66.7%):  88%|████████▊ | 44/50 [00:00<00:00, 150.63it/s]
+Average Metric: 30.00 / 46 (65.2%):  90%|█████████ | 45/50 [00:00<00:00, 150.63it/s]
+Average Metric: 31.00 / 47 (66.0%):  92%|█████████▏| 46/50 [00:01<00:00, 150.63it/s]
+Average Metric: 32.00 / 48 (66.7%):  94%|█████████▍| 47/50 [00:01<00:00, 150.63it/s]
+Average Metric: 32.00 / 49 (65.3%):  96%|█████████▌| 48/50 [00:01<00:00, 150.63it/s]
+Average Metric: 33.00 / 50 (66.0%):  98%|█████████▊| 49/50 [00:01<00:00, 150.63it/s]
+Average Metric: 33.00 / 50 (66.0%): 100%|██████████| 50/50 [00:01<00:00, 23.90it/s]
+Average Metric: 33.00 / 50 (66.0%): 100%|██████████| 50/50 [00:01<00:00, 31.10it/s]2025/12/15 10:47:27 INFO dspy.evaluate.evaluate: Average Metric: 33 / 50 (66.0%)
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: Preparing the train data...
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: Collected data for 50 examples
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: After filtering with the metric, 33 examples remain
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: Using 33 data points for fine-tuning the model: meta-llama/Llama-3.2-3B-Instruct
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: Starting LM fine-tuning...
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: 1 fine-tuning job(s) to start
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: Starting 1 fine-tuning job(s)...
+2025/12/15 10:47:27 INFO dspy.teleprompt.bootstrap_finetune: Calling lm.kill() on the LM to be fine-tuned to free up resources. This won't have any effect if the LM is not running.
+2025/12/15 10:47:27 INFO dspy.clients.huggingface: No running server to kill.
+2025/12/15 10:47:27 INFO dspy.clients.huggingface: [HF Provider] Data format TrainDataFormat.CHAT validated
+2025/12/15 10:47:27 INFO dspy.clients.huggingface: [HF Provider] Finetuning 'meta-llama/Llama-3.2-3B-Instruct' with LoRA
+2025/12/15 10:47:40 INFO dspy.clients.huggingface: [HF Provider] Using device: cuda
+
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.68s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.03it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.07s/it]
+2025/12/15 10:47:44 INFO dspy.clients.huggingface: Adding pad token to tokenizer
+trainable params: 9,175,040 || all params: 3,221,924,864 || trainable%: 0.2848
+
+Map:   0%|          | 0/33 [00:00<?, ? examples/s]
+Map:  27%|██▋       | 9/33 [00:00<00:00, 80.66 examples/s]
+Map:  64%|██████▎   | 21/33 [00:00<00:00, 93.04 examples/s]
+Map: 100%|██████████| 33/33 [00:00<00:00, 96.90 examples/s]
+Map: 100%|██████████| 33/33 [00:00<00:00, 88.66 examples/s]
+
+Filter:   0%|          | 0/33 [00:00<?, ? examples/s]
+Filter: 100%|██████████| 33/33 [00:00<00:00, 4549.29 examples/s]
+average_tokens_across_devices is set to True but it is invalid when world size is1. Turn it to False automatically.
+
+Truncating train dataset:   0%|          | 0/33 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 33/33 [00:00<00:00, 4922.72 examples/s]
+No label_names provided for model class `PeftModelForCausalLM`. Since `PeftModel` hides base models input arguments, if label_names is not given, label_names can't be set automatically within `Trainer`. Note that empty label_names list will be used instead.
+2025/12/15 10:47:45 INFO dspy.clients.huggingface: [HF Provider] Applying LoRA fine-tuning
+2025/12/15 10:47:45 INFO dspy.clients.huggingface: [HF Provider] Training started
+
+  0%|          | 0/20 [00:00<?, ?it/s]
+  5%|▌         | 1/20 [00:02<00:56,  2.95s/it]
+ 10%|█         | 2/20 [00:04<00:32,  1.83s/it]
+ 15%|█▌        | 3/20 [00:05<00:24,  1.46s/it]
+ 20%|██        | 4/20 [00:06<00:20,  1.28s/it]
+ 25%|██▌       | 5/20 [00:06<00:13,  1.13it/s]
+ 30%|███       | 6/20 [00:07<00:12,  1.08it/s]
+ 35%|███▌      | 7/20 [00:08<00:12,  1.05it/s]
+ 40%|████      | 8/20 [00:09<00:11,  1.03it/s]
+ 45%|████▌     | 9/20 [00:10<00:10,  1.01it/s]
+ 50%|█████     | 10/20 [00:10<00:07,  1.37it/s]
+
+
+ 50%|█████     | 10/20 [00:10<00:07,  1.37it/s]
+ 55%|█████▌    | 11/20 [00:11<00:07,  1.22it/s]
+ 60%|██████    | 12/20 [00:12<00:07,  1.14it/s]
+ 65%|██████▌   | 13/20 [00:13<00:06,  1.09it/s]
+ 70%|███████   | 14/20 [00:14<00:05,  1.06it/s]
+ 75%|███████▌  | 15/20 [00:14<00:03,  1.41it/s]
+ 80%|████████  | 16/20 [00:15<00:03,  1.24it/s]
+ 85%|████████▌ | 17/20 [00:16<00:02,  1.15it/s]
+ 90%|█████████ | 18/20 [00:17<00:01,  1.10it/s]
+ 95%|█████████▌| 19/20 [00:18<00:00,  1.06it/s]
+100%|██████████| 20/20 [00:18<00:00,  1.41it/s]
+
+
+100%|██████████| 20/20 [00:18<00:00,  1.41it/s]
+
+
+100%|██████████| 20/20 [00:19<00:00,  1.41it/s]
+100%|██████████| 20/20 [00:19<00:00,  1.03it/s]
+2025/12/15 10:48:06 INFO dspy.clients.huggingface: [HF Provider] Training complete
+2025/12/15 10:48:06 INFO dspy.clients.huggingface: [HF Provider] Reloading base model in bf16 for precise LoRA merging
+{'loss': 0.9274, 'grad_norm': 0.22175109386444092, 'learning_rate': 5.789473684210527e-06, 'num_tokens': 67584.0, 'mean_token_accuracy': 0.7968489597825443, 'epoch': 2.0}
+{'loss': 0.9245, 'grad_norm': 0.23871393501758575, 'learning_rate': 5.263157894736843e-07, 'num_tokens': 135168.0, 'mean_token_accuracy': 0.7978552264325759, 'epoch': 4.0}
+{'train_runtime': 19.4747, 'train_samples_per_second': 8.473, 'train_steps_per_second': 1.027, 'train_loss': 0.925962257385254, 'epoch': 4.0}
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.62s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.07it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.04s/it]
+2025/12/15 10:48:08 INFO dspy.clients.huggingface: [HF Provider] Merging LoRA weights into base model
+2025/12/15 10:48:08 INFO dspy.clients.huggingface: [HF Provider] Merging LoRA trained weights to base model
+2025/12/15 10:48:09 INFO dspy.clients.huggingface: [HF Provider] Saving merged model to meta-llama/Llama-3.2-3B-Instruct-trained
+2025/12/15 10:48:22 INFO dspy.clients.huggingface: [HF Provider] Model successfully merged and saved to meta-llama/Llama-3.2-3B-Instruct-trained.
+2025/12/15 10:48:22 INFO dspy.clients.huggingface: [HF Provider] Releasing GPU memory before redeployment
+2025/12/15 10:48:23 INFO dspy.clients.huggingface: [HF Provider] GPU memory released successfully
+2025/12/15 10:48:23 INFO dspy.clients.huggingface: [HF Provider] Deploying meta-llama/Llama-3.2-3B-Instruct-trained model after LoRA fine-tuning
+2025/12/15 10:48:59 INFO dspy.teleprompt.bootstrap_finetune: Job 1/1 is done
+2025/12/15 10:48:59 INFO dspy.teleprompt.bootstrap_finetune: Updating the student program with the fine-tuned LMs...
+2025/12/15 10:48:59 INFO dspy.teleprompt.bootstrap_finetune: BootstrapFinetune has finished compiling the student program
+2025/12/15 10:48:59 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x iris x meta-llama/Llama-3.2-3B-Instruct x p -> w x GEPA]
+Demonstrations collected (0 in total for 1 predictors):
+
+'generate_answer.predict' predictor demos: []
+
+[BetterTogether x iris x meta-llama/Llama-3.2-3B-Instruct x p -> w x GEPA]
+Calculating experiment program results...
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/50 [00:02<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   2%|▏         | 1/50 [00:02<01:38,  2.00s/it]
+Average Metric: 0.00 / 2 (0.0%):   2%|▏         | 1/50 [00:02<01:38,  2.00s/it]
+Average Metric: 1.00 / 3 (33.3%):   4%|▍         | 2/50 [00:02<01:36,  2.00s/it]
+Average Metric: 1.00 / 3 (33.3%):   6%|▌         | 3/50 [00:02<00:27,  1.73it/s]
+Average Metric: 2.00 / 4 (50.0%):   6%|▌         | 3/50 [00:02<00:27,  1.73it/s]
+Average Metric: 3.00 / 5 (60.0%):   8%|▊         | 4/50 [00:02<00:26,  1.73it/s]
+Average Metric: 3.00 / 6 (50.0%):  10%|█         | 5/50 [00:02<00:26,  1.73it/s]
+Average Metric: 3.00 / 6 (50.0%):  12%|█▏        | 6/50 [00:02<00:11,  3.82it/s]
+Average Metric: 4.00 / 7 (57.1%):  12%|█▏        | 6/50 [00:02<00:11,  3.82it/s]
+Average Metric: 5.00 / 8 (62.5%):  14%|█▍        | 7/50 [00:02<00:11,  3.82it/s]
+Average Metric: 5.00 / 8 (62.5%):  16%|█▌        | 8/50 [00:02<00:08,  4.72it/s]
+Average Metric: 5.00 / 9 (55.6%):  16%|█▌        | 8/50 [00:03<00:08,  4.72it/s]
+Average Metric: 5.00 / 10 (50.0%):  18%|█▊        | 9/50 [00:03<00:08,  4.72it/s]
+Average Metric: 5.00 / 10 (50.0%):  20%|██        | 10/50 [00:03<00:08,  4.46it/s]
+Average Metric: 6.00 / 11 (54.5%):  20%|██        | 10/50 [00:03<00:08,  4.46it/s]
+Average Metric: 7.00 / 12 (58.3%):  22%|██▏       | 11/50 [00:03<00:08,  4.46it/s]
+Average Metric: 7.00 / 13 (53.8%):  24%|██▍       | 12/50 [00:03<00:08,  4.46it/s]
+Average Metric: 7.00 / 13 (53.8%):  26%|██▌       | 13/50 [00:03<00:05,  6.30it/s]
+Average Metric: 8.00 / 14 (57.1%):  26%|██▌       | 13/50 [00:03<00:05,  6.30it/s]
+Average Metric: 8.00 / 15 (53.3%):  28%|██▊       | 14/50 [00:03<00:05,  6.30it/s]
+Average Metric: 8.00 / 15 (53.3%):  30%|███       | 15/50 [00:03<00:04,  7.60it/s]
+Average Metric: 9.00 / 16 (56.2%):  30%|███       | 15/50 [00:03<00:04,  7.60it/s]
+Average Metric: 10.00 / 17 (58.8%):  32%|███▏      | 16/50 [00:04<00:04,  7.60it/s]
+Average Metric: 10.00 / 17 (58.8%):  34%|███▍      | 17/50 [00:04<00:05,  5.70it/s]
+Average Metric: 10.00 / 18 (55.6%):  34%|███▍      | 17/50 [00:04<00:05,  5.70it/s]
+Average Metric: 10.00 / 19 (52.6%):  36%|███▌      | 18/50 [00:04<00:05,  5.70it/s]
+Average Metric: 10.00 / 19 (52.6%):  38%|███▊      | 19/50 [00:04<00:04,  6.86it/s]
+Average Metric: 11.00 / 20 (55.0%):  38%|███▊      | 19/50 [00:04<00:04,  6.86it/s]
+Average Metric: 11.00 / 21 (52.4%):  40%|████      | 20/50 [00:04<00:04,  6.86it/s]
+Average Metric: 11.00 / 21 (52.4%):  42%|████▏     | 21/50 [00:04<00:03,  7.40it/s]
+Average Metric: 12.00 / 22 (54.5%):  42%|████▏     | 21/50 [00:04<00:03,  7.40it/s]
+Average Metric: 13.00 / 23 (56.5%):  44%|████▍     | 22/50 [00:04<00:03,  7.40it/s]
+Average Metric: 13.00 / 23 (56.5%):  46%|████▌     | 23/50 [00:04<00:04,  5.90it/s]
+Average Metric: 14.00 / 24 (58.3%):  46%|████▌     | 23/50 [00:04<00:04,  5.90it/s]
+Average Metric: 15.00 / 25 (60.0%):  48%|████▊     | 24/50 [00:05<00:04,  5.90it/s]
+Average Metric: 15.00 / 25 (60.0%):  50%|█████     | 25/50 [00:05<00:04,  6.06it/s]
+Average Metric: 16.00 / 26 (61.5%):  50%|█████     | 25/50 [00:05<00:04,  6.06it/s]
+Average Metric: 17.00 / 27 (63.0%):  52%|█████▏    | 26/50 [00:05<00:03,  6.06it/s]
+Average Metric: 17.00 / 28 (60.7%):  54%|█████▍    | 27/50 [00:05<00:03,  6.06it/s]
+Average Metric: 17.00 / 28 (60.7%):  56%|█████▌    | 28/50 [00:05<00:02,  8.70it/s]
+Average Metric: 17.00 / 29 (58.6%):  56%|█████▌    | 28/50 [00:05<00:02,  8.70it/s]
+Average Metric: 17.00 / 30 (56.7%):  58%|█████▊    | 29/50 [00:05<00:02,  8.70it/s]
+Average Metric: 17.00 / 30 (56.7%):  60%|██████    | 30/50 [00:05<00:03,  5.81it/s]
+Average Metric: 18.00 / 31 (58.1%):  60%|██████    | 30/50 [00:06<00:03,  5.81it/s]
+Average Metric: 18.00 / 32 (56.2%):  62%|██████▏   | 31/50 [00:06<00:03,  5.81it/s]
+Average Metric: 18.00 / 32 (56.2%):  64%|██████▍   | 32/50 [00:06<00:02,  6.72it/s]
+Average Metric: 18.00 / 33 (54.5%):  64%|██████▍   | 32/50 [00:06<00:02,  6.72it/s]
+Average Metric: 19.00 / 34 (55.9%):  66%|██████▌   | 33/50 [00:06<00:02,  6.72it/s]
+Average Metric: 19.00 / 34 (55.9%):  68%|██████▊   | 34/50 [00:06<00:02,  7.93it/s]
+Average Metric: 20.00 / 35 (57.1%):  68%|██████▊   | 34/50 [00:06<00:02,  7.93it/s]
+Average Metric: 21.00 / 36 (58.3%):  70%|███████   | 35/50 [00:06<00:01,  7.93it/s]
+Average Metric: 21.00 / 36 (58.3%):  72%|███████▏  | 36/50 [00:06<00:02,  6.33it/s]
+Average Metric: 21.00 / 37 (56.8%):  72%|███████▏  | 36/50 [00:06<00:02,  6.33it/s]
+Average Metric: 21.00 / 37 (56.8%):  74%|███████▍  | 37/50 [00:06<00:01,  6.52it/s]
+Average Metric: 21.00 / 38 (55.3%):  74%|███████▍  | 37/50 [00:06<00:01,  6.52it/s]
+Average Metric: 21.00 / 39 (53.8%):  76%|███████▌  | 38/50 [00:07<00:01,  6.52it/s]
+Average Metric: 21.00 / 39 (53.8%):  78%|███████▊  | 39/50 [00:07<00:01,  6.77it/s]
+Average Metric: 21.00 / 40 (52.5%):  78%|███████▊  | 39/50 [00:07<00:01,  6.77it/s]
+Average Metric: 22.00 / 41 (53.7%):  80%|████████  | 40/50 [00:07<00:01,  6.77it/s]
+Average Metric: 22.00 / 41 (53.7%):  82%|████████▏ | 41/50 [00:07<00:01,  7.38it/s]
+Average Metric: 22.00 / 42 (52.4%):  82%|████████▏ | 41/50 [00:07<00:01,  7.38it/s]
+Average Metric: 23.00 / 43 (53.5%):  84%|████████▍ | 42/50 [00:07<00:01,  7.38it/s]
+Average Metric: 23.00 / 43 (53.5%):  86%|████████▌ | 43/50 [00:07<00:00,  7.13it/s]
+Average Metric: 24.00 / 44 (54.5%):  86%|████████▌ | 43/50 [00:07<00:00,  7.13it/s]
+Average Metric: 24.00 / 44 (54.5%):  88%|████████▊ | 44/50 [00:07<00:00,  6.33it/s]
+Average Metric: 25.00 / 45 (55.6%):  88%|████████▊ | 44/50 [00:07<00:00,  6.33it/s]
+Average Metric: 25.00 / 46 (54.3%):  90%|█████████ | 45/50 [00:07<00:00,  6.33it/s]
+Average Metric: 25.00 / 46 (54.3%):  92%|█████████▏| 46/50 [00:07<00:00,  8.23it/s]
+Average Metric: 26.00 / 47 (55.3%):  92%|█████████▏| 46/50 [00:08<00:00,  8.23it/s]
+Average Metric: 26.00 / 48 (54.2%):  94%|█████████▍| 47/50 [00:08<00:00,  8.23it/s]
+Average Metric: 26.00 / 48 (54.2%):  96%|█████████▌| 48/50 [00:08<00:00,  8.18it/s]
+Average Metric: 27.00 / 49 (55.1%):  96%|█████████▌| 48/50 [00:08<00:00,  8.18it/s]
+Average Metric: 28.00 / 50 (56.0%):  98%|█████████▊| 49/50 [00:08<00:00,  8.18it/s]
+Average Metric: 28.00 / 50 (56.0%): 100%|██████████| 50/50 [00:08<00:00,  6.45it/s]
+Average Metric: 28.00 / 50 (56.0%): 100%|██████████| 50/50 [00:08<00:00,  5.75it/s]
+
+2025/12/15 10:49:08 INFO dspy.evaluate.evaluate: Average Metric: 28 / 50 (56.0%)
+
+
+Score:	56.0
+Runtime:	331.14
+

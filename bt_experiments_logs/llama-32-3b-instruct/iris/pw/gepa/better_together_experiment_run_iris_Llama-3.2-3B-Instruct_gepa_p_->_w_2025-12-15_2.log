@@ -1,0 +1,1895 @@
+nohup: ignoring input
+2025/12/15 11:33:41 INFO dspy.datasets.iris: Iris dataset seed: 1765798421
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: Validating the strategy
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: Preparing the student program...
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: Compiling the student program...
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether:
+########## Step 1 of 2 - Strategy 'p' ##########
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: Preparing for prompt optimization...
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: trainset size: 50
+2025/12/15 11:33:41 INFO dspy.teleprompt.bettertogether: Compiling the prompt optimizer...
+2025/12/15 11:33:41 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 520 metric calls of the program. This amounts to 10.40 full evals on the train+val set.
+2025/12/15 11:33:41 INFO dspy.teleprompt.gepa.gepa: Using 35 examples for tracking Pareto scores. You can consider using a smaller sample of the valset to allow GEPA to explore more diverse solutions within the same budget. GEPA requires you to provide the smallest valset that is just large enough to match your downstream task distribution, while providing as large trainset as possible.
+
+GEPA Optimization:   0%|          | 0/520 [00:00<?, ?rollouts/s]2025/12/15 11:33:46 INFO dspy.evaluate.evaluate: Average Metric: 16 / 35 (45.7%)
+2025/12/15 11:33:46 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.45714285714285713 over 35 / 35 examples
+
+GEPA Optimization:   7%|▋         | 35/520 [00:05<01:14,  6.49rollouts/s]2025/12/15 11:33:46 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.45714285714285713
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.20it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:01<00:00,  2.20it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:01<00:00,  1.53it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:01<00:00,  1.53it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:01<00:00,  2.19it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:01<00:00,  2.04it/s]2025/12/15 11:33:48 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:33:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for generate_answer.predict: ## Task Instruction
+## Predict Iris Species Based on Petal and Sepal Dimensions
+
+## Task Description
+Predict the Iris species given the petal and sepal dimensions in centimeters. The task requires the assistant to analyze the sepal and petal dimensions and determine the most likely Iris species.
+
+## Input Format
+The input should be in the following format:
+```markdown
+## Inputs
+### petal_length
+<numeric value>
+
+### petal_width
+<numeric value>
+
+### sepal_length
+<numeric value>
+
+### sepal_width
+<numeric value>
+```
+
+## Task Objective
+The objective of this task is to predict the Iris species (setosa, versicolor, or virginica) based on the given petal and sepal dimensions.
+
+## Classification Criteria
+To determine the Iris species, the assistant should consider the following classification criteria:
+- Setosa: sepal width < 4, sepal length < 4, petal width < 1, petal length < 1
+- Versicolor: 4 <= sepal width < 6, 6 <= sepal length < 7, 1 <= petal width < 2, 2 <= petal length < 4
+- Virginica: 5 >= sepal width, 7 >= sepal length, 2 >= petal width, 4 >= petal length
+
+## Reasoning and Rationale
+The assistant should provide a clear and concise reasoning behind the predicted Iris species, explaining how the sepal and petal dimensions were analyzed and which classification criteria were applied.
+
+## Output Format
+The output should be in the following format:
+```markdown
+## Generated Outputs
+### reasoning
+<clear and concise reasoning>
+
+### answer
+<predicted Iris species>
+```
+
+## Scoring Criteria
+The assistant's performance will be evaluated based on the accuracy of the predicted Iris species. The scoring criteria will be as follows:
+- Correct prediction: 1 point
+- Incorrect prediction: 0 points
+
+## Domain Specific Knowledge
+The following domain-specific knowledge is important for this task:
+- The Iris dataset is a multivariate dataset that contains measurements of sepal and petal dimensions for three species of Iris (setosa, versicolor, and virginica).
+- The classification algorithm created by R.A. Fisher is used to determine the Iris species based on the sepal and petal dimensions.
+- The classification criteria provided above are based on the threshold values used in the classification algorithm.
+
+## Generalizable Strategy
+The assistant may utilize a generalizable strategy to solve this task, such as using a machine learning model to classify the Iris species based on the sepal and petal dimensions. If the assistant utilizes this strategy, it should be documented in the reasoning section of the output.
+
+## Assumptions and Limitations
+The following assumptions and limitations should be considered:
+- The input data is accurate and represents the true sepal and petal dimensions of the Iris flowers.
+- The classification criteria used by the classification algorithm are accurate and representative of the true Iris species.
+- The assistant's performance is not influenced by any biases or errors in the input data or the classification algorithm.
+2025/12/15 11:33:53 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:33:53 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:34:02 INFO dspy.evaluate.evaluate: Average Metric: 11 / 35 (31.4%)
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.3142857142857143 (coverage 35 / 35)
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.3142857142857143
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: False, 1: True, 2: False, 3: True, 4: False, 5: False, 6: False, 7: True, 8: True, 9: True, 10: False, 11: False, 12: False, 13: False, 14: False, 15: False, 16: True, 17: False, 18: True, 19: False, 20: False, 21: False, 22: True, 23: False, 24: False, 25: True, 26: False, 27: True, 28: False, 29: False, 30: False, 31: False, 32: False, 33: True, 34: False}
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: False, 5: True, 6: False, 7: True, 8: True, 9: True, 10: True, 11: False, 12: False, 13: True, 14: False, 15: False, 16: True, 17: True, 18: True, 19: False, 20: True, 21: False, 22: True, 23: True, 24: False, 25: True, 26: True, 27: True, 28: True, 29: False, 30: False, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.6571428571428571
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {0}, 1: {1}, 2: {0}, 3: {1}, 4: {0, 1}, 5: {0}, 6: {0, 1}, 7: {0, 1}, 8: {1}, 9: {0, 1}, 10: {0}, 11: {0, 1}, 12: {0, 1}, 13: {0}, 14: {0, 1}, 15: {0, 1}, 16: {0, 1}, 17: {0}, 18: {1}, 19: {0, 1}, 20: {0}, 21: {0, 1}, 22: {0, 1}, 23: {0}, 24: {0, 1}, 25: {1}, 26: {0}, 27: {1}, 28: {0}, 29: {0, 1}, 30: {0, 1}, 31: {0}, 32: {0, 1}, 33: {1}, 34: {0}}
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.45714285714285713
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 0
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.45714285714285713
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 0
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+
+GEPA Optimization:  15%|█▍        | 76/520 [00:20<02:07,  3.48rollouts/s]2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 2: No merge candidates found
+2025/12/15 11:34:02 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.78it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.78it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.17it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  4.17it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.13it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  3.22it/s]2025/12/15 11:34:02 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:34:04 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Proposed new text for generate_answer.predict: """
+Predict the iris species based on the petal and sepal dimensions.
+
+Given the petal length, petal width, sepal length, and sepal width in centimeters,
+this task aims to predict the species of an iris flower using machine learning classification techniques.
+
+The task is designed to utilize a trained model that has been trained on a labeled dataset of iris flowers,
+where the labels correspond to the species of the iris flowers (setosa, versicolor, or virginica).
+
+The task inputs are expected to be in the following format:
+
+* petal_length (float): The length of the petal in centimeters.
+* petal_width (float): The width of the petal in centimeters.
+* sepal_length (float): The length of the sepal in centimeters.
+* sepal_width (float): The width of the sepal in centimeters.
+
+The task outputs are expected to be one of the following iris species:
+* setosa
+* versicolor
+* virginica
+
+The task is designed to assess the ability to classify iris flowers based on their petal and sepal dimensions.
+
+Assumptions:
+- The task inputs are in centimeters.
+- The petal and sepal dimensions are measured at the tip of the petal and sepal, respectively.
+- The species of the iris flower is the primary characteristic being predicted.
+- The trained model is able to generalize well across different datasets and environmental conditions.
+
+"""
+2025/12/15 11:34:05 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:34:05 INFO dspy.teleprompt.gepa.gepa: Iteration 2: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  16%|█▌        | 82/520 [00:23<02:20,  3.12rollouts/s]2025/12/15 11:34:05 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.31it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.31it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  2.31it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  6.17it/s]2025/12/15 11:34:06 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:34:08 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Iris Species Based on Petal and Sepal Dimensions
+
+## Input Format
+The input will consist of four numerical values representing the dimensions of the petal and sepal in centimeters.
+
+## Input Dimensions
+- petal_length (cm)
+- petal_width (cm)
+- sepal_length (cm)
+- sepal_width (cm)
+
+## Task Objective
+Given the petal and sepal dimensions in cm, predict the iris species.
+
+## Task Constraints
+The iris species can be one of the three following:
+- Setosa (etiolated, short petals)
+- Versicolor (moderately large, somewhat variable petals)
+- Virginica (large, long petals)
+
+## Domain Knowledge
+- Setosa:
+  - Typically has a sepal length between 4-6 cm and a sepal width between 2-4 cm.
+  - Petal length is generally less than 2 cm, and petal width is generally less than 1 cm.
+- Versicolor:
+  - Typically has a sepal length between 5-7 cm and a sepal width between 2.5-4.5 cm.
+  - Petal length is generally between 1-4 cm, and petal width is generally between 0.5-2 cm.
+- Virginica:
+  - Typically has a sepal length between 6-7.5 cm and a sepal width between 3-4.5 cm.
+  - Petal length is generally between 4-6 cm, and petal width is generally between 2-4 cm.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the iris species based on the input dimensions. The chosen algorithm should be trained on a dataset that includes the petal and sepal dimensions and the corresponding iris species.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input dimensions are in centimeters and that the prediction is based on the three main iris species: Setosa, Versicolor, and Virginica.
+2025/12/15 11:34:09 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 11:34:09 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New subsample score 3 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 11:34:15 INFO dspy.evaluate.evaluate: Average Metric: 16 / 35 (45.7%)
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Valset score for new program: 0.45714285714285713 (coverage 35 / 35)
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Val aggregate for new program: 0.45714285714285713
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Individual valset scores for new program: {0: True, 1: True, 2: False, 3: True, 4: True, 5: False, 6: True, 7: True, 8: True, 9: False, 10: False, 11: True, 12: True, 13: False, 14: True, 15: False, 16: True, 17: False, 18: True, 19: False, 20: False, 21: True, 22: False, 23: False, 24: True, 25: True, 26: False, 27: False, 28: True, 29: False, 30: False, 31: False, 32: False, 33: False, 34: False}
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: False, 16: True, 17: True, 18: True, 19: False, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: False, 30: False, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Valset pareto front aggregate score: 0.8571428571428571
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Updated valset pareto front programs: {0: {0, 2}, 1: {1, 2}, 2: {0}, 3: {1, 2}, 4: {2}, 5: {0}, 6: {2}, 7: {0, 1, 2}, 8: {1, 2}, 9: {0, 1}, 10: {0}, 11: {2}, 12: {2}, 13: {0}, 14: {2}, 15: {0, 1, 2}, 16: {0, 1, 2}, 17: {0}, 18: {1, 2}, 19: {0, 1, 2}, 20: {0}, 21: {2}, 22: {0, 1}, 23: {0}, 24: {2}, 25: {1, 2}, 26: {0}, 27: {1}, 28: {0, 2}, 29: {0, 1, 2}, 30: {0, 1, 2}, 31: {0}, 32: {0, 1, 2}, 33: {1}, 34: {0}}
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Best valset aggregate score so far: 0.45714285714285713
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Best program as per aggregate score on valset: 0
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Best score on valset: 0.45714285714285713
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Linear pareto front program index: 0
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New program candidate index: 2
+
+GEPA Optimization:  24%|██▎       | 123/520 [00:33<01:50,  3.59rollouts/s]2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 4: No merge candidates found
+2025/12/15 11:34:15 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.18it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.18it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.63it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.63it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.61it/s]2025/12/15 11:34:16 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:34:20 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Species of Flower Based on Petal and Sepal Dimensions
+
+## Input Format
+The input will consist of four numerical values representing the dimensions of the petal and sepal in centimeters. The input dimensions are:
+- petal_length (cm)
+- petal_width (cm)
+- sepal_length (cm)
+- sepal_width (cm)
+
+## Input Dimensions
+- petal_length (cm): The length of the flower's petal in centimeters.
+- petal_width (cm): The width of the flower's petal in centimeters.
+- sepal_length (cm): The length of the flower's sepal in centimeters.
+- sepal_width (cm): The width of the flower's sepal in centimeters.
+
+## Task Objective
+Given the petal and sepal dimensions in cm, predict the species of flower.
+
+## Task Constraints
+The flower species can be one of the three following:
+- Rose ( typical for Roses)
+- Lily ( typical for Lilies)
+- Carnation ( typical for Carnations)
+
+## Domain Knowledge
+- Rose:
+  - Typically has a sepal length between 4-6 cm and a sepal width between 2-4 cm.
+  - Petal length is generally less than 5 cm, and petal width is generally less than 3 cm.
+- Lily:
+  - Typically has a sepal length between 5-7 cm and a sepal width between 2.5-4.5 cm.
+  - Petal length is generally between 3-6 cm, and petal width is generally between 2-4 cm.
+- Carnation:
+  - Typically has a sepal length between 6-7.5 cm and a sepal width between 3-4.5 cm.
+  - Petal length is generally between 4-6 cm, and petal width is generally between 2-4 cm.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the flower species based on the input dimensions. The chosen algorithm should be trained on a dataset that includes the petal and sepal dimensions and the corresponding flower species.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input dimensions are in centimeters and that the prediction is based on the three main flower species: Roses, Lilies, and Carnations.
+
+## Additional Information
+- The assistant assumes that the input dimensions are measured in centimeters and are in the same unit of measurement for all four dimensions.
+- The assistant assumes that the input dimensions are within the typical ranges for each flower species.
+- The assistant assumes that the flower species can be one of the three specified options.
+
+## Training Data Requirements
+- The assistant requires training data that includes the petal and sepal dimensions and the corresponding flower species for each of the three flower species.
+- The training data should be used to develop a classification or machine learning model that can predict the flower species based on the input dimensions.
+2025/12/15 11:34:21 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:34:21 INFO dspy.teleprompt.gepa.gepa: Iteration 4: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  25%|██▍       | 129/520 [00:39<02:17,  2.85rollouts/s]2025/12/15 11:34:21 INFO dspy.teleprompt.gepa.gepa: Iteration 5: Selected program 1 score: 0.3142857142857143
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:01<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:01<00:02,  1.01s/it]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:01<00:02,  1.01s/it]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:01,  1.01s/it]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.84it/s]2025/12/15 11:34:22 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:34:26 INFO dspy.teleprompt.gepa.gepa: Iteration 5: Proposed new text for generate_answer.predict: ## Task Instruction
+## Predict Iris Species Based on Petal and Sepal Dimensions
+
+## Task Description
+Predict the Iris species given the petal and sepal dimensions in centimeters. The task requires the assistant to analyze the sepal and petal dimensions and determine the most likely Iris species, while considering the classification criteria and domain-specific knowledge.
+
+## Input Format
+The input should be in the following format:
+```markdown
+## Inputs
+### petal_length
+<numeric value>
+
+### petal_width
+<numeric value>
+
+### sepal_length
+<numeric value>
+
+### sepal_width
+<numeric value>
+```
+
+## Task Objective
+The objective of this task is to predict the Iris species (setosa, versicolor, or virginica) based on the given petal and sepal dimensions.
+
+## Classification Criteria
+To determine the Iris species, the assistant should consider the following classification criteria:
+- Setosa: sepal width < 4, sepal length < 4, petal width < 1, petal length < 1
+- Versicolor: 4 <= sepal width < 6, 6 <= sepal length < 7, 1 <= petal width < 2, 2 <= petal length < 4
+- Virginica: 5 >= sepal width, 7 >= sepal length, 2 >= petal width, 4 >= petal length
+
+## Reasoning and Rationale
+The assistant should provide a clear and concise reasoning behind the predicted Iris species, explaining how the sepal and petal dimensions were analyzed and which classification criteria were applied. If a generalizable strategy was utilized, the assistant should document it in the reasoning section of the output.
+
+## Output Format
+The output should be in the following format:
+```markdown
+## Generated Outputs
+### reasoning
+<clear and concise reasoning>
+
+### answer
+<predicted Iris species>
+```
+
+## Scoring Criteria
+The assistant's performance will be evaluated based on the accuracy of the predicted Iris species. The scoring criteria will be as follows:
+- Correct prediction: 1 point
+- Incorrect prediction: 0 points
+
+## Domain Specific Knowledge
+The following domain-specific knowledge is important for this task:
+- The Iris dataset is a multivariate dataset that contains measurements of sepal and petal dimensions for three species of Iris (setosa, versicolor, and virginica).
+- The classification algorithm created by R.A. Fisher is used to determine the Iris species based on the sepal and petal dimensions.
+- The classification criteria provided above are based on the threshold values used in the classification algorithm.
+
+## Generalizable Strategy
+If the assistant utilizes a generalizable strategy to solve this task, such as using a machine learning model to classify the Iris species based on the sepal and petal dimensions, it should be documented in the reasoning section of the output.
+
+## Assumptions and Limitations
+The following assumptions and limitations should be considered:
+- The input data is accurate and represents the true sepal and petal dimensions of the Iris flowers.
+- The classification criteria used by the classification algorithm are accurate and representative of the true Iris species.
+- The assistant's performance is not influenced by any biases or errors in the input data or the classification algorithm.
+2025/12/15 11:34:27 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:34:27 INFO dspy.teleprompt.gepa.gepa: Iteration 5: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  26%|██▌       | 135/520 [00:46<02:50,  2.25rollouts/s]2025/12/15 11:34:27 INFO dspy.teleprompt.gepa.gepa: Iteration 6: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:00, 165.36it/s]
+Average Metric: 3.00 / 3 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00, 232.50it/s]
+Average Metric: 3.00 / 3 (100.0%): 100%|██████████| 3/3 [00:00<00:00, 343.62it/s]2025/12/15 11:34:27 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 11:34:27 INFO dspy.teleprompt.gepa.gepa: Iteration 6: All subsample scores perfect. Skipping.
+2025/12/15 11:34:27 INFO dspy.teleprompt.gepa.gepa: Iteration 6: Reflective mutation did not propose a new candidate
+2025/12/15 11:34:27 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.04it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.09it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.09it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.61it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.70it/s]2025/12/15 11:34:28 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:34:31 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Proposed new text for generate_answer.predict: ## Task: Iris Species Classification from Petal and Sepal Dimensions
+
+## Description
+Predict the species of Iris (setosa, versicolor, or virginica) based on the dimensions of its petals and sepals in centimeters.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `petal_length`: The length of the petal in centimeters.
+- `petal_width`: The width of the petal in centimeters.
+- `sepal_length`: The length of the sepal in centimeters.
+- `sepal_width`: The width of the sepal in centimeters.
+
+## Task Objective
+The assistant should output the predicted species of the Iris (setosa, versicolor, or virginica) based on the input dimensions.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Petal length: If the petal length is above 4.3 cm, it is more likely to be virginica.
+- Petal width: The petal width does not have a specific threshold, but it should be considered in conjunction with the sepal width.
+- Sepal length and width: The sepal length and width should be considered together. A longer and wider sepal length and width are more characteristic of virginica.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The Iris dataset is composed of 50 samples from each of three species of Iris (setosa, versicolor, and virginica).
+- The petal length and width of setosa are typically less than 1.5 cm and 1 cm, respectively.
+- The petal length and width of versicolor are typically between 1.5 cm and 4.5 cm.
+- The petal length of virginica is typically above 4.3 cm.
+- The sepal length of virginica is typically above 5.1 cm.
+- The sepal width of virginica is typically above 2.5 cm.
+
+## Assumptions
+The assistant assumes that the input dimensions are accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:34:32 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:34:32 INFO dspy.teleprompt.gepa.gepa: Iteration 7: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:34:38 INFO dspy.evaluate.evaluate: Average Metric: 19 / 35 (54.3%)
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Found a better program on the valset with score 0.5428571428571428.
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Valset score for new program: 0.5428571428571428 (coverage 35 / 35)
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Val aggregate for new program: 0.5428571428571428
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Individual valset scores for new program: {0: True, 1: False, 2: True, 3: True, 4: True, 5: True, 6: True, 7: False, 8: False, 9: True, 10: True, 11: True, 12: False, 13: True, 14: False, 15: False, 16: True, 17: True, 18: True, 19: True, 20: False, 21: False, 22: True, 23: False, 24: False, 25: True, 26: False, 27: False, 28: True, 29: False, 30: True, 31: True, 32: False, 33: False, 34: False}
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: False, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: False, 30: True, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Valset pareto front aggregate score: 0.9142857142857143
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Updated valset pareto front programs: {0: {0, 2, 3}, 1: {1, 2}, 2: {0, 3}, 3: {1, 2, 3}, 4: {2, 3}, 5: {0, 3}, 6: {2, 3}, 7: {0, 1, 2}, 8: {1, 2}, 9: {0, 1, 3}, 10: {0, 3}, 11: {2, 3}, 12: {2}, 13: {0, 3}, 14: {2}, 15: {0, 1, 2, 3}, 16: {0, 1, 2, 3}, 17: {0, 3}, 18: {1, 2, 3}, 19: {3}, 20: {0}, 21: {2}, 22: {0, 1, 3}, 23: {0}, 24: {2}, 25: {1, 2, 3}, 26: {0}, 27: {1}, 28: {0, 2, 3}, 29: {0, 1, 2, 3}, 30: {3}, 31: {0, 3}, 32: {0, 1, 2, 3}, 33: {1}, 34: {0}}
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Best program as per aggregate score on valset: 3
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Best score on valset: 0.5428571428571428
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Linear pareto front program index: 3
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 7: New program candidate index: 3
+
+GEPA Optimization:  34%|███▍      | 179/520 [00:57<01:52,  3.03rollouts/s]2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 8: No merge candidates found
+2025/12/15 11:34:38 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Selected program 3 score: 0.5428571428571428
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.84it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.84it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.87it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.87it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.52it/s]2025/12/15 11:34:39 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:34:43 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Proposed new text for generate_answer.predict: ## Task: Diabetes Progression Prediction from Patient Characteristics
+
+## Description
+Predict the progression of diabetes based on the characteristics of patients in a clinical trial.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `bmi`: The body mass index of the patient.
+- `bp`: The blood pressure of the patient in mmHg.
+- `s1`: The serum 1 level of the patient.
+- `s2`: The serum 2 level of the patient.
+- `s3`: The serum 3 level of the patient.
+- `s4`: The serum 4 level of the patient.
+- `s5`: The serum 5 level of the patient.
+- `s6`: The serum 6 level of the patient.
+- `t2d`: The presence of type 2 diabetes ('yes' or 'no').
+
+## Task Objective
+The assistant should output the predicted progression of diabetes based on the input characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Patients over 60 years are more likely to progress to type 2 diabetes.
+- Sex: Women are more likely to progress to type 2 diabetes than men.
+- BMI: Patients with a BMI above 25 are more likely to progress to type 2 diabetes.
+- Blood Pressure: Patients with a blood pressure above 120/80 mmHg are more likely to progress to type 2 diabetes.
+- Serum levels: The serum levels of s1, s2, s3, s4, s5, and s6 do not have a specific threshold, but they should be considered in conjunction with other factors.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The risk of progression to type 2 diabetes is higher in patients with a family history of the disease.
+- Patients who are overweight or obese are more likely to progress to type 2 diabetes.
+- The American Diabetes Association recommends that patients with a BMI above 30 be screened for type 2 diabetes.
+- The presence of hypertension, dyslipidemia, or microalbuminuria increases the risk of progression to type 2 diabetes.
+- The risk of progression to type 2 diabetes is higher in patients with a history of gestational diabetes or polycystic ovary syndrome (PCOS).
+
+## Assumptions
+The assistant assumes that the input characteristics are accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:34:43 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:34:43 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:34:49 INFO dspy.evaluate.evaluate: Average Metric: 11 / 35 (31.4%)
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Valset score for new program: 0.3142857142857143 (coverage 35 / 35)
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Val aggregate for new program: 0.3142857142857143
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Individual valset scores for new program: {0: False, 1: True, 2: False, 3: True, 4: False, 5: False, 6: False, 7: False, 8: True, 9: False, 10: False, 11: False, 12: False, 13: True, 14: False, 15: True, 16: True, 17: True, 18: False, 19: True, 20: False, 21: True, 22: False, 23: False, 24: False, 25: False, 26: False, 27: True, 28: False, 29: False, 30: True, 31: False, 32: False, 33: False, 34: False}
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: False, 30: True, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Valset pareto front aggregate score: 0.9428571428571428
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Updated valset pareto front programs: {0: {0, 2, 3}, 1: {1, 2, 4}, 2: {0, 3}, 3: {1, 2, 3, 4}, 4: {2, 3}, 5: {0, 3}, 6: {2, 3}, 7: {0, 1, 2}, 8: {1, 2, 4}, 9: {0, 1, 3}, 10: {0, 3}, 11: {2, 3}, 12: {2}, 13: {0, 3, 4}, 14: {2}, 15: {4}, 16: {0, 1, 2, 3, 4}, 17: {0, 3, 4}, 18: {1, 2, 3}, 19: {3, 4}, 20: {0}, 21: {2, 4}, 22: {0, 1, 3}, 23: {0}, 24: {2}, 25: {1, 2, 3}, 26: {0}, 27: {1, 4}, 28: {0, 2, 3}, 29: {0, 1, 2, 3, 4}, 30: {3, 4}, 31: {0, 3}, 32: {0, 1, 2, 3, 4}, 33: {1}, 34: {0}}
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Best program as per aggregate score on valset: 3
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Best score on valset: 0.5428571428571428
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Linear pareto front program index: 3
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New program candidate index: 4
+
+GEPA Optimization:  42%|████▏     | 220/520 [01:08<01:31,  3.28rollouts/s]2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 9: No merge candidates found
+2025/12/15 11:34:49 INFO dspy.teleprompt.gepa.gepa: Iteration 9: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.88it/s]
+Average Metric: 2.00 / 2 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.76it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  3.76it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.96it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.92it/s]2025/12/15 11:34:50 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:34:53 INFO dspy.teleprompt.gepa.gepa: Iteration 9: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Type of Cactus Based on Spine Length and Diameter
+
+## Input Format
+The input will consist of two numerical values representing the dimensions of the cactus in centimeters.
+
+## Input Dimensions
+- spine_length (cm)
+- spine_diameter (cm)
+
+## Task Objective
+Given the spine and diameter dimensions of a cactus, predict the type of cactus (e.g., Prickly Pear, Pincushion, or Star Cactus) based on the length and diameter of its spines.
+
+## Task Constraints
+The cactus types can be one of the three following:
+- Prickly Pear:
+  - Typically has a spine length between 2-5 cm and a spine diameter between 0.5-1.5 cm.
+- Pincushion:
+  - Typically has a spine length between 1-3 cm and a spine diameter between 0.2-0.8 cm.
+- Star Cactus:
+  - Typically has a spine length between 5-8 cm and a spine diameter between 1-2 cm.
+
+## Domain Knowledge
+- Prickly Pear:
+  - Has a high number of spines, with a general trend of spines being longer and thicker.
+  - Typically has a more columnar growth habit.
+- Pincushion:
+  - Has a moderate number of short, fine spines.
+  - Typically has a more rounded growth habit.
+- Star Cactus:
+  - Has a unique, star-shaped growth habit.
+  - Typically has long, thin spines.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the cactus type based on the input dimensions. The chosen algorithm should be trained on a dataset that includes the spine and diameter dimensions and the corresponding cactus types.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input dimensions are in centimeters and that the prediction is based on the three main cactus types: Prickly Pear, Pincushion, and Star Cactus.
+
+## Additional Information
+- Cacti with spines above 8 cm in length are more likely to be classified as Star Cacti.
+- Cacti with spines below 2 cm in diameter are more likely to be classified as Pincushion cacti.
+- Cacti with spines between 2-5 cm in length and 0.5-1.5 cm in diameter are most likely to be classified as Prickly Pear cacti.
+2025/12/15 11:34:54 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:34:54 INFO dspy.teleprompt.gepa.gepa: Iteration 9: New subsample score 1 is not better than old score 2, skipping
+
+GEPA Optimization:  43%|████▎     | 226/520 [01:13<01:43,  2.85rollouts/s]2025/12/15 11:34:54 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Selected program 4 score: 0.3142857142857143
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.23it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.23it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.66it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.66it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.77it/s]2025/12/15 11:34:55 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:35:00 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Proposed new text for generate_answer.predict: ## Task: Cardiovascular Disease Risk Prediction from Patient Characteristics
+
+## Description
+Predict the risk of cardiovascular disease (CVD) based on the characteristics of patients in a clinical trial.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `bmi`: The body mass index of the patient.
+- `bp`: The blood pressure of the patient in mmHg.
+- `cholesterol`: The level of cholesterol in the patient's blood.
+- `triglycerides`: The level of triglycerides in the patient's blood.
+- `heart_rate`: The heart rate of the patient in beats per minute.
+- `ejection_fraction`: The ejection fraction of the patient's heart.
+- `electrolytes`: The levels of various electrolytes in the patient's blood.
+- `family_history`: The presence of a family history of cardiovascular disease ('yes' or 'no').
+- `smoking_status`: The smoking status of the patient ('smoker' or 'non-smoker').
+- `physical_activity`: The level of physical activity of the patient.
+- `diabetes_status`: The presence of diabetes ('yes' or 'no').
+
+## Task Objective
+The assistant should output the predicted risk of cardiovascular disease based on the input characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Patients over 65 years are at a higher risk of cardiovascular disease.
+- Sex: Men are at a higher risk of cardiovascular disease than women.
+- BMI: Patients with a BMI above 30 are at a higher risk of cardiovascular disease.
+- Blood Pressure: Patients with a blood pressure above 130/80 mmHg are at a higher risk of cardiovascular disease.
+- Cholesterol: Patients with a low level of high-density lipoprotein (HDL) cholesterol and a high level of low-density lipoprotein (LDL) cholesterol are at a higher risk of cardiovascular disease.
+- Triglycerides: Patients with a high level of triglycerides are at a higher risk of cardiovascular disease.
+- Heart Rate: Patients with a heart rate above 100 beats per minute are at a higher risk of cardiovascular disease.
+- Ejection Fraction: Patients with a low ejection fraction are at a higher risk of cardiovascular disease.
+- Electrolytes: Abnormal levels of electrolytes, such as potassium and sodium, are at a higher risk of cardiovascular disease.
+- Family History: Patients with a family history of cardiovascular disease are at a higher risk of cardiovascular disease.
+- Smoking Status: Smokers are at a higher risk of cardiovascular disease.
+- Physical Activity: Patients with low levels of physical activity are at a higher risk of cardiovascular disease.
+- Diabetes Status: Patients with diabetes are at a higher risk of cardiovascular disease.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The American Heart Association recommends that patients with a BMI above 30 be screened for cardiovascular disease.
+- The presence of hypertension, high cholesterol, or high triglycerides increases the risk of cardiovascular disease.
+- The risk of cardiovascular disease is higher in patients with a history of heart attack or stroke.
+- The presence of kidney disease, peripheral artery disease, or chronic obstructive pulmonary disease (COPD) increases the risk of cardiovascular disease.
+- The risk of cardiovascular disease is higher in patients with a family history of heart disease or stroke.
+
+## Assumptions
+The assistant assumes that the input characteristics are accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:35:01 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:35:01 INFO dspy.teleprompt.gepa.gepa: Iteration 10: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:35:06 INFO dspy.evaluate.evaluate: Average Metric: 13 / 35 (37.1%)
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Valset score for new program: 0.37142857142857144 (coverage 35 / 35)
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Val aggregate for new program: 0.37142857142857144
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Individual valset scores for new program: {0: False, 1: False, 2: False, 3: True, 4: False, 5: True, 6: True, 7: True, 8: True, 9: False, 10: False, 11: False, 12: True, 13: False, 14: False, 15: True, 16: False, 17: True, 18: True, 19: False, 20: False, 21: False, 22: True, 23: True, 24: True, 25: False, 26: False, 27: False, 28: False, 29: False, 30: False, 31: False, 32: False, 33: True, 34: False}
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: False, 30: True, 31: True, 32: False, 33: True, 34: True}
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Valset pareto front aggregate score: 0.9428571428571428
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Updated valset pareto front programs: {0: {0, 2, 3}, 1: {1, 2, 4}, 2: {0, 3}, 3: {1, 2, 3, 4, 5}, 4: {2, 3}, 5: {0, 3, 5}, 6: {2, 3, 5}, 7: {0, 1, 2, 5}, 8: {1, 2, 4, 5}, 9: {0, 1, 3}, 10: {0, 3}, 11: {2, 3}, 12: {2, 5}, 13: {0, 3, 4}, 14: {2}, 15: {4, 5}, 16: {0, 1, 2, 3, 4}, 17: {0, 3, 4, 5}, 18: {1, 2, 3, 5}, 19: {3, 4}, 20: {0}, 21: {2, 4}, 22: {0, 1, 3, 5}, 23: {0, 5}, 24: {2, 5}, 25: {1, 2, 3}, 26: {0}, 27: {1, 4}, 28: {0, 2, 3}, 29: {0, 1, 2, 3, 4, 5}, 30: {3, 4}, 31: {0, 3}, 32: {0, 1, 2, 3, 4, 5}, 33: {1, 5}, 34: {0}}
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Best program as per aggregate score on valset: 3
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Best score on valset: 0.5428571428571428
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Linear pareto front program index: 3
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 10: New program candidate index: 5
+
+GEPA Optimization:  51%|█████▏    | 267/520 [01:24<01:20,  3.15rollouts/s]2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 11: No merge candidates found
+2025/12/15 11:35:06 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Selected program 4 score: 0.3142857142857143
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.40it/s]
+Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.80it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  4.80it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.98it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.12it/s]2025/12/15 11:35:07 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:35:10 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Proposed new text for generate_answer.predict: ## Task: Retinal Health Prediction from Patient Images
+
+## Description
+Predict the retinal health of patients based on images of their retinas.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `image_url`: The URL of the retinal image.
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `diabetes_status`: The presence of diabetes ('yes' or 'no').
+- `hypertension_status`: The presence of hypertension ('yes' or 'no').
+- `smoking_status`: The presence of smoking ('yes' or 'no').
+- `cholesterol_level`: The cholesterol level of the patient.
+- `BP`: The blood pressure of the patient in mmHg.
+- `retinal_features`: A list of retinal feature values, including but not limited to:
+  - `focal_length`
+  - `fractal_dimension`
+  - `vascular_density`
+  - `retinal_noise`
+  - `macular_pit_depth`
+
+## Task Objective
+The assistant should output the predicted retinal health based on the input image and characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Older patients are more likely to have retinal health issues.
+- Sex: Women are more likely to have retinal health issues than men.
+- Diabetes status: Patients with diabetes are more likely to have retinal health issues.
+- Hypertension status: Patients with hypertension are more likely to have retinal health issues.
+- Smoking status: Smokers are more likely to have retinal health issues.
+- Cholesterol level: High cholesterol levels are more likely to contribute to retinal health issues.
+- Blood pressure: High blood pressure is more likely to contribute to retinal health issues.
+- Retinal features: The values of the retinal features should be considered in conjunction with other factors.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The presence of diabetic retinopathy is a major cause of blindness in working-age adults.
+- Hypertension is a major risk factor for retinal damage.
+- Smoking is a major risk factor for retinal damage.
+- High cholesterol levels are a major risk factor for retinal damage.
+- The American Academy of Ophthalmology recommends regular eye exams for patients with diabetes.
+- The American Heart Association recommends regular blood pressure checks for patients with hypertension.
+- The Centers for Disease Control and Prevention recommends regular retinal exams for patients with a history of smoking.
+
+## Assumptions
+The assistant assumes that the input image is accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:35:11 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:35:11 INFO dspy.teleprompt.gepa.gepa: Iteration 11: New subsample score 1 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:35:16 INFO dspy.evaluate.evaluate: Average Metric: 13 / 35 (37.1%)
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Valset score for new program: 0.37142857142857144 (coverage 35 / 35)
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Val aggregate for new program: 0.37142857142857144
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Individual valset scores for new program: {0: False, 1: False, 2: False, 3: True, 4: False, 5: False, 6: False, 7: False, 8: True, 9: True, 10: True, 11: False, 12: False, 13: True, 14: True, 15: False, 16: False, 17: True, 18: False, 19: False, 20: False, 21: True, 22: False, 23: False, 24: True, 25: False, 26: False, 27: False, 28: False, 29: False, 30: True, 31: False, 32: True, 33: True, 34: True}
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: False, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Valset pareto front aggregate score: 0.9714285714285714
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Updated valset pareto front programs: {0: {0, 2, 3}, 1: {1, 2, 4}, 2: {0, 3}, 3: {1, 2, 3, 4, 5, 6}, 4: {2, 3}, 5: {0, 3, 5}, 6: {2, 3, 5}, 7: {0, 1, 2, 5}, 8: {1, 2, 4, 5, 6}, 9: {0, 1, 3, 6}, 10: {0, 3, 6}, 11: {2, 3}, 12: {2, 5}, 13: {0, 3, 4, 6}, 14: {2, 6}, 15: {4, 5}, 16: {0, 1, 2, 3, 4}, 17: {0, 3, 4, 5, 6}, 18: {1, 2, 3, 5}, 19: {3, 4}, 20: {0}, 21: {2, 4, 6}, 22: {0, 1, 3, 5}, 23: {0, 5}, 24: {2, 5, 6}, 25: {1, 2, 3}, 26: {0}, 27: {1, 4}, 28: {0, 2, 3}, 29: {0, 1, 2, 3, 4, 5, 6}, 30: {3, 4, 6}, 31: {0, 3}, 32: {6}, 33: {1, 5, 6}, 34: {0, 6}}
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Best program as per aggregate score on valset: 3
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Best score on valset: 0.5428571428571428
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Linear pareto front program index: 3
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 11: New program candidate index: 6
+
+GEPA Optimization:  59%|█████▉    | 308/520 [01:34<01:01,  3.43rollouts/s]2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 12: No merge candidates found
+2025/12/15 11:35:16 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 97.05it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00, 163.92it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00, 243.23it/s]2025/12/15 11:35:16 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:35:19 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Proposed new text for generate_answer.predict: ## Task Instruction
+
+Given the petal and sepal dimensions in cm, predict the iris species.
+
+## Input Format
+The input should be in the following format:
+
+- petal_length: A numeric value representing the length of the petal in cm.
+- petal_width: A numeric value representing the width of the petal in cm.
+- sepal_length: A numeric value representing the length of the sepal in cm.
+- sepal_width: A numeric value representing the width of the sepal in cm.
+
+## Task Description
+The task is to predict the iris species based on the provided petal and sepal dimensions. The iris species classification is based on the characteristics of the petal and sepal dimensions, which are unique to each species.
+
+## Niche and Domain Specific Information
+- The petal length is above 4.3 cm for the virginica species.
+- The petal length is below 5.1 cm for the setosa species.
+- The petal length is between 5.1 cm and 7.9 cm for the virginica species.
+- The petal width is between 1.5 cm and 2.0 cm for the setosa species.
+- The petal width is between 2.0 cm and 3.0 cm for the versicolor species.
+- The sepal length is between 4.0 cm and 6.0 cm for the setosa species.
+- The sepal length is between 6.0 cm and 7.0 cm for the versicolor species.
+- The sepal length is above 7.0 cm for the virginica species.
+
+## Generalizable Strategy
+The assistant may use a generalizable strategy such as:
+- Calculating the z-score for petal length and sepal length to determine the species.
+- Using a decision tree or a machine learning algorithm to classify the species based on the petal and sepal dimensions.
+
+## Output Format
+The output should be in the following format:
+
+- answer: A string representing the predicted iris species ("setosa", "versicolor", or "virginica").
+- reasoning: A string providing the reasoning behind the prediction.
+
+## Feedback
+The feedback should include the accuracy of the prediction (True or False) and any additional information that may be useful for improvement.
+2025/12/15 11:35:20 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:35:20 INFO dspy.teleprompt.gepa.gepa: Iteration 12: New subsample score 2 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:35:26 INFO dspy.evaluate.evaluate: Average Metric: 15 / 35 (42.9%)
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Valset score for new program: 0.42857142857142855 (coverage 35 / 35)
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Val aggregate for new program: 0.42857142857142855
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Individual valset scores for new program: {0: False, 1: False, 2: False, 3: True, 4: False, 5: False, 6: True, 7: False, 8: True, 9: True, 10: False, 11: True, 12: False, 13: True, 14: False, 15: False, 16: False, 17: True, 18: True, 19: True, 20: False, 21: True, 22: False, 23: False, 24: False, 25: True, 26: True, 27: False, 28: True, 29: True, 30: True, 31: False, 32: False, 33: False, 34: False}
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Valset pareto front aggregate score: 1.0
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Updated valset pareto front programs: {0: {0, 2, 3}, 1: {1, 2, 4}, 2: {0, 3}, 3: {1, 2, 3, 4, 5, 6, 7}, 4: {2, 3}, 5: {0, 3, 5}, 6: {2, 3, 5, 7}, 7: {0, 1, 2, 5}, 8: {1, 2, 4, 5, 6, 7}, 9: {0, 1, 3, 6, 7}, 10: {0, 3, 6}, 11: {2, 3, 7}, 12: {2, 5}, 13: {0, 3, 4, 6, 7}, 14: {2, 6}, 15: {4, 5}, 16: {0, 1, 2, 3, 4}, 17: {0, 3, 4, 5, 6, 7}, 18: {1, 2, 3, 5, 7}, 19: {3, 4, 7}, 20: {0}, 21: {2, 4, 6, 7}, 22: {0, 1, 3, 5}, 23: {0, 5}, 24: {2, 5, 6}, 25: {1, 2, 3, 7}, 26: {0, 7}, 27: {1, 4}, 28: {0, 2, 3, 7}, 29: {7}, 30: {3, 4, 6, 7}, 31: {0, 3}, 32: {6}, 33: {1, 5, 6}, 34: {0, 6}}
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Best program as per aggregate score on valset: 3
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Best score on valset: 0.5428571428571428
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: Linear pareto front program index: 3
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 12: New program candidate index: 7
+
+GEPA Optimization:  67%|██████▋   | 349/520 [01:45<00:47,  3.63rollouts/s]2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 13: No merge candidates found
+2025/12/15 11:35:26 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Selected program 7 score: 0.42857142857142855
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.22it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.22it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:00,  1.22it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.86it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.52it/s]2025/12/15 11:35:27 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:35:30 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Proposed new text for generate_answer.predict: ## Task Instruction
+
+Given the petal and sepal dimensions in cm, predict the iris species based on the characteristics of the petal and sepal dimensions. The iris species classification is unique to each species.
+
+## Input Format
+The input should be in the following format:
+
+- petal_length: A numeric value representing the length of the petal in cm.
+- petal_width: A numeric value representing the width of the petal in cm.
+- sepal_length: A numeric value representing the length of the sepal in cm.
+- sepal_width: A numeric value representing the width of the sepal in cm.
+
+## Task Description
+The task is to predict the iris species from the given petal and sepal dimensions. The petal length and sepal length are used to determine the species.
+
+## Niche and Domain Specific Information
+- The petal length is above 4.3 cm for the virginica species.
+- The petal length is below 5.1 cm for the setosa species.
+- The petal length is between 5.1 cm and 7.9 cm for the virginica species.
+- The petal width is between 1.5 cm and 2.0 cm for the setosa species.
+- The petal width is between 2.0 cm and 3.0 cm for the versicolor species.
+- The sepal length is between 4.0 cm and 6.0 cm for the setosa species.
+- The sepal length is between 6.0 cm and 7.0 cm for the versicolor species.
+- The sepal length is above 7.0 cm for the virginica species.
+
+## Generalizable Strategy
+The assistant may use a generalizable strategy such as:
+- Calculating the z-score for petal length and sepal length to determine the species.
+- Using a decision tree or a machine learning algorithm to classify the species based on the petal and sepal dimensions.
+
+## Output Format
+The output should be in the following format:
+
+- answer: A string representing the predicted iris species ("setosa", "versicolor", or "virginica").
+- reasoning: A string providing the reasoning behind the prediction.
+
+## Feedback
+The feedback should include the accuracy of the prediction (True or False) and any additional information that may be useful for improvement.
+2025/12/15 11:35:31 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 11:35:31 INFO dspy.teleprompt.gepa.gepa: Iteration 13: New subsample score 3 is better than old score 2. Continue to full eval and add to candidate pool.
+2025/12/15 11:35:37 INFO dspy.evaluate.evaluate: Average Metric: 18 / 35 (51.4%)
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Valset score for new program: 0.5142857142857142 (coverage 35 / 35)
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Val aggregate for new program: 0.5142857142857142
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Individual valset scores for new program: {0: True, 1: False, 2: True, 3: False, 4: True, 5: False, 6: True, 7: True, 8: False, 9: False, 10: True, 11: False, 12: False, 13: True, 14: False, 15: True, 16: False, 17: True, 18: True, 19: True, 20: False, 21: True, 22: True, 23: False, 24: False, 25: True, 26: False, 27: False, 28: False, 29: False, 30: True, 31: True, 32: True, 33: False, 34: True}
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Valset pareto front aggregate score: 1.0
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Updated valset pareto front programs: {0: {0, 8, 2, 3}, 1: {1, 2, 4}, 2: {0, 8, 3}, 3: {1, 2, 3, 4, 5, 6, 7}, 4: {8, 2, 3}, 5: {0, 3, 5}, 6: {2, 3, 5, 7, 8}, 7: {0, 1, 2, 5, 8}, 8: {1, 2, 4, 5, 6, 7}, 9: {0, 1, 3, 6, 7}, 10: {0, 8, 3, 6}, 11: {2, 3, 7}, 12: {2, 5}, 13: {0, 3, 4, 6, 7, 8}, 14: {2, 6}, 15: {8, 4, 5}, 16: {0, 1, 2, 3, 4}, 17: {0, 3, 4, 5, 6, 7, 8}, 18: {1, 2, 3, 5, 7, 8}, 19: {8, 3, 4, 7}, 20: {0}, 21: {2, 4, 6, 7, 8}, 22: {0, 1, 3, 5, 8}, 23: {0, 5}, 24: {2, 5, 6}, 25: {1, 2, 3, 7, 8}, 26: {0, 7}, 27: {1, 4}, 28: {0, 2, 3, 7}, 29: {7}, 30: {3, 4, 6, 7, 8}, 31: {0, 8, 3}, 32: {8, 6}, 33: {1, 5, 6}, 34: {0, 8, 6}}
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Best program as per aggregate score on valset: 3
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Best score on valset: 0.5428571428571428
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: Linear pareto front program index: 3
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 13: New program candidate index: 8
+
+GEPA Optimization:  75%|███████▌  | 390/520 [01:56<00:35,  3.63rollouts/s]2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 14: No merge candidates found
+2025/12/15 11:35:37 INFO dspy.teleprompt.gepa.gepa: Iteration 14: Selected program 6 score: 0.37142857142857144
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.02it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.02it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  2.02it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  5.19it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  4.49it/s]2025/12/15 11:35:38 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:35:43 INFO dspy.teleprompt.gepa.gepa: Iteration 14: Proposed new text for generate_answer.predict: ## Task: Predicting the Severity of Diabetic Retinopathy from Fundus Images
+
+## Description
+Predict the severity of diabetic retinopathy in patients based on fundus images of their eyes.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `image_url`: The URL of the fundus image.
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `diabetes_status`: The presence of diabetes ('yes' or 'no').
+- `hypertension_status`: The presence of hypertension ('yes' or 'no').
+- `smoking_status`: The presence of smoking ('yes' or 'no').
+- `cholesterol_level`: The cholesterol level of the patient.
+- `BP`: The blood pressure of the patient in mmHg.
+- `retinal_features`: A list of retinal feature values, including but not limited to:
+  - `retinal_nerve_fiber_layer_thickness`
+  - `macular_edema`
+  - `vascular_abnormalities`
+  - `hard_exudates`
+  - `soft_exudates`
+  - `retinal_hypoxia`
+- `fundus_image_quality`: The quality of the fundus image, rated on a scale of 1-5, where 1 is poor quality and 5 is excellent quality.
+
+## Task Objective
+The assistant should output the predicted severity of diabetic retinopathy based on the input image and characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Older patients are more likely to have severe diabetic retinopathy.
+- Sex: Women are more likely to have severe diabetic retinopathy than men.
+- Diabetes status: Patients with diabetes are more likely to have severe diabetic retinopathy.
+- Hypertension status: Patients with hypertension are more likely to have severe diabetic retinopathy.
+- Smoking status: Smokers are more likely to have severe diabetic retinopathy.
+- Cholesterol level: High cholesterol levels are more likely to contribute to severe diabetic retinopathy.
+- Blood pressure: High blood pressure is more likely to contribute to severe diabetic retinopathy.
+- Retinal features: The values of the retinal features should be considered in conjunction with other factors and the fundus image quality.
+- Previous retinal exams: The assistant should consider the results of previous retinal exams to determine the current severity of diabetic retinopathy.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- Diabetic retinopathy is a major cause of blindness in working-age adults.
+- The presence of diabetic retinopathy is associated with an increased risk of cardiovascular disease.
+- Regular eye exams are essential for early detection and treatment of diabetic retinopathy.
+- The American Academy of Ophthalmology recommends regular retinal exams for patients with diabetes.
+- The American Heart Association recommends regular blood pressure checks for patients with hypertension.
+- The Centers for Disease Control and Prevention recommends regular retinal exams for patients with a history of smoking.
+- The International Clinical Diabetic Retinopathy Severity Scale (ICDRS) is a widely used classification system for diabetic retinopathy.
+- The presence and severity of diabetic retinopathy can be correlated with the patient's glycemic control and duration of diabetes.
+
+## Assumptions
+The assistant assumes that the input image is accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions, with a higher score indicating a more accurate prediction.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions and a detailed explanation of the reasoning behind each prediction.
+2025/12/15 11:35:44 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:35:44 INFO dspy.teleprompt.gepa.gepa: Iteration 14: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  76%|███████▌  | 396/520 [02:02<00:40,  3.05rollouts/s]2025/12/15 11:35:44 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Selected program 6 score: 0.37142857142857144
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.33it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00,  2.33it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.33it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  4.12it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.83it/s]2025/12/15 11:35:45 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:35:48 INFO dspy.teleprompt.gepa.gepa: Iteration 15: Proposed new text for generate_answer.predict: ## Task: Blood Pressure Prediction from Patient Records
+
+## Description
+Predict the blood pressure of patients based on their medical records.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `height`: The height of the patient in cm.
+- `weight`: The weight of the patient in kg.
+- `smoking_status`: The presence of smoking ('yes' or 'no').
+- `physical_activity_level`: The level of physical activity of the patient ('sedentary', 'lightly active', 'moderately active', or 'very active').
+- `heart_disease_status`: The presence of heart disease ('yes' or 'no').
+- `diabetes_status`: The presence of diabetes ('yes' or 'no').
+- `BP_record`: A list of blood pressure readings, including systolic and diastolic values.
+
+## Task Objective
+The assistant should output the predicted blood pressure of the patient based on the input data.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Older patients are more likely to have high blood pressure.
+- Sex: Women are more likely to have high blood pressure than men.
+- Height and weight: Patients with a higher body mass index (BMI) are more likely to have high blood pressure.
+- Smoking status: Smokers are more likely to have high blood pressure.
+- Physical activity level: Patients with a lower physical activity level are more likely to have high blood pressure.
+- Heart disease status: Patients with heart disease are more likely to have high blood pressure.
+- Diabetes status: Patients with diabetes are more likely to have high blood pressure.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The American Heart Association recommends regular blood pressure checks for patients with hypertension.
+- The Centers for Disease Control and Prevention recommends regular physical activity monitoring for patients with heart disease.
+- The National Institute on Aging recommends regular height and weight monitoring for older adults.
+- The American College of Cardiology recommends regular blood pressure monitoring for patients with diabetes.
+- The American Diabetes Association recommends regular blood sugar monitoring for patients with diabetes.
+
+## Assumptions
+The assistant assumes that the input data is accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:35:49 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:35:49 INFO dspy.teleprompt.gepa.gepa: Iteration 15: New subsample score 1 is not better than old score 2, skipping
+
+GEPA Optimization:  77%|███████▋  | 402/520 [02:07<00:43,  2.70rollouts/s]2025/12/15 11:35:49 INFO dspy.teleprompt.gepa.gepa: Iteration 16: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00, 83.69it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.39it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.59it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  3.59it/s]2025/12/15 11:35:50 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:35:54 INFO dspy.teleprompt.gepa.gepa: Iteration 16: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Flower Type Based on Petal and Sepal Dimensions
+
+## Input Format
+The input will consist of four numerical values representing the dimensions of the petal and sepal in centimeters.
+
+## Input Dimensions
+- petal_length (cm)
+- petal_width (cm)
+- sepal_length (cm)
+- sepal_width (cm)
+
+## Task Objective
+Given the petal and sepal dimensions in cm, predict the type of flower.
+
+## Task Constraints
+The flower type can be one of the following:
+- Rose (petal length less than 5 cm, petal width less than 3 cm, sepal length between 3-6 cm, and sepal width between 2-4 cm)
+- Carnation (petal length between 5-7 cm, petal width between 3-5 cm, sepal length between 6-8 cm, and sepal width between 3-5 cm)
+- Daisy (petal length between 7-10 cm, petal width between 4-6 cm, sepal length between 7-9 cm, and sepal width between 4-6 cm)
+
+## Domain Knowledge
+- Roses:
+  - Typically have a petal length less than 5 cm and a petal width less than 3 cm.
+  - Petal length is generally less than 5 cm, and petal width is generally less than 3 cm.
+  - Sepal length is between 3-6 cm, and sepal width is between 2-4 cm.
+- Carnations:
+  - Typically have a petal length between 5-7 cm and a petal width between 3-5 cm.
+  - Petal length is generally between 5-7 cm, and petal width is generally between 3-5 cm.
+  - Sepal length is between 6-8 cm, and sepal width is between 3-5 cm.
+- Daisies:
+  - Typically have a petal length between 7-10 cm and a petal width between 4-6 cm.
+  - Petal length is generally between 7-10 cm, and petal width is generally between 4-6 cm.
+  - Sepal length is between 7-9 cm, and sepal width is between 4-6 cm.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the flower type based on the input dimensions. The chosen algorithm should be trained on a dataset that includes the petal and sepal dimensions and the corresponding flower types.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input dimensions are in centimeters and that the prediction is based on the three main flower types: Rose, Carnation, and Daisy.
+2025/12/15 11:35:55 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:35:55 INFO dspy.teleprompt.gepa.gepa: Iteration 16: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  78%|███████▊  | 408/520 [02:13<00:48,  2.29rollouts/s]2025/12/15 11:35:55 INFO dspy.teleprompt.gepa.gepa: Iteration 17: Selected program 4 score: 0.3142857142857143
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.54it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.54it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  1.54it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.60it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  3.84it/s]2025/12/15 11:35:55 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:35:59 INFO dspy.teleprompt.gepa.gepa: Iteration 17: Proposed new text for generate_answer.predict: ## Task: Predicting the Severity of Hypertension from Patient Characteristics
+
+## Description
+Predict the severity of hypertension based on the characteristics of patients in a clinical trial.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `bmi`: The body mass index of the patient.
+- `bp`: The blood pressure of the patient in mmHg.
+- `heart_rate`: The heart rate of the patient.
+- `ejection_fraction`: The ejection fraction of the patient.
+- `lving_function`: The left ventricular function of the patient.
+- `kidney_function`: The kidney function of the patient.
+- `diabetes_status`: The presence of diabetes ('yes' or 'no').
+- `hypertension_status`: The presence of hypertension ('yes' or 'no').
+- `family_history`: The presence of a family history of hypertension ('yes' or 'no').
+
+## Task Objective
+The assistant should output the predicted severity of hypertension based on the input characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Patients over 60 years are more likely to have severe hypertension.
+- Sex: Women are more likely to have severe hypertension than men.
+- BMI: Patients with a BMI above 30 are more likely to have severe hypertension.
+- Blood Pressure: Patients with a blood pressure above 140/90 mmHg are more likely to have severe hypertension.
+- Heart Rate: Patients with a heart rate above 100 beats per minute are more likely to have severe hypertension.
+- Ejection Fraction: Patients with an ejection fraction below 50% are more likely to have severe hypertension.
+- Lving Function: Patients with a left ventricular function below 30% are more likely to have severe hypertension.
+- Kidney Function: Patients with a kidney function below 30% are more likely to have severe hypertension.
+- Diabetes Status: Patients with diabetes are more likely to have severe hypertension.
+- Hypertension Status: Patients with hypertension are more likely to have severe hypertension.
+- Family History: Patients with a family history of hypertension are more likely to have severe hypertension.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The American Heart Association recommends that patients with a blood pressure above 130/80 mmHg be screened for hypertension.
+- The presence of kidney disease, heart failure, or coronary artery disease increases the risk of severe hypertension.
+- The risk of severe hypertension is higher in patients with a history of hypertension or cardiovascular disease.
+- The American Diabetes Association recommends that patients with diabetes be screened for hypertension annually.
+
+## Assumptions
+The assistant assumes that the input characteristics are accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:36:00 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:36:00 INFO dspy.teleprompt.gepa.gepa: Iteration 17: New subsample score 0 is not better than old score 0, skipping
+
+GEPA Optimization:  80%|███████▉  | 414/520 [02:19<00:53,  1.97rollouts/s]2025/12/15 11:36:00 INFO dspy.teleprompt.gepa.gepa: Iteration 18: Selected program 4 score: 0.3142857142857143
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00, 76.83it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  3.65it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  5.48it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  5.48it/s]2025/12/15 11:36:01 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:36:05 INFO dspy.teleprompt.gepa.gepa: Iteration 18: Proposed new text for generate_answer.predict: ## Task: Predicting Migraine Severity based on Patient Characteristics
+
+## Description
+Predict the severity of migraines based on the characteristics of patients in a clinical trial.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `bmi`: The body mass index of the patient.
+- `bp`: The blood pressure of the patient in mmHg.
+- `hrt`: The presence of hypertension ('yes' or 'no').
+- `s1`: The serum 1 level of the patient.
+- `s2`: The serum 2 level of the patient.
+- `s3`: The serum 3 level of the patient.
+- `s4`: The serum 4 level of the patient.
+- `s5`: The serum 5 level of the patient.
+- `s6`: The serum 6 level of the patient.
+- `t2d`: The presence of type 2 diabetes ('yes' or 'no').
+- `asthma`: The presence of asthma ('yes' or 'no').
+- `allergies`: The presence of allergies ('yes' or 'no').
+- `stress`: The level of stress experienced by the patient (1-10).
+- `sleep`: The quality of sleep experienced by the patient (1-10).
+
+## Task Objective
+The assistant should output the predicted severity of migraines based on the input characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Patients over 40 years are more likely to experience severe migraines.
+- Sex: Women are more likely to experience severe migraines than men.
+- BMI: Patients with a BMI above 25 are more likely to experience severe migraines.
+- Blood Pressure: Patients with a blood pressure above 120/80 mmHg are more likely to experience severe migraines.
+- Hypertension: Patients with a history of hypertension are more likely to experience severe migraines.
+- Serum levels: The serum levels of s1, s2, s3, s4, s5, and s6 do not have a specific threshold, but they should be considered in conjunction with other factors.
+- Stress: Patients who experience high levels of stress are more likely to experience severe migraines.
+- Sleep: Patients who experience poor quality sleep are more likely to experience severe migraines.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The risk of severe migraines is higher in patients with a family history of the disease.
+- Patients who are overweight or obese are more likely to experience severe migraines.
+- The American Migraine Foundation recommends that patients with a BMI above 30 be screened for migraines.
+- The presence of allergies, asthma, or other chronic conditions increases the risk of severe migraines.
+- The risk of severe migraines is higher in patients with a history of medication overuse or withdrawal.
+
+## Assumptions
+The assistant assumes that the input characteristics are accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:36:06 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:36:06 INFO dspy.teleprompt.gepa.gepa: Iteration 18: New subsample score 1 is not better than old score 1, skipping
+
+GEPA Optimization:  81%|████████  | 420/520 [02:24<00:57,  1.73rollouts/s]2025/12/15 11:36:06 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:01,  1.36it/s]
+Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.72it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:00,  2.72it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  1.97it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.08it/s]2025/12/15 11:36:07 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:12 INFO dspy.teleprompt.gepa.gepa: Iteration 19: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Species of Wine Based on Chemical Properties
+
+## Input Format
+The input will consist of 13 numerical values representing the chemical properties of the wine, including:
+- acid (mg/L)
+- alcalinity (mg/L)
+- alkalinity (mg/L)
+- calcium (mg/L)
+- chloride (mg/L)
+- chloride (mg/L)
+- chloride (mg/L)
+- chlorides (mg/L)
+- magnesium (mg/L)
+- nitrate (mg/L)
+- potassium (mg/L)
+- sulfates (mg/L)
+- total dry extract (mg/L)
+
+## Input Dimensions
+- acid (mg/L)
+- alcalinity (mg/L)
+- alkalinity (mg/L)
+- calcium (mg/L)
+- chloride (mg/L)
+- chlorides (mg/L)
+- magnesium (mg/L)
+- nitrate (mg/L)
+- potassium (mg/L)
+- sulfates (mg/L)
+- total dry extract (mg/L)
+
+## Task Objective
+Given the chemical properties of the wine, predict the species of wine.
+
+## Task Constraints
+The wine species can be one of the following:
+- Chardonnay
+- Merlot
+- Pinot Noir
+- Cabernet Sauvignon
+- Sauvignon Blanc
+
+## Domain Knowledge
+- Chardonnay:
+  - Typically has a total dry extract between 63-80 mg/L and a potassium level between 3-6 mg/L.
+  - Acid levels are generally between 2.5-3.5 g/L.
+  - Alkalinity levels are generally between 21-28 mg/L.
+  - Chloride levels are generally between 100-500 mg/L.
+- Merlot:
+  - Typically has a total dry extract between 75-100 mg/L and a potassium level between 5-9 mg/L.
+  - Acid levels are generally between 3-4 g/L.
+  - Alkalinity levels are generally between 25-32 mg/L.
+  - Chloride levels are generally between 100-500 mg/L.
+- Pinot Noir:
+  - Typically has a total dry extract between 55-70 mg/L and a potassium level between 3-6 mg/L.
+  - Acid levels are generally between 3-4 g/L.
+  - Alkalinity levels are generally between 20-25 mg/L.
+  - Chloride levels are generally between 100-500 mg/L.
+- Cabernet Sauvignon:
+  - Typically has a total dry extract between 80-120 mg/L and a potassium level between 5-12 mg/L.
+  - Acid levels are generally between 3-4 g/L.
+  - Alkalinity levels are generally between 25-32 mg/L.
+  - Chloride levels are generally between 100-500 mg/L.
+- Sauvignon Blanc:
+  - Typically has a total dry extract between 65-85 mg/L and a potassium level between 4-8 mg/L.
+  - Acid levels are generally between 2.5-3.5 g/L.
+  - Alkalinity levels are generally between 20-25 mg/L.
+  - Chloride levels are generally between 100-500 mg/L.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the wine species based on the input dimensions. The chosen algorithm should be trained on a dataset that includes the chemical properties and the corresponding wine species.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input dimensions are in mg/L and that the prediction is based on the five main wine species: Chardonnay, Merlot, Pinot Noir, Cabernet Sauvignon, and Sauvignon Blanc.
+2025/12/15 11:36:13 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:36:13 INFO dspy.teleprompt.gepa.gepa: Iteration 19: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  82%|████████▏ | 426/520 [02:32<01:05,  1.43rollouts/s]2025/12/15 11:36:13 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:00, 75.74it/s]
+Average Metric: 3.00 / 3 (100.0%):  67%|██████▋   | 2/3 [00:00<00:00,  3.17it/s]
+Average Metric: 3.00 / 3 (100.0%): 100%|██████████| 3/3 [00:00<00:00,  4.76it/s]
+Average Metric: 3.00 / 3 (100.0%): 100%|██████████| 3/3 [00:00<00:00,  4.76it/s]2025/12/15 11:36:14 INFO dspy.evaluate.evaluate: Average Metric: 3 / 3 (100.0%)
+2025/12/15 11:36:14 INFO dspy.teleprompt.gepa.gepa: Iteration 20: All subsample scores perfect. Skipping.
+2025/12/15 11:36:14 INFO dspy.teleprompt.gepa.gepa: Iteration 20: Reflective mutation did not propose a new candidate
+
+GEPA Optimization:  82%|████████▎ | 429/520 [02:32<00:58,  1.56rollouts/s]2025/12/15 11:36:14 INFO dspy.teleprompt.gepa.gepa: Iteration 21: Selected program 6 score: 0.37142857142857144
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 2.00 / 2 (100.0%):  33%|███▎      | 1/3 [00:00<00:00, 84.33it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00,  2.85it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  4.28it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00,  4.28it/s]2025/12/15 11:36:15 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:19 INFO dspy.teleprompt.gepa.gepa: Iteration 21: Proposed new text for generate_answer.predict: ## Task: Diabetic Retinopathy Detection from Retinal Fundus Images
+
+## Description
+Detect diabetic retinopathy in patients based on retinal fundus images.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `image_url`: The URL of the retinal fundus image.
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `diabetes_status`: The presence of diabetes ('yes' or 'no').
+- `hypertension_status`: The presence of hypertension ('yes' or 'no').
+- `smoking_status`: The presence of smoking ('yes' or 'no').
+- `cholesterol_level`: The cholesterol level of the patient.
+- `BP`: The blood pressure of the patient in mmHg.
+- `retinal_features`: A list of retinal feature values, including but not limited to:
+  - `focal_length`
+  - `fractal_dimension`
+  - `vascular_density`
+  - `retinal_noise`
+  - `macular_pit_depth`
+- `retinal_image`: The retinal fundus image itself
+
+## Task Objective
+The assistant should output the predicted presence of diabetic retinopathy based on the input image and characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Older patients are more likely to have diabetic retinopathy.
+- Sex: Women are more likely to have diabetic retinopathy than men.
+- Diabetes status: Patients with diabetes are more likely to have diabetic retinopathy.
+- Hypertension status: Patients with hypertension are more likely to have diabetic retinopathy.
+- Smoking status: Smokers are more likely to have diabetic retinopathy.
+- Cholesterol level: High cholesterol levels are more likely to contribute to diabetic retinopathy.
+- Blood pressure: High blood pressure is more likely to contribute to diabetic retinopathy.
+- Retinal features: The values of the retinal features should be considered in conjunction with other factors.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The presence of diabetic retinopathy is a major cause of blindness in working-age adults.
+- Hypertension is a major risk factor for diabetic retinopathy.
+- Smoking is a major risk factor for diabetic retinopathy.
+- High cholesterol levels are a major risk factor for diabetic retinopathy.
+- The American Academy of Ophthalmology recommends regular eye exams for patients with diabetes.
+- The American Heart Association recommends regular blood pressure checks for patients with hypertension.
+- The Centers for Disease Control and Prevention recommends regular retinal exams for patients with a history of smoking.
+- Diabetic retinopathy can be detected through optical coherence tomography (OCT) and fluorescein angiography.
+- The presence of diabetic retinopathy can be classified into three stages: mild non-proliferative diabetic retinopathy (NPDR), moderate NPDR, and severe NPDR.
+
+## Assumptions
+The assistant assumes that the input image is accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions, including the sensitivity, specificity, and area under the receiver operating characteristic curve (AUROC).
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions, as well as the type of retinal damage detected (e.g., mild, moderate, or severe).
+2025/12/15 11:36:20 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:36:20 INFO dspy.teleprompt.gepa.gepa: Iteration 21: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  84%|████████▎ | 435/520 [02:39<01:02,  1.35rollouts/s]2025/12/15 11:36:20 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:00<00:00, 110.36it/s]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:00<00:00, 207.15it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:00<00:00, 304.23it/s]2025/12/15 11:36:20 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:23 INFO dspy.teleprompt.gepa.gepa: Iteration 22: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Age Group Based on Height and Weight of a Person
+
+## Input Format
+The input will consist of two numerical values representing the height and weight of a person in cm and kg, respectively.
+
+## Input Dimensions
+- height (cm)
+- weight (kg)
+
+## Task Objective
+Given the height and weight of a person, predict the age group.
+
+## Task Constraints
+The age group can be one of the four following:
+- Young Adult (18-24 years)
+- Adult (25-39 years)
+- Middle-Aged (40-59 years)
+- Senior (60 years and above)
+
+## Domain Knowledge
+- Young Adult:
+  - Typically has a height range of 155-180 cm and a weight range of 45-70 kg.
+  - Weight-to-height ratio is generally less than 20 kg/m^2.
+- Adult:
+  - Typically has a height range of 160-185 cm and a weight range of 50-80 kg.
+  - Weight-to-height ratio is generally between 20-25 kg/m^2.
+- Middle-Aged:
+  - Typically has a height range of 165-190 cm and a weight range of 55-85 kg.
+  - Weight-to-height ratio is generally between 25-30 kg/m^2.
+- Senior:
+  - Typically has a height range of 150-175 cm and a weight range of 40-65 kg.
+  - Weight-to-height ratio is generally less than 20 kg/m^2.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the age group based on the input height and weight. The chosen algorithm should be trained on a dataset that includes the height, weight, and corresponding age group.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input height and weight are in centimeters and kilograms, respectively, and that the prediction is based on the four main age groups: Young Adult, Adult, Middle-Aged, and Senior.
+2025/12/15 11:36:24 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:36:24 INFO dspy.teleprompt.gepa.gepa: Iteration 22: New subsample score 0 is not better than old score 2, skipping
+
+GEPA Optimization:  85%|████████▍ | 441/520 [02:42<00:55,  1.43rollouts/s]2025/12/15 11:36:24 INFO dspy.teleprompt.gepa.gepa: Iteration 23: Selected program 2 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 109.61it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00, 206.31it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00, 305.43it/s]2025/12/15 11:36:24 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:36:28 INFO dspy.teleprompt.gepa.gepa: Iteration 23: Proposed new text for generate_answer.predict: # Task Instruction
+## Task Description
+Predict the Cancer Type Based on Tumor Dimensions and Histological Features
+
+## Input Format
+The input will consist of seven numerical values representing the dimensions and histological features of the tumor.
+
+## Input Dimensions
+- Tumor size (mm)
+- Tumor elevation (mm)
+- Tumor depression (mm)
+- Tumor length (mm)
+- Tumor width (mm)
+- Tumor height (mm)
+- Mitosis count per high power field (HPF)
+
+## Task Objective
+Given the tumor dimensions and histological features, predict the cancer type.
+
+## Task Constraints
+The cancer type can be one of the following:
+- Squamous cell carcinoma (epidermoid carcinoma)
+- Adenocarcinoma
+- Small cell carcinoma
+- Giant cell carcinoma
+- Anaplastic carcinoma
+
+## Domain Knowledge
+- Squamous cell carcinoma:
+  - Typically has a tumor size greater than 20 mm.
+  - Tumor elevation and depression are often greater than 5 mm.
+  - Tumor length, width, and height are typically greater than 3 mm.
+  - Mitosis count per HPF is often greater than 10.
+- Adenocarcinoma:
+  - Typically has a tumor size between 10-30 mm.
+  - Tumor elevation and depression are often between 2-6 mm.
+  - Tumor length, width, and height are typically between 2-5 mm.
+  - Mitosis count per HPF is often between 5-10.
+- Small cell carcinoma:
+  - Typically has a tumor size less than 10 mm.
+  - Tumor elevation and depression are often less than 2 mm.
+  - Tumor length, width, and height are typically less than 3 mm.
+  - Mitosis count per HPF is often greater than 20.
+- Giant cell carcinoma:
+  - Typically has a tumor size greater than 30 mm.
+  - Tumor elevation and depression are often greater than 6 mm.
+  - Tumor length, width, and height are typically greater than 5 mm.
+  - Mitosis count per HPF is often greater than 15.
+- Anaplastic carcinoma:
+  - Typically has a tumor size greater than 20 mm.
+  - Tumor elevation and depression are often greater than 5 mm.
+  - Tumor length, width, and height are typically greater than 3 mm.
+  - Mitosis count per HPF is often greater than 15.
+
+## Strategy
+The assistant may use a classification or machine learning algorithm to predict the cancer type based on the input dimensions and histological features. The chosen algorithm should be trained on a dataset that includes the tumor dimensions and histological features and the corresponding cancer types.
+
+## Feedback Mechanism
+For each prediction, the assistant will provide a score indicating whether the prediction is correct or not. The score will be based on the accuracy of the prediction.
+
+## Assumptions
+The assistant assumes that the input dimensions are in millimeters and that the prediction is based on the five main cancer types: Squamous cell carcinoma, Adenocarcinoma, Small cell carcinoma, Giant cell carcinoma, and Anaplastic carcinoma.
+2025/12/15 11:36:29 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:36:29 INFO dspy.teleprompt.gepa.gepa: Iteration 23: New subsample score 0 is not better than old score 1, skipping
+
+GEPA Optimization:  86%|████████▌ | 447/520 [02:47<00:53,  1.37rollouts/s]2025/12/15 11:36:29 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Selected program 0 score: 0.45714285714285713
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 103.18it/s]
+Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:00<00:00,  3.51it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  5.26it/s]
+Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:00<00:00,  5.26it/s]2025/12/15 11:36:29 INFO dspy.evaluate.evaluate: Average Metric: 1 / 3 (33.3%)
+2025/12/15 11:36:32 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Proposed new text for generate_answer.predict: ## Task: Predict Iris Species Classification
+
+## Task Description
+Predict the species of an iris flower based on its petal and sepal dimensions in centimeters.
+
+## Input Format
+The input format should include the following dimensions:
+- petal_length (cm)
+- petal_width (cm)
+- sepal_length (cm)
+- sepal_width (cm)
+
+## Task Requirements
+The task requires predicting the species of an iris flower based on its petal and sepal dimensions. The classification system used for this task is based on the classification algorithm created by R.A. Fisher, which includes three species: Setosa, Versicolor, and Virginica.
+
+## Classification Criteria
+The classification criteria are as follows:
+- Setosa: sepal width < 4, sepal length < 4, petal width < 1, petal length < 1
+- Versicolor: 4 <= sepal width < 6, 6 <= sepal length < 7, 1 <= petal width < 2, 2 <= petal length < 4
+- Virginica: 5 >= sepal width, 7 >= sepal length, 2 >= petal width, 4 >= petal length
+
+## Output Format
+The output should be one of the following species:
+- Setosa
+- Versicolor
+- Virginica
+
+## Feedback
+The task feedback is based on the accuracy of the predicted species. A score of True indicates that the prediction is accurate, while a score of False indicates that the prediction is incorrect.
+
+## Additional Notes
+The task is designed to test the ability to classify iris flowers based on their petal and sepal dimensions, using a classification system that is based on the work of R.A. Fisher. The task is expected to be solved using a classification algorithm, and the predicted species should be one of the three recognized species: Setosa, Versicolor, or Virginica.
+2025/12/15 11:36:33 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:33 INFO dspy.teleprompt.gepa.gepa: Iteration 24: New subsample score 2 is better than old score 1. Continue to full eval and add to candidate pool.
+2025/12/15 11:36:40 INFO dspy.evaluate.evaluate: Average Metric: 12 / 35 (34.3%)
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Valset score for new program: 0.34285714285714286 (coverage 35 / 35)
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Val aggregate for new program: 0.34285714285714286
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Individual valset scores for new program: {0: True, 1: False, 2: True, 3: False, 4: False, 5: True, 6: True, 7: False, 8: True, 9: False, 10: False, 11: False, 12: True, 13: False, 14: False, 15: True, 16: True, 17: False, 18: True, 19: False, 20: False, 21: False, 22: False, 23: True, 24: False, 25: False, 26: True, 27: False, 28: False, 29: False, 30: False, 31: True, 32: False, 33: False, 34: False}
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Valset pareto front aggregate score: 1.0
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Updated valset pareto front programs: {0: {0, 2, 3, 8, 9}, 1: {1, 2, 4}, 2: {0, 8, 3, 9}, 3: {1, 2, 3, 4, 5, 6, 7}, 4: {8, 2, 3}, 5: {0, 9, 3, 5}, 6: {2, 3, 5, 7, 8, 9}, 7: {0, 1, 2, 5, 8}, 8: {1, 2, 4, 5, 6, 7, 9}, 9: {0, 1, 3, 6, 7}, 10: {0, 8, 3, 6}, 11: {2, 3, 7}, 12: {9, 2, 5}, 13: {0, 3, 4, 6, 7, 8}, 14: {2, 6}, 15: {8, 9, 4, 5}, 16: {0, 1, 2, 3, 4, 9}, 17: {0, 3, 4, 5, 6, 7, 8}, 18: {1, 2, 3, 5, 7, 8, 9}, 19: {8, 3, 4, 7}, 20: {0}, 21: {2, 4, 6, 7, 8}, 22: {0, 1, 3, 5, 8}, 23: {0, 9, 5}, 24: {2, 5, 6}, 25: {1, 2, 3, 7, 8}, 26: {0, 9, 7}, 27: {1, 4}, 28: {0, 2, 3, 7}, 29: {7}, 30: {3, 4, 6, 7, 8}, 31: {0, 8, 3, 9}, 32: {8, 6}, 33: {1, 5, 6}, 34: {0, 8, 6}}
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Best program as per aggregate score on valset: 3
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Best score on valset: 0.5428571428571428
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: Linear pareto front program index: 3
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 24: New program candidate index: 9
+
+GEPA Optimization:  94%|█████████▍| 488/520 [02:59<00:12,  2.47rollouts/s]2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 25: No merge candidates found
+2025/12/15 11:36:40 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Selected program 7 score: 0.42857142857142855
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:01<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:01<00:02,  1.22s/it]
+Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:01<00:02,  1.22s/it]
+Average Metric: 2.00 / 3 (66.7%):  67%|██████▋   | 2/3 [00:01<00:01,  1.22s/it]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  2.18it/s]
+Average Metric: 2.00 / 3 (66.7%): 100%|██████████| 3/3 [00:01<00:00,  1.87it/s]2025/12/15 11:36:42 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:45 INFO dspy.teleprompt.gepa.gepa: Iteration 25: Proposed new text for generate_answer.predict: ## Task Instruction
+
+Given the petal and sepal dimensions in cm, predict the iris species.
+
+## Input Format
+The input should be in the following format:
+
+- petal_length: A numeric value representing the length of the petal in cm.
+- petal_width: A numeric value representing the width of the petal in cm.
+- sepal_length: A numeric value representing the length of the sepal in cm.
+- sepal_width: A numeric value representing the width of the sepal in cm.
+
+## Task Description
+The task is to predict the iris species based on the provided petal and sepal dimensions. The iris species classification is based on the characteristics of the petal and sepal dimensions, which are unique to each species.
+
+## Niche and Domain Specific Information
+- The petal length is above 4.3 cm for the virginica species.
+- The petal length is below 5.1 cm for the setosa species.
+- The petal length is between 5.1 cm and 7.9 cm for the virginica species.
+- The petal width is between 1.5 cm and 2.0 cm for the setosa species.
+- The petal width is between 2.0 cm and 3.0 cm for the versicolor species.
+- The sepal length is between 4.0 cm and 6.0 cm for the setosa species.
+- The sepal length is between 6.0 cm and 7.0 cm for the versicolor species.
+- The sepal length is above 7.0 cm for the virginica species.
+
+## Generalizable Strategy
+The assistant may use a generalizable strategy such as:
+- Calculating the z-score for petal length and sepal length to determine the species.
+- Using a decision tree or a machine learning algorithm to classify the species based on the petal and sepal dimensions.
+
+## Output Format
+The output should be in the following format:
+
+- answer: A string representing the predicted iris species ("setosa", "versicolor", or "virginica").
+- reasoning: A string providing the reasoning behind the prediction.
+
+## Feedback
+The feedback should include the accuracy of the prediction (True or False) and any additional information that may be useful for improvement.
+2025/12/15 11:36:45 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:45 INFO dspy.teleprompt.gepa.gepa: Iteration 25: New subsample score 2 is not better than old score 2, skipping
+
+GEPA Optimization:  95%|█████████▌| 494/520 [03:03<00:11,  2.22rollouts/s]2025/12/15 11:36:45 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Selected program 4 score: 0.3142857142857143
+
+
+  0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:00<?, ?it/s]
+Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:00<00:00, 73.41it/s]
+Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:00<00:00,  2.88it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.32it/s]
+Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:00<00:00,  4.32it/s]2025/12/15 11:36:45 INFO dspy.evaluate.evaluate: Average Metric: 0 / 3 (0.0%)
+2025/12/15 11:36:50 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Proposed new text for generate_answer.predict: ## Task: Disease Progression Prediction from Patient Histories
+
+## Description
+Predict the progression of a disease based on the historical characteristics of patients.
+
+## Input Format
+The input should be a dictionary with the following keys and values:
+- `age`: The age of the patient in years.
+- `sex`: The sex of the patient ('male' or 'female').
+- `bmi`: The body mass index of the patient.
+- `bp`: The blood pressure of the patient in mmHg.
+- `disease_history`: A list of previous disease incidents, including the date and severity of each incident.
+- `medications`: A list of current medications being taken by the patient.
+- `lifestyle_factors`: A dictionary containing information about the patient's lifestyle factors, such as diet, exercise habits, and smoking status.
+- `genetic_factors`: A dictionary containing information about the patient's genetic factors, such as family history of the disease.
+- `previous_procedure_results`: A dictionary containing information about previous medical procedures, including the type of procedure and the results of the procedure.
+- `current_symptoms`: A list of current symptoms being experienced by the patient.
+- `laboratory_results`: A dictionary containing information about laboratory results, including test results and abnormal values.
+- `disease_type`: The type of disease being predicted, such as 'cancer', 'heart disease', or 'diabetes'.
+
+## Task Objective
+The assistant should output the predicted progression of disease based on the input characteristics.
+
+## Reasoning
+The assistant's decision should be based on the following characteristics:
+- Age: Patients over 60 years are more likely to progress to disease.
+- Sex: Women are more likely to progress to disease than men.
+- BMI: Patients with a BMI above 25 are more likely to progress to disease.
+- Blood Pressure: Patients with a blood pressure above 120/80 mmHg are more likely to progress to disease.
+- Disease History: Patients with a history of previous disease incidents are more likely to progress to disease.
+- Medications: Patients taking certain medications are more likely to progress to disease.
+- Lifestyle Factors: Patients with unhealthy lifestyle factors are more likely to progress to disease.
+- Genetic Factors: Patients with a family history of the disease are more likely to progress to disease.
+- Previous Procedure Results: Patients with abnormal previous procedure results are more likely to progress to disease.
+- Current Symptoms: Patients experiencing certain symptoms are more likely to progress to disease.
+- Laboratory Results: Patients with abnormal laboratory results are more likely to progress to disease.
+
+## Domain Knowledge
+The assistant should be aware of the following domain-specific facts:
+- The risk of disease progression is higher in patients with a family history of the disease.
+- Patients who are overweight or obese are more likely to progress to disease.
+- The American Diabetes Association recommends that patients with a BMI above 30 be screened for disease.
+- The presence of hypertension, dyslipidemia, or microalbuminuria increases the risk of disease progression.
+- The risk of disease progression is higher in patients with a history of previous disease incidents.
+- The risk of disease progression is higher in patients with a history of previous medical procedures.
+- The risk of disease progression is higher in patients with a history of previous laboratory abnormalities.
+
+## Assumptions
+The assistant assumes that the input characteristics are accurate and not noisy.
+
+## Evaluation Metric
+The assistant's performance should be evaluated based on the accuracy of its predictions.
+
+## Additional Feedback
+The assistant should provide feedback on the accuracy of its predictions, including the number of correct and incorrect predictions.
+2025/12/15 11:36:51 INFO dspy.evaluate.evaluate: Average Metric: 2 / 3 (66.7%)
+2025/12/15 11:36:51 INFO dspy.teleprompt.gepa.gepa: Iteration 26: New subsample score 2 is better than old score 0. Continue to full eval and add to candidate pool.
+2025/12/15 11:36:55 INFO dspy.evaluate.evaluate: Average Metric: 17 / 35 (48.6%)
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Valset score for new program: 0.4857142857142857 (coverage 35 / 35)
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Val aggregate for new program: 0.4857142857142857
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Individual valset scores for new program: {0: False, 1: True, 2: False, 3: False, 4: False, 5: True, 6: False, 7: False, 8: True, 9: True, 10: False, 11: True, 12: False, 13: True, 14: True, 15: True, 16: False, 17: True, 18: True, 19: True, 20: True, 21: False, 22: False, 23: False, 24: True, 25: True, 26: False, 27: False, 28: False, 29: False, 30: True, 31: False, 32: True, 33: True, 34: False}
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: New valset pareto front scores: {0: True, 1: True, 2: True, 3: True, 4: True, 5: True, 6: True, 7: True, 8: True, 9: True, 10: True, 11: True, 12: True, 13: True, 14: True, 15: True, 16: True, 17: True, 18: True, 19: True, 20: True, 21: True, 22: True, 23: True, 24: True, 25: True, 26: True, 27: True, 28: True, 29: True, 30: True, 31: True, 32: True, 33: True, 34: True}
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Valset pareto front aggregate score: 1.0
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Updated valset pareto front programs: {0: {0, 2, 3, 8, 9}, 1: {1, 2, 10, 4}, 2: {0, 8, 3, 9}, 3: {1, 2, 3, 4, 5, 6, 7}, 4: {8, 2, 3}, 5: {0, 3, 5, 9, 10}, 6: {2, 3, 5, 7, 8, 9}, 7: {0, 1, 2, 5, 8}, 8: {1, 2, 4, 5, 6, 7, 9, 10}, 9: {0, 1, 3, 6, 7, 10}, 10: {0, 8, 3, 6}, 11: {10, 2, 3, 7}, 12: {9, 2, 5}, 13: {0, 3, 4, 6, 7, 8, 10}, 14: {2, 10, 6}, 15: {4, 5, 8, 9, 10}, 16: {0, 1, 2, 3, 4, 9}, 17: {0, 3, 4, 5, 6, 7, 8, 10}, 18: {1, 2, 3, 5, 7, 8, 9, 10}, 19: {3, 4, 7, 8, 10}, 20: {0, 10}, 21: {2, 4, 6, 7, 8}, 22: {0, 1, 3, 5, 8}, 23: {0, 9, 5}, 24: {2, 10, 5, 6}, 25: {1, 2, 3, 7, 8, 10}, 26: {0, 9, 7}, 27: {1, 4}, 28: {0, 2, 3, 7}, 29: {7}, 30: {3, 4, 6, 7, 8, 10}, 31: {0, 8, 3, 9}, 32: {8, 10, 6}, 33: {1, 10, 5, 6}, 34: {0, 8, 6}}
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Best valset aggregate score so far: 0.5428571428571428
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Best program as per aggregate score on valset: 3
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Best score on valset: 0.5428571428571428
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: Linear pareto front program index: 3
+2025/12/15 11:36:55 INFO dspy.teleprompt.gepa.gepa: Iteration 26: New program candidate index: 10
+
+GEPA Optimization:  95%|█████████▌| 494/520 [03:14<00:10,  2.54rollouts/s]
+2025/12/15 11:36:55 INFO dspy.teleprompt.bettertogether:
+########## Step 2 of 2 - Strategy 'p -> w' ##########
+2025/12/15 11:36:55 INFO dspy.teleprompt.bettertogether: Shuffling the trainset...
+2025/12/15 11:36:55 INFO dspy.teleprompt.bettertogether: Preparing for weight optimization...
+2025/12/15 11:36:55 INFO dspy.teleprompt.bettertogether: Compiling the weight optimizer...
+2025/12/15 11:36:55 INFO dspy.teleprompt.bootstrap_finetune: Preparing the student and teacher programs...
+2025/12/15 11:36:55 INFO dspy.teleprompt.bootstrap_finetune: Bootstrapping data...
+
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 1.00 / 2 (50.0%):   2%|▏         | 1/50 [00:00<00:00, 113.50it/s]
+Average Metric: 2.00 / 3 (66.7%):   4%|▍         | 2/50 [00:00<00:00, 118.46it/s]
+Average Metric: 2.00 / 4 (50.0%):   6%|▌         | 3/50 [00:00<00:00, 176.37it/s]
+Average Metric: 3.00 / 5 (60.0%):   8%|▊         | 4/50 [00:00<00:00, 193.52it/s]
+Average Metric: 4.00 / 6 (66.7%):  10%|█         | 5/50 [00:00<00:00, 150.25it/s]
+Average Metric: 4.00 / 7 (57.1%):  12%|█▏        | 6/50 [00:00<00:00, 149.80it/s]
+Average Metric: 5.00 / 8 (62.5%):  14%|█▍        | 7/50 [00:00<00:00, 162.45it/s]
+Average Metric: 5.00 / 9 (55.6%):  16%|█▌        | 8/50 [00:00<00:00, 156.91it/s]
+Average Metric: 5.00 / 10 (50.0%):  18%|█▊        | 9/50 [00:00<00:00, 175.90it/s]
+Average Metric: 5.00 / 11 (45.5%):  20%|██        | 10/50 [00:00<00:00, 183.41it/s]
+Average Metric: 5.00 / 12 (41.7%):  22%|██▏       | 11/50 [00:00<00:00, 169.53it/s]
+Average Metric: 6.00 / 13 (46.2%):  24%|██▍       | 12/50 [00:00<00:00, 159.96it/s]
+Average Metric: 6.00 / 14 (42.9%):  26%|██▌       | 13/50 [00:00<00:00, 172.99it/s]
+Average Metric: 7.00 / 15 (46.7%):  28%|██▊       | 14/50 [00:00<00:00, 175.95it/s]
+Average Metric: 7.00 / 16 (43.8%):  30%|███       | 15/50 [00:00<00:00, 163.49it/s]
+Average Metric: 8.00 / 17 (47.1%):  32%|███▏      | 16/50 [00:00<00:00, 174.11it/s]
+Average Metric: 9.00 / 18 (50.0%):  34%|███▍      | 17/50 [00:00<00:00, 163.97it/s]
+Average Metric: 9.00 / 18 (50.0%):  36%|███▌      | 18/50 [00:00<00:00, 173.47it/s]
+Average Metric: 10.00 / 19 (52.6%):  36%|███▌      | 18/50 [00:00<00:00, 173.47it/s]
+Average Metric: 10.00 / 20 (50.0%):  38%|███▊      | 19/50 [00:00<00:00, 173.47it/s]
+Average Metric: 11.00 / 21 (52.4%):  40%|████      | 20/50 [00:00<00:00, 173.47it/s]
+Average Metric: 11.00 / 22 (50.0%):  42%|████▏     | 21/50 [00:00<00:00, 173.47it/s]
+Average Metric: 11.00 / 23 (47.8%):  44%|████▍     | 22/50 [00:00<00:00, 173.47it/s]
+Average Metric: 12.00 / 24 (50.0%):  46%|████▌     | 23/50 [00:00<00:00, 173.47it/s]
+Average Metric: 12.00 / 25 (48.0%):  48%|████▊     | 24/50 [00:00<00:00, 173.47it/s]
+Average Metric: 12.00 / 26 (46.2%):  50%|█████     | 25/50 [00:00<00:00, 173.47it/s]
+Average Metric: 13.00 / 27 (48.1%):  52%|█████▏    | 26/50 [00:00<00:00, 173.47it/s]
+Average Metric: 14.00 / 28 (50.0%):  54%|█████▍    | 27/50 [00:00<00:00, 173.47it/s]
+Average Metric: 15.00 / 29 (51.7%):  56%|█████▌    | 28/50 [00:00<00:00, 173.47it/s]
+Average Metric: 15.00 / 30 (50.0%):  58%|█████▊    | 29/50 [00:00<00:00, 173.47it/s]
+Average Metric: 16.00 / 31 (51.6%):  60%|██████    | 30/50 [00:00<00:00, 173.47it/s]
+Average Metric: 17.00 / 32 (53.1%):  62%|██████▏   | 31/50 [00:00<00:00, 173.47it/s]
+Average Metric: 17.00 / 33 (51.5%):  64%|██████▍   | 32/50 [00:00<00:00, 173.47it/s]
+Average Metric: 17.00 / 34 (50.0%):  66%|██████▌   | 33/50 [00:00<00:00, 173.47it/s]
+Average Metric: 18.00 / 35 (51.4%):  68%|██████▊   | 34/50 [00:00<00:00, 173.47it/s]
+Average Metric: 18.00 / 36 (50.0%):  70%|███████   | 35/50 [00:00<00:00, 173.47it/s]
+Average Metric: 18.00 / 36 (50.0%):  72%|███████▏  | 36/50 [00:00<00:00, 41.72it/s]
+Average Metric: 18.00 / 37 (48.6%):  72%|███████▏  | 36/50 [00:00<00:00, 41.72it/s]
+Average Metric: 18.00 / 38 (47.4%):  74%|███████▍  | 37/50 [00:00<00:00, 41.72it/s]
+Average Metric: 19.00 / 39 (48.7%):  76%|███████▌  | 38/50 [00:00<00:00, 41.72it/s]
+Average Metric: 19.00 / 40 (47.5%):  78%|███████▊  | 39/50 [00:00<00:00, 41.72it/s]
+Average Metric: 19.00 / 41 (46.3%):  80%|████████  | 40/50 [00:00<00:00, 41.72it/s]
+Average Metric: 20.00 / 42 (47.6%):  82%|████████▏ | 41/50 [00:00<00:00, 41.72it/s]
+Average Metric: 20.00 / 43 (46.5%):  84%|████████▍ | 42/50 [00:01<00:00, 41.72it/s]
+Average Metric: 21.00 / 44 (47.7%):  86%|████████▌ | 43/50 [00:01<00:00, 41.72it/s]
+Average Metric: 22.00 / 45 (48.9%):  88%|████████▊ | 44/50 [00:01<00:00, 41.72it/s]
+Average Metric: 22.00 / 45 (48.9%):  90%|█████████ | 45/50 [00:01<00:00, 36.98it/s]
+Average Metric: 23.00 / 46 (50.0%):  90%|█████████ | 45/50 [00:01<00:00, 36.98it/s]
+Average Metric: 24.00 / 47 (51.1%):  92%|█████████▏| 46/50 [00:01<00:00, 36.98it/s]
+Average Metric: 24.00 / 48 (50.0%):  94%|█████████▍| 47/50 [00:01<00:00, 36.98it/s]
+Average Metric: 24.00 / 49 (49.0%):  96%|█████████▌| 48/50 [00:01<00:00, 36.98it/s]
+Average Metric: 25.00 / 50 (50.0%):  98%|█████████▊| 49/50 [00:01<00:00, 36.98it/s]
+Average Metric: 25.00 / 50 (50.0%): 100%|██████████| 50/50 [00:01<00:00, 31.77it/s]2025/12/15 11:36:57 INFO dspy.evaluate.evaluate: Average Metric: 25 / 50 (50.0%)
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: Preparing the train data...
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: Collected data for 50 examples
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: After filtering with the metric, 25 examples remain
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: Using 25 data points for fine-tuning the model: meta-llama/Llama-3.2-3B-Instruct
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: Starting LM fine-tuning...
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: 1 fine-tuning job(s) to start
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: Starting 1 fine-tuning job(s)...
+2025/12/15 11:36:57 INFO dspy.teleprompt.bootstrap_finetune: Calling lm.kill() on the LM to be fine-tuned to free up resources. This won't have any effect if the LM is not running.
+2025/12/15 11:36:57 INFO dspy.clients.huggingface: No running server to kill.
+2025/12/15 11:36:57 INFO dspy.clients.huggingface: [HF Provider] Data format TrainDataFormat.CHAT validated
+2025/12/15 11:36:57 INFO dspy.clients.huggingface: [HF Provider] Finetuning 'meta-llama/Llama-3.2-3B-Instruct' with LoRA
+2025/12/15 11:37:10 INFO dspy.clients.huggingface: [HF Provider] Using device: cuda
+
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.67s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.05it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.06s/it]
+2025/12/15 11:37:14 INFO dspy.clients.huggingface: Adding pad token to tokenizer
+trainable params: 9,175,040 || all params: 3,221,924,864 || trainable%: 0.2848
+
+Map:   0%|          | 0/25 [00:00<?, ? examples/s]
+Map:  64%|██████▍   | 16/25 [00:00<00:00, 152.53 examples/s]
+Map: 100%|██████████| 25/25 [00:00<00:00, 147.93 examples/s]
+
+Filter:   0%|          | 0/25 [00:00<?, ? examples/s]
+Filter: 100%|██████████| 25/25 [00:00<00:00, 4069.61 examples/s]
+average_tokens_across_devices is set to True but it is invalid when world size is1. Turn it to False automatically.
+
+Truncating train dataset:   0%|          | 0/25 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 25/25 [00:00<00:00, 4403.75 examples/s]
+No label_names provided for model class `PeftModelForCausalLM`. Since `PeftModel` hides base models input arguments, if label_names is not given, label_names can't be set automatically within `Trainer`. Note that empty label_names list will be used instead.
+2025/12/15 11:37:15 INFO dspy.clients.huggingface: [HF Provider] Applying LoRA fine-tuning
+2025/12/15 11:37:15 INFO dspy.clients.huggingface: [HF Provider] Training started
+
+  0%|          | 0/15 [00:00<?, ?it/s]
+  7%|▋         | 1/15 [00:02<00:41,  2.94s/it]
+ 13%|█▎        | 2/15 [00:03<00:23,  1.81s/it]
+ 20%|██        | 3/15 [00:04<00:17,  1.45s/it]
+ 27%|██▋       | 4/15 [00:05<00:10,  1.06it/s]
+ 33%|███▎      | 5/15 [00:06<00:09,  1.03it/s]
+ 40%|████      | 6/15 [00:07<00:08,  1.02it/s]
+ 47%|████▋     | 7/15 [00:08<00:07,  1.01it/s]
+ 53%|█████▎    | 8/15 [00:08<00:05,  1.37it/s]
+ 60%|██████    | 9/15 [00:09<00:04,  1.22it/s]
+ 67%|██████▋   | 10/15 [00:10<00:04,  1.14it/s]
+
+
+ 67%|██████▋   | 10/15 [00:10<00:04,  1.14it/s]
+ 73%|███████▎  | 11/15 [00:11<00:03,  1.09it/s]
+ 80%|████████  | 12/15 [00:11<00:02,  1.45it/s]
+ 87%|████████▋ | 13/15 [00:12<00:01,  1.27it/s]
+ 93%|█████████▎| 14/15 [00:13<00:00,  1.17it/s]
+100%|██████████| 15/15 [00:14<00:00,  1.11it/s]
+
+
+100%|██████████| 15/15 [00:15<00:00,  1.11it/s]
+100%|██████████| 15/15 [00:15<00:00,  1.02s/it]
+2025/12/15 11:37:31 INFO dspy.clients.huggingface: [HF Provider] Training complete
+2025/12/15 11:37:31 INFO dspy.clients.huggingface: [HF Provider] Reloading base model in bf16 for precise LoRA merging
+{'loss': 1.231, 'grad_norm': 1.7228578329086304, 'learning_rate': 4.2857142857142855e-06, 'num_tokens': 67584.0, 'mean_token_accuracy': 0.7373066649717444, 'epoch': 2.62}
+{'train_runtime': 15.2313, 'train_samples_per_second': 8.207, 'train_steps_per_second': 0.985, 'train_loss': 1.2267673174540201, 'num_tokens': 101376.0, 'mean_token_accuracy': 0.7455293010262882, 'epoch': 3.92}
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:01<00:01,  1.59s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.09it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.02s/it]
+2025/12/15 11:37:34 INFO dspy.clients.huggingface: [HF Provider] Merging LoRA weights into base model
+2025/12/15 11:37:34 INFO dspy.clients.huggingface: [HF Provider] Merging LoRA trained weights to base model
+2025/12/15 11:37:34 INFO dspy.clients.huggingface: [HF Provider] Saving merged model to meta-llama/Llama-3.2-3B-Instruct-trained
+2025/12/15 11:37:48 INFO dspy.clients.huggingface: [HF Provider] Model successfully merged and saved to meta-llama/Llama-3.2-3B-Instruct-trained.
+2025/12/15 11:37:48 INFO dspy.clients.huggingface: [HF Provider] Releasing GPU memory before redeployment
+2025/12/15 11:37:49 INFO dspy.clients.huggingface: [HF Provider] GPU memory released successfully
+2025/12/15 11:37:49 INFO dspy.clients.huggingface: [HF Provider] Deploying meta-llama/Llama-3.2-3B-Instruct-trained model after LoRA fine-tuning
+2025/12/15 11:38:25 INFO dspy.teleprompt.bootstrap_finetune: Job 1/1 is done
+2025/12/15 11:38:25 INFO dspy.teleprompt.bootstrap_finetune: Updating the student program with the fine-tuned LMs...
+2025/12/15 11:38:25 INFO dspy.teleprompt.bootstrap_finetune: BootstrapFinetune has finished compiling the student program
+2025/12/15 11:38:25 INFO dspy.teleprompt.bettertogether: BetterTogether has finished compiling the student program
+[BetterTogether x iris x meta-llama/Llama-3.2-3B-Instruct x p -> w x GEPA]
+Demonstrations collected (0 in total for 1 predictors):
+
+'generate_answer.predict' predictor demos: []
+
+[BetterTogether x iris x meta-llama/Llama-3.2-3B-Instruct x p -> w x GEPA]
+Calculating experiment program results...
+
+  0%|          | 0/50 [00:00<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/50 [00:02<?, ?it/s]
+Average Metric: 1.00 / 1 (100.0%):   2%|▏         | 1/50 [00:02<01:42,  2.10s/it]
+Average Metric: 2.00 / 2 (100.0%):   2%|▏         | 1/50 [00:02<01:42,  2.10s/it]
+Average Metric: 2.00 / 2 (100.0%):   4%|▍         | 2/50 [00:02<00:45,  1.06it/s]
+Average Metric: 3.00 / 3 (100.0%):   4%|▍         | 2/50 [00:02<00:45,  1.06it/s]
+Average Metric: 3.00 / 4 (75.0%):   6%|▌         | 3/50 [00:02<00:44,  1.06it/s]
+Average Metric: 3.00 / 4 (75.0%):   8%|▊         | 4/50 [00:02<00:20,  2.22it/s]
+Average Metric: 4.00 / 5 (80.0%):   8%|▊         | 4/50 [00:02<00:20,  2.22it/s]
+Average Metric: 4.00 / 6 (66.7%):  10%|█         | 5/50 [00:02<00:20,  2.22it/s]
+Average Metric: 4.00 / 6 (66.7%):  12%|█▏        | 6/50 [00:02<00:12,  3.54it/s]
+Average Metric: 4.00 / 7 (57.1%):  12%|█▏        | 6/50 [00:02<00:12,  3.54it/s]
+Average Metric: 5.00 / 8 (62.5%):  14%|█▍        | 7/50 [00:02<00:12,  3.54it/s]
+Average Metric: 6.00 / 9 (66.7%):  16%|█▌        | 8/50 [00:03<00:11,  3.54it/s]
+Average Metric: 6.00 / 9 (66.7%):  18%|█▊        | 9/50 [00:03<00:09,  4.23it/s]
+Average Metric: 6.00 / 10 (60.0%):  18%|█▊        | 9/50 [00:03<00:09,  4.23it/s]
+Average Metric: 7.00 / 11 (63.6%):  20%|██        | 10/50 [00:03<00:09,  4.23it/s]
+Average Metric: 7.00 / 11 (63.6%):  22%|██▏       | 11/50 [00:03<00:07,  5.55it/s]
+Average Metric: 8.00 / 12 (66.7%):  22%|██▏       | 11/50 [00:03<00:07,  5.55it/s]
+Average Metric: 8.00 / 12 (66.7%):  24%|██▍       | 12/50 [00:03<00:06,  5.64it/s]
+Average Metric: 9.00 / 13 (69.2%):  24%|██▍       | 12/50 [00:03<00:06,  5.64it/s]
+Average Metric: 9.00 / 14 (64.3%):  26%|██▌       | 13/50 [00:03<00:06,  5.64it/s]
+Average Metric: 9.00 / 14 (64.3%):  28%|██▊       | 14/50 [00:03<00:05,  7.10it/s]
+Average Metric: 10.00 / 15 (66.7%):  28%|██▊       | 14/50 [00:04<00:05,  7.10it/s]
+Average Metric: 11.00 / 16 (68.8%):  30%|███       | 15/50 [00:04<00:04,  7.10it/s]
+Average Metric: 11.00 / 16 (68.8%):  32%|███▏      | 16/50 [00:04<00:06,  5.66it/s]
+Average Metric: 11.00 / 17 (64.7%):  32%|███▏      | 16/50 [00:04<00:06,  5.66it/s]
+Average Metric: 12.00 / 18 (66.7%):  34%|███▍      | 17/50 [00:04<00:05,  5.66it/s]
+Average Metric: 12.00 / 18 (66.7%):  36%|███▌      | 18/50 [00:04<00:04,  7.24it/s]
+Average Metric: 13.00 / 19 (68.4%):  36%|███▌      | 18/50 [00:04<00:04,  7.24it/s]
+Average Metric: 13.00 / 20 (65.0%):  38%|███▊      | 19/50 [00:04<00:04,  7.24it/s]
+Average Metric: 13.00 / 20 (65.0%):  40%|████      | 20/50 [00:04<00:03,  8.39it/s]
+Average Metric: 14.00 / 21 (66.7%):  40%|████      | 20/50 [00:04<00:03,  8.39it/s]
+Average Metric: 14.00 / 22 (63.6%):  42%|████▏     | 21/50 [00:04<00:03,  8.39it/s]
+Average Metric: 14.00 / 22 (63.6%):  44%|████▍     | 22/50 [00:04<00:03,  7.94it/s]
+Average Metric: 15.00 / 23 (65.2%):  44%|████▍     | 22/50 [00:05<00:03,  7.94it/s]
+Average Metric: 15.00 / 24 (62.5%):  46%|████▌     | 23/50 [00:05<00:03,  7.94it/s]
+Average Metric: 15.00 / 24 (62.5%):  48%|████▊     | 24/50 [00:05<00:03,  7.21it/s]
+Average Metric: 15.00 / 25 (60.0%):  48%|████▊     | 24/50 [00:05<00:03,  7.21it/s]
+Average Metric: 15.00 / 25 (60.0%):  50%|█████     | 25/50 [00:05<00:05,  4.86it/s]
+Average Metric: 15.00 / 26 (57.7%):  50%|█████     | 25/50 [00:05<00:05,  4.86it/s]
+Average Metric: 16.00 / 27 (59.3%):  52%|█████▏    | 26/50 [00:05<00:04,  4.86it/s]
+Average Metric: 16.00 / 27 (59.3%):  54%|█████▍    | 27/50 [00:05<00:03,  6.35it/s]
+Average Metric: 17.00 / 28 (60.7%):  54%|█████▍    | 27/50 [00:05<00:03,  6.35it/s]
+Average Metric: 17.00 / 29 (58.6%):  56%|█████▌    | 28/50 [00:05<00:03,  6.35it/s]
+Average Metric: 17.00 / 29 (58.6%):  58%|█████▊    | 29/50 [00:05<00:02,  7.97it/s]
+Average Metric: 18.00 / 30 (60.0%):  58%|█████▊    | 29/50 [00:06<00:02,  7.97it/s]
+Average Metric: 18.00 / 31 (58.1%):  60%|██████    | 30/50 [00:06<00:02,  7.97it/s]
+Average Metric: 18.00 / 31 (58.1%):  62%|██████▏   | 31/50 [00:06<00:04,  4.72it/s]
+Average Metric: 19.00 / 32 (59.4%):  62%|██████▏   | 31/50 [00:06<00:04,  4.72it/s]
+Average Metric: 20.00 / 33 (60.6%):  64%|██████▍   | 32/50 [00:06<00:03,  4.72it/s]
+Average Metric: 20.00 / 33 (60.6%):  66%|██████▌   | 33/50 [00:06<00:02,  6.08it/s]
+Average Metric: 21.00 / 34 (61.8%):  66%|██████▌   | 33/50 [00:06<00:02,  6.08it/s]
+Average Metric: 22.00 / 35 (62.9%):  68%|██████▊   | 34/50 [00:07<00:02,  6.08it/s]
+Average Metric: 22.00 / 35 (62.9%):  70%|███████   | 35/50 [00:07<00:02,  6.25it/s]
+Average Metric: 23.00 / 36 (63.9%):  70%|███████   | 35/50 [00:07<00:02,  6.25it/s]
+Average Metric: 23.00 / 37 (62.2%):  72%|███████▏  | 36/50 [00:07<00:02,  6.25it/s]
+Average Metric: 23.00 / 37 (62.2%):  74%|███████▍  | 37/50 [00:07<00:01,  6.71it/s]
+Average Metric: 23.00 / 38 (60.5%):  74%|███████▍  | 37/50 [00:07<00:01,  6.71it/s]
+Average Metric: 24.00 / 39 (61.5%):  76%|███████▌  | 38/50 [00:07<00:01,  6.71it/s]
+Average Metric: 24.00 / 39 (61.5%):  78%|███████▊  | 39/50 [00:07<00:01,  7.54it/s]
+Average Metric: 25.00 / 40 (62.5%):  78%|███████▊  | 39/50 [00:07<00:01,  7.54it/s]
+Average Metric: 26.00 / 41 (63.4%):  80%|████████  | 40/50 [00:07<00:01,  7.54it/s]
+Average Metric: 26.00 / 41 (63.4%):  82%|████████▏ | 41/50 [00:07<00:01,  8.64it/s]
+Average Metric: 26.00 / 42 (61.9%):  82%|████████▏ | 41/50 [00:07<00:01,  8.64it/s]
+Average Metric: 27.00 / 43 (62.8%):  84%|████████▍ | 42/50 [00:08<00:00,  8.64it/s]
+Average Metric: 27.00 / 43 (62.8%):  86%|████████▌ | 43/50 [00:08<00:01,  6.78it/s]
+Average Metric: 27.00 / 44 (61.4%):  86%|████████▌ | 43/50 [00:08<00:01,  6.78it/s]
+Average Metric: 28.00 / 45 (62.2%):  88%|████████▊ | 44/50 [00:08<00:00,  6.78it/s]
+Average Metric: 29.00 / 46 (63.0%):  90%|█████████ | 45/50 [00:08<00:00,  6.78it/s]
+Average Metric: 29.00 / 46 (63.0%):  92%|█████████▏| 46/50 [00:08<00:00,  9.63it/s]
+Average Metric: 30.00 / 47 (63.8%):  92%|█████████▏| 46/50 [00:08<00:00,  9.63it/s]
+Average Metric: 31.00 / 48 (64.6%):  94%|█████████▍| 47/50 [00:08<00:00,  9.63it/s]
+Average Metric: 31.00 / 48 (64.6%):  96%|█████████▌| 48/50 [00:08<00:00,  9.88it/s]
+Average Metric: 31.00 / 49 (63.3%):  96%|█████████▌| 48/50 [00:08<00:00,  9.88it/s]
+Average Metric: 31.00 / 50 (62.0%):  98%|█████████▊| 49/50 [00:09<00:00,  9.88it/s]
+Average Metric: 31.00 / 50 (62.0%): 100%|██████████| 50/50 [00:09<00:00,  3.73it/s]
+Average Metric: 31.00 / 50 (62.0%): 100%|██████████| 50/50 [00:09<00:00,  5.09it/s]
+
+2025/12/15 11:38:35 INFO dspy.evaluate.evaluate: Average Metric: 31 / 50 (62.0%)
+
+
+Score:	62.0
+Runtime:	283.59
