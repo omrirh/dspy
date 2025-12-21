@@ -32,7 +32,7 @@ def bootstrap_trace_data(
     dataset: list[Example],
     metric: Callable | None = None,
     num_threads: int | None = None,
-    raise_on_error=True,
+    raise_on_error=False,
     capture_failed_parses=False,
     failure_score: float = 0,
     format_failure_score: float = -1,

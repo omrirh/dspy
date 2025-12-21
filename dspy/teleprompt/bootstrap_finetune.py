@@ -166,6 +166,7 @@ class BootstrapFinetune(FinetuneTeleprompter):
         return key_to_lm
 
     def _prepare_finetune_data(self, trace_data: list[dict[str, Any]], lm: LM, pred_ind: int | None = None):
+        from dspy.teleprompt.bootstrap_trace import FailedPrediction
         # TODO(nit) Log dataset details/size; make logs nicer
         if self.metric:
             logger.info(f"Collected data for {len(trace_data)} examples")
@@ -178,7 +179,7 @@ class BootstrapFinetune(FinetuneTeleprompter):
         for item in trace_data:
             for pred_ind, _ in enumerate(item["trace"]):
                 include_data = pred_ind is None or pred_ind == pred_ind
-                if include_data:
+                if include_data and not isinstance(item["trace"][pred_ind][2], FailedPrediction):
                     call_data = build_call_data_from_trace(
                         trace=item["trace"], pred_ind=pred_ind, adapter=adapter, exclude_demos=self.exclude_demos
                     )
