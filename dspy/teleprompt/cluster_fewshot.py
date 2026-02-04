@@ -133,20 +133,6 @@ class ClusterFewshot(Teleprompter):
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
 
-        # # Log clusters for debug
-        # if self.task_type != "classification":
-        #     logger.info("--- TRAINING CLUSTERS ---\n")
-        #     for cid, examples in self.training_clusters.items():
-        #         examples_str = "\n".join([f"{ex.question} --> {ex.answer}" for ex in examples[:3]])
-        #         logger.info(f"Cluster {cid + 1}:\n{examples_str}")
-
-        #     logger.info("--- VALIDATION CLUSTERS ---\n")
-        #     for cid, examples in self.validation_clusters.items():
-        #         examples_str = "\n".join([f"{ex.question} --> {ex.answer}" for ex in examples[:3]])
-        #         logger.info(f"Cluster {cid + 1}:\n{examples_str}")
-
-        # exit(0)
-
         self._sample_one_shot_evaluation_set()
         self._sort_examples_as_demos()
 
