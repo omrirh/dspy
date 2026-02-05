@@ -38,7 +38,8 @@ TASK_2_SAMPLINGS = {
 CANDIDATE_EMBEDDING_MODELS = [
     "Qwen/Qwen3-Embedding-0.6B",
     "sentence-transformers/all-mpnet-base-v2",
-    "sentence-transformers/gtr-t5-base"
+    "sentence-transformers/gtr-t5-base",
+    "BAAI/bge-large-en-v1.5"
 ]
 
 
@@ -110,6 +111,7 @@ class ClusterFewshot(Teleprompter):
         self.global_sorted_examples = None
         self._sum_of_clusters_strength = None
         self.trainset_by_hash = {}
+        self.pca_2d = None
 
         self.candidate_fewshot_subsets = None
         self.final_fewshot_subset = None
@@ -159,17 +161,14 @@ class ClusterFewshot(Teleprompter):
         Clustering the given examples into semantic groups.
         It performs semantic embeddings & K search to find clusters that maximizes the silhouette metric.
         """
-        data = [ex['raw'] for ex in self.trainset] if train else self.valset
-        data_type = 'training' if train else 'validation'
+        data = [ex["raw"] for ex in self.trainset] if train else self.valset
+        data_type = "training" if train else "validation"
         examples_embeddings = None
 
         # TODO: think of a better way to generalize that (only supports Iris for now)
         if self.task_type == "classification":
             examples_embeddings = np.array(
-                [
-                    [input_val for _, input_val in dict(example.inputs()).items()]
-                    for example in data
-                ]
+                [[input_val for _, input_val in dict(example.inputs()).items()] for example in data]
             )
 
             self.embedding_model_name = "N/A"  # No model was used to create embeddings
@@ -182,15 +181,12 @@ class ClusterFewshot(Teleprompter):
             examples_embeddings, cluster_labels, k = self.generate_embeddings_func(examples=data)
 
         self.examples2embeddings.update({
-            self.get_example_hash(example): np.array(example_embeddings)
-            for example, example_embeddings
-            in zip(self.trainset if train else data, examples_embeddings)
-            # TODO: assuming self.trainset and data are ordered the same.
+            self.get_example_hash(ex): np.array(emb)
+            for ex, emb in zip(self.trainset if train else self.valset, examples_embeddings)
         })
         self.embeddings2examples.update({
-            str(example_embeddings): example
-            for example_embeddings, example
-            in zip(examples_embeddings, self.trainset if train else data)
+            str(emb): ex
+            for emb, ex in zip(examples_embeddings, self.trainset if train else self.valset)
         })
 
         if train:
@@ -224,24 +220,37 @@ class ClusterFewshot(Teleprompter):
             save_path=None,
             silhouette=None,
             show_ranks=False,
+            examples=None,
     ):
         """
         Visualizes clustered embeddings / ranked examples in 2D using PCA.
         """
         logger.info("Performing PCA dimensionality reduction for visualization...")
-        pca = PCA(n_components=2)
-        embeddings_2d = pca.fit_transform(embeddings)
+        if not self.pca_2d:
+            self.pca_2d = PCA(n_components=2)
+            embeddings_2d = self.pca_2d.fit_transform(embeddings)
+        else:
+            embeddings_2d = self.pca_2d.transform(embeddings)
 
         if show_ranks:
-            examples = [self.embeddings2examples[str(emb)] for emb in embeddings]
+            if examples is None:
+                raise ValueError(
+                    "When show_ranks=True, you must pass `examples` aligned with `embeddings`."
+                )
+            if len(examples) != len(embeddings):
+                raise ValueError(
+                    f"`examples` and `embeddings` must have the same length "
+                    f"(got {len(examples)} vs {len(embeddings)})."
+                )
+
             scores = [self.ranked_examples.get(self.get_example_hash(ex), 0) for ex in examples]
-            np_scores = np.array(scores)
+            np_scores = np.array(scores, dtype=np.float32)
 
             color_values = np_scores
             color_label = "One-shot Score"
 
             # Choose a colormap that works well with continuous values
-            cmap = "coolwarm" if len(set(np_scores)) <= 5 else "viridis"
+            cmap = "coolwarm" if len(set(scores)) <= 5 else "viridis"
         else:
             color_values = np.array(cluster_labels)
             color_label = "Cluster Labels"
@@ -251,13 +260,14 @@ class ClusterFewshot(Teleprompter):
         if color_values is None or len(color_values) == 0:
             raise ValueError("Color values are empty, cannot plot scatter with cmap.")
 
-        plt.figure(figsize=(10, 7))
+        plt.figure(figsize=(4, 3))
         scatter = plt.scatter(
             embeddings_2d[:, 0],
             embeddings_2d[:, 1],
             c=color_values,
             cmap=cmap,
             alpha=0.8,
+            s=10,
         )
 
         cbar = plt.colorbar(scatter)
@@ -265,19 +275,23 @@ class ClusterFewshot(Teleprompter):
 
         if show_ranks:
             logger.info(f"Unique one-shot scores: {set(scores)}")
-            plt.title(f"PCA of {data_type.title()} One-shot Ranks\n"
-                      f"Rank mean={np.mean(np_scores):.2f}\n"
-                      f"Rank std={np.std(np_scores):.2f}")
+            plt.title(
+                f"PCA of {data_type.title()} One-shot Ranks\n"
+                f"Rank mean={np.mean(np_scores):.2f}\n"
+                f"Rank std={np.std(np_scores):.2f}"
+            )
         else:
-            plt.title(f"PCA of {data_type.title()} Embeddings Clusters\n"
-                      f"K={num_clusters}\n"
-                      f"Size={len(embeddings)}\n"
-                      f"Silhouette={silhouette:.3f}\n"
-                      f"Embedding Model={embedding_model}\n"
-                      f"Dataset={'GSM8K' if isinstance(self.student, CoT) else 'HotPotQA' if isinstance(self.student, BasicMH) else 'Iris'}")
+            plt.title(
+                f"PCA of {data_type.title()} Embeddings Clusters\n"
+                f"K={num_clusters}\n"
+                f"Size={len(embeddings)}\n"
+                f"Silhouette={silhouette:.3f}\n"
+                f"Embedding Model={embedding_model}\n"
+                f"Dataset={'GSM8K' if isinstance(self.student, CoT) else 'HotPotQA' if isinstance(self.student, BasicMH) else 'Iris'}"
+            )
 
-        plt.xlabel("PCA Dimension 1")
-        plt.ylabel("PCA Dimension 2")
+        plt.xlabel("PCA Dimension 1", fontsize=12, labelpad=8)
+        plt.ylabel("PCA Dimension 2", fontsize=12, labelpad=8)
 
         plt.grid(True)
         plt.tight_layout()
@@ -314,27 +328,6 @@ class ClusterFewshot(Teleprompter):
         plt.close()
 
         logger.info(f"One-shot scores distribution saved to {save_path}")
-
-    def visualize_reasoning_distribution(self):
-        # Extract ranks based on whether the example has reasoning
-        ranks_with_reasoning = [self.ranked_examples[ex] for ex in self.trainset if hasattr(ex, "reasoning")]
-        ranks_without_reasoning = [self.ranked_examples[ex] for ex in self.trainset if not hasattr(ex, "reasoning")]
-
-        # Plot the distributions
-        plt.figure(figsize=(10, 6))
-        if ranks_with_reasoning:
-            plt.hist(ranks_with_reasoning, bins=len(set(ranks_with_reasoning)), alpha=0.7, label="With reasoning",
-                     edgecolor='black')
-        plt.hist(ranks_without_reasoning, bins=len(set(ranks_without_reasoning)), alpha=0.5, label="Without reasoning",
-                 edgecolor='black')
-
-        plt.title("Distribution of One-shot Ranks With vs Without Reasoning")
-        plt.xlabel("One-shot Evaluation Score (Rank)")
-        plt.ylabel("Frequency")
-        plt.legend()
-        plt.grid(True)
-        plt.tight_layout()
-        plt.savefig("reasoning_ranks_distribution.png")
 
     def _sample_one_shot_evaluation_set(self):
         """
@@ -400,8 +393,9 @@ class ClusterFewshot(Teleprompter):
         self.visualize_one_shot_scores_distribution()
         self._visualize_examples(
             embeddings=[self.examples2embeddings[self.get_example_hash(ex)] for ex in self.trainset],
+            examples=list(self.trainset),
             embedding_model=self.embedding_model_name,
-            save_path=f"embeddings_to_one_shot_ranks.png",
+            save_path="embeddings_to_one_shot_ranks.png",
             data_type="training",
             show_ranks=True,
         )
@@ -904,14 +898,18 @@ class ClusterFewshot(Teleprompter):
 
     def _normalize_example(self, obj):
         if isinstance(obj, Example):
-            # Convert to dict using both inputs and outputs
-            return dict(obj)
-        elif isinstance(obj, list):
-            return [dict(obj_item) for obj_item in obj]
-        elif isinstance(obj, dict):
-            return {k: self._normalize_example(v) for k, v in obj.items()}
-        else:
-            return obj  # Return primitives or other serializables as-is
+            # stable: convert to plain dict and sort nested structures
+            return {k: self._normalize_example(v) for k, v in dict(obj).items()}
+
+        if isinstance(obj, dict):
+            # stable: sort keys
+            return {k: self._normalize_example(obj[k]) for k in sorted(obj.keys())}
+
+        if isinstance(obj, list):
+            # stable: keep list order (semantic), but normalize each item
+            return [self._normalize_example(x) for x in obj]
+
+        return obj
 
     def get_example_hash(self, example_obj):
         """
@@ -921,4 +919,4 @@ class ClusterFewshot(Teleprompter):
         - training examples: `{'raw': Example, name1: Example, ...}`
         """
         normalized = self._normalize_example(example_obj)
-        return json.dumps(normalized, sort_keys=True)
+        return json.dumps(normalized, sort_keys=True, separators=(",", ":"))

@@ -48,6 +48,9 @@ uv tool install colbert-server
 # Ensure uv-installed binaries are on PATH for this shell
 export PATH="$HOME/.local/share/uv/tools/colbert-server/bin:$PATH"
 
+# Ensure colbert-server is ready for running
+colbert-server doctor
+
 #############################################
 # 4. Prepare assets folder
 #############################################
@@ -55,23 +58,22 @@ export PATH="$HOME/.local/share/uv/tools/colbert-server/bin:$PATH"
 mkdir -p "$ASSETS_DIR"
 
 #############################################
-# 5. Run colbert-server (GPU 1) in nohup sticky mode
+# 5. Run colbert-server in nohup sticky mode
 #############################################
-
-echo "[INFO] Starting colbert-server on GPU 1..."
+echo "[INFO] Starting colbert-server"
 echo "[INFO] Logs will be written to: $LOGFILE"
 
-# Kill any existing colbert-server on this port (optional)
+# Kill any existing colbert-server on this port
 if lsof -iTCP:$PORT -sTCP:LISTEN >/dev/null 2>&1; then
     echo "[WARN] Port $PORT already in use. Killing old process..."
     kill -9 "$(lsof -t -i:$PORT)"
 fi
 
-nohup env CUDA_VISIBLE_DEVICES=1 colbert-server serve \
+CUDA_VISIBLE_DEVICES="" nohup colbert-server serve \
     --download-archives "$ASSETS_DIR" \
     --extract \
     --port "$PORT" \
     > "$LOGFILE" 2>&1 &
 
-echo "[INFO] colbert-server started in background."
-echo "[INFO] Tail logs using: tail -f $LOGFILE"
+echo "[INFO] colbert-server started."
+tail -f "$LOGFILE"

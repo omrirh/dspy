@@ -96,7 +96,7 @@ def main(dataset, prompt_optimizer, strategy, model):
     )
 
     # Retriever model as local ColBERTv2
-    COLBERT_V2_ENDPOINT = "http://localhost:8893/api/search"
+    COLBERT_V2_ENDPOINT = "http://localhost:8894/api/search"
     retriever = dspy.ColBERTv2(url=COLBERT_V2_ENDPOINT)
     dspy.configure(rm=retriever)
 
@@ -183,8 +183,8 @@ if __name__ == "__main__":
     main(args.dataset, args.prompt_optimizer, args.strategy, args.model)
 
     # # for debugging
-    # dataset = "hotpotqa"
-    # prompt_optimizer = "clusterfsv2"
+    # dataset = "gsm8k"
+    # prompt_optimizer = "clusterfs"
     # strategy = "p"
     # model = "Qwen/Qwen2.5-7B-Instruct"
 
