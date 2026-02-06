@@ -8,7 +8,7 @@ from dspy.primitives.program import Program
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune, prepare_student, set_missing_predictor_lms, \
     launch_lms, kill_lms
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
-from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.clusterfewshot import ClusterFewshot
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.teleprompt import Teleprompter
 

@@ -8,7 +8,11 @@ from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.bettertogether import BetterTogether
-from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.clusterfewshot import (
+    ClusterFewshot,
+    create_sentence_transformer_encoder,
+    create_numeric_encoder,
+)
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
 
@@ -122,10 +126,23 @@ def main(dataset, prompt_optimizer, strategy, model):
         )
 
     if prompt_optimizer_name == "clusterfs":
+        # Initialize semantic encoders based on task type
+        if task_type == "classification":
+            # Use numeric encoder for classification tasks (e.g., Iris)
+            semantic_encoders = [create_numeric_encoder()]
+        else:
+            # Use SentenceTransformer encoders for text-based tasks (QA, arithmetic, etc.)
+            semantic_encoders = [
+                create_sentence_transformer_encoder("Qwen/Qwen3-Embedding-0.6B"),
+                create_sentence_transformer_encoder("sentence-transformers/all-mpnet-base-v2"),
+                create_sentence_transformer_encoder("sentence-transformers/gtr-t5-base"),
+                create_sentence_transformer_encoder("BAAI/bge-large-en-v1.5"),
+            ]
+
         prompt_optimizer = ClusterFewshot(
             metric=metric,
             task_type=task_type,
-            use_target_model_embeddings=("w -> p" in strategy),
+            semantic_encoders=semantic_encoders,
         )
 
     if prompt_optimizer_name == "miprov2":
