@@ -143,6 +143,7 @@ def main(dataset, prompt_optimizer, strategy, model):
             metric=metric,
             task_type=task_type,
             semantic_encoders=semantic_encoders,
+            apply_visuals=False,
         )
 
     if prompt_optimizer_name == "miprov2":
