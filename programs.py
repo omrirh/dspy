@@ -4,6 +4,47 @@ import numpy as np
 from dspy.dsp.utils.utils import deduplicate
 
 
+# ---------------------------------------------------------------------------
+# Crop Recommendation — LLM-as-an-Agronomist
+# ---------------------------------------------------------------------------
+
+class CropRecommenderSignature(dspy.Signature):
+    """You are an expert agronomist advisor. Given soil nutrient levels and
+    environmental conditions for a field, recommend the single most suitable
+    crop to cultivate."""
+
+    nitrogen = dspy.InputField(desc="Nitrogen (N) content in soil, mg/kg")
+    phosphorous = dspy.InputField(desc="Phosphorous (P) content in soil, mg/kg")
+    potassium = dspy.InputField(desc="Potassium (K) content in soil, mg/kg")
+    temperature = dspy.InputField(desc="Average temperature, °C")
+    humidity = dspy.InputField(desc="Relative humidity, %")
+    ph = dspy.InputField(desc="Soil pH value")
+    rainfall = dspy.InputField(desc="Rainfall, mm")
+    crop = dspy.OutputField(
+        desc="The recommended crop (one of: rice, maize, chickpea, kidneybeans, "
+             "pigeonpeas, mothbeans, mungbean, blackgram, lentil, pomegranate, "
+             "banana, mango, grapes, watermelon, muskmelon, apple, orange, "
+             "papaya, coconut, cotton, jute, coffee)"
+    )
+
+
+class CropRecommender(dspy.Module):
+    def __init__(self):
+        super().__init__()
+        self.recommend = dspy.ChainOfThought(CropRecommenderSignature)
+
+    def forward(self, nitrogen, phosphorous, potassium, temperature, humidity, ph, rainfall):
+        return self.recommend(
+            nitrogen=nitrogen,
+            phosphorous=phosphorous,
+            potassium=potassium,
+            temperature=temperature,
+            humidity=humidity,
+            ph=ph,
+            rainfall=rainfall,
+        )
+
+
 class BasicMH(dspy.Module):
     def __init__(self, passages_per_hop=3, num_hops=2):
         super().__init__()

@@ -19,19 +19,21 @@ from .clusterfewshot_utils import (
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_SAMPLING_STRATEGIES = ["top_n", "best_in_cluster"]
+
 TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n", "best_in_cluster"],
     "multihop": ["top_n", "best_in_cluster"],
-    "classification": ["best_in_cluster"],
+    "classification": ["top_n", "best_in_cluster"],
 }
 
 
 class ClusterFewshot(Teleprompter):
     def __init__(
             self,
-            task_type: str,
             metric: Optional[Callable] = None,
             metric_threshold: Optional[float] = None,
+            task_type: Optional[str] = None,
             soft_select: bool = False,
             apply_visuals: bool = True,
             semantic_encoders: Optional[List[SemanticEncoder]] = None
@@ -42,20 +44,21 @@ class ClusterFewshot(Teleprompter):
         This teleprompter optimizes few-shot demonstrations by:
         1. Clustering training examples based on semantic embeddings from custom encoders
         2. Evaluating each example's effectiveness as a one-shot demonstration
-        3. Selecting the best few-shot subset using task-specific sampling strategies
+        3. Selecting the best few-shot subset using sampling strategies
 
         The Bring-Your-Own-Encoder (BYOE) design allows you to provide custom semantic
         encoders tailored to your task. ClusterFewshot will evaluate all encoders via
         grid search and select the one that produces the best clustering (highest silhouette score).
 
         Args:
-            task_type: str
-                Type of task being optimized. Determines the sampling strategy.
-                Supported tasks: 'arithmetic', 'multihop', 'classification'
             metric: Optional[Callable]
                 Evaluation function to measure prediction quality.
             metric_threshold: Optional[float]
                 Minimum metric value for filtering examples during bootstrapping.
+            task_type: Optional[str]
+                Optional task type label. When provided and recognized, uses task-specific
+                sampling strategies. When None, uses default strategies (top_n + best_in_cluster).
+                Known task types: 'arithmetic', 'multihop', 'classification'
             soft_select: bool
                 If True, uses differentiable soft selection to balance one-shot impact
                 with semantic diversity via gradient descent optimization.
@@ -70,7 +73,7 @@ class ClusterFewshot(Teleprompter):
                 If None, you must provide encoders - no defaults are assumed.
 
         Example:
-            # Using SentenceTransformer encoders for QA tasks
+            # Using SentenceTransformer encoders (no task_type needed)
             from dspy.teleprompt.clusterfewshot import (
                 ClusterFewshot,
                 create_sentence_transformer_encoder
@@ -82,17 +85,14 @@ class ClusterFewshot(Teleprompter):
             ]
 
             optimizer = ClusterFewshot(
-                task_type="arithmetic",
                 metric=gsm8k_metric,
                 semantic_encoders=encoders
             )
 
-            # Using numeric encoder for classification
-            from dspy.teleprompt.clusterfewshot import create_numeric_encoder
-
+            # With task_type for task-specific strategies
             optimizer = ClusterFewshot(
+                metric=gsm8k_metric,
                 task_type="classification",
-                metric=dspy.evaluate.answer_exact_match,
                 semantic_encoders=[create_numeric_encoder()]
             )
         """
@@ -100,12 +100,13 @@ class ClusterFewshot(Teleprompter):
         self.metric = metric
         self.metric_threshold = metric_threshold
 
-        # Validate task type
-        if task_type not in TASK_2_SAMPLINGS:
-            raise ValueError(
-                f"'{task_type}' task is not supported in ClusterFewshot. Currently supported tasks:\n{list(TASK_2_SAMPLINGS.keys())}")
-
         self.task_type = task_type
+        self.sampling_strategies = TASK_2_SAMPLINGS.get(task_type, DEFAULT_SAMPLING_STRATEGIES)
+
+        if task_type and task_type not in TASK_2_SAMPLINGS:
+            logger.info(
+                f"Unknown task_type '{task_type}' — using default sampling strategies: {DEFAULT_SAMPLING_STRATEGIES}"
+            )
         self._soft_select = soft_select
         self.apply_visuals = apply_visuals
         self.semantic_encoders = semantic_encoders
@@ -294,7 +295,7 @@ class ClusterFewshot(Teleprompter):
         - 'popularity': Allocates examples proportionally to cluster sizes
         - 'central': Selects the most semantically central example in each cluster
         """
-        sampling_strategies = TASK_2_SAMPLINGS[self.task_type]
+        sampling_strategies = self.sampling_strategies
         adaptive_fewshot_subsets = {
             sampling_strategy: []
             for sampling_strategy in sampling_strategies
@@ -328,7 +329,7 @@ class ClusterFewshot(Teleprompter):
         Otherwise, evaluates each strategy on the validation set and selects
         the one with the highest accuracy.
         """
-        sampling_strategies = TASK_2_SAMPLINGS[self.task_type]
+        sampling_strategies = self.sampling_strategies
 
         if len(sampling_strategies) == 1:
             sampling_strategy = sampling_strategies[0]

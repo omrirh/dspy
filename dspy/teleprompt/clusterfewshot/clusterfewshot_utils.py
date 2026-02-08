@@ -12,13 +12,13 @@ from datasets.fingerprint import Hasher
 from dspy.primitives import Example
 from sklearn.metrics import silhouette_score
 from dspy.utils.parallelizer import ParallelExecutor
-from programs import CoT, BasicMH
+
 from dspy.evaluate import Evaluate
 
 logger = logging.getLogger(__name__)
 
 MIN_CLUSTERS: int = 3
-MAX_CLUSTERS: int = 3
+MAX_CLUSTERS: int = 10
 
 
 # ============================================================================
@@ -273,7 +273,7 @@ def visualize_examples(
     if color_values is None or len(color_values) == 0:
         raise ValueError("Color values are empty, cannot plot scatter with cmap.")
 
-    plt.figure(figsize=(4, 3))
+    plt.figure(figsize=(10, 7))
     scatter = plt.scatter(
         embeddings_2d[:, 0],
         embeddings_2d[:, 1],
@@ -300,7 +300,8 @@ def visualize_examples(
             f"Size={len(embeddings)}\n"
             f"Silhouette={silhouette:.3f}\n"
             f"Embedding Model={embedding_model}\n"
-            f"Dataset={'GSM8K' if isinstance(student, CoT) else 'HotPotQA' if isinstance(student, BasicMH) else 'Iris'}"
+            # TODO: derive dataset name without coupling to specific program classes
+            f"Dataset={type(student).__name__}"
         )
 
     plt.xlabel("PCA Dimension 1", fontsize=12, labelpad=8)
@@ -340,7 +341,7 @@ def visualize_one_shot_scores_distribution(ranked_examples: Dict, save_path="one
     sorted_scores = sorted(score_counts.items())
     scores, counts = zip(*sorted_scores)
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 7))
     plt.bar(scores, counts, color='skyblue', edgecolor='black')
     plt.xlabel("One-shot Evaluation Score")
     plt.ylabel("Score frequency")
@@ -386,7 +387,7 @@ def visualize_soft_selection(
 
     colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 7))
     plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
     plt.title(f"PCA of Training Embeddings with Selected Few-shot (Red)\nDiversity λ={div_lambda:.3f}")
     plt.xlabel("PCA Dimension 1")
@@ -429,7 +430,7 @@ def visualize_os_test(
 
     colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 7))
     plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
     plt.title(f"PCA of Validation Embeddings with Selected One-shot test questions (Red)")
     plt.xlabel("PCA Dimension 1")
@@ -584,7 +585,10 @@ def evaluate_example_as_demo(example: Dict, evaluator, student, os_test: List[Ex
     Returns:
         Score indicating demonstration quality (higher is better)
     """
-    example_visual = f"{', '.join([f'{input_key}: {input_val}' for input_key, input_val in dict(example['raw'].inputs()).items()])} --> {example['raw'].answer}"
+    raw = example['raw']
+    inputs_str = ', '.join(f'{k}: {v}' for k, v in dict(raw.inputs()).items())
+    labels_str = ', '.join(f'{k}: {v}' for k, v in dict(raw.labels()).items())
+    example_visual = f"{inputs_str} --> {labels_str}"
 
     logger.info(
         f"Conducting example-as-demo test ({len(os_test)} questions) "

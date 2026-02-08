@@ -132,12 +132,16 @@ class BetterTogether(Teleprompter):
         # from the original training set for prompts optimization on GSM8K/HotPotQA.
         # For Iris, 15 and 35 were sub-sampled for training/validation.
         logger.info(f"trainset size: {len(trainset)}")
-        if len(trainset) > 50:
-            num_train = 100
-            num_val = 250
-        else:
+        if len(trainset) <= 50:
             num_train = 15
             num_val = 35
+        elif len(trainset) >= 850:
+            num_train = 500
+            num_val = 350
+        else:
+            # Proportional split (~60/40) when trainset is between 50 and 850
+            num_train = int(len(trainset) * 0.6)
+            num_val = len(trainset) - num_train
 
         prompt_trainset = trainset[:num_train]
         prompt_valset = trainset[num_train:num_train + num_val]

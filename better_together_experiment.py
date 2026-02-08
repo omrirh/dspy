@@ -1,8 +1,9 @@
 import time
 import dspy
 from dspy.evaluate import Evaluate
-from programs import CoT, BasicMH, IrisProgram
+from programs import CoT, BasicMH, IrisProgram, CropRecommender
 from dspy.datasets import HotPotQA, IrisDataset
+from dspy.datasets.crop_recommendation import CropRecommendationDataset, crop_recommendation_metric, create_crop_numeric_encoder
 from remote_setup.utils import assign_local_lm
 from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
@@ -70,6 +71,13 @@ def main(dataset, prompt_optimizer, strategy, model):
         student = IrisProgram()
         trainset, devset, testset = dataset.get_data_splits()
 
+    elif dataset_name == "crop_recommendation":
+        dataset = CropRecommendationDataset(csv_path="Crop_recommendation.csv")
+        metric = crop_recommendation_metric
+        task_type = "classification"
+        student = CropRecommender()
+        trainset, devset, testset = dataset.get_data_splits()
+
     if dataset_name in QA_DATASETS:
         trainset = [x.with_inputs('question') for x in dataset.train if
                     not any(ex in x.question for ex in exclude_examples)][:train_size]
@@ -127,8 +135,11 @@ def main(dataset, prompt_optimizer, strategy, model):
 
     if prompt_optimizer_name == "clusterfs":
         # Initialize semantic encoders based on task type
-        if task_type == "classification":
-            # Use numeric encoder for classification tasks (e.g., Iris)
+        if task_type == "classification" and dataset_name == "crop_recommendation":
+            # Use crop-specific numeric encoder (7 agronomic features)
+            semantic_encoders = [create_crop_numeric_encoder()]
+        elif task_type == "classification":
+            # Use generic numeric encoder for classification tasks (e.g., Iris)
             semantic_encoders = [create_numeric_encoder()]
         else:
             # Use SentenceTransformer encoders for text-based tasks (QA, arithmetic, etc.)

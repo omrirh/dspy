@@ -19,7 +19,7 @@ class SemanticEncoder:
     Encapsulates an encoder model and its transformation method for semantic embedding.
 
     The SemanticEncoder provides a unified interface for different types of encoders,
-    making it easy to plug in custom encoding strategies into ClusterFewshot.
+    making it easy to plug in custom example encoding strategies into ClusterFewshot.
 
     Example usage:
         # Using a SentenceTransformer encoder
@@ -77,7 +77,7 @@ class SemanticEncoder:
 
     def encode(self, examples: List[Example]) -> np.ndarray:
         """
-        Encode a list of examples into embedding vectors.
+        Encode a list of examples into latent embedding vectors.
 
         Args:
             examples: List of Example objects to encode
