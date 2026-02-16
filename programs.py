@@ -8,41 +8,84 @@ from dspy.dsp.utils.utils import deduplicate
 # Crop Recommendation — LLM-as-an-Agronomist
 # ---------------------------------------------------------------------------
 
-class CropRecommenderSignature(dspy.Signature):
-    """You are an expert agronomist advisor. Given soil nutrient levels and
-    environmental conditions for a field, recommend the single most suitable
-    crop to cultivate."""
+# Feature descriptions for dynamic signature generation
+CROP_FEATURE_DESCRIPTIONS = {
+    'nitrogen': "Nitrogen (N) content in soil, mg/kg",
+    'phosphorous': "Phosphorous (P) content in soil, mg/kg",
+    'potassium': "Potassium (K) content in soil, mg/kg",
+    'temperature': "Average temperature, °C",
+    'humidity': "Relative humidity, %",
+    'ph': "Soil pH value",
+    'rainfall': "Rainfall, mm",
+}
 
-    nitrogen = dspy.InputField(desc="Nitrogen (N) content in soil, mg/kg")
-    phosphorous = dspy.InputField(desc="Phosphorous (P) content in soil, mg/kg")
-    potassium = dspy.InputField(desc="Potassium (K) content in soil, mg/kg")
-    temperature = dspy.InputField(desc="Average temperature, °C")
-    humidity = dspy.InputField(desc="Relative humidity, %")
-    ph = dspy.InputField(desc="Soil pH value")
-    rainfall = dspy.InputField(desc="Rainfall, mm")
-    crop = dspy.OutputField(
+
+def create_crop_recommender_signature(feature_names: list) -> type:
+    """
+    Dynamically creates a CropRecommender signature based on selected features.
+
+    Args:
+        feature_names: List of feature names to include as input fields
+
+    Returns:
+        A dspy.Signature class with the specified input fields
+    """
+    # Build the signature fields dictionary
+    fields = {}
+    for feature in feature_names:
+        if feature in CROP_FEATURE_DESCRIPTIONS:
+            fields[feature] = dspy.InputField(desc=CROP_FEATURE_DESCRIPTIONS[feature])
+        else:
+            fields[feature] = dspy.InputField()
+
+    # Add the output field
+    fields['crop'] = dspy.OutputField(
         desc="The recommended crop (one of: rice, maize, chickpea, kidneybeans, "
              "pigeonpeas, mothbeans, mungbean, blackgram, lentil, pomegranate, "
              "banana, mango, grapes, watermelon, muskmelon, apple, orange, "
              "papaya, coconut, cotton, jute, coffee)"
     )
 
+    # Create the signature class dynamically
+    signature_class = type(
+        'CropRecommenderSignature',
+        (dspy.Signature,),
+        {
+            '__doc__': "You are an expert agronomist advisor. Given key environmental "
+                      "conditions for a field, recommend the single most suitable crop to cultivate.",
+            **fields
+        }
+    )
+
+    return signature_class
+
 
 class CropRecommender(dspy.Module):
-    def __init__(self):
+    def __init__(self, feature_names: list = None):
+        """
+        Args:
+            feature_names: List of feature names to use. If None, uses the global
+                          CROP_INPUT_FIELDS from the dataset module.
+        """
         super().__init__()
-        self.recommend = dspy.ChainOfThought(CropRecommenderSignature)
 
-    def forward(self, nitrogen, phosphorous, potassium, temperature, humidity, ph, rainfall):
-        return self.recommend(
-            nitrogen=nitrogen,
-            phosphorous=phosphorous,
-            potassium=potassium,
-            temperature=temperature,
-            humidity=humidity,
-            ph=ph,
-            rainfall=rainfall,
-        )
+        # Import here to avoid circular dependency
+        if feature_names is None:
+            from dspy.datasets.crop_recommendation import CROP_INPUT_FIELDS
+            feature_names = CROP_INPUT_FIELDS
+
+        self.feature_names = feature_names
+        signature = create_crop_recommender_signature(feature_names)
+        self.recommend = dspy.ChainOfThought(signature)
+
+    def forward(self, **kwargs):
+        """
+        Dynamically forward based on available features.
+        Accepts any subset of: nitrogen, phosphorous, potassium, temperature, humidity, ph, rainfall
+        """
+        # Only pass the features that are expected by the signature
+        inputs = {k: v for k, v in kwargs.items() if k in self.feature_names}
+        return self.recommend(**inputs)
 
 
 class BasicMH(dspy.Module):

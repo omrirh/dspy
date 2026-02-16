@@ -10,23 +10,32 @@ from dspy.teleprompt.clusterfewshot.semantic_encoder import SemanticEncoder
 
 logger = logging.getLogger(__name__)
 
+# Top 5 features selected by Random Forest (pre-computed)
+# Features: rainfall, humidity, potassium, phosphorous, nitrogen
 CROP_INPUT_FIELDS = [
-    'nitrogen', 'phosphorous', 'potassium',
-    'temperature', 'humidity', 'ph', 'rainfall',
+    'rainfall', 'humidity', 'potassium', 'phosphorous', 'nitrogen',
 ]
 
 
 class CropRecommendationDataset(Dataset):
     """
-    Kaggle Crop Recommendation dataset (22 crops, 7 numeric features, 2200 rows).
+    Kaggle Crop Recommendation dataset (22 crops, 5 numeric features, 2200 rows).
 
-    Each example carries 7 numeric input fields and a crop label, following the
+    Uses pre-selected top 5 features: rainfall, humidity, potassium, phosphorous, nitrogen.
+    Each example carries these 5 numeric input fields and a crop label, following the
     same pattern as IrisDataset — raw features as InputFields, no text formatting.
 
     Source: https://www.kaggle.com/datasets/atharvaingle/crop-recommendation-dataset
     """
 
     def __init__(self, csv_path: str, train_size: int = 500, dev_size: int = 350, test_size: int = 350, *args, **kwargs):
+        """
+        Args:
+            csv_path: Path to the crop recommendation CSV file (use Crop_recommendation_5features.csv)
+            train_size: Number of training examples
+            dev_size: Number of dev examples
+            test_size: Number of test examples
+        """
         super().__init__(*args, **kwargs)
 
         df = pd.read_csv(csv_path)
@@ -35,13 +44,11 @@ class CropRecommendationDataset(Dataset):
         examples = []
         for _, row in df.iterrows():
             example = dspy.Example(
-                nitrogen=float(row['N']),
-                phosphorous=float(row['P']),
-                potassium=float(row['K']),
-                temperature=float(row['temperature']),
-                humidity=float(row['humidity']),
-                ph=float(row['ph']),
                 rainfall=float(row['rainfall']),
+                humidity=float(row['humidity']),
+                potassium=float(row['potassium']),
+                phosphorous=float(row['phosphorous']),
+                nitrogen=float(row['nitrogen']),
                 crop=str(row['label']).strip().lower(),
             ).with_inputs(*CROP_INPUT_FIELDS)
             examples.append(example)
@@ -87,7 +94,12 @@ def crop_recommendation_metric(gold, pred, trace=None):
 # ---------------------------------------------------------------------------
 
 def crop_numeric_transform(encoder, examples):
-    """Extract the 7 agronomic features as embedding vectors for clustering."""
+    """
+    Extract the 5 agronomic features (rainfall, humidity, potassium, phosphorous, nitrogen)
+    as embedding vectors for clustering.
+
+    This encoder uses ONLY the numeric input features, NOT the crop label.
+    """
     return np.array([
         [float(ex[field]) for field in CROP_INPUT_FIELDS]
         for ex in examples
@@ -95,7 +107,12 @@ def crop_numeric_transform(encoder, examples):
 
 
 def create_crop_numeric_encoder() -> SemanticEncoder:
-    """Factory for a numeric encoder that uses soil/environmental features."""
+    """
+    Factory for a numeric encoder that uses soil/environmental features only (no label).
+
+    This encoder clusters examples based purely on agronomic similarity of the input features,
+    without considering the crop label.
+    """
     return SemanticEncoder(
         encoder=None,
         transform_fn=crop_numeric_transform,

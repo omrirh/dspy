@@ -90,6 +90,7 @@ def cluster_examples(
             silhouette=silhouette_score(examples_embeddings, cluster_labels) if len(set(cluster_labels)) > 1 else 0,
             pca_2d=pca_2d,
             student=student,
+            examples=trainset if train else data,
         )
 
     logger.info(f"{data_type} clustering completed with K={k}.")
@@ -273,6 +274,51 @@ def visualize_examples(
     if color_values is None or len(color_values) == 0:
         raise ValueError("Color values are empty, cannot plot scatter with cmap.")
 
+    # Compute label distribution per cluster (for classification tasks)
+    label_distribution = {}
+    if not show_ranks and cluster_labels is not None and examples is not None:
+        from collections import Counter
+
+        # Group examples by cluster
+        cluster_to_examples = {}
+        for idx, cluster_id in enumerate(cluster_labels):
+            if cluster_id not in cluster_to_examples:
+                cluster_to_examples[cluster_id] = []
+            cluster_to_examples[cluster_id].append(examples[idx])
+
+        # Extract labels and compute distribution for each cluster
+        for cluster_id, cluster_examples in cluster_to_examples.items():
+            # Try to extract label from different possible fields
+            labels = []
+            for ex in cluster_examples:
+                # Handle both dict-like and Example objects
+                if hasattr(ex, 'get'):
+                    label = ex.get('crop') or ex.get('answer') or ex.get('label') or ex.get('species')
+                elif hasattr(ex, 'labels'):
+                    label_dict = dict(ex.labels())
+                    label = label_dict.get('crop') or label_dict.get('answer') or label_dict.get('label') or label_dict.get('species')
+                elif isinstance(ex, dict) and 'raw' in ex:
+                    # Bootstrapped example format
+                    raw_ex = ex['raw']
+                    label_dict = dict(raw_ex.labels())
+                    label = label_dict.get('crop') or label_dict.get('answer') or label_dict.get('label') or label_dict.get('species')
+                else:
+                    label = None
+
+                if label:
+                    labels.append(str(label))
+
+            if labels:
+                label_counts = Counter(labels)
+                label_distribution[cluster_id] = label_counts
+
+                # Log the distribution
+                top_labels = label_counts.most_common(5)  # Top 5 labels per cluster
+                logger.info(
+                    f"Cluster {cluster_id} ({len(cluster_examples)} examples): "
+                    f"{', '.join([f'{label}={count}' for label, count in top_labels])}"
+                )
+
     plt.figure(figsize=(10, 7))
     scatter = plt.scatter(
         embeddings_2d[:, 0],
@@ -306,6 +352,26 @@ def visualize_examples(
 
     plt.xlabel("PCA Dimension 1", fontsize=12, labelpad=8)
     plt.ylabel("PCA Dimension 2", fontsize=12, labelpad=8)
+
+    # Add label distribution legend if available
+    if label_distribution and not show_ranks:
+        legend_text = "Label Distribution per Cluster:\n"
+        for cluster_id in sorted(label_distribution.keys()):
+            label_counts = label_distribution[cluster_id]
+            # Show top 3 labels per cluster to avoid clutter
+            top_labels = label_counts.most_common(3)
+            cluster_size = sum(label_counts.values())
+            label_str = ", ".join([f"{label}" for label, count in top_labels])
+            legend_text += f"C{cluster_id} (n={cluster_size}): {label_str}\n"
+
+        # Add text box with label distribution
+        plt.text(
+            0.02, 0.98, legend_text,
+            transform=plt.gca().transAxes,
+            fontsize=8,
+            verticalalignment='top',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+        )
 
     plt.grid(True)
     plt.tight_layout()
