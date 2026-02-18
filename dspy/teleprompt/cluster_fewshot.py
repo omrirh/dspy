@@ -35,6 +35,9 @@ TASK_2_SAMPLINGS = {
     "classification": ["best_in_cluster"],
 }
 
+# Strategies that require per-example one-shot evaluation and ranking
+RANKING_REQUIRED_STRATEGIES = {"top_n", "best_in_cluster"}
+
 CANDIDATE_EMBEDDING_MODELS = [
     "Qwen/Qwen3-Embedding-0.6B",
     "sentence-transformers/all-mpnet-base-v2",
@@ -135,8 +138,9 @@ class ClusterFewshot(Teleprompter):
         self.training_clusters = self._cluster_examples()
         self.validation_clusters = self._cluster_examples(train=False)
 
-        self._sample_one_shot_evaluation_set()
-        self._sort_examples_as_demos()
+        if self._needs_ranking():
+            self._sample_one_shot_evaluation_set()
+            self._sort_examples_as_demos()
 
         if self._soft_select:
             self.soft_select(N=self.N)
@@ -260,7 +264,7 @@ class ClusterFewshot(Teleprompter):
         if color_values is None or len(color_values) == 0:
             raise ValueError("Color values are empty, cannot plot scatter with cmap.")
 
-        plt.figure(figsize=(4, 3))
+        plt.figure(figsize=(12, 9))
         scatter = plt.scatter(
             embeddings_2d[:, 0],
             embeddings_2d[:, 1],
@@ -456,13 +460,15 @@ class ClusterFewshot(Teleprompter):
 
     def sample_examples_from_cluster(self, cluster_id, sampling_strategy):
         """
-        Samples examples from a given cluster based on one of 4 approaches:
+        Samples examples from a given cluster based on one of 6 approaches:
         1. top N: Collects examples that fall in the top global N demonstrations set.
             If there aren't any in the given cluster, returns an empty list.
         2. Best in cluster: Returns the top-ranked example-as-demo from the given cluster.
         3. Popularity: Allocates a proportionate number of slots in the few-shot subset
             for the given cluster top-ranked examples, based on cluster size (i.e. semantic popularity)
         4. Central: Samples most centric example (i.e most common within a semantic demonstrations trend)
+        5. Centroids: Selects the geometrically closest example to the cluster centroid embedding.
+        6. Cluster random: Samples a uniformly random example from the cluster.
         """
         sampled_examples = []
 
@@ -486,6 +492,12 @@ class ClusterFewshot(Teleprompter):
 
             elif sampling_strategy == "central":
                 sampled_examples = self.get_central_examples(examples=cluster_examples, sample_size=1)
+
+            elif sampling_strategy == "centroids":
+                sampled_examples = self.get_central_examples(examples=cluster_examples, sample_size=1)
+
+            elif sampling_strategy == "cluster_random":
+                sampled_examples = [random.choice(cluster_examples)]
 
         logger.info(
             f"{len(sampled_examples)}/{self.N} slots given to cluster {cluster_id + 1} (size={len(self.training_clusters[cluster_id])})"
@@ -530,6 +542,11 @@ class ClusterFewshot(Teleprompter):
         logger.info(
             f"Best few-shot subset sampled according to '{best_strategy}' strategy "
             f"({ranked_sampling_strategies[best_strategy]}% accuracy on the validation set)")
+
+    def _needs_ranking(self):
+        """Returns True if the task's sampling strategies require one-shot evaluation and ranking."""
+        strategies = set(TASK_2_SAMPLINGS[self.task_type])
+        return self._soft_select or bool(strategies & RANKING_REQUIRED_STRATEGIES)
 
     def get_central_examples(self, examples, sample_size):
         embeddings = [self.examples2embeddings[self.get_example_hash(ex)] for ex in examples]

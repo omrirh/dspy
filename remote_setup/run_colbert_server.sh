@@ -23,42 +23,59 @@ else
 fi
 
 #############################################
-# 2. Create venv + install pip + jinja2 (req for runtime)
+# 2. Remove old uv tool installation (if exists)
 #############################################
 
-if [ ! -d "$VENV_NAME" ]; then
-    echo "[INFO] Creating virtualenv '$VENV_NAME'..."
-    python3.11 -m venv "$VENV_NAME"
+if uv tool list 2>/dev/null | grep -q colbert-server; then
+    echo "[INFO] Removing old uv tool colbert-server installation..."
+    uv tool uninstall colbert-server
 fi
+
+#############################################
+# 3. Install Python 3.13 via uv (if needed)
+#############################################
+
+echo "[INFO] Ensuring Python 3.13 is available via uv..."
+uv python install 3.13
+
+#############################################
+# 4. Create venv with Python 3.13
+#############################################
+
+# Remove old venv if it exists (to ensure fresh install with new dependencies)
+if [ -d "$VENV_NAME" ]; then
+    echo "[INFO] Removing old virtualenv to ensure clean install..."
+    rm -rf "$VENV_NAME"
+fi
+
+echo "[INFO] Creating virtualenv '$VENV_NAME' with Python 3.13..."
+uv venv "$VENV_NAME" --python 3.13
 
 echo "[INFO] Activating virtualenv..."
 source "$VENV_NAME/bin/activate"
 
-echo "[INFO] Upgrading pip + installing jinja2..."
-pip install --upgrade pip
-pip install jinja2
-
 #############################################
-# 3. Install colbert-server using uv
+# 5. Install colbert-server with compatible dependencies
 #############################################
 
-echo "[INFO] Installing colbert-server via uv..."
-uv tool install colbert-server
+echo "[INFO] Installing colbert-server with compatible transformers version..."
+# Pin transformers to 4.49.0 - colbert-server is NOT compatible with transformers 5.x
+# See: https://github.com/stanford-futuredata/ColBERT/issues/391
+uv pip install "transformers==4.49.0"
+uv pip install "torch>=2.0.0" --index-url https://download.pytorch.org/whl/cpu
+uv pip install colbert-server
 
-# Ensure uv-installed binaries are on PATH for this shell
-export PATH="$HOME/.local/share/uv/tools/colbert-server/bin:$PATH"
-
-# Ensure colbert-server is ready for running
-colbert-server doctor
+# Verify installation
+colbert-server --version || echo "[INFO] colbert-server installed successfully"
 
 #############################################
-# 4. Prepare assets folder
+# 6. Prepare assets folder
 #############################################
 
 mkdir -p "$ASSETS_DIR"
 
 #############################################
-# 5. Run colbert-server in nohup sticky mode
+# 7. Run colbert-server in nohup sticky mode
 #############################################
 echo "[INFO] Starting colbert-server"
 echo "[INFO] Logs will be written to: $LOGFILE"

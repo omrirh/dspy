@@ -9,10 +9,11 @@ DATASET="gsm8k"
 PROMPT_OPTIMIZER="clusterfs"
 STRATEGY="p"
 MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
+BASELINE=false
 
 # Supported values
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
-VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "miprov2")
+VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "retrievalfs" "miprov2")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p" "p -> p" "p -> p -> p")
 VALID_MODELS=(
   "meta-llama/Llama-2-7b-chat-hf"
@@ -37,12 +38,14 @@ while [[ "$#" -gt 0 ]]; do
         --prompt-optimizer) PROMPT_OPTIMIZER="$2"; shift ;;
         --strategy) STRATEGY="$2"; shift ;;
         --model) MODEL="$2"; shift ;;
+        --baseline) BASELINE=true ;;
         -h|--help)
-            echo "Usage: $0 [--dataset <dataset name>] [--prompt-optimizer <optimizer>] [--strategy <strategy>] [--model <model name>]"
+            echo "Usage: $0 [--dataset <dataset name>] [--prompt-optimizer <optimizer>] [--strategy <strategy>] [--model <model name>] [--baseline]"
             echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k, iris"
-            echo "  --prompt-optimizer  Specify the prompt optimization method. Default: bfrs. Options: bfrs, clusterfs, miprov2"
+            echo "  --prompt-optimizer  Specify the prompt optimization method. Default: bfrs. Options: bfrs, clusterfs, retrievalfs, miprov2"
             echo "  --strategy          Specify the strategy. Default: p. Options: 'p', 'w', 'p -> p', 'p -> p -> p', 'p -> w', 'w -> p', 'p -> w -> p'"
             echo "  --model             Specify the model to use. Default: meta-llama/Meta-Llama-3-8B-Instruct"
+            echo "  --baseline          Run in baseline mode (skip optimization, evaluate student program directly)"
             exit 0
             ;;
         *) echo "Unknown parameter: $1"; exit 1 ;;
@@ -85,7 +88,11 @@ if [[ "$PROMPT_OPTIMIZER" == "miprov2" ]]; then
 fi
 
 # Format additional params for log filename
-LOG_PARAMS="_${PROMPT_OPTIMIZER}_$(echo "$STRATEGY" | tr ' ' '_')"
+if [[ "$BASELINE" == "true" ]]; then
+    LOG_PARAMS="_baseline"
+else
+    LOG_PARAMS="_${PROMPT_OPTIMIZER}_$(echo "$STRATEGY" | tr ' ' '_')"
+fi
 MODEL_ID="_$(basename "$MODEL")"
 
 # Set log file
@@ -94,12 +101,21 @@ EXPERIMENT_LOG_FILE="better_together_experiment_run_${DATASET}${MODEL_ID}${LOG_P
 # PATCH: set higher number of open files limit to prevent LiteLLM database limit reach
 ulimit -n 65535
 
+# Build the command arguments
+CMD_ARGS=(
+    --dataset "$DATASET"
+    --prompt-optimizer "$PROMPT_OPTIMIZER"
+    --strategy "$STRATEGY"
+    --model "$MODEL"
+)
+
+# Add baseline flag if enabled
+if [[ "$BASELINE" == "true" ]]; then
+    CMD_ARGS+=(--baseline)
+fi
+
 # Run experiment
-nohup python3.11 better_together_experiment.py \
-    --dataset "$DATASET" \
-    --prompt-optimizer "$PROMPT_OPTIMIZER" \
-    --strategy "$STRATEGY" \
-    --model "$MODEL" 2>&1 | tee "$EXPERIMENT_LOG_FILE" &
+nohup python3.11 better_together_experiment.py "${CMD_ARGS[@]}" 2>&1 | tee "$EXPERIMENT_LOG_FILE" &
 
 echo -e "\nBetterTogether Experiment"
 echo "-------------------------"
@@ -107,4 +123,5 @@ echo "Dataset: $DATASET"
 echo "Prompt Optimizer: $PROMPT_OPTIMIZER"
 echo "Strategy: $STRATEGY"
 echo "Model: $MODEL"
+echo "Baseline Mode: $BASELINE"
 echo -e "Log file: $EXPERIMENT_LOG_FILE\n\n"

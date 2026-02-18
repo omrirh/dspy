@@ -1,7 +1,11 @@
 import dspy
 import torch
 import numpy as np
+from typing import TYPE_CHECKING
 from dspy.dsp.utils.utils import deduplicate
+
+if TYPE_CHECKING:
+    from dspy.teleprompt.retrieval_fewshot import RetrievalFewshot
 
 
 class BasicMH(dspy.Module):
@@ -54,82 +58,116 @@ class IrisProgram(dspy.Module):
             sepal_width=sepal_width
         )
 
-# TODO: experiment with this!
-# class ClusterFewshotCoT(CoT):
-#     def __init__(self, clusterfewshot):
-#         super().__init__()
-#         self.clusters = clusterfewshot.training_clusters
-#         self.centers = {
-#             cluster_id: np.mean([clusterfewshot.examples2embeddings[str(ex)] for ex in examples], axis=0)
-#             for cluster_id, examples in self.clusters.items()
-#         }
-#         self.ranked_examples = clusterfewshot.ranked_examples
-#
-#         self.tokenizer = clusterfewshot.tokenizer
-#         self.embedding_model = clusterfewshot.embedding_model
-#
-#         self.N = 3  # TODO: test this and make it dynamic
-#
-#     def forward(self, question):
-#         # Embed the query using the same method
-#         chat_str = self.tokenizer.apply_chat_template(
-#             conversation=[
-#                 {"role": "user", "content": question},
-#                 {"role": "assistant", "content": ""}
-#             ],
-#             tokenize=False,
-#             add_generation_prompt=False,
-#         )
-#
-#         encoding = self.tokenizer(
-#             chat_str,
-#             return_tensors="pt",
-#             padding="max_length",
-#             truncation=True,
-#             max_length=1024,
-#         )
-#         input_ids = encoding["input_ids"].to(self.embedding_model.device)
-#         if input_ids.dim() == 1:
-#             input_ids = input_ids.unsqueeze(0)
-#
-#         with torch.no_grad():
-#             token_embs = self.embedding_model.get_input_embeddings()(input_ids)
-#             query_embedding = token_embs.mean(dim=1).squeeze(0).cpu().numpy()
-#
-#         top_cluster_ids = sorted(
-#             list(self.clusters.keys()),
-#             key=lambda id: np.linalg.norm(query_embedding - self.centers[id]),
-#             reverse=False,
-#         )[:self.N]
-#
-#         # Assign top N performing one-shots from the closest cluster
-#         self.prog.predict.demos = [self.clusters[cluster_id][0] for cluster_id in top_cluster_ids] # dynamically assign
-#
-#         return super().forward(question)
-#
 
-# class ClusterFewshotIrisProgram(IrisProgram):
-#     def __init__(self, clusterfewshot):
-#         super().__init__()
-#         self.clusters = clusterfewshot.training_clusters
-#         self.centers = {
-#             cluster_id: np.mean([clusterfewshot.examples2embeddings[str(ex)] for ex in examples], axis=0)
-#             for cluster_id, examples in self.clusters.items()
-#         }
-#         self.ranked_examples = clusterfewshot.ranked_examples
-#
-#         self.N = 3  # setosa, versicolor or virginia
-#
-#     def forward(self, petal_length, petal_width, sepal_length, sepal_width):
-#         query_vect = [petal_length, petal_width, sepal_length, sepal_width]
-#
-#         top_cluster_ids = sorted(
-#             list(self.clusters.keys()),
-#             key=lambda id: np.linalg.norm(query_vect - self.centers[id]),
-#             reverse=False,
-#         )[:self.N]
-#
-#         # Assign top N performing one-shots from the closest cluster
-#         self.generate_answer.predict.demos = [self.clusters[cluster_id][0] for cluster_id in top_cluster_ids] # dynamically assign
-#
-#         return super().forward(petal_length, petal_width, sepal_length, sepal_width)
+class _RetrievalFewshotMixin:
+    """
+    Mixin providing per-query embedding and demo assignment for retrieval-driven few-shot programs.
+    All retrieval strategy logic lives in the RetrievalClusterFewshot optimizer; this mixin
+    only handles query embedding (task-specific) and demo assignment to predictors.
+    """
+
+    def _init_retrieval(self, cf_optimizer: "RetrievalFewshot"):
+        self._cf_optimizer = cf_optimizer
+        self._embedding_model = cf_optimizer.embedding_model
+        self._use_target_model = cf_optimizer.use_target_model_embeddings
+        if self._use_target_model:
+            self._tokenizer = cf_optimizer.tokenizer
+
+    def _embed_query(self, question: str) -> np.ndarray:
+        """Embeds a text query using the same model used during compilation."""
+        if self._use_target_model:
+            return self._embed_with_target_model(question)
+        return self._embedding_model.encode([question], convert_to_numpy=True)[0]
+
+    def _embed_with_target_model(self, question: str, max_seq_length: int = 1024) -> np.ndarray:
+        """Mean-pooled input embedding via the target LM — mirrors compile-time logic."""
+        chat_str = self._tokenizer.apply_chat_template(
+            conversation=[{"role": "user", "content": question}],
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        encoding = self._tokenizer(
+            chat_str,
+            return_tensors="pt",
+            padding="max_length",
+            truncation=True,
+            max_length=max_seq_length,
+        )
+        device = next(self._embedding_model.parameters()).device
+        input_ids = encoding["input_ids"].to(device)
+        attention_mask = encoding["attention_mask"].to(device)
+
+        with torch.no_grad():
+            token_embs = self._embedding_model.get_input_embeddings()(input_ids)
+            attention_expanded = attention_mask.unsqueeze(-1)
+            token_embs = token_embs * attention_expanded
+            sum_embs = token_embs.sum(dim=1)
+            lengths = attention_expanded.sum(dim=1).clamp(min=1)
+            mean_emb = sum_embs / lengths
+
+        return mean_emb.squeeze(0).cpu().numpy()
+
+    def _assign_demos(self, selected_examples: list):
+        """Assigns per-predictor demos from the selected bootstrapped example dicts."""
+        for name, predictor in self.named_predictors():
+            demos = []
+            for ex in selected_examples:
+                if name in ex:
+                    demos.extend(ex[name])
+            predictor.demos = demos
+
+
+class RetrievalFewshotCoT(CoT, _RetrievalFewshotMixin):
+    """
+    Retrieval-driven CoT for GSM8K (arithmetic tasks).
+    Selects few-shot demonstrations dynamically at inference time based on
+    semantic similarity between the incoming question and the compiled cluster space.
+    """
+
+    def __init__(self, cf_optimizer: "RetrievalFewshot"):
+        super().__init__()
+        self._init_retrieval(cf_optimizer)
+
+    def forward(self, question):
+        query_emb = self._embed_query(question)
+        self._assign_demos(self._cf_optimizer.retrieve_demos(query_emb))
+        return super().forward(question)
+
+
+class RetrievalFewshotMH(BasicMH, _RetrievalFewshotMixin):
+    """
+    Retrieval-driven multi-hop program for HotPotQA.
+    Selects few-shot demonstrations dynamically at inference time based on
+    semantic similarity between the incoming question and the compiled cluster space.
+    """
+
+    def __init__(self, cf_optimizer: "RetrievalFewshot"):
+        super().__init__()
+        self._init_retrieval(cf_optimizer)
+
+    def forward(self, question):
+        query_emb = self._embed_query(question)
+        self._assign_demos(self._cf_optimizer.retrieve_demos(query_emb))
+        return super().forward(question)
+
+
+class RetrievalFewshotIrisProgram(IrisProgram, _RetrievalFewshotMixin):
+    """
+    Retrieval-driven Iris classifier.
+    Uses raw feature vectors as the query embedding (no language model required)
+    to retrieve the most semantically similar demonstrations at inference time.
+    """
+
+    def __init__(self, cf_optimizer: "RetrievalFewshot"):
+        super().__init__()
+        self._init_retrieval(cf_optimizer)
+
+    def _embed_query(self, petal_length, petal_width, sepal_length, sepal_width) -> np.ndarray:
+        """For Iris, the embedding is the raw input feature vector."""
+        return np.array([float(petal_length), float(petal_width),
+                         float(sepal_length), float(sepal_width)])
+
+    def forward(self, petal_length, petal_width, sepal_length, sepal_width):
+        query_emb = self._embed_query(petal_length, petal_width, sepal_length, sepal_width)
+        self._assign_demos(self._cf_optimizer.retrieve_demos(query_emb))
+        return super().forward(petal_length, petal_width, sepal_length, sepal_width)
