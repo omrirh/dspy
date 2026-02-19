@@ -4,7 +4,7 @@ import random
 import torch.nn.functional as F
 import logging
 import numpy as np
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -54,7 +54,9 @@ class ClusterFewshot(Teleprompter):
             metric_threshold=None,
             descending: bool = True,
             soft_select: bool = False,
-            use_target_model_embeddings: bool = False
+            use_target_model_embeddings: bool = False,
+            os_sampling_strategy: str = "centroid",
+            os_set_size: Optional[int] = None,
     ):
         """
         ClusterFewshot: Task-adaptive few-shot selection using clustering over examples embeddings
@@ -80,6 +82,18 @@ class ClusterFewshot(Teleprompter):
                 a candidate SentenceTransformer's semantic embeddings.
                 This option is recommended when running this teleprompter in the
                 BetterTogether optimization pipeline.
+            os_sampling_strategy: str
+                Strategy for sampling the one-shot evaluation set from the validation set.
+                "centroid" (default): selects the most central examples from each validation
+                    cluster — the paper's reported approach.
+                "random": uniform random sampling from the full validation set,
+                    independent of cluster structure (for ablation runs).
+            os_set_size: Optional[int]
+                Total number of examples in the one-shot evaluation set.
+                For "centroid": if None, samples 3 per cluster (unchanged default).
+                    If set, distributes the budget evenly across clusters.
+                For "random": required; total examples to sample uniformly.
+                Typical ablation values: 9, 15, 21.
         """
         super().__init__()
         self.metric = metric
@@ -100,6 +114,9 @@ class ClusterFewshot(Teleprompter):
         self.embeddings2examples = {}
         self.use_target_model_embeddings = use_target_model_embeddings
         self.generate_embeddings_func = None
+
+        self.os_sampling_strategy = os_sampling_strategy
+        self.os_set_size = os_set_size
 
         self.training_K = None
         self.validation_K = None
@@ -139,7 +156,10 @@ class ClusterFewshot(Teleprompter):
         self.validation_clusters = self._cluster_examples(train=False)
 
         if self._needs_ranking():
-            self._sample_one_shot_evaluation_set()
+            self._sample_one_shot_evaluation_set(
+                os_sampling_strategy=self.os_sampling_strategy,
+                os_set_size=self.os_set_size,
+            )
             self._sort_examples_as_demos()
 
         if self._soft_select:
@@ -333,22 +353,60 @@ class ClusterFewshot(Teleprompter):
 
         logger.info(f"One-shot scores distribution saved to {save_path}")
 
-    def _sample_one_shot_evaluation_set(self):
+    def _sample_one_shot_evaluation_set(
+            self,
+            os_sampling_strategy: str = "centroid",
+            os_set_size: Optional[int] = None,
+    ):
         """
-        Selects examples from each validation cluster to form the one-shot testing set.
+        Selects examples from the validation set to form the one-shot evaluation set.
+
+        Args:
+            os_sampling_strategy: Sampling approach for the one-shot evaluation set.
+                "centroid" (default): selects the most central examples from each validation
+                    cluster — the paper's reported approach. If os_set_size is None, samples
+                    3 examples per cluster (unchanged default).
+                "random": uniform random sampling from the full validation set, independent
+                    of cluster structure (for ablation runs). os_set_size is required.
+            os_set_size: Total number of examples to sample. For "centroid", if None,
+                uses 3 per cluster. If set, distributes the budget evenly across clusters.
+                For "random", required. Typical ablation values: 9, 15, 21.
         """
+        _VALID_OS_STRATEGIES = {"centroid", "random"}
+        if os_sampling_strategy not in _VALID_OS_STRATEGIES:
+            raise ValueError(
+                f"Unknown os_sampling_strategy '{os_sampling_strategy}'. "
+                f"Choose from: {_VALID_OS_STRATEGIES}"
+            )
+
         self.os_test = []
-        samples_per_cluster = 3
 
-        for cluster_id, examples in self.validation_clusters.items():
-            sample_size = min(samples_per_cluster, len(examples))
-            selected = self.get_central_examples(examples=examples, sample_size=sample_size)
+        if os_sampling_strategy == "centroid":
+            if os_set_size is not None:
+                n_clusters = len(self.validation_clusters)
+                samples_per_cluster = max(1, os_set_size // n_clusters)
+            else:
+                samples_per_cluster = 3  # default, unchanged behaviour
 
-            logger.info(
-                f"Sampling {sample_size} questions from cluster {cluster_id + 1} (size={len(examples)})")
+            for cluster_id, examples in self.validation_clusters.items():
+                sample_size = min(samples_per_cluster, len(examples))
+                selected = self.get_central_examples(examples=examples, sample_size=sample_size)
+                logger.info(
+                    f"Sampling {sample_size} questions from cluster {cluster_id + 1} (size={len(examples)})"
+                )
+                self.os_test.extend(selected)
 
-            self.os_test.extend(selected)
+        else:  # "random"
+            if os_set_size is None:
+                raise ValueError(
+                    "os_set_size must be specified when using os_sampling_strategy='random'."
+                )
+            all_val = list(self.valset)
+            sample_size = min(os_set_size, len(all_val))
+            self.os_test = random.sample(all_val, sample_size)
+            logger.info(f"Randomly sampled {sample_size} questions from the full validation set.")
 
+        self._save_os_test_markdown(os_sampling_strategy=os_sampling_strategy)
         self.visualize_os_test()
         logger.info(f"One-shot evaluation set assembled with {len(self.os_test)} questions.")
 
@@ -831,6 +889,115 @@ class ClusterFewshot(Teleprompter):
         plt.close()
 
         logger.info(f"One-shot test set PCA plot saved to {save_path}")
+
+    def _save_os_test_markdown(
+            self,
+            os_sampling_strategy: str,
+            save_path: Optional[str] = None,
+    ):
+        """
+        Saves the one-shot evaluation test set to a Markdown file.
+
+        Examples are formatted in the same field order used by ChatAdapter when
+        presenting demonstrations in the prompt: input fields first, then output
+        fields, each under a ``[[ ## field_name ## ]]`` header.
+
+        For "centroid" strategy the file groups examples by validation cluster,
+        preserving the semantic structure used during sampling.
+        For "random" strategy the file lists examples in the order they were sampled.
+
+        Args:
+            os_sampling_strategy: The strategy used to produce ``self.os_test``.
+            save_path: Output file path. Defaults to
+                ``os_test_{os_sampling_strategy}_N{len(self.os_test)}.md``.
+        """
+        n = len(self.os_test)
+        if save_path is None:
+            save_path = f"os_test_{os_sampling_strategy}_N{n}.md"
+
+        # Field order follows the student's first predictor signature —
+        # identical to the order ChatAdapter uses when building prompt messages.
+        sig = self.student.named_predictors()[0][1].signature
+        input_fields = list(sig.input_fields.keys())
+        output_fields = list(sig.output_fields.keys())
+
+        lines = [
+            "# One-Shot Evaluation Test Set",
+            "",
+            f"**Sampling strategy:** `{os_sampling_strategy}`  ",
+            f"**Total examples:** {n}  ",
+            f"**Input fields:** {', '.join(f'`{f}`' for f in input_fields)}  ",
+            f"**Output fields:** {', '.join(f'`{f}`' for f in output_fields)}",
+            "",
+            "---",
+            "",
+        ]
+
+        if os_sampling_strategy == "centroid":
+            # Group os_test examples by validation cluster for meaningful ordering.
+            hash_to_cluster = {
+                self.get_example_hash(ex): cluster_id
+                for cluster_id, examples in self.validation_clusters.items()
+                for ex in examples
+            }
+            cluster_groups: dict = {}
+            for ex in self.os_test:
+                cid = hash_to_cluster.get(self.get_example_hash(ex), -1)
+                cluster_groups.setdefault(cid, []).append(ex)
+
+            for cluster_id in sorted(cluster_groups.keys()):
+                cluster_examples = cluster_groups[cluster_id]
+                cluster_size = len(self.validation_clusters.get(cluster_id, []))
+                lines.append(f"## Cluster {cluster_id + 1}  (validation size={cluster_size})")
+                lines.append("")
+                for i, ex in enumerate(cluster_examples, start=1):
+                    lines.append(f"### Example {i}")
+                    lines.append("")
+                    lines.extend(self._format_example_fields_md(ex, input_fields, output_fields))
+                    lines.append("---")
+                    lines.append("")
+        else:
+            # Random: list examples in sample order.
+            for i, ex in enumerate(self.os_test, start=1):
+                lines.append(f"## Example {i}")
+                lines.append("")
+                lines.extend(self._format_example_fields_md(ex, input_fields, output_fields))
+                lines.append("---")
+                lines.append("")
+
+        with open(save_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
+        logger.info(f"One-shot evaluation test set saved to '{save_path}'.")
+
+    def _format_example_fields_md(
+            self,
+            example,
+            input_fields: List[str],
+            output_fields: List[str],
+    ) -> List[str]:
+        """
+        Formats a single Example's fields as Markdown lines following the
+        ChatAdapter convention: input fields first, then output fields, each
+        preceded by a ``[[ ## field_name ## ]]`` header.
+
+        Returns a list of lines (without a trailing newline) ready to be
+        extended into the parent document.
+        """
+        lines = []
+        for field_name in input_fields:
+            val = example.get(field_name, "N/A")
+            lines.append(f"**`[[ ## {field_name} ## ]]`**")
+            lines.append("")
+            lines.append(str(val))
+            lines.append("")
+        for field_name in output_fields:
+            val = example.get(field_name, "N/A")
+            lines.append(f"**`[[ ## {field_name} ## ]]`**")
+            lines.append("")
+            lines.append(str(val))
+            lines.append("")
+        return lines
 
     def bootstrap_examples(self, examples):
         import dspy
