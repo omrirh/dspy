@@ -134,7 +134,6 @@ def main(dataset, prompt_optimizer, strategy, model, baseline=False):
             metric=metric,
             task_type=task_type,
             use_target_model_embeddings=("w -> p" in strategy),
-            os_set_size=15,
         )
 
     if prompt_optimizer_name == "retrievalfs":
