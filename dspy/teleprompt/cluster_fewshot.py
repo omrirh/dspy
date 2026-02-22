@@ -345,7 +345,13 @@ class ClusterFewshot(Teleprompter):
         plt.bar(scores, counts, color='skyblue', edgecolor='black')
         plt.xlabel("One-shot Evaluation Score")
         plt.ylabel("Score frequency")
-        plt.title("Distribution of One-shot Scores")
+        num_candidates = len(self.ranked_examples)
+        os_set_size = len(self.os_test) if self.os_test else 0
+        plt.title(
+            f"Distribution of One-shot Scores\n"
+            f"Dataset: {self.task_type} | Candidates evaluated: {num_candidates} | "
+            f"OS eval set size: {os_set_size} | OS sampling: {self.os_sampling_strategy}"
+        )
         plt.grid(axis='y', linestyle='--', alpha=0.6)
         plt.tight_layout()
         plt.savefig(save_path)
