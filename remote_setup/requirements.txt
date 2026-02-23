@@ -14,3 +14,43 @@ psutil
 # Experiment utilities
 matplotlib
 pandas
+
+# ── SGLang runtime deps ────────────────────────────────────────────────────────
+# sglang==0.4.6.post4 is installed by prepare_virtualenv.sh (not here) because
+# it requires extra index URLs. The packages below are its runtime_common deps
+# that are NOT auto-installed when sglang is installed without the [srt] extra,
+# plus the version-pinned packages needed to avoid known incompatibilities.
+#
+# Validated against: CUDA 12.4, SM80 (Ampere), torch 2.6.0+cu124  2026-02-23
+
+# sgl-kernel: 0.1.2.post1 is sglang's pin; newer builds (0.3.x+) are SM100-only
+sgl-kernel==0.1.2.post1
+
+# transformers: sglang pins 4.51.1; 5.x breaks AutoImageProcessor.register()
+# in janus_pro.py; do not upgrade past 4.51.x until sglang is upgraded
+transformers==4.51.1
+tokenizers==0.21.0
+
+# compressed-tensors: 0.13.0 imports transformers.masking_utils (added in 4.52)
+compressed-tensors==0.12.2
+
+# torchao: 0.9.0 targets torch 2.6.0; 0.16.0+ skips C++ extensions on 2.6.0
+torchao==0.9.0
+
+# triton: 3.2.0 ships with torch 2.6.0 and has default_cache_dir;
+# do NOT pin 3.1.0 (causes uv to downgrade torch to 2.5.1)
+triton==3.2.0
+
+# cuda-python: needed by deep_gemm JIT compiler (cuda.bindings)
+cuda-python==12.9.5
+
+# xgrammar: sglang's pin for grammar-constrained generation
+xgrammar==0.1.19
+
+# Remaining runtime_common deps not pulled in by base sglang install
+pyzmq==27.1.0
+partial-json-parser==0.2.1.1.post7
+einops==0.8.2
+
+# nvidia-ml-py: replaces deprecated pynvml (provides same pynvml import)
+nvidia-ml-py==13.590.48

@@ -18,8 +18,11 @@ done
 source vm_vars.env
 source dspy_venv/bin/activate
 
-# Install SGLang and FlashInfer if not present
-uv pip install flashinfer-python==0.2.5 torch==2.6.0+cu124 \
+# Ensure SGLang and FlashInfer are present (no-op if already installed by prepare_virtualenv.sh).
+# flashinfer must use its own index with --no-deps to avoid pulling a mismatched torch from PyPI.
+# torch is intentionally omitted here — it requires the PyTorch CUDA index and is installed by
+# prepare_virtualenv.sh; attempting to resolve it from the flashinfer index causes a solver error.
+uv pip install flashinfer-python==0.2.5 \
     --extra-index-url https://flashinfer.ai/whl/cu124/torch2.6/ --no-deps
 uv pip install "sglang==0.4.6.post4"
 

@@ -70,3 +70,4 @@ experiments/logs/
 experiments/plots/
 vm_vars.env
 sglang_*.log
+dspy_venv/
