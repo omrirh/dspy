@@ -11,11 +11,14 @@ import psutil
 logger = logging.getLogger(__name__)
 
 
-def assign_local_lm(model: str, api_base: str, api_key: str = "local"):
+def assign_local_lm(model: str, api_base: str, api_key: str = "local", provider=None):
     """Configure dspy.settings with a locally served SGLang model."""
     import dspy
 
-    lm = dspy.LM(model=model, api_base=api_base, api_key=api_key)
+    kwargs = dict(model=model, api_base=api_base, api_key=api_key)
+    if provider is not None:
+        kwargs["provider"] = provider
+    lm = dspy.LM(**kwargs)
     dspy.configure(lm=lm)
     return lm
 
@@ -50,6 +53,31 @@ def wait_for_server(port: int, timeout: int = 180):
             return
         time.sleep(1)
     raise TimeoutError(f"Server on port {port} did not start within {timeout}s.")
+
+
+def stop_server_and_clean_resources(port: int = 30000):
+    """Kill the SGLang server listening on *port* and free GPU memory."""
+    import gc
+    import torch
+
+    proc = get_sglang_process()
+    if proc:
+        logger.info(f"Stopping SGLang server (PID {proc.pid}) on port {port}")
+        proc.terminate()
+        try:
+            proc.wait(timeout=10)
+        except psutil.TimeoutExpired:
+            logger.warning("Server did not terminate gracefully; killing it.")
+            proc.kill()
+        logger.info("SGLang server stopped.")
+    else:
+        logger.info("No running SGLang server found.")
+
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+        torch.cuda.empty_cache()
+    gc.collect()
+    logger.info("GPU memory and resources cleaned up.")
 
 
 def deploy_sglang_model(

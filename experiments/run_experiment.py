@@ -170,6 +170,7 @@ def build_optimizer(optimizer_name: str, metric, args, gepa_log_dir: str):
             max_bootstrapped_demos=args.max_bootstrapped_demos,
             max_labeled_demos=args.max_labeled_demos,
             demo_mutation_strategy=args.demo_mutation_strategy,
+            reflection_minibatch_size=args.reflection_minibatch_size,
         )
 
     elif optimizer_name == "miprov2":
@@ -327,7 +328,7 @@ if __name__ == "__main__":
                         help="LM for GEPA reflection proposals. Defaults to --model (self-improving).")
 
     # Budget
-    parser.add_argument("--auto", default="light", choices=["light", "medium", "heavy"],
+    parser.add_argument("--auto", default="medium", choices=["light", "medium", "heavy"],
                         help="Budget preset passed to the optimizer")
 
     # Few-shot (GEPAFewShot / MIPROv2)
@@ -337,6 +338,8 @@ if __name__ == "__main__":
     parser.add_argument("--max-labeled-demos",      type=int, default=4)
     parser.add_argument("--demo-mutation-strategy", default="metric_based",
                         choices=["random", "metric_based"])
+    parser.add_argument("--reflection-minibatch-size", type=int, default=10,
+                        help="Minibatch size for GEPA reflection step (default raised from 3 to 10)")
 
     # Dataset sizes
     parser.add_argument("--train-size", type=int, default=200)
@@ -344,7 +347,7 @@ if __name__ == "__main__":
     parser.add_argument("--test-size",  type=int, default=300)
 
     # Misc
-    parser.add_argument("--num-threads", type=int, default=4)
+    parser.add_argument("--num-threads", type=int, default=16)
     parser.add_argument("--log-dir",     default="experiments/logs",
                         help="Root directory for run logs and artifacts")
 
