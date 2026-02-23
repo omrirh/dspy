@@ -1,0 +1,37 @@
+#!/bin/bash
+# Pre-commit hook: run mock pipeline tests before every commit.
+# Aborts the commit if any test fails.
+#
+# Activate once per clone:
+#   git config core.hooksPath .githooks
+
+set -e
+
+echo "Running pre-commit checks: experiments/tests/test_pipeline.py ..."
+
+# Resolve Python: prefer the poetry venv if it exists, fall back to python3.
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+# Search for the poetry-managed dspy venv in standard cache locations.
+# Use version sort (newest Python first) so py3.12 is preferred over py3.9.
+POETRY_PYTHON="$(find \
+    "$HOME/Library/Caches/pypoetry/virtualenvs" \
+    "$HOME/.cache/pypoetry/virtualenvs" \
+    -path "*/dspy-*/bin/python" -maxdepth 3 2>/dev/null | sort -Vr | head -1)"
+
+if [[ -n "$POETRY_PYTHON" && -x "$POETRY_PYTHON" ]]; then
+    PYTHON="$POETRY_PYTHON"
+elif command -v python3 &>/dev/null; then
+    PYTHON="python3"
+else
+    echo "ERROR: No Python interpreter found. Aborting commit."
+    exit 1
+fi
+
+echo "Using Python: $PYTHON"
+
+# Run tests from repo root so relative imports resolve correctly.
+cd "$REPO_ROOT"
+"$PYTHON" -m pytest experiments/tests/test_pipeline.py -v --tb=short
+
+echo "Pre-commit checks passed."

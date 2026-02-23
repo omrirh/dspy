@@ -1,5 +1,6 @@
 # TODO: This should move internally. Same for passage_match. dspy.metrics.answer_exact_match, dspy.metrics.answer_passage_match
 
+import inspect
 import re
 import string
 import unicodedata
@@ -315,6 +316,41 @@ def answer_exact_match(example, pred, trace=None, frac=1.0):
         return _answer_match(pred.answer, example.answer, frac=frac)
 
     raise ValueError(f"Invalid answer type: {type(example.answer)}")
+
+
+def as_gepa_metric(metric_fn):
+    """Wrap a standard DSPy metric into the 5-argument GEPA metric protocol.
+
+    GEPA passes five arguments to its metric: ``(gold, pred, trace, pred_name,
+    pred_trace)``.  Standard DSPy metrics only accept ``(gold, pred)`` or
+    ``(gold, pred, trace)``.  This wrapper detects the original signature and
+    calls ``metric_fn`` with the appropriate subset of arguments.
+
+    Args:
+        metric_fn: A callable with signature ``(gold, pred)`` or
+            ``(gold, pred, trace)``.
+
+    Returns:
+        Callable: A 5-argument metric compatible with GEPA.
+
+    Example:
+        ```python
+        import dspy
+        from dspy.evaluate import answer_exact_match, as_gepa_metric
+
+        gepa_metric = as_gepa_metric(answer_exact_match)
+        # gepa_metric(gold, pred, trace=None, pred_name=None, pred_trace=None)
+        ```
+    """
+    sig = inspect.signature(metric_fn)
+    accepts_trace = "trace" in sig.parameters
+
+    def gepa_metric(gold, pred, trace=None, pred_name=None, pred_trace=None):
+        if accepts_trace:
+            return metric_fn(gold, pred, trace=trace)
+        return metric_fn(gold, pred)
+
+    return gepa_metric
 
 
 def answer_passage_match(example, pred, trace=None):

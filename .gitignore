@@ -66,3 +66,7 @@ docs/docs/**/*.json*
 
 test_before_pypi/
 .github/.internal_dspyai/dist/
+experiments/logs/
+experiments/plots/
+vm_vars.env
+sglang_*.log

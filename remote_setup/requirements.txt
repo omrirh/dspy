@@ -1,0 +1,16 @@
+# Core DSPy (install from local repo)
+-e .
+
+# Prompt optimization
+gepa
+
+# Evaluation & data
+scikit-learn
+datasets==2.21.0
+
+# SGLang server management
+psutil
+
+# Experiment utilities
+matplotlib
+pandas
