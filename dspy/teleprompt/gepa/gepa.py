@@ -361,6 +361,8 @@ class GEPA(Teleprompter):
         use_mlflow: bool = False,
         # Reproducibility
         seed: int | None = 0,
+        # Instruction proposal configuration
+        reflection_prompt_template: str | None = None,
         # GEPA passthrough kwargs
         gepa_kwargs: dict | None = None,
     ):
@@ -427,6 +429,7 @@ class GEPA(Teleprompter):
         self.custom_instruction_proposer = instruction_proposer
         self.component_selector = component_selector
         self.gepa_kwargs = gepa_kwargs or {}
+        self.reflection_prompt_template = reflection_prompt_template
 
     def auto_budget(
         self, num_preds, num_candidates, valset_size: int, minibatch_size: int = 35, full_eval_steps: int = 5
@@ -528,7 +531,7 @@ class GEPA(Teleprompter):
                     pred_name,
                     trace_for_pred,
                 )
-                if hasattr(o, "feedback"):
+                if (isinstance(o, dict) and "feedback" in o) or hasattr(o, "feedback"):
                     if o["feedback"] is None:
                         o["feedback"] = f"This trajectory got a score of {o['score']}."
                     return o
@@ -552,6 +555,7 @@ class GEPA(Teleprompter):
             custom_instruction_proposer=self.custom_instruction_proposer,
             warn_on_score_mismatch=self.warn_on_score_mismatch,
             reflection_minibatch_size=self.reflection_minibatch_size,
+            reflection_prompt_template=self.reflection_prompt_template,
         )
 
         # Build the seed candidate: map each predictor name to its current instruction

@@ -192,7 +192,7 @@ class GEPAFewShotAdapter(DspyAdapter):
         if self.mutation_strategy == "random":
             return self._random_mutate(current, pool)
         elif self.mutation_strategy == "metric_based":
-            return self._metric_based_mutate(current, pool)
+            return self._metric_based_mutate(current, pool, reflective_examples)
         else:
             raise ValueError(f"Unknown demo mutation strategy: {self.mutation_strategy!r}")
 
@@ -229,23 +229,74 @@ class GEPAFewShotAdapter(DspyAdapter):
 
         return result
 
+    @staticmethod
+    def _failure_targeted_weights(
+        pool: list[tuple[Example, float]],
+        reflective_examples: list[dict],
+    ) -> list[float]:
+        """
+        Blend each pool demo's quality score with its token-Jaccard relevance
+        to the *failed* inputs in the reflective dataset.
+
+        Weight_i = quality_i * (1.0 + relevance_i)
+
+        where relevance_i = mean token-Jaccard(demo_inputs, failed_inputs).
+        Token Jaccard is defined over lowercased whitespace-split word sets.
+        When no failure examples are present, relevance = 0 and weights
+        reduce to plain quality scores.
+        """
+        # Collect text tokens from failed reflective examples
+        failure_token_sets: list[set[str]] = []
+        for ex in reflective_examples:
+            inputs = ex.get("Inputs", {})
+            text = " ".join(str(v) for v in inputs.values())
+            failure_token_sets.append(set(text.lower().split()))
+
+        weights: list[float] = []
+        for demo, quality in pool:
+            q = max(quality, 1e-3)
+            if not failure_token_sets:
+                weights.append(q)
+                continue
+            # Token set for this pool demo
+            demo_text = " ".join(str(v) for v in demo.values())
+            demo_tokens = set(demo_text.lower().split())
+            # Mean Jaccard over all failure examples
+            jaccard_scores = []
+            for ft in failure_token_sets:
+                union = demo_tokens | ft
+                if union:
+                    jaccard_scores.append(len(demo_tokens & ft) / len(union))
+                else:
+                    jaccard_scores.append(0.0)
+            relevance = sum(jaccard_scores) / len(jaccard_scores)
+            weights.append(q * (1.0 + relevance))
+
+        return weights
+
     def _metric_based_mutate(
         self,
         current: list[Example],
         pool: list[tuple[Example, float]],
+        reflective_examples: list[dict] | None = None,
     ) -> list[Example]:
         """
-        Score-weighted add / remove / swap.
+        Score-weighted add / remove / swap, optionally biased toward demos
+        that are relevant to observed failure patterns.
 
-        Selection from pool uses scores as sampling weights so that
-        higher-quality bootstrapped demos are preferred.  Removal is uniform
-        (we don't have per-demo scores for the current set; all were either
-        bootstrapped with quality ≥ threshold or drawn from the labeled set).
+        When *reflective_examples* (failed minibatch inputs) are provided,
+        selection weights blend quality score × (1 + token-Jaccard relevance)
+        so that pool demos covering the same vocabulary as failures are
+        preferred.  Removal remains uniform.
         """
         pool_examples = [ex for ex, _ in pool]
-        pool_scores = [max(s, 1e-3) for _, s in pool]  # guard against 0-weight
-        available_pairs = [(ex, s) for ex, s in zip(pool_examples, pool_scores)
-                           if ex not in current]
+        blended_weights = self._failure_targeted_weights(
+            pool, reflective_examples or []
+        )
+        available_pairs = [
+            (ex, w) for ex, w in zip(pool_examples, blended_weights)
+            if ex not in current
+        ]
 
         ops: list[str] = []
         if len(current) < self.k_demos and available_pairs:
@@ -263,7 +314,7 @@ class GEPAFewShotAdapter(DspyAdapter):
 
         if op == "add":
             avail_exs = [ex for ex, _ in available_pairs]
-            avail_ws  = [s  for _, s  in available_pairs]
+            avail_ws  = [w  for _, w  in available_pairs]
             [chosen] = self.rng.choices(avail_exs, weights=avail_ws, k=1)
             result.append(chosen)
 
@@ -272,10 +323,10 @@ class GEPAFewShotAdapter(DspyAdapter):
             result.pop(self.rng.randrange(len(result)))
 
         elif op == "swap":
-            # Replace a uniform-random slot with a score-weighted pool draw
+            # Replace a uniform-random slot with a failure-targeted pool draw
             idx = self.rng.randrange(len(result))
             avail_exs = [ex for ex, _ in available_pairs]
-            avail_ws  = [s  for _, s  in available_pairs]
+            avail_ws  = [w  for _, w  in available_pairs]
             [replacement] = self.rng.choices(avail_exs, weights=avail_ws, k=1)
             result[idx] = replacement
 
@@ -362,6 +413,8 @@ class GEPAFewShot(GEPA):
 
         def wrapped(gold: Example, pred: Prediction, trace=None) -> float:
             result = five_arg(gold, pred, trace, None, None)
+            if isinstance(result, dict) and "score" in result:
+                return float(result["score"])
             if hasattr(result, "score"):
                 return float(result["score"])
             return float(result)
@@ -494,7 +547,7 @@ class GEPAFewShot(GEPA):
                     pred_name,
                     trace_for_pred,
                 )
-                if hasattr(o, "feedback"):
+                if (isinstance(o, dict) and "feedback" in o) or hasattr(o, "feedback"):
                     if o["feedback"] is None:
                         o["feedback"] = f"This trajectory got a score of {o['score']}."
                     return o
@@ -517,6 +570,7 @@ class GEPAFewShot(GEPA):
             custom_instruction_proposer=self.custom_instruction_proposer,
             warn_on_score_mismatch=self.warn_on_score_mismatch,
             reflection_minibatch_size=self.reflection_minibatch_size,
+            reflection_prompt_template=self.reflection_prompt_template,
             # Few-shot specific
             demo_pool=demo_pool,
             k_demos=self.k_demos,

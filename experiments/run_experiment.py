@@ -34,6 +34,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import dspy
 from dspy.evaluate import Evaluate
+from experiments.metrics import (
+    BETTER_REFLECTION_PROMPT,
+    gsm8k_gepa_metric,
+    iris_gepa_metric,
+)
 from remote_setup.utils import deploy_sglang_model, is_server_up
 
 logging.basicConfig(
@@ -83,6 +88,12 @@ def ensure_sglang_server(model: str, api_base: str):
 # ---------------------------------------------------------------------------
 
 def build_dataset(dataset_name: str, train_size: int, val_size: int, test_size: int):
+    """
+    Returns (trainset, valset, testset, metric, gepa_metric).
+
+    *metric*      — 2/3-arg DSPy metric used for test-set Evaluate().
+    *gepa_metric* — 5-arg GEPA metric used during optimization (rich feedback).
+    """
     if dataset_name == "gsm8k":
         from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 
@@ -90,7 +101,8 @@ def build_dataset(dataset_name: str, train_size: int, val_size: int, test_size: 
         trainset = [x.with_inputs("question") for x in dataset.train][:train_size]
         valset   = [x.with_inputs("question") for x in dataset.dev][:val_size]
         testset  = [x.with_inputs("question") for x in dataset.test][:test_size]
-        metric   = gsm8k_metric
+        metric      = gsm8k_metric
+        gepa_metric = gsm8k_gepa_metric
 
     elif dataset_name == "iris":
         from dspy.datasets.iris import IrisDataset
@@ -100,7 +112,8 @@ def build_dataset(dataset_name: str, train_size: int, val_size: int, test_size: 
         trainset = trainset[:train_size]
         valset   = valset[:val_size]
         testset  = testset[:test_size]
-        metric   = dspy.evaluate.answer_exact_match
+        metric      = dspy.evaluate.answer_exact_match
+        gepa_metric = iris_gepa_metric
 
     else:
         raise ValueError(f"Unknown dataset: {dataset_name!r}")
@@ -109,7 +122,7 @@ def build_dataset(dataset_name: str, train_size: int, val_size: int, test_size: 
         f"Dataset '{dataset_name}': "
         f"{len(trainset)} train / {len(valset)} val / {len(testset)} test"
     )
-    return trainset, valset, testset, metric
+    return trainset, valset, testset, metric, gepa_metric
 
 
 # ---------------------------------------------------------------------------
@@ -131,9 +144,13 @@ def build_student(dataset_name: str):
 # Optimizer setup
 # ---------------------------------------------------------------------------
 
-def build_optimizer(optimizer_name: str, metric, args, gepa_log_dir: str):
-    """Instantiate the chosen prompt optimizer."""
+def build_optimizer(optimizer_name: str, metric, gepa_metric, args, gepa_log_dir: str):
+    """
+    Instantiate the chosen prompt optimizer.
 
+    *metric*      — 2/3-arg metric for MIPROv2 (unchanged).
+    *gepa_metric* — 5-arg GEPA metric with rich feedback (used by GEPA / GEPAFewShot).
+    """
     # Reflection LM defaults to the task model itself (self-improving).
     reflection_model = args.reflection_model or args.model
     reflection_lm = dspy.LM(
@@ -146,20 +163,21 @@ def build_optimizer(optimizer_name: str, metric, args, gepa_log_dir: str):
         from dspy.teleprompt.gepa import GEPA
 
         return GEPA(
-            metric=dspy.evaluate.as_gepa_metric(metric),
+            metric=gepa_metric,
             auto=args.auto,
             reflection_lm=reflection_lm,
             num_threads=args.num_threads,
             seed=RANDOM_SEED,
             log_dir=gepa_log_dir,
             track_stats=True,
+            reflection_prompt_template=BETTER_REFLECTION_PROMPT,
         )
 
     elif optimizer_name == "gepa_fewshot":
         from dspy.teleprompt.gepa import GEPAFewShot
 
         return GEPAFewShot(
-            metric=dspy.evaluate.as_gepa_metric(metric),
+            metric=gepa_metric,
             auto=args.auto,
             reflection_lm=reflection_lm,
             num_threads=args.num_threads,
@@ -171,6 +189,7 @@ def build_optimizer(optimizer_name: str, metric, args, gepa_log_dir: str):
             max_labeled_demos=args.max_labeled_demos,
             demo_mutation_strategy=args.demo_mutation_strategy,
             reflection_minibatch_size=args.reflection_minibatch_size,
+            reflection_prompt_template=BETTER_REFLECTION_PROMPT,
         )
 
     elif optimizer_name == "miprov2":
@@ -225,13 +244,13 @@ def main(args):
     dspy.configure(lm=lm)
 
     # ---- Data & program ----
-    trainset, valset, testset, metric = build_dataset(
+    trainset, valset, testset, metric, gepa_metric = build_dataset(
         args.dataset, args.train_size, args.val_size, args.test_size
     )
     student = build_student(args.dataset)
 
     # ---- Optimize ----
-    optimizer = build_optimizer(args.optimizer, metric, args, gepa_log_dir)
+    optimizer = build_optimizer(args.optimizer, metric, gepa_metric, args, gepa_log_dir)
 
     logger.info(f"Starting optimization with {args.optimizer.upper()} ...")
     t0 = time.time()
@@ -347,7 +366,7 @@ if __name__ == "__main__":
     parser.add_argument("--test-size",  type=int, default=300)
 
     # Misc
-    parser.add_argument("--num-threads", type=int, default=16)
+    parser.add_argument("--num-threads", type=int, default=4)
     parser.add_argument("--log-dir",     default="experiments/logs",
                         help="Root directory for run logs and artifacts")
 

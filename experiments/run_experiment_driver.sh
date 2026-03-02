@@ -15,7 +15,7 @@ source dspy_venv/bin/activate
 DATASET="gsm8k"
 OPTIMIZER="gepa_fewshot"
 MODEL="meta-llama/Llama-3.2-3B-Instruct"
-AUTO="light"
+AUTO="medium"
 K_DEMOS=3
 MAX_BOOTSTRAPPED_DEMOS=16
 MAX_LABELED_DEMOS=4
@@ -64,7 +64,7 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --dataset                  Dataset. Options: ${VALID_DATASETS[*]}"
             echo "  --optimizer                Optimizer. Options: ${VALID_OPTIMIZERS[*]}"
             echo "  --model                    Task LM identifier"
-            echo "  --auto                     Budget preset. Options: ${VALID_AUTO[*]}. Default: light"
+            echo "  --auto                     Budget preset. Options: ${VALID_AUTO[*]}. Default: medium"
             echo "  --k-demos                  Demos per candidate (GEPAFewShot). Default: 3"
             echo "  --max-bootstrapped-demos   Max bootstrapped demos in pool. Default: 16"
             echo "  --max-labeled-demos        Max labeled demos in pool. Default: 4"

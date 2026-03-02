@@ -88,6 +88,7 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
         custom_instruction_proposer: "ProposalFn | None" = None,
         warn_on_score_mismatch: bool = True,
         reflection_minibatch_size: int | None = None,
+        reflection_prompt_template: str | None = None,
     ):
         self.student = student_module
         self.metric_fn = metric_fn
@@ -100,6 +101,7 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
         self.custom_instruction_proposer = custom_instruction_proposer
         self.warn_on_score_mismatch = warn_on_score_mismatch
         self.reflection_minibatch_size = reflection_minibatch_size
+        self.reflection_prompt_template = reflection_prompt_template
 
     def propose_new_texts(
         self,
@@ -123,12 +125,15 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
             for name in components_to_update:
                 base_instruction = candidate[name]
                 dataset_with_feedback = reflective_dataset[name]
+                input_dict: dict[str, Any] = {
+                    "current_instruction_doc": base_instruction,
+                    "dataset_with_feedback": dataset_with_feedback,
+                }
+                if self.reflection_prompt_template is not None:
+                    input_dict["prompt_template"] = self.reflection_prompt_template
                 results[name] = InstructionProposalSignature.run(
                     lm=(lambda x: self.stripped_lm_call(x)[0]),
-                    input_dict={
-                        "current_instruction_doc": base_instruction,
-                        "dataset_with_feedback": dataset_with_feedback,
-                    },
+                    input_dict=input_dict,
                 )["new_instruction"]
 
         return results
@@ -173,7 +178,9 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
                     scores.append(self.failure_score)
                 else:
                     score = t["score"]
-                    if hasattr(score, "score"):
+                    if isinstance(score, dict) and "score" in score:
+                        score = score["score"]
+                    elif hasattr(score, "score"):
                         score = score["score"]
                     scores.append(score)
 
@@ -192,7 +199,10 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
             res = evaluator(program)
             outputs = [r[1] for r in res.results]
             scores = [r[2] for r in res.results]
-            scores = [s["score"] if hasattr(s, "score") else s for s in scores]
+            scores = [
+                s["score"] if (isinstance(s, dict) and "score" in s) or hasattr(s, "score") else s
+                for s in scores
+            ]
             return EvaluationBatch(outputs=outputs, scores=scores, trajectories=None)
 
     def make_reflective_dataset(
@@ -218,7 +228,9 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
                 example = data["example"]
                 prediction = data["prediction"]
                 module_score = data["score"]
-                if hasattr(module_score, "score"):
+                if isinstance(module_score, dict) and "score" in module_score:
+                    module_score = module_score["score"]
+                elif hasattr(module_score, "score"):
                     module_score = module_score["score"]
 
                 trace_instances = [t for t in trace if t[0].signature.equals(module.signature)]
