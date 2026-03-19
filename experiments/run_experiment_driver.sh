@@ -25,6 +25,7 @@ VAL_SIZE=100
 TEST_SIZE=300
 NUM_THREADS=4
 API_BASE="http://localhost:30000/v1"
+MAX_TOKENS=""         # empty = no limit (model decides)
 REFLECTION_MODEL=""   # empty = same as task model
 REFLECTION_MINIBATCH_SIZE=10
 LOG_LEVEL="INFO"
@@ -37,6 +38,7 @@ VALID_MODELS=(
     "meta-llama/Llama-3.2-3B-Instruct"
     "meta-llama/Llama-3.1-8B-Instruct"
     "meta-llama/Meta-Llama-3-8B-Instruct"
+    "microsoft/Phi-4-mini-instruct"
     "Qwen/Qwen2.5-7B-Instruct"
     "Qwen/Qwen3-8B"
     "Qwen/Qwen3.5-0.8B"
@@ -61,6 +63,7 @@ while [[ "$#" -gt 0 ]]; do
         --test-size)                TEST_SIZE="$2";                  shift ;;
         --num-threads)              NUM_THREADS="$2";                shift ;;
         --api-base)                 API_BASE="$2";                   shift ;;
+        --max-tokens)               MAX_TOKENS="$2";                 shift ;;
         --reflection-model)         REFLECTION_MODEL="$2";           shift ;;
         --reflection-minibatch-size) REFLECTION_MINIBATCH_SIZE="$2"; shift ;;
         --log-level)                LOG_LEVEL="$2";                  shift ;;
@@ -80,6 +83,7 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --test-size                Test examples. Default: 300"
             echo "  --num-threads              Parallel eval threads. Default: 4"
             echo "  --api-base                 SGLang endpoint. Default: http://localhost:30000/v1"
+            echo "  --max-tokens               Max tokens per LM call. Default: unset (model decides)"
             echo "  --reflection-model         GEPA reflection LM. Default: same as --model"
             echo "  --reflection-minibatch-size  Subsample size for GEPA reflection gate. Default: 25"
             echo "  --log-level                Logging verbosity: DEBUG/INFO/WARNING/ERROR. Default: INFO"
@@ -111,6 +115,9 @@ fi
 EXTRA_ARGS=""
 if [[ -n "$REFLECTION_MODEL" ]]; then
     EXTRA_ARGS="$EXTRA_ARGS --reflection-model $REFLECTION_MODEL"
+fi
+if [[ -n "$MAX_TOKENS" ]]; then
+    EXTRA_ARGS="$EXTRA_ARGS --max-tokens $MAX_TOKENS"
 fi
 if [[ "$OPTIMIZER" == "gepa_fewshot" ]]; then
     EXTRA_ARGS="$EXTRA_ARGS --k-demos $K_DEMOS --demo-mutation-strategy $DEMO_MUTATION_STRATEGY"

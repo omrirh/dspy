@@ -41,6 +41,7 @@ _HF_MODELS = [
     "meta-llama/Llama-3.1-8B-Instruct",
     "meta-llama/Llama-3.2-3B-Instruct",
     "openai/gpt-oss-20b",
+    "microsoft/Phi-4-mini-instruct",
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

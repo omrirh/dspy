@@ -156,6 +156,8 @@ def build_optimizer(optimizer_name: str, metric, gepa_metric, args, gepa_log_dir
     reflection_lm_kwargs = {}
     if "Qwen3" in reflection_model:
         reflection_lm_kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
+    if args.max_tokens is not None:
+        reflection_lm_kwargs["max_tokens"] = args.max_tokens
     reflection_lm = dspy.LM(
         reflection_model,
         api_base=args.api_base,
@@ -247,6 +249,8 @@ def main(args):
     lm_kwargs = {}
     if "Qwen3" in args.model:
         lm_kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
+    if args.max_tokens is not None:
+        lm_kwargs["max_tokens"] = args.max_tokens
     lm = dspy.LM(
         args.model,
         api_base=args.api_base,
@@ -353,6 +357,9 @@ if __name__ == "__main__":
     parser.add_argument("--api-base", default="http://localhost:30000/v1",
                         help="OpenAI-compatible endpoint for the task model")
     parser.add_argument("--api-key",  default="local")
+    parser.add_argument("--max-tokens", type=int, default=None,
+                        help="Max tokens per LM response. Defaults to None (model decides). "
+                             "Set explicitly for models prone to verbose output (e.g. 500 for Phi-4-mini-instruct on GSM8K).")
 
     # Reflection LM (GEPA / GEPAFewShot)
     parser.add_argument("--reflection-model", default=None,

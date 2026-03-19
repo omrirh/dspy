@@ -545,6 +545,10 @@ class GEPAFewShot(GEPA):
         demo_metric: Optional[GEPAFeedbackMetric] = None,
         **gepa_kwargs,
     ):
+        # Force use_merge=False — merge is not yet supported in GEPAFewShot.
+        # Silently override any inherited default (GEPA defaults to True) so
+        # the assert in compile() is never hit in normal usage.
+        gepa_kwargs["use_merge"] = False
         super().__init__(metric=metric, **gepa_kwargs)
         self.k_demos = k_demos
         self.max_bootstrapped_demos = max_bootstrapped_demos
