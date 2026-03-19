@@ -131,10 +131,15 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
                 }
                 if self.reflection_prompt_template is not None:
                     input_dict["prompt_template"] = self.reflection_prompt_template
-                results[name] = InstructionProposalSignature.run(
+                new_instruction = InstructionProposalSignature.run(
                     lm=(lambda x: self.stripped_lm_call(x)[0]),
                     input_dict=input_dict,
                 )["new_instruction"]
+                # The reflection LM occasionally echoes the {curr_instructions} template
+                # placeholder and its closing tag verbatim into the proposed instruction.
+                # Strip it before storing.
+                new_instruction = new_instruction.replace("{curr_instructions}", "").replace("</curr_instructions>", "").strip()
+                results[name] = new_instruction
 
         return results
 
@@ -174,7 +179,7 @@ class DspyAdapter(GEPAAdapter[Example, TraceData, Prediction]):
             outputs = []
             for t in trajs:
                 outputs.append(t["prediction"])
-                if hasattr(t["prediction"], "__class__") and t.get("score") is None:
+                if isinstance(t["prediction"], FailedPrediction) or t.get("score") is None:
                     scores.append(self.failure_score)
                 else:
                     score = t["score"]

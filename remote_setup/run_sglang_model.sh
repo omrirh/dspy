@@ -34,7 +34,7 @@ huggingface-cli login --token "$HF_TOKEN"
 
 SERVER_CMD="python -m sglang.launch_server --model-path \"$MODEL_NAME\" --port $PORT"
 
-if [[ "$MODEL_NAME" == "Qwen/Qwen3-8B" ]]; then
+if [[ "$MODEL_NAME" == Qwen/Qwen3* ]]; then
     SERVER_CMD+=" --reasoning-parser qwen3"
 elif [[ "$MODEL_NAME" == "google/gemma-3-4b-it" ]]; then
     SERVER_CMD+=" --context-length 8192"

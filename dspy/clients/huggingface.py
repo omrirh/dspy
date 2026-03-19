@@ -34,6 +34,8 @@ _HF_MODELS = [
     "Qwen/Qwen2.5-7B-Instruct",
     "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
     "Qwen/Qwen3-8B",
+    "Qwen/Qwen3.5-0.8B",
+    "Qwen/Qwen3.5-9B",
     "google/gemma-3-4b-it",
     "Qwen/Qwen2-7B-Instruct",
     "meta-llama/Llama-3.1-8B-Instruct",

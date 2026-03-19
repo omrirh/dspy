@@ -153,10 +153,14 @@ def build_optimizer(optimizer_name: str, metric, gepa_metric, args, gepa_log_dir
     """
     # Reflection LM defaults to the task model itself (self-improving).
     reflection_model = args.reflection_model or args.model
+    reflection_lm_kwargs = {}
+    if "Qwen3" in reflection_model:
+        reflection_lm_kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
     reflection_lm = dspy.LM(
         reflection_model,
         api_base=args.api_base,
         api_key=args.api_key,
+        **reflection_lm_kwargs,
     )
 
     if optimizer_name == "gepa":
@@ -224,6 +228,7 @@ def main(args):
 
     fh = logging.FileHandler(os.path.join(log_dir, "run.log"))
     fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
+    fh.setLevel(getattr(logging, args.log_level))
     logging.getLogger().addHandler(fh)
 
     logger.info(f"Run: {run_tag} | seed: {RANDOM_SEED}")
@@ -236,10 +241,17 @@ def main(args):
     ensure_sglang_server(args.model, args.api_base)
 
     # ---- Task LM ----
+    # Qwen3 family models are hybrid reasoning models that generate <think> chains by default.
+    # Disable thinking for prompt optimization runs — it adds 1000-2000 tokens per call with
+    # no benefit for structured tasks like classification.
+    lm_kwargs = {}
+    if "Qwen3" in args.model:
+        lm_kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
     lm = dspy.LM(
         args.model,
         api_base=args.api_base,
         api_key=args.api_key,
+        **lm_kwargs,
     )
     dspy.configure(lm=lm)
 
@@ -358,7 +370,7 @@ if __name__ == "__main__":
     parser.add_argument("--demo-mutation-strategy", default="metric_based",
                         choices=["random", "metric_based"])
     parser.add_argument("--reflection-minibatch-size", type=int, default=10,
-                        help="Minibatch size for GEPA reflection step (default raised from 3 to 10)")
+                        help="Minibatch size for GEPA reflection step")
 
     # Dataset sizes
     parser.add_argument("--train-size", type=int, default=200)
@@ -369,6 +381,15 @@ if __name__ == "__main__":
     parser.add_argument("--num-threads", type=int, default=4)
     parser.add_argument("--log-dir",     default="experiments/logs",
                         help="Root directory for run logs and artifacts")
+    parser.add_argument("--log-level",   default="INFO",
+                        choices=["DEBUG", "INFO", "WARNING", "ERROR"],
+                        help="Logging verbosity. Use DEBUG to see per-iteration "
+                             "demo mutation decisions (op_select / demo_mutate / score_tracker).")
 
     args = parser.parse_args()
+    # Target only the GEPAFewShot mutation logger — setting root to DEBUG would
+    # flood output with litellm / httpx / DSPy internals noise.
+    logging.getLogger("dspy.teleprompt.gepa.gepa_fewshot").setLevel(
+        getattr(logging, args.log_level)
+    )
     main(args)

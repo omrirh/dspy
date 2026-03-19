@@ -18,9 +18,13 @@ GEPA evolves instructions via Pareto-based reflective search.  GEPAFewShot adds 
 Demo mutation strategies
 ------------------------
   "random"        — uniform random add / remove / swap from pool.
-  "metric_based"  — score-weighted sampling: demos are weighted by their bootstrap
-                    quality score so higher-quality demos are more likely selected
-                    and lower-quality demos are preferentially swapped out.
+  "metric_based"  — feedback-driven: pool quality priors (1.0 bootstrapped /
+                    0.5 labeled) are progressively replaced by empirical per-demo
+                    scores accumulated from evaluate() calls.  Operation type
+                    (add / remove / swap) is biased by _select_operation() toward
+                    the direction of highest improvement potential; selection within
+                    add/swap is weighted by empirical quality × token-Jaccard
+                    relevance to the current reflective minibatch.
 
 Pareto awareness
 ----------------
@@ -94,6 +98,15 @@ class GEPAFewShotAdapter(DspyAdapter):
 
         # candidate_key → {predictor_name: [Example, ...]}
         self._demo_registry: dict[tuple, dict[str, list[Example]]] = {}
+        # candidate_key → mean score observed during evaluate() (capture_traces=False)
+        self._score_registry: dict[tuple, float] = {}
+        # id(demo) → (score_sum, count) accumulated across all non-trace evaluations
+        self._demo_score_tracker: dict[int, tuple[float, int]] = {}
+
+        # Rollout counters — incremented by evaluate() and propose_new_texts()
+        self.n_trace_evals: int = 0    # capture_traces=True  (reflection rollouts)
+        self.n_score_evals: int = 0    # capture_traces=False (Pareto scoring)
+        self.n_mutations:   int = 0    # propose_new_texts() calls (candidate proposals)
 
     # ------------------------------------------------------------------
     # Registry helpers
@@ -116,8 +129,10 @@ class GEPAFewShotAdapter(DspyAdapter):
                 pool_pairs = self.demo_pool.get(name, [])
                 k = min(self.k_demos, len(pool_pairs))
                 if k > 0:
-                    chosen = self.rng.sample(pool_pairs, k)
-                    demos[name] = [ex for ex, _ in chosen]
+                    pool_exs = [ex for ex, _ in pool_pairs]
+                    pool_ws  = [w  for _, w  in pool_pairs]
+                    chosen = self.rng.choices(pool_exs, weights=pool_ws, k=k)
+                    demos[name] = chosen
                 else:
                     demos[name] = []
             self._demo_registry[key] = demos
@@ -127,6 +142,53 @@ class GEPAFewShotAdapter(DspyAdapter):
         self, candidate: dict[str, str], demos: dict[str, list[Example]]
     ) -> None:
         self._demo_registry[self._candidate_key(candidate)] = demos
+
+    # ------------------------------------------------------------------
+    # Empirical quality tracking
+    # ------------------------------------------------------------------
+
+    def evaluate(self, batch, candidate, capture_traces=False):
+        """
+        Intercepts every non-trace evaluation to update per-demo score tracking.
+
+        After each capture_traces=False call (Pareto scoring path), the mean
+        batch score is recorded per candidate and accumulated per demo so that
+        _empirical_quality() can replace the fixed 1.0/0.5 quality prior over
+        the course of the run.
+        """
+        if capture_traces:
+            self.n_trace_evals += 1
+        else:
+            self.n_score_evals += 1
+
+        result = super().evaluate(batch, candidate, capture_traces)
+        if not capture_traces and result.scores:
+            key = self._candidate_key(candidate)
+            mean_score = sum(result.scores) / len(result.scores)
+            self._score_registry[key] = mean_score
+            n_updated = 0
+            for pred_demos in self._demo_registry.get(key, {}).values():
+                for demo in pred_demos:
+                    s, c = self._demo_score_tracker.get(id(demo), (0.0, 0))
+                    self._demo_score_tracker[id(demo)] = (s + mean_score, c + 1)
+                    n_updated += 1
+            logger.debug(
+                "score_tracker: batch_size=%d  mean_score=%.3f  "
+                "demos_updated=%d  tracker_size=%d",
+                len(result.scores), mean_score, n_updated, len(self._demo_score_tracker),
+            )
+        return result
+
+    def _empirical_quality(self, demo: Example, prior_quality: float, min_obs: int = 3) -> float:
+        """
+        Pseudo-count blend of the fixed pool prior with observed mean score.
+
+        Returns prior_quality until min_obs evaluations are accumulated, then
+        transitions smoothly to the empirical mean.  This prevents early noisy
+        observations from immediately overriding the bootstrapped quality signal.
+        """
+        s, c = self._demo_score_tracker.get(id(demo), (0.0, 0))
+        return (prior_quality * min_obs + s) / (min_obs + c)
 
     # ------------------------------------------------------------------
     # Core overrides
@@ -152,6 +214,8 @@ class GEPAFewShotAdapter(DspyAdapter):
         The mutated demo set is registered under the new candidate's key so
         that the next build_program() call picks it up automatically.
         """
+        self.n_mutations += 1
+
         # 1. Propose new instructions via GEPA's reflection mechanism
         new_instructions = super().propose_new_texts(
             candidate, reflective_dataset, components_to_update
@@ -229,23 +293,25 @@ class GEPAFewShotAdapter(DspyAdapter):
 
         return result
 
-    @staticmethod
     def _failure_targeted_weights(
+        self,
         pool: list[tuple[Example, float]],
         reflective_examples: list[dict],
     ) -> list[float]:
         """
-        Blend each pool demo's quality score with its token-Jaccard relevance
-        to the *failed* inputs in the reflective dataset.
+        Blend each pool demo's empirical quality score with its token-Jaccard
+        relevance to the inputs in the current reflective dataset.
 
-        Weight_i = quality_i * (1.0 + relevance_i)
+        Weight_i = empirical_quality_i * (1.0 + jaccard_relevance_i)
 
-        where relevance_i = mean token-Jaccard(demo_inputs, failed_inputs).
+        empirical_quality_i is a pseudo-count blend of the fixed pool prior
+        (1.0 bootstrapped / 0.5 labeled) with the observed mean score across
+        all evaluations where demo_i was present — see _empirical_quality().
         Token Jaccard is defined over lowercased whitespace-split word sets.
-        When no failure examples are present, relevance = 0 and weights
-        reduce to plain quality scores.
+        When no reflective examples are present, relevance = 0 and weights
+        reduce to plain empirical quality scores.
         """
-        # Collect text tokens from failed reflective examples
+        # Collect text tokens from reflective examples (minibatch inputs)
         failure_token_sets: list[set[str]] = []
         for ex in reflective_examples:
             inputs = ex.get("Inputs", {})
@@ -254,7 +320,7 @@ class GEPAFewShotAdapter(DspyAdapter):
 
         weights: list[float] = []
         for demo, quality in pool:
-            q = max(quality, 1e-3)
+            q = max(self._empirical_quality(demo, quality), 1e-3)
             if not failure_token_sets:
                 weights.append(q)
                 continue
@@ -274,6 +340,68 @@ class GEPAFewShotAdapter(DspyAdapter):
 
         return weights
 
+    def _select_operation(
+        self,
+        ops: list[str],
+        current: list[Example],
+        available_pairs: list[tuple[Example, float]],
+        pool_priors: dict[int, float],
+    ) -> str:
+        """
+        Bias operation type toward the direction of highest improvement potential.
+
+        Uses empirical quality scores (from _demo_score_tracker) to compare the
+        best available pool demo against the worst demo currently in the set:
+
+          delta > 0  →  a better demo is available  →  prefer add / swap
+          delta < 0  →  no better demo available     →  prefer remove
+          delta ≈ 0  →  no clear signal              →  roughly uniform
+
+        Falls back to uniform random until every demo in the current set has
+        accumulated at least min_obs=3 observations (matching _empirical_quality's
+        pseudo-count threshold), or when only one operation is available.
+
+        pool_priors maps id(demo) → pool quality prior (1.0 for bootstrapped,
+        0.5 for labeled) so that unseen bootstrapped demos are valued correctly
+        when computing best_avail.
+        """
+        _MIN_OBS = 3  # must match _empirical_quality's min_obs
+        all_observed = all(
+            self._demo_score_tracker.get(id(d), (0, 0))[1] >= _MIN_OBS
+            for d in current
+        )
+        if not all_observed or len(ops) == 1:
+            chosen = self.rng.choice(ops)
+            logger.debug("op_select: insufficient observations — uniform random %s → %s", ops, chosen)
+            return chosen
+
+        # best_avail uses the pool's actual quality prior so bootstrapped demos
+        # (prior=1.0) are not undervalued against unseen labeled demos (prior=0.5).
+        best_avail = max(
+            (self._empirical_quality(d, pool_priors.get(id(d), 0.5)) for d, _ in available_pairs),
+            default=0.5,
+        )
+        # worst_curr uses a conservative prior=0.5 — current demos have enough
+        # observations (_MIN_OBS guard above) so the prior has limited influence.
+        worst_curr = min(
+            (self._empirical_quality(d, 0.5) for d in current),
+            default=0.5,
+        )
+        delta = best_avail - worst_curr
+
+        weights = [
+            max(0.5 + delta, 1e-2) if op in ("add", "swap") else max(0.5 - delta, 1e-2)
+            for op in ops
+        ]
+        [chosen] = self.rng.choices(ops, weights=weights, k=1)
+        logger.debug(
+            "op_select: delta=%.3f (best_avail=%.3f worst_curr=%.3f) "
+            "ops=%s weights=%s → %s",
+            delta, best_avail, worst_curr,
+            ops, [f"{w:.2f}" for w in weights], chosen,
+        )
+        return chosen
+
     def _metric_based_mutate(
         self,
         current: list[Example],
@@ -281,13 +409,16 @@ class GEPAFewShotAdapter(DspyAdapter):
         reflective_examples: list[dict] | None = None,
     ) -> list[Example]:
         """
-        Score-weighted add / remove / swap, optionally biased toward demos
-        that are relevant to observed failure patterns.
+        Feedback-driven add / remove / swap mutation.
 
-        When *reflective_examples* (failed minibatch inputs) are provided,
-        selection weights blend quality score × (1 + token-Jaccard relevance)
-        so that pool demos covering the same vocabulary as failures are
-        preferred.  Removal remains uniform.
+        Selection weights for add/swap blend empirical quality (accumulated from
+        _demo_score_tracker via evaluate()) with token-Jaccard relevance to the
+        current reflective minibatch — see _failure_targeted_weights().
+
+        The operation type (add / remove / swap) is chosen by _select_operation(),
+        which biases toward add/swap when a better demo is available and toward
+        remove when no improvement is found in the pool.  Falls back to uniform
+        random until sufficient empirical observations accumulate.
         """
         pool_examples = [ex for ex, _ in pool]
         blended_weights = self._failure_targeted_weights(
@@ -297,6 +428,11 @@ class GEPAFewShotAdapter(DspyAdapter):
             (ex, w) for ex, w in zip(pool_examples, blended_weights)
             if ex not in current
         ]
+        # Map id(demo) → pool quality prior for available demos so _select_operation
+        # can use the real bootstrapped prior (1.0) rather than a flat 0.5.
+        pool_priors = {
+            id(ex): prior for ex, prior in pool if ex not in current
+        }
 
         ops: list[str] = []
         if len(current) < self.k_demos and available_pairs:
@@ -309,26 +445,42 @@ class GEPAFewShotAdapter(DspyAdapter):
         if not ops:
             return current
 
-        op = self.rng.choice(ops)
+        op = self._select_operation(ops, current, available_pairs, pool_priors)
         result = list(current)
+        size_before = len(result)
 
         if op == "add":
             avail_exs = [ex for ex, _ in available_pairs]
             avail_ws  = [w  for _, w  in available_pairs]
             [chosen] = self.rng.choices(avail_exs, weights=avail_ws, k=1)
             result.append(chosen)
+            logger.debug(
+                "demo_mutate: add  eq=%.3f  set_size %d→%d",
+                self._empirical_quality(chosen, 0.5), size_before, len(result),
+            )
 
         elif op == "remove":
-            # Uniform removal — prefer not to bias against any particular demo
-            result.pop(self.rng.randrange(len(result)))
+            # Uniform removal — no directional bias within the current set
+            idx = self.rng.randrange(len(result))
+            removed = result.pop(idx)
+            logger.debug(
+                "demo_mutate: remove  eq=%.3f  set_size %d→%d",
+                self._empirical_quality(removed, 0.5), size_before, len(result),
+            )
 
         elif op == "swap":
-            # Replace a uniform-random slot with a failure-targeted pool draw
             idx = self.rng.randrange(len(result))
             avail_exs = [ex for ex, _ in available_pairs]
             avail_ws  = [w  for _, w  in available_pairs]
             [replacement] = self.rng.choices(avail_exs, weights=avail_ws, k=1)
+            evicted = result[idx]
             result[idx] = replacement
+            logger.debug(
+                "demo_mutate: swap  out_eq=%.3f → in_eq=%.3f  set_size %d",
+                self._empirical_quality(evicted, 0.5),
+                self._empirical_quality(replacement, 0.5),
+                len(result),
+            )
 
         return result
 
@@ -490,10 +642,13 @@ class GEPAFewShot(GEPA):
 
         from gepa import GEPAResult, optimize
 
-        from dspy.teleprompt.gepa.gepa_utils import DspyAdapter, LoggerAdapter
-
         assert trainset is not None and len(trainset) > 0, "Trainset must be non-empty."
         assert teacher is None, "teacher is not yet supported in GEPAFewShot."
+        assert not self.use_merge, (
+            "use_merge is not yet supported in GEPAFewShot: merged candidates receive a "
+            "fresh random demo set unrelated to either parent, producing incoherent "
+            "(instruction, demo) pairings.  Set use_merge=False (the default)."
+        )
 
         # ---- Budget resolution (identical to GEPA) ----
         if self.auto is not None:
@@ -613,6 +768,19 @@ class GEPAFewShot(GEPA):
             raise_on_exception=True,
             seed=self.seed,
             **self.gepa_kwargs,
+        )
+
+        # ---- Rollout summary ----
+        logger.info(
+            "GEPAFewShot rollout summary — "
+            "mutations (candidate proposals): %d  |  "
+            "trace evals (reflection rollouts): %d  |  "
+            "score evals (Pareto scoring): %d  |  "
+            "unique candidates scored: %d",
+            adapter.n_mutations,
+            adapter.n_trace_evals,
+            adapter.n_score_evals,
+            len(adapter._score_registry),
         )
 
         # ---- Build final program (adapter.build_program applies both

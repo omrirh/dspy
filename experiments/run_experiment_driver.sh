@@ -26,6 +26,8 @@ TEST_SIZE=300
 NUM_THREADS=4
 API_BASE="http://localhost:30000/v1"
 REFLECTION_MODEL=""   # empty = same as task model
+REFLECTION_MINIBATCH_SIZE=10
+LOG_LEVEL="INFO"
 
 # Supported values
 VALID_DATASETS=("gsm8k" "iris")
@@ -37,6 +39,8 @@ VALID_MODELS=(
     "meta-llama/Meta-Llama-3-8B-Instruct"
     "Qwen/Qwen2.5-7B-Instruct"
     "Qwen/Qwen3-8B"
+    "Qwen/Qwen3.5-0.8B"
+    "Qwen/Qwen3.5-9B"
     "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
     "google/gemma-3-4b-it"
 )
@@ -58,6 +62,8 @@ while [[ "$#" -gt 0 ]]; do
         --num-threads)              NUM_THREADS="$2";                shift ;;
         --api-base)                 API_BASE="$2";                   shift ;;
         --reflection-model)         REFLECTION_MODEL="$2";           shift ;;
+        --reflection-minibatch-size) REFLECTION_MINIBATCH_SIZE="$2"; shift ;;
+        --log-level)                LOG_LEVEL="$2";                  shift ;;
         -h|--help)
             echo "Usage: $0 [options]"
             echo ""
@@ -75,6 +81,8 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --num-threads              Parallel eval threads. Default: 4"
             echo "  --api-base                 SGLang endpoint. Default: http://localhost:30000/v1"
             echo "  --reflection-model         GEPA reflection LM. Default: same as --model"
+            echo "  --reflection-minibatch-size  Subsample size for GEPA reflection gate. Default: 25"
+            echo "  --log-level                Logging verbosity: DEBUG/INFO/WARNING/ERROR. Default: INFO"
             exit 0
             ;;
         *) echo "Unknown parameter: $1"; exit 1 ;;
@@ -125,8 +133,10 @@ nohup python3.11 experiments/run_experiment.py \
     --test-size      "$TEST_SIZE" \
     --num-threads    "$NUM_THREADS" \
     --api-base       "$API_BASE" \
-    --max-bootstrapped-demos "$MAX_BOOTSTRAPPED_DEMOS" \
-    --max-labeled-demos      "$MAX_LABELED_DEMOS" \
+    --max-bootstrapped-demos    "$MAX_BOOTSTRAPPED_DEMOS" \
+    --max-labeled-demos         "$MAX_LABELED_DEMOS" \
+    --reflection-minibatch-size "$REFLECTION_MINIBATCH_SIZE" \
+    --log-level                 "$LOG_LEVEL" \
     $EXTRA_ARGS \
     2>&1 | tee "experiments/logs/$LOG_FILE" &
 
