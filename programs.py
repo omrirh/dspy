@@ -8,6 +8,90 @@ if TYPE_CHECKING:
     from dspy.teleprompt.retrieval_fewshot import RetrievalFewshot
 
 
+# ---------------------------------------------------------------------------
+# Crop Recommendation — LLM-as-an-Agronomist
+# ---------------------------------------------------------------------------
+
+# Feature descriptions for dynamic signature generation
+CROP_FEATURE_DESCRIPTIONS = {
+    'nitrogen': "Nitrogen (N) content in soil, mg/kg",
+    'phosphorous': "Phosphorous (P) content in soil, mg/kg",
+    'potassium': "Potassium (K) content in soil, mg/kg",
+    'temperature': "Average temperature, °C",
+    'humidity': "Relative humidity, %",
+    'ph': "Soil pH value",
+    'rainfall': "Rainfall, mm",
+}
+
+
+def create_crop_recommender_signature(feature_names: list) -> type:
+    """
+    Dynamically creates a CropRecommender signature based on selected features.
+
+    Args:
+        feature_names: List of feature names to include as input fields
+
+    Returns:
+        A dspy.Signature class with the specified input fields
+    """
+    # Build the signature fields dictionary
+    fields = {}
+    for feature in feature_names:
+        if feature in CROP_FEATURE_DESCRIPTIONS:
+            fields[feature] = dspy.InputField(desc=CROP_FEATURE_DESCRIPTIONS[feature])
+        else:
+            fields[feature] = dspy.InputField()
+
+    # Add the output field
+    fields['crop'] = dspy.OutputField(
+        desc="The recommended crop (one of: rice, maize, chickpea, kidneybeans, "
+             "pigeonpeas, mothbeans, mungbean, blackgram, lentil, pomegranate, "
+             "banana, mango, grapes, watermelon, muskmelon, apple, orange, "
+             "papaya, coconut, cotton, jute, coffee)"
+    )
+
+    # Create the signature class dynamically
+    signature_class = type(
+        'CropRecommenderSignature',
+        (dspy.Signature,),
+        {
+            '__doc__': "You are an expert agronomist advisor. Given key environmental "
+                      "conditions for a field, recommend the single most suitable crop to cultivate.",
+            **fields
+        }
+    )
+
+    return signature_class
+
+
+class CropRecommender(dspy.Module):
+    def __init__(self, feature_names: list = None):
+        """
+        Args:
+            feature_names: List of feature names to use. If None, uses the global
+                          CROP_INPUT_FIELDS from the dataset module.
+        """
+        super().__init__()
+
+        # Import here to avoid circular dependency
+        if feature_names is None:
+            from dspy.datasets.crop_recommendation import CROP_INPUT_FIELDS
+            feature_names = CROP_INPUT_FIELDS
+
+        self.feature_names = feature_names
+        signature = create_crop_recommender_signature(feature_names)
+        self.recommend = dspy.ChainOfThought(signature)
+
+    def forward(self, **kwargs):
+        """
+        Dynamically forward based on available features.
+        Accepts any subset of: nitrogen, phosphorous, potassium, temperature, humidity, ph, rainfall
+        """
+        # Only pass the features that are expected by the signature
+        inputs = {k: v for k, v in kwargs.items() if k in self.feature_names}
+        return self.recommend(**inputs)
+
+
 class BasicMH(dspy.Module):
     def __init__(self, passages_per_hop=3, num_hops=2):
         super().__init__()
@@ -68,44 +152,13 @@ class _RetrievalFewshotMixin:
 
     def _init_retrieval(self, cf_optimizer: "RetrievalFewshot"):
         self._cf_optimizer = cf_optimizer
+        # cf_optimizer.embedding_model is the underlying SentenceTransformer (or None for
+        # numeric encoders). Set by RetrievalFewshot.compile() after encoder selection.
         self._embedding_model = cf_optimizer.embedding_model
-        self._use_target_model = cf_optimizer.use_target_model_embeddings
-        if self._use_target_model:
-            self._tokenizer = cf_optimizer.tokenizer
 
     def _embed_query(self, question: str) -> np.ndarray:
-        """Embeds a text query using the same model used during compilation."""
-        if self._use_target_model:
-            return self._embed_with_target_model(question)
+        """Embeds a text query using the same SentenceTransformer used during compilation."""
         return self._embedding_model.encode([question], convert_to_numpy=True)[0]
-
-    def _embed_with_target_model(self, question: str, max_seq_length: int = 1024) -> np.ndarray:
-        """Mean-pooled input embedding via the target LM — mirrors compile-time logic."""
-        chat_str = self._tokenizer.apply_chat_template(
-            conversation=[{"role": "user", "content": question}],
-            tokenize=False,
-            add_generation_prompt=True,
-        )
-        encoding = self._tokenizer(
-            chat_str,
-            return_tensors="pt",
-            padding="max_length",
-            truncation=True,
-            max_length=max_seq_length,
-        )
-        device = next(self._embedding_model.parameters()).device
-        input_ids = encoding["input_ids"].to(device)
-        attention_mask = encoding["attention_mask"].to(device)
-
-        with torch.no_grad():
-            token_embs = self._embedding_model.get_input_embeddings()(input_ids)
-            attention_expanded = attention_mask.unsqueeze(-1)
-            token_embs = token_embs * attention_expanded
-            sum_embs = token_embs.sum(dim=1)
-            lengths = attention_expanded.sum(dim=1).clamp(min=1)
-            mean_emb = sum_embs / lengths
-
-        return mean_emb.squeeze(0).cpu().numpy()
 
     def _assign_demos(self, selected_examples: list):
         """Assigns per-predictor demos from the selected bootstrapped example dicts."""

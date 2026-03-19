@@ -5,17 +5,27 @@ from programs import (
     CoT,
     BasicMH,
     IrisProgram,
+    CropRecommender,
     RetrievalFewshotCoT,
     RetrievalFewshotMH,
     RetrievalFewshotIrisProgram,
 )
 from dspy.datasets import HotPotQA, IrisDataset
+from dspy.datasets.crop_recommendation import (
+    CropRecommendationDataset,
+    crop_recommendation_metric,
+    create_crop_numeric_encoder,
+)
 from remote_setup.utils import assign_local_lm
 from dspy.clients.huggingface import HFProvider
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.mipro_optimizer_v2 import MIPROv2
 from dspy.teleprompt.bettertogether import BetterTogether
-from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.clusterfewshot import (
+    ClusterFewshot,
+    create_sentence_transformer_encoder,
+    create_numeric_encoder,
+)
 from dspy.teleprompt.retrieval_fewshot import RetrievalFewshot
 from dspy.teleprompt.bootstrap_finetune import BootstrapFinetune
 from dspy.teleprompt.random_search import BootstrapFewShotWithRandomSearch
@@ -74,6 +84,13 @@ def main(dataset, prompt_optimizer, strategy, model, baseline=False):
         student = IrisProgram()
         trainset, devset, testset = dataset.get_data_splits()
 
+    elif dataset_name == "crop_recommendation":
+        dataset = CropRecommendationDataset(csv_path="Crop_recommendation_5features.csv")
+        metric = crop_recommendation_metric
+        task_type = "classification"
+        student = CropRecommender()
+        trainset, devset, testset = dataset.get_data_splits()
+
     if dataset_name in QA_DATASETS:
         trainset = [x.with_inputs('question') for x in dataset.train if
                     not any(ex in x.question for ex in exclude_examples)][:train_size]
@@ -129,11 +146,28 @@ def main(dataset, prompt_optimizer, strategy, model, baseline=False):
             num_threads=6
         )
 
+    if prompt_optimizer_name in ("clusterfs", "retrievalfs"):
+        # Initialize semantic encoders based on dataset/task type
+        if dataset_name == "crop_recommendation":
+            semantic_encoders = [create_crop_numeric_encoder()]
+        elif task_type == "classification":
+            # Generic numeric encoder for other classification tasks (e.g., Iris)
+            semantic_encoders = [create_numeric_encoder()]
+        else:
+            # SentenceTransformer encoders for text-based tasks (QA, arithmetic, etc.)
+            semantic_encoders = [
+                create_sentence_transformer_encoder("Qwen/Qwen3-Embedding-0.6B"),
+                create_sentence_transformer_encoder("sentence-transformers/all-mpnet-base-v2"),
+                create_sentence_transformer_encoder("sentence-transformers/gtr-t5-base"),
+                create_sentence_transformer_encoder("BAAI/bge-large-en-v1.5"),
+            ]
+
     if prompt_optimizer_name == "clusterfs":
         prompt_optimizer = ClusterFewshot(
             metric=metric,
             task_type=task_type,
-            use_target_model_embeddings=("w -> p" in strategy),
+            semantic_encoders=semantic_encoders,
+            apply_visuals=True,
         )
 
     if prompt_optimizer_name == "retrievalfs":
@@ -146,7 +180,7 @@ def main(dataset, prompt_optimizer, strategy, model, baseline=False):
             metric=metric,
             task_type=task_type,
             retrieval_program_class=retrieval_class_map[task_type],
-            use_target_model_embeddings=("w -> p" in strategy),
+            semantic_encoders=semantic_encoders,
             n_shots=3,
             retrieval_strategy="mmr",
             mmr_lambda=0.8,

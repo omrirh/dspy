@@ -12,7 +12,7 @@ MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 BASELINE=false
 
 # Supported values
-VALID_DATASETS=("hotpotqa" "gsm8k" "iris")
+VALID_DATASETS=("hotpotqa" "gsm8k" "iris" "crop_recommendation")
 VALID_PROMPT_OPTIMIZERS=("bfrs" "clusterfs" "retrievalfs" "miprov2")
 VALID_STRATEGIES=("p" "w" "p -> w" "w -> p" "p -> w -> p" "p -> p" "p -> p -> p")
 VALID_MODELS=(
@@ -41,7 +41,7 @@ while [[ "$#" -gt 0 ]]; do
         --baseline) BASELINE=true ;;
         -h|--help)
             echo "Usage: $0 [--dataset <dataset name>] [--prompt-optimizer <optimizer>] [--strategy <strategy>] [--model <model name>] [--baseline]"
-            echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k, iris"
+            echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k, iris, crop_recommendation"
             echo "  --prompt-optimizer  Specify the prompt optimization method. Default: bfrs. Options: bfrs, clusterfs, retrievalfs, miprov2"
             echo "  --strategy          Specify the strategy. Default: p. Options: 'p', 'w', 'p -> p', 'p -> p -> p', 'p -> w', 'w -> p', 'p -> w -> p'"
             echo "  --model             Specify the model to use. Default: meta-llama/Meta-Llama-3-8B-Instruct"

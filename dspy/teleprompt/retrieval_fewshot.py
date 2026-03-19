@@ -1,9 +1,14 @@
 import logging
 import numpy as np
-from typing import List
+from typing import List, Optional
 
 from dspy.primitives import Example
-from dspy.teleprompt.cluster_fewshot import ClusterFewshot
+from dspy.teleprompt.clusterfewshot import ClusterFewshot
+from dspy.teleprompt.clusterfewshot.clusterfewshot_utils import (
+    bootstrap_examples,
+    get_example_hash,
+    generate_embedding_clusters_with_semantic_encoders,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +22,8 @@ class RetrievalFewshot(ClusterFewshot):
     Pipeline:
         1. Bootstraps training examples to generate successful reasoning paths,
            yielding a candidate demonstration pool.
-        2. Embeds the pool into a shared semantic space
-           (via SentenceTransformer model selection or target LM input embeddings).
+        2. Embeds the pool into a shared semantic space via the provided
+           SemanticEncoder(s); the best encoder is selected by silhouette score.
         3. At inference time, retrieves a query-specific few-shot context
            using kNN or MMR over the demonstration pool embeddings.
 
@@ -27,7 +32,7 @@ class RetrievalFewshot(ClusterFewshot):
 
     Args:
         task_type: str
-            Task label (used for classification-specific embedding path).
+            Task label (used for task-specific sampling strategies).
         retrieval_program_class:
             Class to instantiate as the compiled student (e.g. RetrievalFewshotCoT).
             Must accept a single argument: this optimizer instance.
@@ -35,8 +40,12 @@ class RetrievalFewshot(ClusterFewshot):
             Evaluation metric forwarded to the bootstrapping step.
         metric_threshold: Optional[float]
             Threshold for metric-based filtering during bootstrapping.
-        use_target_model_embeddings: bool
-            Use target LM input embeddings instead of a SentenceTransformer.
+        semantic_encoders: List[SemanticEncoder]
+            Encoders used to embed the demonstration pool. The best encoder is
+            selected via silhouette score, same as ClusterFewshot.
+            For text tasks: use create_sentence_transformer_encoder(...).
+            For classification tasks: use create_numeric_encoder() or a task-
+            specific factory (e.g. create_crop_numeric_encoder()).
         n_shots: int
             Number of demonstrations to retrieve per query. Default: 3.
         retrieval_strategy: str
@@ -45,6 +54,15 @@ class RetrievalFewshot(ClusterFewshot):
         mmr_lambda: float
             Relevance/diversity tradeoff for MMR (0 = full diversity, 1 = full relevance).
             Only used when retrieval_strategy="mmr".
+
+    Post-flight note:
+        _RetrievalFewshotMixin._embed_query() accesses self._embedding_model.encode()
+        directly on the underlying SentenceTransformer. This works for text tasks but
+        couples inference-time encoding to the encoder's internal model object.
+        A cleaner future fix is to add a SemanticEncoder.encode_query(inputs) method
+        that accepts a raw query (string or feature dict) and returns a single embedding
+        vector, so programs can call self._cf_optimizer.selected_encoder.encode_query(...)
+        without reaching into .encoder internals.
     """
 
     def __init__(
@@ -53,7 +71,7 @@ class RetrievalFewshot(ClusterFewshot):
             retrieval_program_class,
             metric=None,
             metric_threshold=None,
-            use_target_model_embeddings: bool = False,
+            semantic_encoders: Optional[List] = None,
             n_shots: int = 3,
             retrieval_strategy: str = "knn",
             mmr_lambda: float = 0.5,
@@ -63,7 +81,7 @@ class RetrievalFewshot(ClusterFewshot):
             metric=metric,
             metric_threshold=metric_threshold,
             soft_select=False,
-            use_target_model_embeddings=use_target_model_embeddings,
+            semantic_encoders=semantic_encoders,
         )
 
         if retrieval_strategy not in RETRIEVAL_STRATEGIES:
@@ -86,44 +104,42 @@ class RetrievalFewshot(ClusterFewshot):
         Compiles the RetrievalFewshot optimizer.
 
         1. Bootstraps training examples (generates traced reasoning paths).
-        2. Embeds the bootstrapped pool into a semantic space.
+        2. Embeds the bootstrapped pool into a semantic space via BYOE encoders.
         3. Returns a retrieval-enabled student program.
 
         Clustering, ranking, and static subset selection are skipped entirely.
         """
         self.student = student.deepcopy()
-        self.trainset = self.bootstrap_examples(trainset)
+        self.trainset = bootstrap_examples(
+            examples=trainset,
+            student=self.student,
+            metric=self.metric,
+            metric_threshold=self.metric_threshold,
+            trainset_by_hash=self.trainset_by_hash,
+        )
         self.valset = valset
 
         logger.info("Compiling RetrievalFewshot optimizer...")
 
-        # --- Embed the demonstration pool ---
-        if self.task_type == "classification":
-            # Raw feature vectors (no model needed)
-            data = [ex["raw"] for ex in self.trainset]
-            embeddings = np.array(
-                [[float(v) for _, v in dict(example.inputs()).items()] for example in data]
-            )
-            self.embedding_model_name = "N/A"
-        else:
-            if self.use_target_model_embeddings:
-                self.embedding_model_name = self.student.named_predictors()[0][1].lm.model
-                self.generate_embeddings_func = self.generate_embedding_clusters_with_target_model
-            else:
-                self.generate_embeddings_func = self.generate_embedding_clusters_with_candidate_models
+        # --- Embed the demonstration pool via BYOE semantic encoders ---
+        data = [ex["raw"] for ex in self.trainset]
+        embeddings, _, _, self.selected_encoder = generate_embedding_clusters_with_semantic_encoders(
+            examples=data,
+            semantic_encoders=self.semantic_encoders,
+        )
 
-            data = [ex["raw"] for ex in self.trainset]
-            # Model selection runs internally (silhouette-based); cluster labels discarded
-            embeddings, _, _ = self.generate_embeddings_func(examples=data)
+        # Expose the underlying model for _RetrievalFewshotMixin._embed_query()
+        # (see post-flight note in the class docstring for a cleaner future approach)
+        self.embedding_model = self.selected_encoder.encoder
 
         self.examples2embeddings = {
-            self.get_example_hash(ex): np.array(emb)
+            get_example_hash(ex): np.array(emb)
             for ex, emb in zip(self.trainset, embeddings)
         }
 
         logger.info(
             f"Demonstration pool ready: {len(self.trainset)} bootstrapped examples, "
-            f"embedding_model={self.embedding_model_name}, strategy={self.retrieval_strategy}."
+            f"encoder={self.selected_encoder.name()}, strategy={self.retrieval_strategy}."
         )
 
         retrieval_student = self.retrieval_program_class(self)
@@ -166,7 +182,7 @@ class RetrievalFewshot(ClusterFewshot):
         Returns the n training examples whose embeddings are closest to the query.
         """
         distances = [
-            (ex, np.linalg.norm(query_embedding - self.examples2embeddings[self.get_example_hash(ex)]))
+            (ex, np.linalg.norm(query_embedding - self.examples2embeddings[get_example_hash(ex)]))
             for ex in self.trainset
         ]
         distances.sort(key=lambda t: t[1])
@@ -194,7 +210,7 @@ class RetrievalFewshot(ClusterFewshot):
 
         # Precompute query-similarity for all candidates
         query_sims = {
-            self.get_example_hash(ex): cosine(query_norm, self.examples2embeddings[self.get_example_hash(ex)])
+            get_example_hash(ex): cosine(query_norm, self.examples2embeddings[get_example_hash(ex)])
             for ex in candidates
         }
 
@@ -208,8 +224,8 @@ class RetrievalFewshot(ClusterFewshot):
             for ex in candidates:
                 if ex in selected:
                     continue
-                ex_emb = self.examples2embeddings[self.get_example_hash(ex)]
-                rel = query_sims[self.get_example_hash(ex)]
+                ex_emb = self.examples2embeddings[get_example_hash(ex)]
+                rel = query_sims[get_example_hash(ex)]
 
                 redundancy = (
                     max(cosine(ex_emb, s_emb) for s_emb in selected_embeddings)
@@ -224,6 +240,6 @@ class RetrievalFewshot(ClusterFewshot):
 
             if best_ex is not None:
                 selected.append(best_ex)
-                selected_embeddings.append(self.examples2embeddings[self.get_example_hash(best_ex)])
+                selected_embeddings.append(self.examples2embeddings[get_example_hash(best_ex)])
 
         return selected

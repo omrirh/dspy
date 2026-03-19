@@ -63,3 +63,7 @@ docs/docs/**/*.json*
 *.index
 *.pkl
 *.tar.gz
+
+# LLM tools
+.claude/
+.mcp.json
