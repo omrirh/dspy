@@ -6,7 +6,7 @@ set -euo pipefail
 #############################################
 
 PORT=8894
-ASSETS_DIR="/tmp/wiki-assets"
+ASSETS_DIR="/home/obarhaim/wiki-assets"
 VENV_NAME="colbert_venv"
 LOGFILE="colbert_server.log"
 

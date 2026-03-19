@@ -5,8 +5,10 @@ from .semantic_encoder import (
     SemanticEncoder,
     sentence_transformer_transform,
     numeric_transform,
+    hotpotqa_question_transform,
     create_sentence_transformer_encoder,
     create_numeric_encoder,
+    create_hotpotqa_question_encoder,
 )
 
 __all__ = [
@@ -14,6 +16,8 @@ __all__ = [
     'SemanticEncoder',
     'sentence_transformer_transform',
     'numeric_transform',
+    'hotpotqa_question_transform',
     'create_sentence_transformer_encoder',
     'create_numeric_encoder',
+    'create_hotpotqa_question_encoder',
 ]

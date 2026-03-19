@@ -1,7 +1,7 @@
 import dspy
 import torch
 import numpy as np
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 from dspy.dsp.utils.utils import deduplicate
 
 if TYPE_CHECKING:
@@ -141,6 +141,47 @@ class IrisProgram(dspy.Module):
             sepal_length=sepal_length,
             sepal_width=sepal_width
         )
+
+
+class HotPotQAAgentSignature(dspy.Signature):
+    """Answer multi-hop questions by searching Wikipedia for relevant passages.
+    Think step-by-step: decompose the question, issue targeted searches to gather
+    evidence, and synthesize findings into a concise factual answer."""
+
+    question: str = dspy.InputField()
+    answer: str = dspy.OutputField(desc="A short, factual answer (entity name, date, or yes/no)")
+
+
+class ReactAgentMH(dspy.Module):
+    """
+    ReAct-based multi-hop agent for HotPotQA backed by ColBERTv2 search.
+
+    This program wraps ``dspy.ReAct`` with a Wikipedia search tool and exposes
+    the standard ``question -> answer`` interface expected by ``answer_exact_match``.
+
+    Named predictors (used by ClusterFewshot for demo injection):
+        - ``agent.react``    — the step-level Predict module (thought + tool selection)
+        - ``agent.extract``  — the final ChainOfThought extraction module
+
+    The ``search_tool`` is a plain Python callable with signature::
+
+        def search(query: str) -> str: ...
+
+    It should return a formatted string of top passages (created by
+    ``create_colbert_search_tool`` in ``react_agent_experiment.py``).
+
+    Args:
+        search_tool: Callable that accepts a ``query`` string and returns passages.
+        max_iters: Maximum ReAct steps before forced extraction. Default 5 is
+                   sufficient for 2-hop HotPotQA; raise to 7 for harder examples.
+    """
+
+    def __init__(self, search_tool: Callable, max_iters: int = 5):
+        super().__init__()
+        self.agent = dspy.ReAct(HotPotQAAgentSignature, tools=[search_tool], max_iters=max_iters)
+
+    def forward(self, question: str):
+        return self.agent(question=question)
 
 
 class _RetrievalFewshotMixin:

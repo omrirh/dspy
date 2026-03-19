@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _HF_MODELS = [
+    # 2B–8B class — baseline/comparison models
     "meta-llama/Llama-2-7b-chat-hf",
     "meta-llama/Meta-Llama-3-8B-Instruct",
     "mistralai/Mistral-7B-Instruct-v0.2",
@@ -41,6 +42,12 @@ _HF_MODELS = [
     "meta-llama/Llama-3.1-8B-Instruct",
     "meta-llama/Llama-3.2-3B-Instruct",
     "openai/gpt-oss-20b",
+    # 14B–32B class — agentic-ready, fits A100 80GB in BF16
+    "microsoft/Phi-4",                   # 14B — strong structured output for its size
+    "Qwen/Qwen2.5-32B-Instruct",         # 32B — excellent tool-call compliance
+    "Qwen/Qwen3-32B",                    # 32B — latest Qwen, strong reasoning
+    # 70B class — requires FP8 quantization on A100 80GB (sglang --quantization fp8)
+    "meta-llama/Llama-3.3-70B-Instruct", # 70B — best Llama for tool-calling
 ]
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"

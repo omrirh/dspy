@@ -184,3 +184,73 @@ def create_numeric_encoder() -> SemanticEncoder:
         transform_fn=numeric_transform,
         name="NumericEncoder"
     )
+
+
+# ============================================================================
+# AGENTIC ENCODER UTILITIES
+# ============================================================================
+
+def hotpotqa_question_transform(encoder, examples: List[Example]) -> np.ndarray:
+    """
+    Transform for HotPotQA agentic experiments.
+
+    Extracts the 'question' field and encodes it with the given SentenceTransformer.
+    Handles both raw dspy.Example objects and bootstrapped dicts that carry a 'raw' key,
+    so the same encoder can be used across training and validation phases without
+    requiring changes to the ClusterFewshot compilation pipeline.
+
+    Args:
+        encoder: SentenceTransformer model
+        examples: List of Example objects or bootstrapped dicts with 'question' field
+
+    Returns:
+        Embeddings array of shape (n_examples, embedding_dim)
+    """
+    texts = []
+    for ex in examples:
+        # Handle both raw Example objects and bootstrapped dicts (ex["raw"])
+        if isinstance(ex, dict) and "raw" in ex:
+            raw = ex["raw"]
+            q = raw.question if hasattr(raw, "question") else raw.get("question", "")
+        else:
+            q = ex.question if hasattr(ex, "question") else ex.get("question", "")
+        texts.append(q)
+    return encoder.encode(texts, convert_to_numpy=True)
+
+
+def create_hotpotqa_question_encoder(model_name: str, device: str = "cpu") -> SemanticEncoder:
+    """
+    Factory for a question-level semantic encoder tuned for HotPotQA agentic experiments.
+
+    Clusters training examples by question semantics so that ClusterFewshot selects
+    demonstrations that cover diverse question types (bridge, comparison, temporal, etc.)
+    rather than repeatedly sampling from the same topical neighborhood.
+
+    Two model choices are recommended and can be passed together to ClusterFewshot's
+    grid search, which will select the one yielding the highest silhouette score:
+
+        encoders = [
+            create_hotpotqa_question_encoder("sentence-transformers/all-mpnet-base-v2"),
+            create_hotpotqa_question_encoder("sentence-transformers/multi-qa-mpnet-base-dot-v1"),
+        ]
+
+    - ``all-mpnet-base-v2``: General-purpose model; captures broad topic similarity.
+    - ``multi-qa-mpnet-base-dot-v1``: Fine-tuned for question-answering semantic matching;
+      better separates questions by the type of reasoning they require (lookup vs.
+      comparison vs. multi-entity bridging).
+
+    Args:
+        model_name: SentenceTransformer model name (HuggingFace hub or local path)
+        device: Device string ('cpu', 'cuda', 'cuda:0', etc.)
+
+    Returns:
+        SemanticEncoder configured for HotPotQA question-level clustering
+    """
+    from sentence_transformers import SentenceTransformer
+
+    model = SentenceTransformer(model_name, device=device)
+    return SemanticEncoder(
+        encoder=model,
+        transform_fn=hotpotqa_question_transform,
+        name=model_name,
+    )

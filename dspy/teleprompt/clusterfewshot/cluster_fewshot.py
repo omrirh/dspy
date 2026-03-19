@@ -25,6 +25,10 @@ TASK_2_SAMPLINGS = {
     "arithmetic": ["top_n", "best_in_cluster"],
     "multihop": ["top_n", "best_in_cluster"],
     "classification": ["top_n", "best_in_cluster"],
+    # Agentic tasks use diversity-first ordering: best_in_cluster ensures each semantic
+    # cluster of question types contributes at least one demonstration, preventing the
+    # agent from over-fitting to the most common question pattern in the training set.
+    "agentic": ["best_in_cluster", "top_n"],
 }
 
 
@@ -58,7 +62,7 @@ class ClusterFewshot(Teleprompter):
             task_type: Optional[str]
                 Optional task type label. When provided and recognized, uses task-specific
                 sampling strategies. When None, uses default strategies (top_n + best_in_cluster).
-                Known task types: 'arithmetic', 'multihop', 'classification'
+                Known task types: 'arithmetic', 'multihop', 'classification', 'agentic'
             soft_select: bool
                 If True, uses differentiable soft selection to balance one-shot impact
                 with semantic diversity via gradient descent optimization.

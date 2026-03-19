@@ -446,12 +446,12 @@ def visualize_soft_selection(
         examples2embeddings[get_example_hash(ex)]
         for ex in all_examples
     ])
-    selected_set = set(final_fewshot_subset)
+    selected_hashes = {get_example_hash(ex) for ex in final_fewshot_subset}
 
     pca = PCA(n_components=2)
     reduced = pca.fit_transform(embs)
 
-    colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
+    colors = ['red' if get_example_hash(ex) in selected_hashes else 'gray' for ex in all_examples]
 
     plt.figure(figsize=(10, 7))
     plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
@@ -489,12 +489,14 @@ def visualize_os_test(
         examples2embeddings[get_example_hash(ex)]
         for ex in all_examples
     ])
-    selected_set = set(os_test)
+    # Use string hashes for membership test — avoids calling Example.__hash__,
+    # which breaks when an Example field (e.g. gold_titles in HotPotQA) is a set.
+    selected_hashes = {get_example_hash(ex) for ex in os_test}
 
     pca = PCA(n_components=2)
     reduced = pca.fit_transform(embs)
 
-    colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
+    colors = ['red' if get_example_hash(ex) in selected_hashes else 'gray' for ex in all_examples]
 
     plt.figure(figsize=(10, 7))
     plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
@@ -987,6 +989,10 @@ def normalize_example(obj: Any) -> Any:
     if isinstance(obj, list):
         # stable: keep list order (semantic), but normalize each item
         return [normalize_example(x) for x in obj]
+
+    if isinstance(obj, set):
+        # stable: sort for deterministic ordering (sets are unordered)
+        return sorted([normalize_example(x) for x in obj])
 
     return obj
 
