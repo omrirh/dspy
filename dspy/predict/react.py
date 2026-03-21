@@ -76,9 +76,13 @@ class ReAct(Module):
         for idx in range(self.max_iters):
             pred = self._call_with_potential_trajectory_truncation(self.react, trajectory, **input_args)
 
-            trajectory[f"thought_{idx}"] = pred.next_thought
-            trajectory[f"tool_name_{idx}"] = pred.next_tool_name
-            trajectory[f"tool_args_{idx}"] = pred.next_tool_args
+            try:
+                trajectory[f"thought_{idx}"] = pred.next_thought
+                trajectory[f"tool_name_{idx}"] = pred.next_tool_name
+                trajectory[f"tool_args_{idx}"] = pred.next_tool_args
+            except AttributeError:
+                logger.warning("ReAct prediction missing expected fields (parse failure); falling back to extract.")
+                break
 
             try:
                 parsed_tool_args = {}
