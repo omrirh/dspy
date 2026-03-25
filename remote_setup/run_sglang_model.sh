@@ -39,6 +39,28 @@ SERVER_CMD="python -m sglang.launch_server \
 if [[ "$MODEL_NAME" == "Qwen/Qwen3-8B" ]]; then
   echo -e "Using a dedicated reasoning parser for $MODEL_NAME model"
   SERVER_CMD+=" --reasoning-parser qwen3"
+elif [[ "$MODEL_NAME" == "Qwen/Qwen3-32B" ]]; then
+  echo -e "Using reasoning parser + A100 80GB memory settings for $MODEL_NAME"
+  SERVER_CMD+=" --reasoning-parser qwen3 --dtype bfloat16 --mem-fraction-static 0.88 --context-length 4096 --enable-torch-compile"
+elif [[ "$MODEL_NAME" == "Qwen/Qwen2.5-14B-Instruct" ]]; then
+  # 14B BF16 weights ~28 GB on A100 80 GB.
+  # --mem-fraction-static 0.80 : 64 GB for weights + CUDA graph buffers,
+  #   ~16 GB remaining for KV cache.
+  echo -e "Applying A100 80GB settings for $MODEL_NAME"
+  SERVER_CMD+=" --dtype bfloat16 --mem-fraction-static 0.80 --context-length 16384 --enable-torch-compile"
+elif [[ "$MODEL_NAME" == "Qwen/Qwen2.5-32B-Instruct" ]]; then
+  # 32B BF16 weights ~64 GB on A100 80 GB.
+  # --mem-fraction-static 0.88 : 70.4 GB for weights + CUDA graph buffers,
+  #   ~9.6 GB remaining for KV cache.
+  # --context-length 8192      : ClusterFewshot-selected demos can exceed 4K;
+  #   8K headroom avoids 400 Bad Request errors during optimizer eval.
+  # --enable-torch-compile     : ~15 % throughput gain on A100, +60 s warm-up.
+  echo -e "Applying A100 80GB memory settings for $MODEL_NAME"
+  SERVER_CMD+=" --dtype bfloat16 --mem-fraction-static 0.88 --context-length 8192 --enable-torch-compile"
+elif [[ "$MODEL_NAME" == "meta-llama/Llama-3.3-70B-Instruct" ]]; then
+  # 70B requires FP8 quantization to fit in 80 GB.
+  echo -e "Applying FP8 quantization + A100 80GB memory settings for $MODEL_NAME"
+  SERVER_CMD+=" --quantization fp8 --dtype bfloat16 --mem-fraction-static 0.93 --context-length 4096"
 elif [[ "$MODEL_NAME" == "google/gemma-3-4b-it" ]]; then
   echo -e "Applying memory-friendly settings for $MODEL_NAME"
   SERVER_CMD+=" --context-length 8192"

@@ -29,6 +29,7 @@ VALID_MODELS=(
   "google/gemma-3-4b-it"
   # 14B–32B — agentic-ready, BF16 on A100 80GB
   "microsoft/Phi-4"
+  "Qwen/Qwen2.5-14B-Instruct"
   "Qwen/Qwen2.5-32B-Instruct"
   "Qwen/Qwen3-32B"
   # 70B — FP8 on A100 80GB (sglang --quantization fp8 required)

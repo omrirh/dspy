@@ -168,6 +168,18 @@ def load_hotpotqa_splits(train_size: int, dev_size: int, test_size: int):
 # LM configuration
 # ---------------------------------------------------------------------------
 
+# Max tokens for generation per model class.
+# ReAct steps (thought + tool_name + tool_args) rarely exceed 300 tokens;
+# the extract step is ~100 tokens. 1024 is a safe ceiling for all sizes.
+# 32B gets 2048 — the larger context window means longer thoughts are common.
+_LOCAL_MODEL_MAX_TOKENS: dict[str, int] = {
+    "Qwen2.5-32B-Instruct": 2048,
+    "Qwen3-32B": 2048,
+    "Llama-3.3-70B-Instruct": 2048,
+}
+_LOCAL_MODEL_MAX_TOKENS_DEFAULT = 1024
+
+
 def configure_lm(model: str, sglang_port: int | None, devset, metric):
     """
     Configures the DSPy language model.
@@ -184,11 +196,17 @@ def configure_lm(model: str, sglang_port: int | None, devset, metric):
 
         port = sglang_port or 7501
         sglang_url = f"http://localhost:{port}/v1"
-        logger.info(f"Connecting to local sglang server at {sglang_url} (model: {model})")
+        model_basename = model.split("/")[-1]
+        max_tokens = next(
+            (v for k, v in _LOCAL_MODEL_MAX_TOKENS.items() if k in model_basename),
+            _LOCAL_MODEL_MAX_TOKENS_DEFAULT,
+        )
+        logger.info(f"Connecting to local sglang server at {sglang_url} (model: {model}, max_tokens: {max_tokens})")
         lm = assign_local_lm(
             model=model,
             api_base=sglang_url,
             provider=HFProvider(validation_set=devset, validation_metric=metric),
+            max_tokens=max_tokens,
         )
     elif model.startswith("gemini/"):
         lm = dspy.LM(model, api_key=os.getenv("GEMINI_API_KEY"), max_tokens=4096)

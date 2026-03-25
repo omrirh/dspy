@@ -29,6 +29,7 @@ VALID_MODELS=(
   "meta-llama/Llama-3.1-8B-Instruct"
   "meta-llama/Llama-3.2-3B-Instruct"
   "openai/gpt-oss-20b"
+  "Qwen/Qwen2.5-32B-Instruct"
 )
 
 # Parse arguments

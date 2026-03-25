@@ -44,6 +44,7 @@ _HF_MODELS = [
     "openai/gpt-oss-20b",
     # 14B–32B class — agentic-ready, fits A100 80GB in BF16
     "microsoft/Phi-4",                   # 14B — strong structured output for its size
+    "Qwen/Qwen2.5-14B-Instruct",
     "Qwen/Qwen2.5-32B-Instruct",         # 32B — excellent tool-call compliance
     "Qwen/Qwen3-32B",                    # 32B — latest Qwen, strong reasoning
     # 70B class — requires FP8 quantization on A100 80GB (sglang --quantization fp8)

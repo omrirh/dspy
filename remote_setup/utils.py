@@ -12,6 +12,7 @@ def assign_local_lm(
         model: str,
         api_base: str,
         provider,
+        max_tokens: int = 1024,
 ):
     import dspy
     lm = dspy.LM(
@@ -19,6 +20,7 @@ def assign_local_lm(
         api_base=api_base,
         api_key="local",
         provider=provider,
+        max_tokens=max_tokens,
     )
     dspy.configure(lm=lm)
 
@@ -162,19 +164,67 @@ def stop_server_and_clean_resources(port: int, cuda_device: int = 0, retry_attem
         logger.info(f"Unexpected error while cleaning up GPU resources: {e}")
 
 
+# ---------------------------------------------------------------------------
+# Per-model sglang launch overrides (mirrors run_sglang_model.sh logic).
+# Keys are matched as substrings of model_path.
+# ---------------------------------------------------------------------------
+_SGLANG_MODEL_EXTRA_ARGS: dict[str, str] = {
+    # 32B BF16 on A100 80 GB: weights ~64 GB, leaves ~9.6 GB KV cache.
+    "Qwen2.5-32B-Instruct": (
+        "--dtype bfloat16 "
+        "--mem-fraction-static 0.88 "
+        "--context-length 4096 "
+        "--enable-torch-compile"
+    ),
+    # 70B requires FP8 to fit in 80 GB.
+    "Llama-3.3-70B-Instruct": (
+        "--quantization fp8 "
+        "--dtype bfloat16 "
+        "--mem-fraction-static 0.93 "
+        "--context-length 4096"
+    ),
+    # Qwen3-32B: reasoning parser + same memory settings as Qwen2.5-32B.
+    "Qwen3-32B": (
+        "--reasoning-parser qwen3 "
+        "--dtype bfloat16 "
+        "--mem-fraction-static 0.88 "
+        "--context-length 4096 "
+        "--enable-torch-compile"
+    ),
+}
+
+
+def _get_model_extra_args(model_path: str) -> str:
+    """Returns extra sglang args for a model, matched by substring."""
+    for key, args in _SGLANG_MODEL_EXTRA_ARGS.items():
+        if key in model_path:
+            return args
+    # Qwen3 catch-all for reasoning parser (covers sizes not listed above).
+    if "Qwen3" in model_path:
+        return "--reasoning-parser qwen3"
+    return ""
+
+
 def deploy_sglang_model(model_path: str, log_file: str, port: int = 7501, cuda_device: int = 0):
     """
     Deploy a Language Model with SGLang.
 
+    Model-specific launch flags (memory fractions, quantization, torch-compile)
+    are resolved automatically from ``_SGLANG_MODEL_EXTRA_ARGS``, mirroring the
+    logic in ``remote_setup/run_sglang_model.sh``.
+
     Args:
-        model_path (str): Path to the model directory.
+        model_path (str): HF model id or local path to the model directory.
         port (int): Port for the SGLang server.
         cuda_device (int): CUDA device ID to use.
         log_file (str): Log file for the server output.
     """
-    logger.info(f"Deploying {model_path} model...")
-    command = f"nohup env CUDA_VISIBLE_DEVICES={cuda_device} python -m sglang.launch_server " \
-              f"--model-path {model_path} {'--reasoning-parser qwen3' if 'Qwen3' in model_path else ''} --port {port} > {log_file} 2>&1 &"
+    extra_args = _get_model_extra_args(model_path)
+    logger.info(f"Deploying {model_path} (extra sglang args: '{extra_args or 'none'}')...")
+    command = (
+        f"nohup env CUDA_VISIBLE_DEVICES={cuda_device} python -m sglang.launch_server "
+        f"--model-path {model_path} {extra_args} --port {port} > {log_file} 2>&1 &"
+    )
     subprocess.Popen(command, shell=True)
 
     # Wait for the server to start

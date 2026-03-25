@@ -18,7 +18,7 @@ from dspy.evaluate import Evaluate
 logger = logging.getLogger(__name__)
 
 MIN_CLUSTERS: int = 3
-MAX_CLUSTERS: int = 10
+MAX_CLUSTERS: int = 4
 
 
 # ============================================================================
