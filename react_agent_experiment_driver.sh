@@ -12,11 +12,12 @@ SGLANG_PORT=""
 TRAIN_SIZE=500
 DEV_SIZE=200
 TEST_SIZE=500
-MAX_ITERS=5
+MAX_ITERS=20
 ENCODER_DEVICE="cpu"
 BASELINE=false
 NO_VISUALS=false
 SAMPLE_TRAJECTORY=false
+SEED=""
 
 # Supported models
 VALID_MODELS=(
@@ -54,6 +55,7 @@ while [[ "$#" -gt 0 ]]; do
         --baseline)         BASELINE=true ;;
         --no-visuals)       NO_VISUALS=true ;;
         --sample-trajectory) SAMPLE_TRAJECTORY=true ;;
+        --seed)             SEED="$2"; shift ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
@@ -65,11 +67,12 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --train-size        Number of training examples. Default: 500"
             echo "  --dev-size          Number of validation examples. Default: 200"
             echo "  --test-size         Number of test examples. Default: 500"
-            echo "  --max-iters         Max ReAct steps per question. Default: 5"
+            echo "  --max-iters         Max ReAct steps per question. Default: 20"
             echo "  --encoder-device    SentenceTransformer device (cpu / cuda). Default: cpu"
             echo "  --baseline          Evaluate zero-shot agent only (skip optimization)"
             echo "  --no-visuals        Disable matplotlib cluster plots"
             echo "  --sample-trajectory Print a qualitative trajectory comparison at the end"
+            echo "  --seed              Random seed for reproducibility"
             echo ""
             echo "Supported models:"
             for m in "${VALID_MODELS[@]}"; do echo "  $m"; done
@@ -99,7 +102,9 @@ if [[ "$BASELINE" == "true" ]]; then
 else
     RUN_TAG="_${OPTIMIZER}"
 fi
-LOG_FILE="react_agent_experiment${MODEL_ID}${RUN_TAG}_$(date +'%Y-%m-%d').log"
+SEED_TAG=""
+[[ -n "$SEED" ]] && SEED_TAG="_s${SEED}"
+LOG_FILE="react_agent_experiment${MODEL_ID}${RUN_TAG}${SEED_TAG}_$(date +'%Y-%m-%d').log"
 
 # Build command arguments
 CMD_ARGS=(
@@ -117,6 +122,7 @@ CMD_ARGS=(
 [[ "$BASELINE" == "true" ]]  && CMD_ARGS+=(--baseline)
 [[ "$NO_VISUALS" == "true" ]] && CMD_ARGS+=(--no-visuals)
 [[ "$SAMPLE_TRAJECTORY" == "true" ]] && CMD_ARGS+=(--sample-trajectory)
+[[ -n "$SEED" ]] && CMD_ARGS+=(--seed "$SEED")
 
 # PATCH: raise open-file limit to avoid LiteLLM sqlite issues
 ulimit -n 65535
@@ -133,6 +139,7 @@ echo "ColBERT URL   : $COLBERT_URL"
 echo "Train / Dev / Test : $TRAIN_SIZE / $DEV_SIZE / $TEST_SIZE"
 echo "Max iters     : $MAX_ITERS"
 echo "Encoder device: $ENCODER_DEVICE"
+echo "Seed          : ${SEED:-<auto>}"
 echo "Baseline only : $BASELINE"
 echo "Log file      : $LOG_FILE"
 echo ""
