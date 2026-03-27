@@ -172,11 +172,11 @@ class ReactAgentMH(dspy.Module):
 
     Args:
         search_tool: Callable that accepts a ``query`` string and returns passages.
-        max_iters: Maximum ReAct steps before forced extraction. Default 5 is
-                   sufficient for 2-hop HotPotQA; raise to 7 for harder examples.
+        max_iters: Maximum ReAct steps before forced extraction. Default 20
+                   matches the upstream DSPy ReAct default.
     """
 
-    def __init__(self, search_tool: Callable, max_iters: int = 5):
+    def __init__(self, search_tool: Callable, max_iters: int = 20):
         super().__init__()
         self.agent = dspy.ReAct(HotPotQAAgentSignature, tools=[search_tool], max_iters=max_iters)
 
