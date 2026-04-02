@@ -1,0 +1,105 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "What is the name of this American professional wrestler, who is well known for his time with the World Wrestling Federation, under the name Crush and with the Group The Disciples of Apocalypse? ",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out the real name of the professional wrestler who was known as Crush in the World Wrestling Federation and was also part of The Disciples of Apocalypse group.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Crush professional wrestler World Wrestling Federation Disciples of Apocalypse\"}\n\n[[ ## observation_0 ## ]]\n[1] The Disciples of Apocalypse | The Disciples of Apocalypse (DOA) were a biker-themed professional wrestling stable in the World Wrestling Federation in the late 1990s. The group came together from the firing of Crush and Savio Vega from the Nation of Domination stable in June 1997 and consisted of four main members: Crush, Chainz, Skull and 8-Ball.\n[2] D-Generation X | D-Generation X (also known as DX) was a professional wrestling stable (and later tag team) best known for their appearances in the World Wrestling Federation\/Entertainment\/WWE. The group originated in the midst of the WWF's \"Attitude Era\" in 1997 as a foil to another prominent faction, The Hart Foundation, LOD 2000, and The Disciples of Apocalypse (after DX's debut on March 30), Mankind, Chainsaw Charlie, The Rock\/The Nation and Stone Cold Steve Austin,\n[3] Demolition (professional wrestling) | Demolition is a professional wrestling tag team most prominent during the late 1980s and early 1990s in the World Wrestling Federation (WWF) made up of Ax (Bill Eadie), Smash (Barry Darsow), and later Crush (Brian Adams). In the WWF, Demolition were three-time WWF World Tag Team Champions, and hold the record for the most combined days as reigning champions with that championship. Their first reign with the WWF World Tag Team Championship is the second longest reign with any tag team championship in WWE history (behind The New Day's reign with the WWE (Raw) Tag Team Championship) and is the longest reign on record for that specific championship (which has been defunct since 2010). Beginning in 2007, Ax and Smash reunited for several appearances at various independent shows and legends conventions.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Crush was part of The Disciples of Apocalypse and was also a member of Demolition in the World Wrestling Federation. To find out Crush's real name, I need to search for more information about Crush.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Crush professional wrestler real name\"}\n\n[[ ## observation_1 ## ]]\n[1] Brian Adams (wrestler) | Brian Keith Adams (April 14, 1964 \u2013 August 13, 2007) was an American professional wrestler. Adams is well known for his time with the World Wrestling Federation (WWF), under the name Crush, and for World Championship Wrestling (WCW) under his real name Brian Adams. Trained in Japan by Antonio Inoki, he was a two-time WCW World Tag Team Champion and a one-time WWF Tag Team Champion and a one-time AJPW World Tag Team Champion, among other titles and accomplishments. In 2002, he briefly tried a career in boxing until he was forced to retire due to back and shoulder injuries. He died of accidental respiratory failure from a combination of buprenorphine, carisoprodol, chlordiazepoxide and alprazolam.\n[2] The Crusher (wrestler) | Reginald Lisowski (July 11, 1926 \u2013 October 22, 2005) was an American professional wrestler, better known by his ring name, The Crusher (sometimes Crusher Lisowski to distinguish him from other Crushers, such as Crusher Blackwell). In his obituary, The Washington Post described him as \"a professional wrestler whose blue-collar bona fides made him beloved among working class fans for 40 years\".\n[3] Jerry Blackwell | Jerry Blackwell (April 26, 1949 \u2013 January 22, 1995) was an American professional wrestler, better known by his ring name \"Crusher\" Jerry Blackwell. Blackwell competed in the 1979 World's Strongest Man contest, but withdrew early in the competition due to an injury. He was a main event star in the American Wrestling Association where he feuded with Mad Dog Vachon, Hulk Hogan, The Crusher, Bruiser Brody and Sheik Adnan Al-Kaissey.",
+        "next_thought": "From the search results, I found that Crush's real name is Brian Adams. He is well known for his time with the World Wrestling Federation and World Championship Wrestling.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "The name of the American professional wrestler who is well known for his time with the World Wrestling Federation under the name Crush and with the Group The Disciples of Apocalypse is Brian Adams."
+          }
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Are both Jackson Hole Airport and Coastal Carolina Regional Airport located in North Carolina?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out the locations of Jackson Hole Airport and Coastal Carolina Regional Airport.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Jackson Hole Airport location\"}\n\n[[ ## observation_0 ## ]]\n[1] Jackson Hole Airport | Jackson Hole Airport (IATA: JAC, ICAO: KJAC, FAA LID: JAC) is a United States public airport located seven miles (11 km) north of Jackson, in Teton County, Wyoming. In 2015, it was the busiest airport in Wyoming by passenger traffic with 313,151 passengers. During peak seasons, Jackson Hole has nonstop airline service from 13 destinations throughout the United States including New York\u2013JFK, Chicago\u2013O'Hare, and Los Angeles International Airport. During shoulder seasons, airline service is limited to the nearby hubs of Salt Lake City and Denver. The airport is served year-round by Delta Connection and United Express and seasonally by Delta (mainline), United (mainline), Frontier Airlines and American.\n[2] Jackson Municipal Airport (Minnesota) | Jackson Municipal Airport (IATA: MJQ, ICAO: KMJQ, FAA LID: MJQ) is a city owned public use airport located two nautical miles (2.3 mi, 3.7 km) north of the central business district of Jackson, a city in Jackson County, Minnesota, United States. It is included in the FAA's National Plan of Integrated Airport Systems for 2011\u20132015, which categorized it as a \"general aviation\" facility.\n[3] Greene County\u2013Lewis A. Jackson Regional Airport | Greene County\u2013Lewis A. Jackson Regional Airport (FAA LID: I19) is a public use airport located in Xenia, a city in Greene County, Ohio, United States. It is 10 nautical miles (19 km) east of the central business district of the city of Dayton. The Airport Manager is Dave Kushner.",
+        "next_thought": "From the search results, I found that Jackson Hole Airport is located in Wyoming, not North Carolina. Now I need to find out the location of Coastal Carolina Regional Airport.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Coastal Carolina Regional Airport location"
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "What is the name of this American professional wrestler, who is well known for his time with the World Wrestling Federation, under the name Crush and with the Group The Disciples of Apocalypse? ",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out the real name of the professional wrestler who was known as Crush in the World Wrestling Federation and was also part of The Disciples of Apocalypse group.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Crush professional wrestler World Wrestling Federation Disciples of Apocalypse\"}\n\n[[ ## observation_0 ## ]]\n[1] The Disciples of Apocalypse | The Disciples of Apocalypse (DOA) were a biker-themed professional wrestling stable in the World Wrestling Federation in the late 1990s. The group came together from the firing of Crush and Savio Vega from the Nation of Domination stable in June 1997 and consisted of four main members: Crush, Chainz, Skull and 8-Ball.\n[2] D-Generation X | D-Generation X (also known as DX) was a professional wrestling stable (and later tag team) best known for their appearances in the World Wrestling Federation\/Entertainment\/WWE. The group originated in the midst of the WWF's \"Attitude Era\" in 1997 as a foil to another prominent faction, The Hart Foundation, LOD 2000, and The Disciples of Apocalypse (after DX's debut on March 30), Mankind, Chainsaw Charlie, The Rock\/The Nation and Stone Cold Steve Austin,\n[3] Demolition (professional wrestling) | Demolition is a professional wrestling tag team most prominent during the late 1980s and early 1990s in the World Wrestling Federation (WWF) made up of Ax (Bill Eadie), Smash (Barry Darsow), and later Crush (Brian Adams). In the WWF, Demolition were three-time WWF World Tag Team Champions, and hold the record for the most combined days as reigning champions with that championship. Their first reign with the WWF World Tag Team Championship is the second longest reign with any tag team championship in WWE history (behind The New Day's reign with the WWE (Raw) Tag Team Championship) and is the longest reign on record for that specific championship (which has been defunct since 2010). Beginning in 2007, Ax and Smash reunited for several appearances at various independent shows and legends conventions.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Crush was part of The Disciples of Apocalypse and was also a member of Demolition in the World Wrestling Federation. To find out Crush's real name, I need to search for more information about Crush.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Crush professional wrestler real name\"}\n\n[[ ## observation_1 ## ]]\n[1] Brian Adams (wrestler) | Brian Keith Adams (April 14, 1964 \u2013 August 13, 2007) was an American professional wrestler. Adams is well known for his time with the World Wrestling Federation (WWF), under the name Crush, and for World Championship Wrestling (WCW) under his real name Brian Adams. Trained in Japan by Antonio Inoki, he was a two-time WCW World Tag Team Champion and a one-time WWF Tag Team Champion and a one-time AJPW World Tag Team Champion, among other titles and accomplishments. In 2002, he briefly tried a career in boxing until he was forced to retire due to back and shoulder injuries. He died of accidental respiratory failure from a combination of buprenorphine, carisoprodol, chlordiazepoxide and alprazolam.\n[2] The Crusher (wrestler) | Reginald Lisowski (July 11, 1926 \u2013 October 22, 2005) was an American professional wrestler, better known by his ring name, The Crusher (sometimes Crusher Lisowski to distinguish him from other Crushers, such as Crusher Blackwell). In his obituary, The Washington Post described him as \"a professional wrestler whose blue-collar bona fides made him beloved among working class fans for 40 years\".\n[3] Jerry Blackwell | Jerry Blackwell (April 26, 1949 \u2013 January 22, 1995) was an American professional wrestler, better known by his ring name \"Crusher\" Jerry Blackwell. Blackwell competed in the 1979 World's Strongest Man contest, but withdrew early in the competition due to an injury. He was a main event star in the American Wrestling Association where he feuded with Mad Dog Vachon, Hulk Hogan, The Crusher, Bruiser Brody and Sheik Adnan Al-Kaissey.\n\n[[ ## thought_2 ## ]]\nFrom the search results, I found that Crush's real name is Brian Adams. He is well known for his time with the World Wrestling Federation and World Championship Wrestling.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"The name of the American professional wrestler who is well known for his time with the World Wrestling Federation under the name Crush and with the Group The Disciples of Apocalypse is Brian Adams.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The search results indicate that Crush was a member of The Disciples of Apocalypse and was also part of Demolition in the World Wrestling Federation. Further searching for Crush's real name revealed that he is Brian Adams.",
+        "answer": "Brian Adams"
+      },
+      {
+        "augmented": true,
+        "question": "Are both Jackson Hole Airport and Coastal Carolina Regional Airport located in North Carolina?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out the locations of Jackson Hole Airport and Coastal Carolina Regional Airport.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Jackson Hole Airport location\"}\n\n[[ ## observation_0 ## ]]\n[1] Jackson Hole Airport | Jackson Hole Airport (IATA: JAC, ICAO: KJAC, FAA LID: JAC) is a United States public airport located seven miles (11 km) north of Jackson, in Teton County, Wyoming. In 2015, it was the busiest airport in Wyoming by passenger traffic with 313,151 passengers. During peak seasons, Jackson Hole has nonstop airline service from 13 destinations throughout the United States including New York\u2013JFK, Chicago\u2013O'Hare, and Los Angeles International Airport. During shoulder seasons, airline service is limited to the nearby hubs of Salt Lake City and Denver. The airport is served year-round by Delta Connection and United Express and seasonally by Delta (mainline), United (mainline), Frontier Airlines and American.\n[2] Jackson Municipal Airport (Minnesota) | Jackson Municipal Airport (IATA: MJQ, ICAO: KMJQ, FAA LID: MJQ) is a city owned public use airport located two nautical miles (2.3 mi, 3.7 km) north of the central business district of Jackson, a city in Jackson County, Minnesota, United States. It is included in the FAA's National Plan of Integrated Airport Systems for 2011\u20132015, which categorized it as a \"general aviation\" facility.\n[3] Greene County\u2013Lewis A. Jackson Regional Airport | Greene County\u2013Lewis A. Jackson Regional Airport (FAA LID: I19) is a public use airport located in Xenia, a city in Greene County, Ohio, United States. It is 10 nautical miles (19 km) east of the central business district of the city of Dayton. The Airport Manager is Dave Kushner.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Jackson Hole Airport is located in Wyoming, not North Carolina. Now I need to find out the location of Coastal Carolina Regional Airport.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Coastal Carolina Regional Airport location\"}\n\n[[ ## observation_1 ## ]]\n[1] Coastal Carolina Regional Airport | Coastal Carolina Regional Airport (IATA: EWN, ICAO: KEWN, FAA LID: EWN) is a public airport located three miles (5 km) southeast of central business district of New Bern, a town in Craven County, North Carolina, United States.\n[2] Western Carolina Regional Airport | Western Carolina Regional Airport (ICAO: KRHP, FAA LID: RHP) is a county-owned public-use airport located two nautical miles (3.7 km) west of the central business district of Andrews, in Cherokee County, North Carolina, United States. It was formerly known as Andrews-Murphy Airport.\n[3] Mid-Carolina Regional Airport | Mid-Carolina Regional Airport (IATA: SRW, ICAO: KRUQ, FAA LID: RUQ) (formerly Rowan County Airport) is a public airport located three miles (5 km) southwest of the central business district (CBD) of Salisbury, a city in Rowan County, North Carolina, USA. This general aviation airport covers 400 acre and has one runway.\n\n[[ ## thought_2 ## ]]\nI have found that Jackson Hole Airport is located in Wyoming, not North Carolina. Coastal Carolina Regional Airport is located in North Carolina. Therefore, the answer to the question is no.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"No, Jackson Hole Airport is located in Wyoming, while Coastal Carolina Regional Airport is located in North Carolina.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Jackson Hole Airport is located in Wyoming, not North Carolina. Coastal Carolina Regional Airport is located in North Carolina. Therefore, both airports are not located in North Carolina.",
+        "answer": "No"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

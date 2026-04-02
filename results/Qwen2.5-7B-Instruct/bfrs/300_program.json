@@ -1,0 +1,114 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Do Kitelife and The American Conservative publish articles on similar topics?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out the topics that Kitelife and The American Conservative typically publish articles about.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"topics published by Kitelife and The American Conservative\"}\n\n[[ ## observation_0 ## ]]\n[1] Kitelife | KiteLife (KL) is an American magazine devoted to kites.\n[2] Christwire | Christwire is a satirical website that publishes blog-style articles intended to ridicule excesses of American Christian conservatives. Recurring topics include homosexuality, atheism, Hollywood, and other purported threats to American culture.\n[3] John Barresi | John Barresi (born ) is an American sport kite flier and designer, and has been the editor and owner of \"Kitelife\" magazine since late 2002, a role now shared with his wife Takako Barresi.\n\n[[ ## thought_1 ## ]]\nBased on the search results, Kitelife is a magazine about kites, and The American Conservative is not mentioned. I need to find out more about The American Conservative's topics.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"topics published by The American Conservative\"}\n\n[[ ## observation_1 ## ]]\n[1] The American Conservative | The American Conservative (TAC) is a bi-monthly journal of opinion published by the American Ideas Institute. It was founded in 2002 to advocate for what it holds to be the original conservative values of peace, community, and fiscal restraint, rather than the ideology of \"war, every man for himself, and endless deficits and debt\" that it believes was the result of the modern conservative movement. It is opposed to the \"left-wing ideologies that ran rampant in the 20th century and the right-wing, but not conservative, reaction that has only exacerbated the destruction wrought by the left.\"\n[2] The Conservative (1898-1902) | The Conservative was a weekly newspaper devoted to the discussion of political, economic, and sociological questions published in Nebraska City, Nebraska by Julius Sterling Morton.\n[3] Christwire | Christwire is a satirical website that publishes blog-style articles intended to ridicule excesses of American Christian conservatives. Recurring topics include homosexuality, atheism, Hollywood, and other purported threats to American culture.",
+        "next_thought": "The American Conservative publishes articles on political, economic, and sociological questions, while Kitelife focuses on kite-related topics. These topics are quite different.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      },
+      {
+        "augmented": true,
+        "question": "What Trust did the author of The Tale of Jemima Puddle-Duck leave her house to?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out who the author of The Tale of Jemima Puddle-Duck is and then find out which Trust she left her house to.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"author of The Tale of Jemima Puddle-Duck\"}\n\n[[ ## observation_0 ## ]]\n[1] The Tale of Jemima Puddle-Duck | The Tale of Jemima Puddle-Duck is a children's book written and illustrated by Beatrix Potter. It was first published by Frederick Warne & Co. in July 1908. Potter composed the book at Hill Top, a working farm in the Lake District she bought in 1905. Following the purchase, her works began to focus on country and village life, incorporating large casts of animal characters and sinister villains. \"Jemima Puddle-Duck\" was the first of her books set wholly at the farm with background illustrations based on the farm buildings and yard, and nearby locales.\n[2] Jemima J | Jemima J: A Novel About Ugly Ducklings and Swans is a 2000 novel by British author Jane Green.\n[3] Puddle Lane | Puddle Lane (or Tales from Puddle Lane) is a 1980s British pre-school children's television programme written by Rick Vanes with animated stories written by Sheila K. McCullagh, author of Tim and the Hidden People. A long series of books based on the stories was produced by Ladybird Books, also under the title Puddle Lane.",
+        "next_thought": "The author of The Tale of Jemima Puddle-Duck is Beatrix Potter. Now I need to find out which Trust she left her house to.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Beatrix Potter left her house to"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Codex Porphyrianus includes the only apocalyptic document in the New Testament that the name means what?",
+        "trajectory": "",
+        "answer": null
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Do Kitelife and The American Conservative publish articles on similar topics?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out the topics that Kitelife and The American Conservative typically publish articles about.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"topics published by Kitelife and The American Conservative\"}\n\n[[ ## observation_0 ## ]]\n[1] Kitelife | KiteLife (KL) is an American magazine devoted to kites.\n[2] Christwire | Christwire is a satirical website that publishes blog-style articles intended to ridicule excesses of American Christian conservatives. Recurring topics include homosexuality, atheism, Hollywood, and other purported threats to American culture.\n[3] John Barresi | John Barresi (born ) is an American sport kite flier and designer, and has been the editor and owner of \"Kitelife\" magazine since late 2002, a role now shared with his wife Takako Barresi.\n\n[[ ## thought_1 ## ]]\nBased on the search results, Kitelife is a magazine about kites, and The American Conservative is not mentioned. I need to find out more about The American Conservative's topics.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"topics published by The American Conservative\"}\n\n[[ ## observation_1 ## ]]\n[1] The American Conservative | The American Conservative (TAC) is a bi-monthly journal of opinion published by the American Ideas Institute. It was founded in 2002 to advocate for what it holds to be the original conservative values of peace, community, and fiscal restraint, rather than the ideology of \"war, every man for himself, and endless deficits and debt\" that it believes was the result of the modern conservative movement. It is opposed to the \"left-wing ideologies that ran rampant in the 20th century and the right-wing, but not conservative, reaction that has only exacerbated the destruction wrought by the left.\"\n[2] The Conservative (1898-1902) | The Conservative was a weekly newspaper devoted to the discussion of political, economic, and sociological questions published in Nebraska City, Nebraska by Julius Sterling Morton.\n[3] Christwire | Christwire is a satirical website that publishes blog-style articles intended to ridicule excesses of American Christian conservatives. Recurring topics include homosexuality, atheism, Hollywood, and other purported threats to American culture.\n\n[[ ## thought_2 ## ]]\nThe American Conservative publishes articles on political, economic, and sociological questions, while Kitelife focuses on kite-related topics. These topics are quite different.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I searched for the topics published by Kitelife and The American Conservative. Kitelife is a magazine about kites, while The American Conservative publishes articles on political, economic, and sociological questions.",
+        "answer": "No"
+      },
+      {
+        "augmented": true,
+        "question": "What Trust did the author of The Tale of Jemima Puddle-Duck leave her house to?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out who the author of The Tale of Jemima Puddle-Duck is and then find out which Trust she left her house to.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"author of The Tale of Jemima Puddle-Duck\"}\n\n[[ ## observation_0 ## ]]\n[1] The Tale of Jemima Puddle-Duck | The Tale of Jemima Puddle-Duck is a children's book written and illustrated by Beatrix Potter. It was first published by Frederick Warne & Co. in July 1908. Potter composed the book at Hill Top, a working farm in the Lake District she bought in 1905. Following the purchase, her works began to focus on country and village life, incorporating large casts of animal characters and sinister villains. \"Jemima Puddle-Duck\" was the first of her books set wholly at the farm with background illustrations based on the farm buildings and yard, and nearby locales.\n[2] Jemima J | Jemima J: A Novel About Ugly Ducklings and Swans is a 2000 novel by British author Jane Green.\n[3] Puddle Lane | Puddle Lane (or Tales from Puddle Lane) is a 1980s British pre-school children's television programme written by Rick Vanes with animated stories written by Sheila K. McCullagh, author of Tim and the Hidden People. A long series of books based on the stories was produced by Ladybird Books, also under the title Puddle Lane.\n\n[[ ## thought_1 ## ]]\nThe author of The Tale of Jemima Puddle-Duck is Beatrix Potter. Now I need to find out which Trust she left her house to.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Beatrix Potter left her house to\"}\n\n[[ ## observation_1 ## ]]\n[1] Hill Top, Cumbria | Hill Top is a 17th-century house in Near Sawrey near Hawkshead, in the English county of Cumbria. It is an example of Lakeland vernacular architecture with random stone walls and slate roof. The house was once the home of children's author and illustrator Beatrix Potter who left it to the National Trust. It is a Grade II* listed building. It is open to the public as a writer's house museum, shown as Beatrix Potter herself would have known it. The address is Hill Top, Near Sawrey, Hawkshead, Ambleside, LA22 0LF.\n[2] Dalguise | Dalguise (Scottish Gaelic D\u00e0il Ghiuthais) is a settlement in Perth and Kinross, Scotland. It is situated on the western side of the River Tay on the B898 road, 8 km north of Dunkeld. Located there is Dalguise House, a place where Beatrix Potter stayed in her childhood as a summer visitor, and which acted as inspiration for some of her later stories. Dalguise House is now the location of an outdoor education centre. Dalguise PGL.\n[3] Beatrix Potter Gallery | The Beatrix Potter Gallery is a gallery run by the National Trust and situated in a 17th-century stone-built house in Hawkshead, Cumbria, England. It is dedicated to presenting original book illustrations by Beatrix Potter.\n\n[[ ## thought_2 ## ]]\nFrom the search results, it is clear that Beatrix Potter left her house, Hill Top, to the National Trust.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": \"{'answer': 'The National Trust'}\"}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I first identified the author of The Tale of Jemima Puddle-Duck, which is Beatrix Potter. Then, I searched for information on which Trust she left her house to, and found that she left her house, Hill Top, to the National Trust.",
+        "answer": "The National Trust"
+      },
+      {
+        "augmented": true,
+        "question": "Codex Porphyrianus includes the only apocalyptic document in the New Testament that the name means what?",
+        "trajectory": "",
+        "reasoning": "The question is asking about the Codex Porphyrianus and the only apocalyptic document in the New Testament that has a name meaning something specific. The Codex Porphyrianus is a 4th-century Greek uncial manuscript of the New Testament. The apocalyptic document in question is the Book of Revelation, which is the only apocalyptic book in the New Testament. The name \"Revelation\" in Greek is \"Apokalypsis,\" which means \"unveiling\" or \"revelation.\"",
+        "answer": "unveiling"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

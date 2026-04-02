@@ -1,0 +1,122 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "What year was the novel written which the 1931 film Huckleberry Finn was based upon?",
+        "trajectory": "",
+        "next_thought": "To answer this question, I need to find out which novel the 1931 film Huckleberry Finn was based on and then find the year that novel was written.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "1931 film Huckleberry Finn based on novel"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Who developed the 2015 video game Rhianna Pratchett worked on?",
+        "trajectory": "",
+        "next_thought": "To answer this question, I first need to find out which game Rhianna Pratchett worked on in 2015.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Rhianna Pratchett 2015 game"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "In which province is the county where The 43rd Biathlon World Championships were held ?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to find out where the 43rd Biathlon World Championships were held.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"43rd Biathlon World Championships location\"}\n\n[[ ## observation_0 ## ]]\n[1] Biathlon World Championships 2009 | The 43rd Biathlon World Championships were held in Pyeongchang, South Korea from February 13 to February 22, 2009. It was the first time that the Biathlon World Championships were held in Asia (outside of Asian Russia).\n[2] Biathlon World Championships 2008 | The 42nd Biathlon World Championships were held in \u00d6stersund in J\u00e4mtland in central Sweden from February 8 to February 17, 2008. It was the second time \u00d6stersund was hosting the Biathlon World Championships, the first being in 1970. It was also 50 years after the first Biathlon World Championships, which were held 1958 in Saalfelden, Austria.\n[3] Biathlon World Championships 2012 | The 45th Biathlon World Championships were held in Ruhpolding, Germany, from 1 to 11 March 2012.\n\n[[ ## thought_1 ## ]]\nThe 43rd Biathlon World Championships were held in Pyeongchang, South Korea. Now I need to find out which province Pyeongchang is located in.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Pyeongchang province\"}\n\n[[ ## observation_1 ## ]]\n[1] Pyeongchang County | Pyeongchang (] ; in full, \"Pyeongchang-gun\" ] ; ) is a county in Gangwon province of South Korea located in the Taebaek Mountains region. It is home to several Buddhist temples, including Woljeongsa. It is approximately 180 km east of Seoul, the capital of South Korea. Pyeongchang will host the 2018 Winter Olympics and the 2018 Winter Paralympics.\n[2] Pyeongchang-eup | Pyeongchang-eup (\ud3c9\ucc3d\uc74d) is a town in South Korea and the county seat of the county of Pyeongchang. The town has a surface area of 116.31 km2 and a population of . It is located on the left bank of the river Pyeongchanggang.\n[3] Pyongan Province | Pyeong'an Province (] , Hangul: \ud3c9\uc548\ub3c4 ; Hanja: \u5e73\u5b89\u9053 ) was one of Eight Provinces of Korea during the Joseon. Pyeong'an was located in the northwest of Korea. The provincial capital was Pyeongyang (now Pyongyang, North Korea).",
+        "next_thought": "From the search results, Pyeongchang is a county in Gangwon province of South Korea. Therefore, the answer to the question is Gangwon province.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Gangwon province"
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "What year was the novel written which the 1931 film Huckleberry Finn was based upon?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which novel the 1931 film Huckleberry Finn was based on and then find the year that novel was written.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"1931 film Huckleberry Finn based on novel\"}\n\n[[ ## observation_0 ## ]]\n[1] Huckleberry Finn (1931 film) | Huckleberry Finn (1931) is an American Pre-Code comedy film directed by Norman Taurog and starring Jackie Coogan as Tom Sawyer and Junior Durkin as Huckleberry Finn. The picture was based upon the novel \"The Adventures of Huckleberry Finn\" by Mark Twain.\n[2] The Adventures of Huckleberry Finn (1960 film) | The Adventures of Huckleberry Finn is a 1960 American film directed by Michael Curtiz. Based on the Mark Twain novel of the same name, it was the third sound film version of the story and the second filmed by Metro-Goldwyn-Mayer. The film was the first adaptation of \"Huckleberry Finn\" to be filmed in CinemaScope and Technicolor. It starred Eddie Hodges as Huck and former boxer Archie Moore as the runaway slave, Jim. Tony Randall also appeared in the film (and received top billing), and Buster Keaton had a bit role in what proved to be his final film for his old studio, Metro-Goldwyn-Mayer. Neville Brand portrayed Huck's alcoholic father, Pap Finn.\n[3] Huckleberry Finn (1920 film) | Huckleberry Finn is a surviving American silent dramatic rural film from 1920, based on Mark Twain's classic \"Adventures of Huckleberry Finn\". It was produced by Famous Players-Lasky and distributed through Paramount Pictures. William Desmond Taylor directed \"Huckleberry Finn\", as he had the 1917 film version of \"Tom Sawyer\", using a scenario written by Julia Crawford Ivers, who also had been the writer for \"Tom Sawyer\".\n\n[[ ## thought_1 ## ]]\nThe 1931 film Huckleberry Finn was based on the novel \"The Adventures of Huckleberry Finn\" by Mark Twain. Now I need to find out the year this novel was written.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"year The Adventures of Huckleberry Finn written\"}\n\n[[ ## observation_1 ## ]]\n[1] Adventures of Huckleberry Finn | Adventures of Huckleberry Finn (or, in more recent editions, The Adventures of Huckleberry Finn) is a novel by Mark Twain, first published in the United Kingdom in December 1884 and in the United States in February 1885. Commonly named among the Great American Novels, the work is among the first in major American literature to be written throughout in vernacular English, characterized by local color regionalism. It is told in the first person by Huckleberry \"Huck\" Finn, a friend of Tom Sawyer the narrator of two other Twain novels (\"Tom Sawyer Abroad\" and \"Tom Sawyer, Detective\"). It is a direct sequel to \"The Adventures of Tom Sawyer\".\n[2] The Adventures of Huckleberry Finn (1939 film) | The Adventures of Huckleberry Finn is a 1939 [Metro-Goldwyn-Mayer film adaptation of Mark Twain's novel of the same name, starring Mickey Rooney in the title role. The supporting cast features Walter Connolly, William Frawley and Rex Ingram. It was remade by MGM in 1960. A musical version was released in 1974.\n[3] The Adventures of Huckleberry Finn (1960 film) | The Adventures of Huckleberry Finn is a 1960 American film directed by Michael Curtiz. Based on the Mark Twain novel of the same name, it was the third sound film version of the story and the second filmed by Metro-Goldwyn-Mayer. The film was the first adaptation of \"Huckleberry Finn\" to be filmed in CinemaScope and Technicolor. It starred Eddie Hodges as Huck and former boxer Archie Moore as the runaway slave, Jim. Tony Randall also appeared in the film (and received top billing), and Buster Keaton had a bit role in what proved to be his final film for his old studio, Metro-Goldwyn-Mayer. Neville Brand portrayed Huck's alcoholic father, Pap Finn.\n\n[[ ## thought_2 ## ]]\nThe novel \"The Adventures of Huckleberry Finn\" was first published in the United Kingdom in December 1884 and in the United States in February 1885. This is the year the novel was written and published.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"The novel 'The Adventures of Huckleberry Finn' was written in 1884.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The 1931 film Huckleberry Finn was based on the novel \"The Adventures of Huckleberry Finn\" by Mark Twain. The novel was first published in the United Kingdom in December 1884 and in the United States in February 1885. Therefore, the novel was written in 1884.",
+        "answer": "1884"
+      },
+      {
+        "augmented": true,
+        "question": "Who developed the 2015 video game Rhianna Pratchett worked on?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to find out which game Rhianna Pratchett worked on in 2015.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Rhianna Pratchett 2015 game\"}\n\n[[ ## observation_0 ## ]]\n[1] Rhianna Pratchett | Rhianna Pratchett (born 30 December 1976) is an English video game writer, narrative designer, and journalist. She has worked on titles such as \"Tomb Raider\" (2013) and its follow up, \"Rise of the Tomb Raider\" (2015), \"Heavenly Sword\", \"Overlord\", and \"Mirror's Edge\".\n[2] Rhian Wilkinson | Rhian Emilie Wilkinson (born May 12, 1982) is a Canadian professional soccer defender and former striker who last played in 2015 for Portland Thorns FC in the National Women's Soccer League. She was also a member of the Canadian national team, with whom she won an Olympic bronze medal at London 2012. She has played as a forward and midfielder, but is primarily an offensively-minded right fullback who carries the ball forward and makes crosses in the attacking zone.\n[3] The Shepherd's Crown | The Shepherd's Crown is a comic fantasy novel, the last book written by Terry Pratchett before his death in March 2015. It is the fifth novel in the \"Discworld\" series to be based on the character of Tiffany Aching, and was published in the UK on 27 August 2015 by Random House publishers, and in the United States on 1 September 2015.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it seems that Rhianna Pratchett worked on \"Rise of the Tomb Raider\" in 2015. Now I need to find out who developed this game.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Rise of the Tomb Raider developers\"}\n\n[[ ## observation_1 ## ]]\n[1] Rise of the Tomb Raider | Rise of the Tomb Raider is an action-adventure video game developed by Crystal Dynamics and published by Square Enix. It is the sequel to the 2013 video game \"Tomb Raider\", a reboot of the Tomb Raider franchise. It was released for Xbox One and Xbox 360 in November 2015 and for Microsoft Windows in January 2016. A special edition of the game, titled Rise of the Tomb Raider: 20 Year Celebration, was released worldwide for PlayStation 4 in October 2016.\n[2] Rhianna Pratchett | Rhianna Pratchett (born 30 December 1976) is an English video game writer, narrative designer, and journalist. She has worked on titles such as \"Tomb Raider\" (2013) and its follow up, \"Rise of the Tomb Raider\" (2015), \"Heavenly Sword\", \"Overlord\", and \"Mirror's Edge\".\n[3] Tomb Raider: Underworld | Tomb Raider: Underworld is an action-adventure video game, the eighth instalment of the \"Tomb Raider\" series, following character Lara Croft. The story continues from the events in \"\" as a direct sequel, but also addresses unexplained plot elements by association with \"\". \"Underworld\" was released by Eidos Interactive for the Xbox 360, PlayStation 3 and Microsoft Windows, in North America on 18 November 2008, Europe on 21 November 2008 and Australia on 5 December 2008. On 14 June 2012, \"Underworld\" was released on the Mac OS X by Feral Interactive. It is the third game in the series to be developed by Crystal Dynamics and is also the first \"Tomb Raider\" game to be released on the PlayStation 3. Developers implemented new features into the gameplay, such as the dual-target feature and an upgraded inventory system, using an Active Sonar map and a multi-purpose grappling hook. The game also features a hint system and a new melee combat system where Lara has the ability to battle her opponents using kicks and grapple pulls. Downloadable content was also released exclusively for the Xbox 360, where the player takes control of Lara and her doppelg\u00e4nger in two new chapters.\n\n[[ ## thought_2 ## ]]\nThe search results indicate that Crystal Dynamics developed \"Rise of the Tomb Raider\". Now I can conclude the answer.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Crystal Dynamics developed the 2015 video game Rhianna Pratchett worked on, which is 'Rise of the Tomb Raider'.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Rhianna Pratchett worked on \"Rise of the Tomb Raider\" in 2015. The game was developed by Crystal Dynamics.",
+        "answer": "Crystal Dynamics"
+      },
+      {
+        "augmented": true,
+        "question": "In which province is the county where The 43rd Biathlon World Championships were held ?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to find out where the 43rd Biathlon World Championships were held.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"43rd Biathlon World Championships location\"}\n\n[[ ## observation_0 ## ]]\n[1] Biathlon World Championships 2009 | The 43rd Biathlon World Championships were held in Pyeongchang, South Korea from February 13 to February 22, 2009. It was the first time that the Biathlon World Championships were held in Asia (outside of Asian Russia).\n[2] Biathlon World Championships 2008 | The 42nd Biathlon World Championships were held in \u00d6stersund in J\u00e4mtland in central Sweden from February 8 to February 17, 2008. It was the second time \u00d6stersund was hosting the Biathlon World Championships, the first being in 1970. It was also 50 years after the first Biathlon World Championships, which were held 1958 in Saalfelden, Austria.\n[3] Biathlon World Championships 2012 | The 45th Biathlon World Championships were held in Ruhpolding, Germany, from 1 to 11 March 2012.\n\n[[ ## thought_1 ## ]]\nThe 43rd Biathlon World Championships were held in Pyeongchang, South Korea. Now I need to find out which province Pyeongchang is located in.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Pyeongchang province\"}\n\n[[ ## observation_1 ## ]]\n[1] Pyeongchang County | Pyeongchang (] ; in full, \"Pyeongchang-gun\" ] ; ) is a county in Gangwon province of South Korea located in the Taebaek Mountains region. It is home to several Buddhist temples, including Woljeongsa. It is approximately 180 km east of Seoul, the capital of South Korea. Pyeongchang will host the 2018 Winter Olympics and the 2018 Winter Paralympics.\n[2] Pyeongchang-eup | Pyeongchang-eup (\ud3c9\ucc3d\uc74d) is a town in South Korea and the county seat of the county of Pyeongchang. The town has a surface area of 116.31 km2 and a population of . It is located on the left bank of the river Pyeongchanggang.\n[3] Pyongan Province | Pyeong'an Province (] , Hangul: \ud3c9\uc548\ub3c4 ; Hanja: \u5e73\u5b89\u9053 ) was one of Eight Provinces of Korea during the Joseon. Pyeong'an was located in the northwest of Korea. The provincial capital was Pyeongyang (now Pyongyang, North Korea).\n\n[[ ## thought_2 ## ]]\nFrom the search results, Pyeongchang is a county in Gangwon province of South Korea. Therefore, the answer to the question is Gangwon province.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Gangwon province\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The 43rd Biathlon World Championships were held in Pyeongchang, South Korea. Pyeongchang is a county located in Gangwon province. Therefore, the province where the county that hosted the 43rd Biathlon World Championships is located is Gangwon province.",
+        "answer": "Gangwon province"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

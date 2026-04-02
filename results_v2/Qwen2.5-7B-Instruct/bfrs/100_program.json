@@ -1,0 +1,101 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Do John Lanchester and Paul Val\u00e9ry have the same nationality ?",
+        "trajectory": "",
+        "answer": null
+      },
+      {
+        "augmented": true,
+        "question": "EqualityMaine was founded after the death that took place in what Maine city?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the city in Maine where the death took place that led to the founding of EqualityMaine.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"founding of EqualityMaine and related deaths in Maine cities\"}\n\n[[ ## observation_0 ## ]]\n[1] EqualityMaine | EqualityMaine (formerly the Maine Lesbian\/Gay Political Alliance) is a political advocacy organization in Maine, United States. Founded in 1984 after the murder of Charlie Howard, it is the oldest and largest lesbian, gay, bisexual and transgender (LGBT) organization in the state. In 2008, they were a primary opponent of an attempt to revoke an anti-discrimination law in Maine. In 2009, EqualityMaine was one of the main supporters of a push to recognize same-sex marriage in Maine.\n[2] Linda Smith Dyer | Linda Smith Dyer (August 6, 1948 \u2013 September 27, 2001) was an American lawyer, lobbyist, and women's rights activist. After a two-decade legal career, she entered public service as deputy commissioner of the Maine Department of Agriculture. She co-founded the Maine Women's Lobby and was active in the effort to ratify the Equal Rights Amendment in Maine. A member on numerous boards and committees, she was a past president of the Maine State Bar Association and the Family Planning Association of Maine. She was inducted into the Maine Women's Hall of Fame in 2001, a few months before her death.\n[3] Sharon Barker | Sharon E. Barker (born 1949) is a Canadian-American women's rights activist, women's health advocate, and feminist. She is the founding director of the Women's Resource Center at the University of Maine and one of the founders and first president of the Mabel Sine Wadsworth Women's Health Center in Bangor. For over 30 years she has advocated for women and girls in the areas of health care, gender equality, sexual assault, and reproductive rights. She was inducted into the Maine Women's Hall of Fame in 2009.\n\n[[ ## thought_1 ## ]]\nThe founding of EqualityMaine was after the murder of Charlie Howard. I need to find the city where Charlie Howard died.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Charlie Howard murder location in Maine\"}\n\n[[ ## observation_1 ## ]]\n[1] Charlie Howard (murder victim) | Charles O. Howard (January 31, 1961 \u2013 July 7, 1984) was an American murder victim in Bangor, Maine in 1984. As Howard and a male companion, Roy Ogden, were walking down the street, three teenagers, Shawn I. Mabry, age 16, James Francis Baines, age 15, and Daniel Ness, age 17, harassed and assaulted Howard for being gay. The youths chased the pair, yelling homophobic epithets, until they caught Howard and threw him over the State Street Bridge into the Kenduskeag Stream, despite his pleas that he could not swim. He drowned, but his friend escaped and pulled a fire alarm. Charlie Howard's body was found by rescue workers several hours later.\n[2] EqualityMaine | EqualityMaine (formerly the Maine Lesbian\/Gay Political Alliance) is a political advocacy organization in Maine, United States. Founded in 1984 after the murder of Charlie Howard, it is the oldest and largest lesbian, gay, bisexual and transgender (LGBT) organization in the state. In 2008, they were a primary opponent of an attempt to revoke an anti-discrimination law in Maine. In 2009, EqualityMaine was one of the main supporters of a push to recognize same-sex marriage in Maine.\n[3] Charles P. Nelson (congressman) | Charles P. \"Charlie\" Nelson (July 2, 1907 \u2013 June 8, 1962) was an American politician and a member of the US House of Representatives from Maine.",
+        "next_thought": "The murder of Charlie Howard took place in Bangor, Maine. Therefore, EqualityMaine was founded in Bangor, Maine after his death.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Bangor"
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Do John Lanchester and Paul Val\u00e9ry have the same nationality ?",
+        "trajectory": "",
+        "reasoning": "To determine if John Lanchester and Paul Val\u00e9ry have the same nationality, I need to find out the nationality of each author. I will search Wikipedia for information on their nationalities.\n\n1. John Lanchester is a British novelist and journalist.\n2. Paul Val\u00e9ry was a French poet, essayist, and philosopher.\n\nSince John Lanchester is British and Paul Val\u00e9ry is French, they do not have the same nationality.",
+        "answer": "No"
+      },
+      {
+        "augmented": true,
+        "question": "EqualityMaine was founded after the death that took place in what Maine city?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the city in Maine where the death took place that led to the founding of EqualityMaine.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"founding of EqualityMaine and related deaths in Maine cities\"}\n\n[[ ## observation_0 ## ]]\n[1] EqualityMaine | EqualityMaine (formerly the Maine Lesbian\/Gay Political Alliance) is a political advocacy organization in Maine, United States. Founded in 1984 after the murder of Charlie Howard, it is the oldest and largest lesbian, gay, bisexual and transgender (LGBT) organization in the state. In 2008, they were a primary opponent of an attempt to revoke an anti-discrimination law in Maine. In 2009, EqualityMaine was one of the main supporters of a push to recognize same-sex marriage in Maine.\n[2] Linda Smith Dyer | Linda Smith Dyer (August 6, 1948 \u2013 September 27, 2001) was an American lawyer, lobbyist, and women's rights activist. After a two-decade legal career, she entered public service as deputy commissioner of the Maine Department of Agriculture. She co-founded the Maine Women's Lobby and was active in the effort to ratify the Equal Rights Amendment in Maine. A member on numerous boards and committees, she was a past president of the Maine State Bar Association and the Family Planning Association of Maine. She was inducted into the Maine Women's Hall of Fame in 2001, a few months before her death.\n[3] Sharon Barker | Sharon E. Barker (born 1949) is a Canadian-American women's rights activist, women's health advocate, and feminist. She is the founding director of the Women's Resource Center at the University of Maine and one of the founders and first president of the Mabel Sine Wadsworth Women's Health Center in Bangor. For over 30 years she has advocated for women and girls in the areas of health care, gender equality, sexual assault, and reproductive rights. She was inducted into the Maine Women's Hall of Fame in 2009.\n\n[[ ## thought_1 ## ]]\nThe founding of EqualityMaine was after the murder of Charlie Howard. I need to find the city where Charlie Howard died.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Charlie Howard murder location in Maine\"}\n\n[[ ## observation_1 ## ]]\n[1] Charlie Howard (murder victim) | Charles O. Howard (January 31, 1961 \u2013 July 7, 1984) was an American murder victim in Bangor, Maine in 1984. As Howard and a male companion, Roy Ogden, were walking down the street, three teenagers, Shawn I. Mabry, age 16, James Francis Baines, age 15, and Daniel Ness, age 17, harassed and assaulted Howard for being gay. The youths chased the pair, yelling homophobic epithets, until they caught Howard and threw him over the State Street Bridge into the Kenduskeag Stream, despite his pleas that he could not swim. He drowned, but his friend escaped and pulled a fire alarm. Charlie Howard's body was found by rescue workers several hours later.\n[2] EqualityMaine | EqualityMaine (formerly the Maine Lesbian\/Gay Political Alliance) is a political advocacy organization in Maine, United States. Founded in 1984 after the murder of Charlie Howard, it is the oldest and largest lesbian, gay, bisexual and transgender (LGBT) organization in the state. In 2008, they were a primary opponent of an attempt to revoke an anti-discrimination law in Maine. In 2009, EqualityMaine was one of the main supporters of a push to recognize same-sex marriage in Maine.\n[3] Charles P. Nelson (congressman) | Charles P. \"Charlie\" Nelson (July 2, 1907 \u2013 June 8, 1962) was an American politician and a member of the US House of Representatives from Maine.\n\n[[ ## thought_2 ## ]]\nThe murder of Charlie Howard took place in Bangor, Maine. Therefore, EqualityMaine was founded in Bangor, Maine after his death.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Bangor\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Charlie Howard was murdered in 1984, and EqualityMaine was founded in 1984 after his death. The murder took place in Bangor, Maine, which is the city where EqualityMaine was founded.",
+        "answer": "Bangor"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

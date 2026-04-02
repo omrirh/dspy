@@ -1,0 +1,133 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Which 1968 Beatles' song, which is written by Paul McCartney but credited to the song partnership Lennon-McCarney, opens the double-disc album \"The Beatles\" and then seques into \"Dear Prudence\"?",
+        "trajectory": "",
+        "next_thought": "I need to find the 1968 Beatles' song that opens 'The Beatles' double-disc album, which is written by Paul McCartney but credited to Lennon-McCarney, and then seques into 'Dear Prudence'.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "1968 Beatles song written by Paul McCartney but credited to Lennon-McCarney, opens The Beatles album, and then seques into 'Dear Prudence'"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Cotton Mather was politically influential in what oldest defined region in the US?",
+        "trajectory": "[[ ## thought_0 ## ]]\nCotton Mather was politically influential in the oldest defined region in the US. I need to find out which region this is.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Cotton Mather politically influential oldest defined region in the US\"}\n\n[[ ## observation_0 ## ]]\n[1] Cotton Mather | Cotton Mather, FRS (February 12, 1663 \u2013 February 13, 1728; A.B. 1678, Harvard College; A.M. 1681, honorary doctorate 1710, University of Glasgow) was a socially and politically influential New England Puritan minister, prolific author, and pamphleteer. He left a scientific legacy due to his hybridization experiments and his promotion of inoculation for disease prevention, though he is most frequently remembered today for his vigorous support for the Salem witch trials. He was subsequently denied the Presidency of Harvard College which his father, Increase Mather, had held.\n[2] Cambridge Association | The Cambridge Association of Boston, Massachusetts, was the first formal association of Congregational ministers in America. It began when influential Boston area clergymen regularly met in the Harvard College library between 1690 and 1697. The minutes of their meetings shed important light on the oft-debated question of the extent to which the ministers supported the use of spectral evidence in witchcraft trials. Cotton Mather began the group in 1690 with a letter to Samuel Parris the minister in Salem village. Increase Mather's important essay \"Cases of Conscience\" was first presented to this group at a meeting on October 3, 1692.\n[3] John C. Mather (New York) | John Cotton Mather (November 30, 1813 Deposit, Delaware County, New York \u2013 August 13, 1882 Watertown, Jefferson County, New York) was an American politician. In 1853, he was the first person tried by the New York Court for the Trial of Impeachments.",
+        "next_thought": "The oldest defined region in the US that Cotton Mather was politically influential in is New England. I need to confirm this and provide a concise answer.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      },
+      {
+        "augmented": true,
+        "question": "Stratford-on-Avon is a constituency represented in what lower house of the Parliament of the United Kingdom, that meets in the Palace of Westminster?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which lower house of the Parliament of the United Kingdom meets in the Palace of Westminster and then determine if Stratford-on-Avon is a constituency in that house.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Stratford-on-Avon constituency Parliament of the United Kingdom lower house Palace of Westminster\"}\n\n[[ ## observation_0 ## ]]\n[1] Stratford-on-Avon (UK Parliament constituency) | Stratford-on-Avon is a constituency represented in the House of Commons of the UK Parliament since 2010 by Nadhim Zahawi, a Conservative.\n[2] Stratford West Ham (UK Parliament constituency) | Stratford (strictly the Stratford Division of West Ham) was a parliamentary constituency in the Borough of West Ham in the South-West of Essex (now East London), which returned one Member of Parliament (MP) to the House of Commons of the Parliament of the United Kingdom, elected by the first-past-the-post voting system.\n[3] Stratford by-election, 1963 | The Stratford by-election, 1963 was a by-election held on 15 August 1963 for the British House of Commons constituency of Stratford-on-Avon in Warwickshire.",
+        "next_thought": "From the search results, I can see that Stratford-on-Avon is a constituency in the House of Commons of the UK Parliament. The other results are not relevant to answering the question.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {}
+        }
+      },
+      {
+        "augmented": true,
+        "question": "In which American animated educational interactive children's television program,  created and executive produced by Chris Gifford and Valerie Walsh, did Harrison Chad have a role?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the American animated educational interactive children's television program where Harrison Chad had a role, which was created and executive produced by Chris Gifford and Valerie Walsh.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Harrison Chad role in American animated children's television program created by Chris Gifford and Valerie Walsh\"}\n\n[[ ## observation_0 ## ]]\n[1] Harrison Chad | Harrison Chad (born July 17, 1992, in Plainview, New York, U.S.) is an American actor and voice actor. His roles include young Tarzan in the film \"Tarzan 2\", Boots on \"Dora the Explorer\" (2000-2007) and \"Go, Diego, Go! \", the singing voice of Leo on \"Little Einsteins\" (2005-2009) and Cardigan from \"\". He also has performed in a number of live-action movies, such as the Comedy Central movie, \"Hebrew Hammer\" and the Showtime movie, \"Carry Me Home\".\n[2] Go, Diego, Go! | Go, Diego, Go! is an American animated educational interactive children's television program that originally aired on the Nickelodeon children's cable network in the United States and produced by Nickelodeon Animation Studio. Created and executive produced by Chris Gifford and Valerie Walsh, the series is a spin-off of \"Dora the Explorer\" and follows Dora's cousin Diego, an 8-year-old boy whose adventures frequently involve rescuing animals and protecting their environment.\n[3] Chad Webber | Chad Webber (born June, 1960) is an American graphic designer and former child actor noted for providing the voice of Charlie Brown in various \"Peanuts\" animation films during the early 1970s.",
+        "next_thought": "From the search results, I found that Harrison Chad had a role in 'Go, Diego, Go!', which is an American animated educational interactive children's television program created and executive produced by Chris Gifford and Valerie Walsh.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Which 1968 Beatles' song, which is written by Paul McCartney but credited to the song partnership Lennon-McCarney, opens the double-disc album \"The Beatles\" and then seques into \"Dear Prudence\"?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the 1968 Beatles' song that opens 'The Beatles' double-disc album, which is written by Paul McCartney but credited to Lennon-McCarney, and then seques into 'Dear Prudence'.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"1968 Beatles song written by Paul McCartney but credited to Lennon-McCarney, opens The Beatles album, and then seques into 'Dear Prudence'\"}\n\n[[ ## observation_0 ## ]]\n[1] Back in the U.S.S.R. | \"Back in the U.S.S.R.\" is a song by the Beatles. It is credited to the songwriting partnership Lennon\u2013McCartney, but written by Paul McCartney. The song opens the 1968 double-disc album \"The Beatles\" (also known as the \"White Album\"), and then segues into \"Dear Prudence\".\n[2] Glass Onion | \"Glass Onion\" is a song by the Beatles from their 1968 double-album \"The Beatles\" (also known as the \"White Album\") primarily written by John Lennon and credited to Lennon\u2013McCartney. This is the first track on the album to feature Ringo Starr on drums. Starr briefly left the group during recording sessions for the album and was replaced on drums by Paul McCartney on both \"Back in the U.S.S.R.\" and \"Dear Prudence\".\n[3] Dear Prudence | \"Dear Prudence\" is a song by the English rock group the Beatles from their 1968 album \"The Beatles\" (also known as \"the White Album\"). The song was written by John Lennon, and credited to Lennon\u2013McCartney. Written in India, it was inspired by Prudence Farrow, a sister of actress Mia Farrow, who became obsessive about meditating while practising with Maharishi Mahesh Yogi.\n\n[[ ## thought_1 ## ]]\nThe song that opens the double-disc album \"The Beatles\" and is written by Paul McCartney but credited to Lennon-McCarney, and then segues into \"Dear Prudence\" is \"Back in the U.S.S.R.\"\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{\"kwargs\": {\"answer\": \"Back in the U.S.S.R.\"}}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "The song that opens the 1968 Beatles' double-disc album \"The Beatles\" (also known as the \"White Album\"), is written by Paul McCartney but credited to Lennon-McCarney, and then segues into \"Dear Prudence\" is \"Back in the U.S.S.R.\" This can be confirmed from the Wikipedia pages of the songs \"Back in the U.S.S.R.\", \"Glass Onion\", and \"Dear Prudence\".",
+        "answer": "Back in the U.S.S.R."
+      },
+      {
+        "augmented": true,
+        "question": "Cotton Mather was politically influential in what oldest defined region in the US?",
+        "trajectory": "[[ ## thought_0 ## ]]\nCotton Mather was politically influential in the oldest defined region in the US. I need to find out which region this is.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Cotton Mather politically influential oldest defined region in the US\"}\n\n[[ ## observation_0 ## ]]\n[1] Cotton Mather | Cotton Mather, FRS (February 12, 1663 \u2013 February 13, 1728; A.B. 1678, Harvard College; A.M. 1681, honorary doctorate 1710, University of Glasgow) was a socially and politically influential New England Puritan minister, prolific author, and pamphleteer. He left a scientific legacy due to his hybridization experiments and his promotion of inoculation for disease prevention, though he is most frequently remembered today for his vigorous support for the Salem witch trials. He was subsequently denied the Presidency of Harvard College which his father, Increase Mather, had held.\n[2] Cambridge Association | The Cambridge Association of Boston, Massachusetts, was the first formal association of Congregational ministers in America. It began when influential Boston area clergymen regularly met in the Harvard College library between 1690 and 1697. The minutes of their meetings shed important light on the oft-debated question of the extent to which the ministers supported the use of spectral evidence in witchcraft trials. Cotton Mather began the group in 1690 with a letter to Samuel Parris the minister in Salem village. Increase Mather's important essay \"Cases of Conscience\" was first presented to this group at a meeting on October 3, 1692.\n[3] John C. Mather (New York) | John Cotton Mather (November 30, 1813 Deposit, Delaware County, New York \u2013 August 13, 1882 Watertown, Jefferson County, New York) was an American politician. In 1853, he was the first person tried by the New York Court for the Trial of Impeachments.\n\n[[ ## thought_1 ## ]]\nThe oldest defined region in the US that Cotton Mather was politically influential in is New England. I need to confirm this and provide a concise answer.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "Cotton Mather was a socially and politically influential Puritan minister in New England, and the Cambridge Association, which he started, was an important group of Congregational ministers in Boston, Massachusetts, which is part of New England. New England is considered the oldest defined region in the United States.",
+        "answer": "New England"
+      },
+      {
+        "augmented": true,
+        "question": "Stratford-on-Avon is a constituency represented in what lower house of the Parliament of the United Kingdom, that meets in the Palace of Westminster?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which lower house of the Parliament of the United Kingdom meets in the Palace of Westminster and then determine if Stratford-on-Avon is a constituency in that house.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Stratford-on-Avon constituency Parliament of the United Kingdom lower house Palace of Westminster\"}\n\n[[ ## observation_0 ## ]]\n[1] Stratford-on-Avon (UK Parliament constituency) | Stratford-on-Avon is a constituency represented in the House of Commons of the UK Parliament since 2010 by Nadhim Zahawi, a Conservative.\n[2] Stratford West Ham (UK Parliament constituency) | Stratford (strictly the Stratford Division of West Ham) was a parliamentary constituency in the Borough of West Ham in the South-West of Essex (now East London), which returned one Member of Parliament (MP) to the House of Commons of the Parliament of the United Kingdom, elected by the first-past-the-post voting system.\n[3] Stratford by-election, 1963 | The Stratford by-election, 1963 was a by-election held on 15 August 1963 for the British House of Commons constituency of Stratford-on-Avon in Warwickshire.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I can see that Stratford-on-Avon is a constituency in the House of Commons of the UK Parliament. The other results are not relevant to answering the question.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{\"kwargs\": {}}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "Stratford-on-Avon is a constituency in the UK Parliament, and the lower house of the Parliament of the United Kingdom that meets in the Palace of Westminster is the House of Commons.",
+        "answer": "House of Commons"
+      },
+      {
+        "augmented": true,
+        "question": "In which American animated educational interactive children's television program,  created and executive produced by Chris Gifford and Valerie Walsh, did Harrison Chad have a role?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the American animated educational interactive children's television program where Harrison Chad had a role, which was created and executive produced by Chris Gifford and Valerie Walsh.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Harrison Chad role in American animated children's television program created by Chris Gifford and Valerie Walsh\"}\n\n[[ ## observation_0 ## ]]\n[1] Harrison Chad | Harrison Chad (born July 17, 1992, in Plainview, New York, U.S.) is an American actor and voice actor. His roles include young Tarzan in the film \"Tarzan 2\", Boots on \"Dora the Explorer\" (2000-2007) and \"Go, Diego, Go! \", the singing voice of Leo on \"Little Einsteins\" (2005-2009) and Cardigan from \"\". He also has performed in a number of live-action movies, such as the Comedy Central movie, \"Hebrew Hammer\" and the Showtime movie, \"Carry Me Home\".\n[2] Go, Diego, Go! | Go, Diego, Go! is an American animated educational interactive children's television program that originally aired on the Nickelodeon children's cable network in the United States and produced by Nickelodeon Animation Studio. Created and executive produced by Chris Gifford and Valerie Walsh, the series is a spin-off of \"Dora the Explorer\" and follows Dora's cousin Diego, an 8-year-old boy whose adventures frequently involve rescuing animals and protecting their environment.\n[3] Chad Webber | Chad Webber (born June, 1960) is an American graphic designer and former child actor noted for providing the voice of Charlie Brown in various \"Peanuts\" animation films during the early 1970s.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Harrison Chad had a role in 'Go, Diego, Go!', which is an American animated educational interactive children's television program created and executive produced by Chris Gifford and Valerie Walsh.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "Harrison Chad had a role in 'Go, Diego, Go!', which is an American animated educational interactive children's television program created and executive produced by Chris Gifford and Valerie Walsh.",
+        "answer": "Go, Diego, Go!"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

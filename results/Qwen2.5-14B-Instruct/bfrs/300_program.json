@@ -1,0 +1,88 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Meji Mwamba contested the 2012 Olympic super heavyweight final with which Azerbaidjani boxer?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which Azerbaidjani boxer Meji Mwamba contested against in the 2012 Olympic super heavyweight final.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Meji Mwamba 2012 Olympic super heavyweight final\"}\n\n[[ ## observation_0 ## ]]\n[1] Meji Mwamba | Meji Mwamba is a Democratic Republic of the Congo boxer. At the 2012 Summer Olympics, he competed in the Men's super heavyweight, but was defeated in the first round by Magomedrasul Majidov of Azerbaijan.\n[2] Ioseb Chugoshvili | Ioseb Ivanesh Chugoshvili (Georgian: \u10d8\u10dd\u10e1\u10d4\u10d1 \u10d8\u10d5\u10d0\u10dc\u10d4\u10e1 \u10e9\u10e3\u10d2\u10dd\u10e8\u10d5\u10d8\u10da\u10d8 ; born July 29, 1986 in Telavi, Georgia) is an amateur Belarusian Greco-Roman wrestler of Georgian origin, who competes in the men's super heavyweight category. Chugoshvili represented Belarus at the 2012 Summer Olympics in London, where he competed in the 120 kg class, an event which was dominated by defending Olympic champion Mija\u00edn L\u00f3pez of Cuba. He was eliminated in his first preliminary match against Estonia's Heiki Nabi, with a technical score of 1\u20134 after two periods, and a classification score of 1\u20133. Because Nabi advanced further into the final match against L\u00f3pez, Chugoshvili offered another shot for an Olympic bronze medal through the repechage bouts. He first defeated Poland's \u0141ukasz Banak, but lost the bronze medal match to Sweden's Johan Euren, who stopped him with a par terre position in order to score a point each in two out of three periods.\n[3] Radhouane Chebbi | Radhouane Chebbi (Arabic: \u0631\u0636\u0648\u0627\u0646 \u0627\u0644\u0634\u0627\u0628\u064a\u200e \u200e ; born August 8, 1986 in Tunis) is an amateur Tunisian Greco-Roman wrestler, who competes in the men's super heavyweight category. Chebbi represented Tunisia at the 2012 Summer Olympics in London, where he competed in the men's 120 kg class. He received a bye for the preliminary round of sixteen match, before losing out to Poland's \u0141ukasz Banak, who was able to score three points in two straight periods, leaving Chebbi without a single point.\n\n[[ ## thought_1 ## ]]\nThe search result does not provide the name of the Azerbaidjani boxer Meji Mwamba contested against in the 2012 Olympic super heavyweight final. I need to search for the 2012 Olympic super heavyweight final results specifically.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"2012 Olympic super heavyweight final results\"}\n\n[[ ## observation_1 ## ]]\n[1] Ioseb Chugoshvili | Ioseb Ivanesh Chugoshvili (Georgian: \u10d8\u10dd\u10e1\u10d4\u10d1 \u10d8\u10d5\u10d0\u10dc\u10d4\u10e1 \u10e9\u10e3\u10d2\u10dd\u10e8\u10d5\u10d8\u10da\u10d8 ; born July 29, 1986 in Telavi, Georgia) is an amateur Belarusian Greco-Roman wrestler of Georgian origin, who competes in the men's super heavyweight category. Chugoshvili represented Belarus at the 2012 Summer Olympics in London, where he competed in the 120 kg class, an event which was dominated by defending Olympic champion Mija\u00edn L\u00f3pez of Cuba. He was eliminated in his first preliminary match against Estonia's Heiki Nabi, with a technical score of 1\u20134 after two periods, and a classification score of 1\u20133. Because Nabi advanced further into the final match against L\u00f3pez, Chugoshvili offered another shot for an Olympic bronze medal through the repechage bouts. He first defeated Poland's \u0141ukasz Banak, but lost the bronze medal match to Sweden's Johan Euren, who stopped him with a par terre position in order to score a point each in two out of three periods.\n[2] 2012 Super League season results | This is a list of the 2012 Super League season results. Super League is the top-flight rugby league competition in the United Kingdom and France. The 2012 season started on 4 February and ends on 6 October with the 2012 Super League Grand Final at Old Trafford. The Magic Weekend was scheduled over the weekend of 26 and 27 May and was played at the Etihad Stadium in Manchester for the first time, having previously been played at the Millennium Stadium in Cardiff and Murrayfield Stadium in Edinburgh.\n[3] Boxing at the 2012 Summer Olympics \u2013 Men's super heavyweight | Boxing at the 2012 Summer Olympics \u2013 Men's super heavyweight\n\n[[ ## thought_2 ## ]]\nThe search results do not provide the specific information about the 2012 Olympic super heavyweight final. I need to search for the specific match between Meji Mwamba and the Azerbaidjani boxer in the 2012 Olympic super heavyweight final.\n\n[[ ## tool_name_2 ## ]]\nsearch\n\n[[ ## tool_args_2 ## ]]\n{\"query\": \"Meji Mwamba 2012 Olympic super heavyweight final Azerbaidjani boxer\"}\n\n[[ ## observation_2 ## ]]\n[1] Meji Mwamba | Meji Mwamba is a Democratic Republic of the Congo boxer. At the 2012 Summer Olympics, he competed in the Men's super heavyweight, but was defeated in the first round by Magomedrasul Majidov of Azerbaijan.\n[2] Mehdi Khodabakhshi | Mahdi Khodabakhshi (Persian: \u0645\u0647\u062f\u06cc \u062e\u062f\u0627\u0628\u062e\u0634\u06cc\u200e \u200e , born April 21, 1991 in Tonekabon, Iran) is an Iranian taekwondo practitioner. He has been practicing for more than 15 years. He has beaten several Taekwondo notables such as Aaron Cook and Steven Lopez and is the current world champion. He is currently ranked 1st in the welterweight division. Also he additionally won the gold medal in the welterweight division in the 2014 Asian Games in Incheon. He is a participant of the 2016 Rio Olympics, but lost in the 1\/04-Finale against the Iranian born Azeri Milad Beigi Harchegani\n[3] Mojtaba Mirzajanpour | Mojtaba Mirzajanpour Muziraji (Persian: \u0645\u062c\u062a\u0628\u06cc \u0645\u06cc\u0631\u0632\u0627\u062c\u0627\u0646\u067e\u0648\u0631 \u0645\u0648\u0632\u06cc\u0631\u062c\u06cc\u200e \u200e , born 7 October 1991) is an Iranian volleyball player, a member of the Iranian national team and Iranian Super League club Shahrdari Urmia. He participated in the 2014 World Championship and 2016 Olympic Games.",
+        "next_thought": "The search result indicates that Meji Mwamba was defeated in the first round by Magomedrasul Majidov of Azerbaijan in the 2012 Olympic super heavyweight. This is the information I was looking for.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Meji Mwamba contested the 2012 Olympic super heavyweight final with the Azerbaidjani boxer Magomedrasul Majidov."
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Meji Mwamba contested the 2012 Olympic super heavyweight final with which Azerbaidjani boxer?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which Azerbaidjani boxer Meji Mwamba contested against in the 2012 Olympic super heavyweight final.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Meji Mwamba 2012 Olympic super heavyweight final\"}\n\n[[ ## observation_0 ## ]]\n[1] Meji Mwamba | Meji Mwamba is a Democratic Republic of the Congo boxer. At the 2012 Summer Olympics, he competed in the Men's super heavyweight, but was defeated in the first round by Magomedrasul Majidov of Azerbaijan.\n[2] Ioseb Chugoshvili | Ioseb Ivanesh Chugoshvili (Georgian: \u10d8\u10dd\u10e1\u10d4\u10d1 \u10d8\u10d5\u10d0\u10dc\u10d4\u10e1 \u10e9\u10e3\u10d2\u10dd\u10e8\u10d5\u10d8\u10da\u10d8 ; born July 29, 1986 in Telavi, Georgia) is an amateur Belarusian Greco-Roman wrestler of Georgian origin, who competes in the men's super heavyweight category. Chugoshvili represented Belarus at the 2012 Summer Olympics in London, where he competed in the 120 kg class, an event which was dominated by defending Olympic champion Mija\u00edn L\u00f3pez of Cuba. He was eliminated in his first preliminary match against Estonia's Heiki Nabi, with a technical score of 1\u20134 after two periods, and a classification score of 1\u20133. Because Nabi advanced further into the final match against L\u00f3pez, Chugoshvili offered another shot for an Olympic bronze medal through the repechage bouts. He first defeated Poland's \u0141ukasz Banak, but lost the bronze medal match to Sweden's Johan Euren, who stopped him with a par terre position in order to score a point each in two out of three periods.\n[3] Radhouane Chebbi | Radhouane Chebbi (Arabic: \u0631\u0636\u0648\u0627\u0646 \u0627\u0644\u0634\u0627\u0628\u064a\u200e \u200e ; born August 8, 1986 in Tunis) is an amateur Tunisian Greco-Roman wrestler, who competes in the men's super heavyweight category. Chebbi represented Tunisia at the 2012 Summer Olympics in London, where he competed in the men's 120 kg class. He received a bye for the preliminary round of sixteen match, before losing out to Poland's \u0141ukasz Banak, who was able to score three points in two straight periods, leaving Chebbi without a single point.\n\n[[ ## thought_1 ## ]]\nThe search result does not provide the name of the Azerbaidjani boxer Meji Mwamba contested against in the 2012 Olympic super heavyweight final. I need to search for the 2012 Olympic super heavyweight final results specifically.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"2012 Olympic super heavyweight final results\"}\n\n[[ ## observation_1 ## ]]\n[1] Ioseb Chugoshvili | Ioseb Ivanesh Chugoshvili (Georgian: \u10d8\u10dd\u10e1\u10d4\u10d1 \u10d8\u10d5\u10d0\u10dc\u10d4\u10e1 \u10e9\u10e3\u10d2\u10dd\u10e8\u10d5\u10d8\u10da\u10d8 ; born July 29, 1986 in Telavi, Georgia) is an amateur Belarusian Greco-Roman wrestler of Georgian origin, who competes in the men's super heavyweight category. Chugoshvili represented Belarus at the 2012 Summer Olympics in London, where he competed in the 120 kg class, an event which was dominated by defending Olympic champion Mija\u00edn L\u00f3pez of Cuba. He was eliminated in his first preliminary match against Estonia's Heiki Nabi, with a technical score of 1\u20134 after two periods, and a classification score of 1\u20133. Because Nabi advanced further into the final match against L\u00f3pez, Chugoshvili offered another shot for an Olympic bronze medal through the repechage bouts. He first defeated Poland's \u0141ukasz Banak, but lost the bronze medal match to Sweden's Johan Euren, who stopped him with a par terre position in order to score a point each in two out of three periods.\n[2] 2012 Super League season results | This is a list of the 2012 Super League season results. Super League is the top-flight rugby league competition in the United Kingdom and France. The 2012 season started on 4 February and ends on 6 October with the 2012 Super League Grand Final at Old Trafford. The Magic Weekend was scheduled over the weekend of 26 and 27 May and was played at the Etihad Stadium in Manchester for the first time, having previously been played at the Millennium Stadium in Cardiff and Murrayfield Stadium in Edinburgh.\n[3] Boxing at the 2012 Summer Olympics \u2013 Men's super heavyweight | Boxing at the 2012 Summer Olympics \u2013 Men's super heavyweight\n\n[[ ## thought_2 ## ]]\nThe search results do not provide the specific information about the 2012 Olympic super heavyweight final. I need to search for the specific match between Meji Mwamba and the Azerbaidjani boxer in the 2012 Olympic super heavyweight final.\n\n[[ ## tool_name_2 ## ]]\nsearch\n\n[[ ## tool_args_2 ## ]]\n{\"query\": \"Meji Mwamba 2012 Olympic super heavyweight final Azerbaidjani boxer\"}\n\n[[ ## observation_2 ## ]]\n[1] Meji Mwamba | Meji Mwamba is a Democratic Republic of the Congo boxer. At the 2012 Summer Olympics, he competed in the Men's super heavyweight, but was defeated in the first round by Magomedrasul Majidov of Azerbaijan.\n[2] Mehdi Khodabakhshi | Mahdi Khodabakhshi (Persian: \u0645\u0647\u062f\u06cc \u062e\u062f\u0627\u0628\u062e\u0634\u06cc\u200e \u200e , born April 21, 1991 in Tonekabon, Iran) is an Iranian taekwondo practitioner. He has been practicing for more than 15 years. He has beaten several Taekwondo notables such as Aaron Cook and Steven Lopez and is the current world champion. He is currently ranked 1st in the welterweight division. Also he additionally won the gold medal in the welterweight division in the 2014 Asian Games in Incheon. He is a participant of the 2016 Rio Olympics, but lost in the 1\/04-Finale against the Iranian born Azeri Milad Beigi Harchegani\n[3] Mojtaba Mirzajanpour | Mojtaba Mirzajanpour Muziraji (Persian: \u0645\u062c\u062a\u0628\u06cc \u0645\u06cc\u0631\u0632\u0627\u062c\u0627\u0646\u067e\u0648\u0631 \u0645\u0648\u0632\u06cc\u0631\u062c\u06cc\u200e \u200e , born 7 October 1991) is an Iranian volleyball player, a member of the Iranian national team and Iranian Super League club Shahrdari Urmia. He participated in the 2014 World Championship and 2016 Olympic Games.\n\n[[ ## thought_3 ## ]]\nThe search result indicates that Meji Mwamba was defeated in the first round by Magomedrasul Majidov of Azerbaijan in the 2012 Olympic super heavyweight. This is the information I was looking for.\n\n[[ ## tool_name_3 ## ]]\nfinish\n\n[[ ## tool_args_3 ## ]]\n{\"kwargs\": {\"answer\": \"Meji Mwamba contested the 2012 Olympic super heavyweight final with the Azerbaidjani boxer Magomedrasul Majidov.\"}}\n\n[[ ## observation_3 ## ]]\nCompleted.",
+        "reasoning": "Meji Mwamba was defeated in the first round by Magomedrasul Majidov of Azerbaijan in the 2012 Olympic super heavyweight event. This information was found by searching for Meji Mwamba's performance in the 2012 Olympic super heavyweight final and the specific match against the Azerbaidjani boxer.",
+        "answer": "Magomedrasul Majidov"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

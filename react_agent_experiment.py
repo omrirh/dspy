@@ -214,6 +214,12 @@ def _build_per_example_results(eval_results, max_iters):
     results = []
     for idx, (example, prediction, score) in enumerate(eval_results):
         n_failures, failure_type, n_steps, finished = count_parse_failures(prediction, max_iters)
+        trajectory = getattr(prediction, "trajectory", None) or {}
+        search_queries = [
+            trajectory.get(f"tool_args_{i}")
+            for i in range(n_steps)
+            if str(trajectory.get(f"tool_name_{i}", "")).lower() == "search"
+        ]
         results.append({
             "idx": idx,
             "question": example.get("question", ""),
@@ -224,6 +230,7 @@ def _build_per_example_results(eval_results, max_iters):
             "parse_failure_type": failure_type,
             "trajectory_steps": n_steps,
             "finished_via_tool": finished,
+            "search_queries": search_queries,
         })
     return results
 
@@ -430,7 +437,7 @@ def _run_miprov2(student, trainset, devset, metric):
     opt = MIPROv2(
         metric=metric,
         auto="medium",
-        max_bootstrapped_demos=3,
+        max_bootstrapped_demos=4,
         max_labeled_demos=0,
         num_threads=6,
     )
@@ -441,6 +448,7 @@ def _run_miprov2(student, trainset, devset, metric):
         minibatch=True,
         minibatch_size=25,
         minibatch_full_eval_steps=10,
+        requires_permission_to_run=False,
     )
     return program, opt
 
@@ -455,7 +463,7 @@ def _run_bfrs(student, trainset, devset, metric):
     """
     opt = BootstrapFewShotWithRandomSearch(
         metric=metric,
-        max_bootstrapped_demos=3,
+        max_bootstrapped_demos=4,
         max_labeled_demos=0,
         num_candidate_programs=6,
         num_threads=6,

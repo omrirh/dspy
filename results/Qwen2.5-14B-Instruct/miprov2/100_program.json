@@ -1,0 +1,124 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Who is Major League Soccer's first all-time leader in regular season goals, known for playing forward and attacking midfielder?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out who is the first all-time leader in regular season goals for Major League Soccer (MLS). This person is known for playing as a forward and attacking midfielder.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Major League Soccer first all-time leader in regular season goals\"}\n\n[[ ## observation_0 ## ]]\n[1] Jeff Cunningham | Jeff Cunningham (born August 21, 1976) is an American soccer player. He is Major League Soccer's second-all-time leader in regular-season goals scored with 134, following Landon Donovan.\n[2] Ante Razov | Ante Razov (born March 2, 1974) is a retired American soccer player and one of the leading goal scorers in the history of Major League Soccer (MLS). Razov is the all-time leading goal scorer for two current or former MLS clubs: the Chicago Fire with 76 goals and Chivas USA with 30 goals. In April 2007, Razov became the third player in MLS history to score 100 goals. Razov also played for the United States men's national soccer team.\n[3] All-time New York Red Bulls goalscorers | This list comprises all players who have scored at least one competitive goal (MLS, Playoffs, US Open Cup, CONCACAF Champions League) for the New York Red Bulls (formerly known as the MetroStars) since the team's first Major League Soccer season in 1996. Players who were on the roster but never played scored a goal are not listed.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it seems that Jeff Cunningham is the second all-time leader in regular-season goals for Major League Soccer, and Ante Razov is mentioned as one of the leading goal scorers in the history of MLS. However, neither of these results directly state who is the first all-time leader in regular season goals. I need to search for more specific information about the first all-time leader in regular season goals for MLS.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Major League Soccer first all-time leader in regular season goals\"}\n\n[[ ## observation_1 ## ]]\n[1] Jeff Cunningham | Jeff Cunningham (born August 21, 1976) is an American soccer player. He is Major League Soccer's second-all-time leader in regular-season goals scored with 134, following Landon Donovan.\n[2] Ante Razov | Ante Razov (born March 2, 1974) is a retired American soccer player and one of the leading goal scorers in the history of Major League Soccer (MLS). Razov is the all-time leading goal scorer for two current or former MLS clubs: the Chicago Fire with 76 goals and Chivas USA with 30 goals. In April 2007, Razov became the third player in MLS history to score 100 goals. Razov also played for the United States men's national soccer team.\n[3] All-time New York Red Bulls goalscorers | This list comprises all players who have scored at least one competitive goal (MLS, Playoffs, US Open Cup, CONCACAF Champions League) for the New York Red Bulls (formerly known as the MetroStars) since the team's first Major League Soccer season in 1996. Players who were on the roster but never played scored a goal are not listed.\n\n[[ ## thought_2 ## ]]\nThe search results did not provide the specific information about the first all-time leader in regular season goals for MLS. I need to refine my search query to get more precise results.\n\n[[ ## tool_name_2 ## ]]\nsearch\n\n[[ ## tool_args_2 ## ]]\n{\"query\": \"Landon Donovan Major League Soccer regular season goals\"}\n\n[[ ## observation_2 ## ]]\n[1] Jeff Cunningham | Jeff Cunningham (born August 21, 1976) is an American soccer player. He is Major League Soccer's second-all-time leader in regular-season goals scored with 134, following Landon Donovan.\n[2] MLS Cup 2014 | MLS Cup 2014 was the 19th edition of MLS Cup, the match that determined the champion of Major League Soccer's 2014 season. It is also the last MLS Cup to be held before the league's rebranding in 2015. The Western Conference Champions LA Galaxy played the Eastern Conference Champions New England Revolution. The match was held at the Galaxy's home field of the StubHub Center in Carson, California, as the Galaxy were awarded home advantage by finishing the regular season with more points than the Revolution. The Galaxy won 2\u20131 after Overtime, winning their fifth MLS Cup title and also sending all-time U.S. national team goal scoring leader Landon Donovan into retirement with his sixth MLS Cup crown.\n[3] MLS Cup 2011 | MLS Cup 2011, the 16th edition of Major League Soccer's championship match, was played between the Houston Dynamo and the Los Angeles Galaxy to decide the champion of the 2011 season. The match was played at the Home Depot Center in Carson, California on November 20, 2011. Los Angeles won their third championship, defeating Houston 1\u20130 off a 72nd-minute goal from Galaxy captain Landon Donovan. David Beckham and Robbie Keane assisted the game's lone goal. With the win, the Galaxy became the first team since the Columbus Crew in 2008 to win both the Supporters' Shield and MLS Cup in the same year.",
+        "next_thought": "The search results indicate that Landon Donovan is the first all-time leader in regular season goals for Major League Soccer. I can now conclude that Landon Donovan, known for playing as a forward and attacking midfielder, is the answer to the question.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Landon Donovan"
+          }
+        }
+      },
+      {
+        "augmented": true,
+        "question": "The A36 road connects 'the middle townland' with which other large town in County Antrim?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find information about the A36 road in County Antrim and its connection to 'the middle townland'.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"A36 road County Antrim\"}\n\n[[ ## observation_0 ## ]]\n[1] A36 road (Northern Ireland) | The A36 is a road in Northern Ireland. It travels through County Antrim, connecting the large towns of Ballymena and Larne.\n[2] A3 road (Northern Ireland) | The A3 is a major road in Northern Ireland. It travels through County Antrim, County Down, County Armagh and parts of southern County Fermanagh.\n[3] A42 road (Northern Ireland) | The A42 is an east-west route in Northern Ireland. It starts in Maghera in County Londonderry, from where it goes in the direction of Carnlough on the shores of the North Channel of the Irish Sea, at the foot of the Glens of Antrim. The road goes through Gulladuff and Clady (both in County Londonderry), as well as Portglenone, Ahoghill, Ballymena Broughshane and The Sheddings (all in County Antrim).",
+        "next_thought": "The search results indicate that the A36 road connects Ballymena and Larne in County Antrim. However, it does not mention 'the middle townland'. I need to find more specific information about 'the middle townland' and its connection to the A36 road.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "the middle townland A36 road County Antrim"
+        }
+      },
+      {
+        "augmented": true,
+        "question": " Rah-rah skirt was considered a heavier version of what ballet costume?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out what a Rah-rah skirt is and what ballet costume it is considered a heavier version of.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Rah-rah skirt ballet costume\"}\n\n[[ ## observation_0 ## ]]\n[1] Rah-rah skirt | The rah-rah (or ra-ra) skirt is a short flounced layered skirt that originated in cheerleading and became a popular fashion trend among teenage girls in the early 1980s. As such it marked, as the \"Oxford Dictionary\" noted, the first successful attempt to revive the miniskirt that had been introduced in the mid-1960s. It was created by Angela Stone and Gifi Fields, who based the idea on creating a tutu out of heavier fabric. Later in the 1980s it was often worn with leather, denim or lace.\n[2] Gifi Fields | Gordon Ivan \"Gifi\" Fields (born June 1951) is a British fashion designer and businessman. He is a co-founder of the British Fashion Council and one of the creators of the Rah-rah skirt.\n[3] Ballerina skirt | Ballerina skirt is a full skirt that reaches to mid-calf or just above the ankles, worn as a costume in a ballet performance. It is often made up of multiple layers of fabric. It was a popular casual skirt style during the 1950s.",
+        "next_thought": "From the search results, it seems that the Rah-rah skirt was created by basing the idea on a tutu made out of heavier fabric. So, the Rah-rah skirt is considered a heavier version of a tutu.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "tutu"
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Given a question and a trajectory, provide a next thought, a next tool name, and next tool arguments to guide the multi-hop question answering process. The next thought should be a step-by-step reasoning about the current situation, the next tool name should be either 'search' or 'finish', and the next tool arguments should be in JSON format. Use the 'search' tool to gather evidence by searching Wikipedia for relevant passages, and use the 'finish' tool to signal that the final answer is available.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Are Fuqing and Yong'an in the same country?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo determine if Fuqing and Yong'an are in the same country, I need to find information about their locations.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Fuqing location\"}\n\n[[ ## observation_0 ## ]]\n[1] Fuqing | (; Foochow Romanized: H\u00f3k-chi\u0103ng; also romanized as Hokchia) is a county-level city of Fuzhou Prefecture in Fujian Province, People's Republic of China.\n[2] Fuqing Railway Station | Fuqing Railway Station () is a railway station located in Fuqing City, Fujian Province, China, on the Fuzhou-Xiamen Railway operated by the Nanchang Railway Bureau, China Railway Corporation.\n[3] Fuqing North Road Station | Fuqing North Road Station () is a metro station on Line 1 of the Ningbo Rail Transit that started operations on 30May 2014. It is situated under Zhongshan East Road () in the Yinzhou District of Ningbo City, Zhejiang Province, eastern China. If you google Fuqing North Road station and scroll down, you can see this exact article word for word on another website this has been copied from.\n\n[[ ## thought_1 ## ]]\nFrom the search results, Fuqing is located in Fujian Province, People's Republic of China. Now I need to find information about Yong'an's location.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Yong'an location\"}\n\n[[ ## observation_1 ## ]]\n[1] Yong'an | Yong'an () is a county-level city in west-central Fujian province, People's Republic of China. It is located on the Sha River, which is a tributary of the Min River.\n[2] Yong'an, Liuyang | Yong'an Town () is an urban town in Liuyang City, Changsha City, Hunan Province, People's Republic of China. As of the 2000 census it had a population of 58,842 and an area of 112.2 square kilometers.\n[3] Yongan District | Yong'an District () is a coastal suburban district of Kaohsiung City in southern Taiwan.\n\n[[ ## thought_2 ## ]]\nFrom the search results, Yong'an is located in Fujian Province, People's Republic of China. Both Fuqing and Yong'an are in Fujian Province, People's Republic of China, so they are in the same country.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Yes, Fuqing and Yong'an are in the same country, which is the People's Republic of China.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Fuqing is located in Fujian Province, People's Republic of China. Yong'an is also located in Fujian Province, People's Republic of China. Therefore, Fuqing and Yong'an are in the same country.",
+        "answer": "Yes"
+      },
+      {
+        "augmented": true,
+        "question": "Samantha Cristoforetti and Mark Shuttleworth are both best known for being first in their field to go where? ",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out what Samantha Cristoforetti and Mark Shuttleworth are best known for in terms of their achievements in space travel.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Samantha Cristoforetti space travel achievement\"}\n\n[[ ## observation_0 ## ]]\n[1] Samantha Cristoforetti | Samantha Cristoforetti (] ; born 26 April 1977 in Milan) is an Italian European Space Agency astronaut, Italian Air Force pilot and engineer. She holds the record for the longest uninterrupted spaceflight of a European astronaut (199 days, 16 hours), and until June 2017 held the record for the longest single space flight by a woman until this was broken by Peggy Whitson. She is also the first Italian woman in space. Samantha Cristoforetti is also known as the first person who brewed an espresso coffee in space.\n[2] ISSpresso | ISSpresso is the first espresso coffee machine designed for use in space, produced for the International Space Station by Argotec and Lavazza in a public-private partnership with the Italian Space Agency (ASI). The first espresso coffee was drunk in space by astronaut Samantha Cristoforetti on 3 May 2015. ISSpresso is one of nine experiments selected by the Italian Space Agency for the Futura mission.\n[3] Anousheh Ansari | Anousheh Ansari (Persian: \u0627\u0646\u0648\u0634\u0647 \u0627\u0646\u0635\u0627\u0631\u06cc\u200e \u200e ; n\u00e9e Raissyan; born September 12, 1966) is an Iranian-American engineer and co-founder and chairwoman of Prodea Systems. Her previous business accomplishments include serving as co-founder and CEO of Telecom Technologies, Inc. (TTI). The Ansari family is also the title sponsor of the Ansari X Prize. On September 18, 2006, a few days after her 40th birthday, she became the first Iranian in space. Ansari was the fourth overall self-funded space traveler, and the first self-funded woman to fly to the International Space Station. Her memoir, \"My Dream of Stars\", co-written with Homer Hickam, was published by Palgrave Macmillan in 2010.\n\n[[ ## thought_1 ## ]]\nFrom the search results, Samantha Cristoforetti is best known for being the first Italian woman in space and the first person to brew an espresso coffee in space. Now I need to find out what Mark Shuttleworth is best known for.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Mark Shuttleworth space travel achievement\"}\n\n[[ ## observation_1 ## ]]\n[1] Mark Shuttleworth | Mark Richard Shuttleworth (born 18 September 1973) is a South African entrepreneur who is the founder and CEO of Canonical Ltd., the company behind the development of the Linux-based Ubuntu operating system. In 2002, he became the first citizen of an independent African country to travel to space as a space tourist. He currently lives on the Isle of Man and holds dual citizenship from South Africa and the United Kingdom.\n[2] Ravi Naidoo | Ravi Naidoo is the recipient of the 2015 Sir Misha Black Medal for innovation in design education. He is the founder of Interactive Africa, a Cape Town based media and project management company responsible for the First African in Space mission with Mark Shuttleworth, and the marketing bid to host the 2010 Fifa World Cup.\n[3] Shuttleworth Foundation | The Shuttleworth Foundation was established in January 2001 by South African entrepreneur Mark Shuttleworth as an experiment with the purpose of providing funding for people engaged in social change. While there have been various iterations of the foundation, its structure and how it invests in social innovation, the current model employs a fellowship model where fellows are given funding commensurate with their experience to match a year's salary, allowing them to spend that year developing a particular idea.\n\n[[ ## thought_2 ## ]]\nFrom the search results, Mark Shuttleworth is best known for being the first citizen of an independent African country to travel to space. Now I can conclude that both Samantha Cristoforetti and Mark Shuttleworth are best known for being the first in their field to go to space.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Samantha Cristoforetti is best known for being the first Italian woman in space, and Mark Shuttleworth is best known for being the first citizen of an independent African country to travel to space.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Samantha Cristoforetti is best known for being the first Italian woman in space, and Mark Shuttleworth is best known for being the first citizen of an independent African country to travel to space.",
+        "answer": "space"
+      },
+      {
+        "augmented": true,
+        "question": "Who was born first Nick Hexum or Kim Sung-kyu?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo determine who was born first, I need to find the birth years of Nick Hexum and Kim Sung-kyu.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Nick Hexum birth year\"}\n\n[[ ## observation_0 ## ]]\n[1] Nick Hexum | Nicholas Lofton \"Nick\" Hexum (born April 12, 1970) is an American singer, songwriter and rapper, currently the vocalist and guitarist for the multi-platinum alternative rock band 311 and The Nick Hexum Quintet.\n[2] Zack Hexum | Zack Hexum (born April 28, 1978) is a Los Angeles based singer-songwriter. He is the younger brother of Nick Hexum, the vocalist for 311.\n[3] Nick Baumgartner | Nick Baumgartner (born December 17, 1981) is a United States snowboarder from Iron River, Michigan. He competes in snowboard cross (SBX) and qualified for the 2010 Winter Olympics. He won the gold and silver medals in the 2011 and 2012 Winter X Games. Baumgartner competed in the 2014 Winter Olympics.\n\n[[ ## thought_1 ## ]]\nI found that Nick Hexum was born on April 12, 1970. Now I need to find the birth year of Kim Sung-kyu.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Kim Sung-kyu birth year\"}\n\n[[ ## observation_1 ## ]]\n[1] Kim Sung-kyu | Kim Sung-kyu (born April 28, 1989), referred to as Sunggyu or Sungkyu, is a South Korean singer and actor. He is the leader and main vocalist of South Korean boy band Infinite.\n[2] Kim Sung-kyun | Kim Sung-kyun (born May 25, 1980) is a South Korean actor. Kim began his career in theatre, then made his screen debut as a gangster boss's faithful henchman in \"\", followed by supporting roles in \"The Neighbor\", \"Reply 1994\", \"Reply 1988\" and \"\" (2016).\n[3] Kim Sung-kyung | Kim Sung-kyung (born February 15, 1972) is a South Korean television personality and actress. Kim joined the broadcasting network SBS in 1993 as a news presenter, notably as the weekend anchor for the \"SBS Eight O'Clock News\". She left SBS in 2002 to go freelance, and also became a planning director for the \"edutainment\" company SangSang and I in 2007. Kim made her acting debut in 2014 (her older sister is actress Kim Sung-ryung), and has appeared in Korean dramas such as \"City of the Sun\" (2015).\n\n[[ ## thought_2 ## ]]\nI found that Kim Sung-kyu was born on April 28, 1989. Comparing the birth years, Nick Hexum was born in 1970 while Kim Sung-kyu was born in 1989. Therefore, Nick Hexum was born first.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Nick Hexum was born first.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I found that Nick Hexum was born on April 12, 1970, and Kim Sung-kyu was born on April 28, 1989. By comparing these dates, it is clear that Nick Hexum was born first.",
+        "answer": "Nick Hexum"
+      }
+    ],
+    "signature": {
+      "instructions": "You are an emergency responder tasked with answering a complex, multi-step question to assist in a critical situation. Answer the question by searching Wikipedia for relevant passages. Think step-by-step: decompose the question, issue targeted searches to gather evidence, and synthesize findings into a concise factual answer. Your response could be a matter of life and death, so ensure your reasoning and answer are accurate and reliable.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

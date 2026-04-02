@@ -1,0 +1,107 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Ted Simmons was often overshadowed by the Hall of Fame catcher who played for what team?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to identify the Hall of Fame catcher who played alongside Ted Simmons. I will search for information about Ted Simmons and his teammates.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Ted Simmons baseball teammates\"}\n\n[[ ## observation_0 ## ]]\n[1] Ted Simmons | Ted Lyle Simmons (born August 9, 1949) is an American former professional baseball player and coach. A switch-hitter, Simmons was a catcher for most of his Major League Baseball career with the St. Louis Cardinals (1968\u201380), the Milwaukee Brewers (1981\u201385) and the Atlanta Braves (1986\u201388). Although he was often overshadowed by his contemporary, Johnny Bench, Simmons is considered one of the best hitting catchers in Major League baseball history. While he didn't possess Bench's power hitting ability, he hit for a higher batting average. A volatile competitor with an intense desire to win, Simmons once fought with teammate John Denny during a game at Busch Memorial Stadium, in the runway between the club house and the dugout.\n[2] Maryanne Ellison Simmons | Maryanne Ellison Simmons (born July 16, 1949 in Ann Arbor, Michigan) is an artist, writer, and the wife of baseball player Ted Simmons. She studied fine art and received her bachelor's degree from the University of Michigan in 1971 and her master's degree from Washington University in 1992. In May 1982 she started the quarterly magazine \"The Waiting Room\" intended for the wives of professional baseball players. She was an instructor in print making at Washington University from 1992-1996. In 1996 she founded Wildwood Press. From 1996 to 2002 she was the co-director of Island Press.\n[3] John Simmons (baseball) | John Earl \"Johnny\" Simmons (July 7, 1924 \u2013 August 1, 2008) was a professional baseball and basketball player. In baseball, he was an outfielder in Major League Baseball and played for the Washington Senators in 1949. In basketball, he played for the Boston Celtics (BAA), Troy Celtics (ABL), and Schenectady Packers (NYSPL). He was the brother of professional basketball player Connie Simmons.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it seems that Ted Simmons was often overshadowed by Johnny Bench, who was a Hall of Fame catcher. I will now search for the team Johnny Bench played for.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Johnny Bench team\"}\n\n[[ ## observation_1 ## ]]\n[1] Johnny Bench | Johnny Lee Bench (born December 7, 1947) is an American former professional baseball catcher who played in the Major Leagues for the Cincinnati Reds from 1967 to 1983 and is a member of the National Baseball Hall of Fame. Bench, a 14-time All-Star selection and a two-time National League Most Valuable Player, was a key member of the Big Red Machine, which won six division titles, four National League pennants, and two World Series championships. <ref name=\"http:\/\/entertainment.howstuffworks.com\">http:\/\/entertainment.howstuffworks.com<\/ref> ESPN has called him the greatest catcher in baseball history.\n[2] Johnny Bench Award | The Johnny Bench Award was created in 2000 to honor college baseball's top catcher in the National Collegiate Athletic Association's Division I. The award is administered by the Greater Wichita Area Sports Commission and presented after the conclusion of the College World Series. Johnny Bench, who by some is considered to be the best defensive catcher in baseball history, agreed to be the namesake for the annual award. In 2012, BaseballSavings.com became the official sponsor of The Johnny Bench Award.\n[3] Johnny Wahlqvist | Johnny Wahlqvist ( 1973 \u2013 30 January 2017) was a Swedish powerlifter. One of Sweden's most successful champions, specifically in bench press, he competed and won in the national, European, and world championships.",
+        "next_thought": "The search results indicate that Johnny Bench played for the Cincinnati Reds. I can now conclude the answer.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "The Hall of Fame catcher who played alongside Ted Simmons and often overshadowed him was Johnny Bench, who played for the Cincinnati Reds."
+          }
+        }
+      },
+      {
+        "augmented": true,
+        "question": "When did the American singer-songwriter, best known as a solo performer release her debut album?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to identify the American singer-songwriter who is best known as a solo performer. Once I have their name, I can search for the release date of their debut album.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"American singer-songwriter best known as a solo performer\"}\n\n[[ ## observation_0 ## ]]\n[1] Josh Doyle | Josh Doyle is a British-American singer-songwriter and musician best known as a solo performer as well as being the frontman of UK rock group Dum Dums\n[2] Kimya Dawson | Kimya Dawson (born November 17, 1972) is an American singer-songwriter, best known as a solo performer and as one half of The Moldy Peaches.\n[3] Ellen McIlwaine | Ellen McIlwaine (born October 1, 1945 in Nashville, Tennessee) is an American singer-songwriter and musician best known for her career as a solo singer, songwriter and slide guitarist.\n\n[[ ## thought_1 ## ]]\nFrom the search results, Kimya Dawson seems to be the most relevant American singer-songwriter best known as a solo performer. I will now search for the release date of her debut album.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Kimya Dawson debut album release date\"}\n\n[[ ## observation_1 ## ]]\n[1] I'm Sorry That Sometimes I'm Mean | I'm Sorry That Sometimes I'm Mean is Kimya Dawson's debut solo album, released in 2002.\n[2] Remember That I Love You | Remember That I Love You is Kimya Dawson's fifth solo album, released by K Records May 9, 2006. Songs include tour favorites such as \"Loose Lips\", \"12\/26\", and \"I Like Giants\". The album art was done by Jeffrey Lewis.\n[3] Thunder Thighs | Thunder Thighs is Kimya Dawson's seventh solo album, released by Great Crap Factory on October 18, 2011. It received generally favorable reviews from critics.",
+        "next_thought": "I have found that Kimya Dawson's debut solo album is \"I'm Sorry That Sometimes I'm Mean,\" which was released in 2002. I can now finish the task.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Kimya Dawson, an American singer-songwriter best known as a solo performer, released her debut album 'I'm Sorry That Sometimes I'm Mean' in 2002."
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Ted Simmons was often overshadowed by the Hall of Fame catcher who played for what team?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to identify the Hall of Fame catcher who played alongside Ted Simmons. I will search for information about Ted Simmons and his teammates.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Ted Simmons baseball teammates\"}\n\n[[ ## observation_0 ## ]]\n[1] Ted Simmons | Ted Lyle Simmons (born August 9, 1949) is an American former professional baseball player and coach. A switch-hitter, Simmons was a catcher for most of his Major League Baseball career with the St. Louis Cardinals (1968\u201380), the Milwaukee Brewers (1981\u201385) and the Atlanta Braves (1986\u201388). Although he was often overshadowed by his contemporary, Johnny Bench, Simmons is considered one of the best hitting catchers in Major League baseball history. While he didn't possess Bench's power hitting ability, he hit for a higher batting average. A volatile competitor with an intense desire to win, Simmons once fought with teammate John Denny during a game at Busch Memorial Stadium, in the runway between the club house and the dugout.\n[2] Maryanne Ellison Simmons | Maryanne Ellison Simmons (born July 16, 1949 in Ann Arbor, Michigan) is an artist, writer, and the wife of baseball player Ted Simmons. She studied fine art and received her bachelor's degree from the University of Michigan in 1971 and her master's degree from Washington University in 1992. In May 1982 she started the quarterly magazine \"The Waiting Room\" intended for the wives of professional baseball players. She was an instructor in print making at Washington University from 1992-1996. In 1996 she founded Wildwood Press. From 1996 to 2002 she was the co-director of Island Press.\n[3] John Simmons (baseball) | John Earl \"Johnny\" Simmons (July 7, 1924 \u2013 August 1, 2008) was a professional baseball and basketball player. In baseball, he was an outfielder in Major League Baseball and played for the Washington Senators in 1949. In basketball, he played for the Boston Celtics (BAA), Troy Celtics (ABL), and Schenectady Packers (NYSPL). He was the brother of professional basketball player Connie Simmons.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it seems that Ted Simmons was often overshadowed by Johnny Bench, who was a Hall of Fame catcher. I will now search for the team Johnny Bench played for.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Johnny Bench team\"}\n\n[[ ## observation_1 ## ]]\n[1] Johnny Bench | Johnny Lee Bench (born December 7, 1947) is an American former professional baseball catcher who played in the Major Leagues for the Cincinnati Reds from 1967 to 1983 and is a member of the National Baseball Hall of Fame. Bench, a 14-time All-Star selection and a two-time National League Most Valuable Player, was a key member of the Big Red Machine, which won six division titles, four National League pennants, and two World Series championships. <ref name=\"http:\/\/entertainment.howstuffworks.com\">http:\/\/entertainment.howstuffworks.com<\/ref> ESPN has called him the greatest catcher in baseball history.\n[2] Johnny Bench Award | The Johnny Bench Award was created in 2000 to honor college baseball's top catcher in the National Collegiate Athletic Association's Division I. The award is administered by the Greater Wichita Area Sports Commission and presented after the conclusion of the College World Series. Johnny Bench, who by some is considered to be the best defensive catcher in baseball history, agreed to be the namesake for the annual award. In 2012, BaseballSavings.com became the official sponsor of The Johnny Bench Award.\n[3] Johnny Wahlqvist | Johnny Wahlqvist ( 1973 \u2013 30 January 2017) was a Swedish powerlifter. One of Sweden's most successful champions, specifically in bench press, he competed and won in the national, European, and world championships.\n\n[[ ## thought_2 ## ]]\nThe search results indicate that Johnny Bench played for the Cincinnati Reds. I can now conclude the answer.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"The Hall of Fame catcher who played alongside Ted Simmons and often overshadowed him was Johnny Bench, who played for the Cincinnati Reds.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Ted Simmons was often overshadowed by Johnny Bench, who was a Hall of Fame catcher. Johnny Bench played for the Cincinnati Reds.",
+        "answer": "Cincinnati Reds"
+      },
+      {
+        "augmented": true,
+        "question": "When did the American singer-songwriter, best known as a solo performer release her debut album?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to identify the American singer-songwriter who is best known as a solo performer. Once I have their name, I can search for the release date of their debut album.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"American singer-songwriter best known as a solo performer\"}\n\n[[ ## observation_0 ## ]]\n[1] Josh Doyle | Josh Doyle is a British-American singer-songwriter and musician best known as a solo performer as well as being the frontman of UK rock group Dum Dums\n[2] Kimya Dawson | Kimya Dawson (born November 17, 1972) is an American singer-songwriter, best known as a solo performer and as one half of The Moldy Peaches.\n[3] Ellen McIlwaine | Ellen McIlwaine (born October 1, 1945 in Nashville, Tennessee) is an American singer-songwriter and musician best known for her career as a solo singer, songwriter and slide guitarist.\n\n[[ ## thought_1 ## ]]\nFrom the search results, Kimya Dawson seems to be the most relevant American singer-songwriter best known as a solo performer. I will now search for the release date of her debut album.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Kimya Dawson debut album release date\"}\n\n[[ ## observation_1 ## ]]\n[1] I'm Sorry That Sometimes I'm Mean | I'm Sorry That Sometimes I'm Mean is Kimya Dawson's debut solo album, released in 2002.\n[2] Remember That I Love You | Remember That I Love You is Kimya Dawson's fifth solo album, released by K Records May 9, 2006. Songs include tour favorites such as \"Loose Lips\", \"12\/26\", and \"I Like Giants\". The album art was done by Jeffrey Lewis.\n[3] Thunder Thighs | Thunder Thighs is Kimya Dawson's seventh solo album, released by Great Crap Factory on October 18, 2011. It received generally favorable reviews from critics.\n\n[[ ## thought_2 ## ]]\nI have found that Kimya Dawson's debut solo album is \"I'm Sorry That Sometimes I'm Mean,\" which was released in 2002. I can now finish the task.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Kimya Dawson, an American singer-songwriter best known as a solo performer, released her debut album 'I'm Sorry That Sometimes I'm Mean' in 2002.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The American singer-songwriter best known as a solo performer is Kimya Dawson. Her debut album, \"I'm Sorry That Sometimes I'm Mean,\" was released in 2002.",
+        "answer": "2002"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

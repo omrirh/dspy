@@ -2,20 +2,25 @@
 #
 # run_react_matrix.sh — Run the full ReAct experiment matrix.
 #
-# Matrix: 2 models x 3 optimizers x 3 seeds + 2 baselines = 20 runs
-#   Models:     Qwen/Qwen2.5-7B-Instruct, Qwen/Qwen2.5-14B-Instruct
+# Matrix: 3 models x 3 optimizers x 3 seeds + 3 baselines = 30 runs
+#   Models:     Qwen/Qwen2.5-7B-Instruct, Qwen/Qwen2.5-14B-Instruct,
+#               meta-llama/Llama-3.1-8B-Instruct
 #   Optimizers: clusterfs, miprov2, bfrs
 #   Seeds:      100, 200, 300
 #   Baselines:  1 per model (seed 100)
 #
 # Usage:
-#   ./run_react_matrix.sh                          # run all 20 experiments
+#   ./run_react_matrix.sh                          # run all 30 experiments
 #   ./run_react_matrix.sh --dry-run                # preview commands only
 #   ./run_react_matrix.sh --resume                 # skip runs with existing JSON
 #   ./run_react_matrix.sh --sglang-port 7501       # override sglang port
 #   ./run_react_matrix.sh --results-dir my_results # override results directory
+#   ./run_react_matrix.sh --models "Qwen/Qwen2.5-7B-Instruct"  # run single model
 
 set -euo pipefail
+
+source ../vm_vars.env
+source ../dspy_venv/bin/activate
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -23,6 +28,7 @@ set -euo pipefail
 MODELS=(
     "Qwen/Qwen2.5-7B-Instruct"
     "Qwen/Qwen2.5-14B-Instruct"
+    "meta-llama/Llama-3.1-8B-Instruct"
 )
 OPTIMIZERS=("clusterfs" "miprov2" "bfrs")
 SEEDS=(100 200 300)
@@ -31,14 +37,15 @@ BASELINE_SEED=100
 COLBERT_URL="http://localhost:8894/api/search"
 SGLANG_PORT="7501"
 ENCODER_DEVICE="cpu"
-TRAIN_SIZE=500
-DEV_SIZE=200
-TEST_SIZE=500
+TRAIN_SIZE=100
+DEV_SIZE=250
+TEST_SIZE=1500
 MAX_ITERS=20
 RESULTS_DIR="results"
 
 DRY_RUN=false
 RESUME=false
+MODELS_OVERRIDE=()
 
 # ---------------------------------------------------------------------------
 # Parse arguments
@@ -55,6 +62,7 @@ while [[ "$#" -gt 0 ]]; do
         --dev-size)       DEV_SIZE="$2"; shift ;;
         --test-size)      TEST_SIZE="$2"; shift ;;
         --max-iters)      MAX_ITERS="$2"; shift ;;
+        --models)         IFS=',' read -ra MODELS_OVERRIDE <<< "$2"; shift ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
@@ -65,10 +73,12 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --colbert-url     ColBERTv2 endpoint (default: $COLBERT_URL)"
             echo "  --encoder-device  SentenceTransformer device (default: cpu)"
             echo "  --results-dir     Output directory (default: results)"
-            echo "  --train-size      Training examples (default: 500)"
-            echo "  --dev-size        Validation examples (default: 200)"
-            echo "  --test-size       Test examples (default: 500)"
+            echo "  --train-size      Training examples (default: 100)"
+            echo "  --dev-size        Validation examples (default: 250)"
+            echo "  --test-size       Test examples (default: 1500)"
             echo "  --max-iters       Max ReAct steps (default: 20)"
+            echo "  --models          Comma-separated model IDs to run (default: all 3)"
+            echo "                    e.g. --models 'meta-llama/Llama-3.1-8B-Instruct'"
             exit 0
             ;;
         *) echo "Unknown parameter: $1"; exit 1 ;;
@@ -76,12 +86,19 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+# Apply model override if provided
+[[ ${#MODELS_OVERRIDE[@]} -gt 0 ]] && MODELS=("${MODELS_OVERRIDE[@]}")
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
 TIMESTAMP=$(date +'%Y-%m-%d_%H%M%S')
 LOG_FILE="react_matrix_${TIMESTAMP}.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
+
+# Required for MIPROv2 non-interactive runs
+export PYTHONUNBUFFERED=1
+export AUTO_CONFIRM=true
 
 echo "============================================================"
 echo "  ReAct Experiment Matrix"

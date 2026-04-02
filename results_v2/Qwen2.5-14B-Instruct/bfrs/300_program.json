@@ -1,0 +1,137 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Who was Hemingway's publisher for the novel that brought the festival of San Fermin to the attention of English speakers?",
+        "trajectory": "",
+        "next_thought": "To answer this question, I need to find out which novel by Hemingway brought the festival of San Fermin to the attention of English speakers and then find out who the publisher of that novel was.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Hemingway novel about San Fermin festival"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "In which county is the race track at which the Endurance Gold Cup Stakes was held ? ",
+        "trajectory": "",
+        "next_thought": "To answer this question, I first need to find out which race track hosted the Endurance Gold Cup Stakes. Once I have that information, I can then determine the county in which that race track is located.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Endurance Gold Cup Stakes race track"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "The Shark Tank investor that Cinnaholic rejected an offer from is originally from what country?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which Shark Tank investor Cinnaholic rejected an offer from and then find out which country that investor is from.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Cinnaholic Shark Tank investor rejected offer\"}\n\n[[ ## observation_0 ## ]]\n[1] Cinnaholic | Cinnaholic is a vegan bakery franchise that started in 2010 and currently operates in eight states. The company's owners appeared on the television show Shark Tank in 2014, which ended with them ultimately turning down a $200,000 investment offer from Robert Herjavec. The company has adopted a franchise business model and has plans to open 100 locations by 2020.\n[2] List of Shark Tank episodes | \"Shark Tank\" is an American reality television series produced by Mark Burnett. The show features a panel of potential venture capital investors, called \"sharks\", that considers offers from aspiring entrepreneurs seeking investments for their business or product. A one-hour pitch by the entrepreneur is edited down to \"a dramatic 10-minute segment\" for the episode. The entrepreneur can make a deal if one or more of the sharks are willing to meet or exceed the full investment amount they asked for. If all of the sharks opt out the entrepreneur leaves empty-handed.\n[3] Beyond the Tank | Beyond The Tank is an American reality television companion spin-off series on ABC, which follows up on aspiring entrepreneurs who made business presentations to a panel of potential investors on \"Shark Tank\". The show premiered on May 1, 2015, and was picked-up for 10 episodes, but only three episodes aired. It was renewed for a second season on May 7, 2015, which premiered on January 5, 2016, before airing in its regular time slot on January 7, 2016. Additional episodes started airing in March 2016 after ABC cancelled \"Of Kings and Prophets.\"",
+        "next_thought": "From the search results, I found that Cinnaholic rejected an offer from Robert Herjavec on Shark Tank. Now I need to find out which country Robert Herjavec is from.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Robert Herjavec country of origin"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Are the Harrier and King Shepherd both hybrids?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer the question, I need to find out if the Harrier and King Shepherd are both hybrids. I will start by searching for information about the Harrier.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Harrier dog breed\"}\n\n[[ ## observation_0 ## ]]\n[1] Harrier (dog) | The Harrier is a medium-sized dog breed of the hound class,\n[2] Beagle-Harrier | The Beagle-Harrier is a scenthound. It is a breed of dog originating from France.\n[3] Hamiltonst\u00f6vare | The Hamiltonst\u00f6vare is a breed of dog, bred as a hunting hound. The breed was developed in Sweden by the founder of the Swedish Kennel Club, Count Adolf Hamilton. Its ancestry includes several German hounds as well as English Foxhounds and Harriers.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it seems that the Harrier is a distinct breed and not a hybrid. I will now search for information about the King Shepherd to determine if it is a hybrid.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"King Shepherd dog breed\"}\n\n[[ ## observation_1 ## ]]\n[1] King Shepherd | The King Shepherd is a dog breed developed from crossing German Shepherd Dog with Shiloh Shepherd and long-coated European lines of German Shepherd along with the Great Pyrenees in the 1990s.\n[2] King Charles Spaniel | The King Charles Spaniel (also known as the English Toy Spaniel) is a small dog breed of the spaniel type. In 1903, the Kennel Club combined four separate toy spaniel breeds under this single title. The other varieties merged into this breed were the Blenheim, Ruby and Prince Charles Spaniels, each of which contributed one of the four colours available in the breed.\n[3] Topscore Contradiction | NORD Ch. Topscore Contradiction, also known as King, is a standard sized Poodle, who was the winner of the title of Best In Show at the Crufts dog show in 2002. He was the first overseas dog and the first undocked dog from a breed which was previously docked in the UK to win the title.",
+        "next_thought": "The search results indicate that the King Shepherd is a hybrid breed developed from crossing the German Shepherd with other breeds. Now I can conclude that the Harrier is not a hybrid, while the King Shepherd is a hybrid.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": "The Harrier is not a hybrid, while the King Shepherd is a hybrid."
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Who was Hemingway's publisher for the novel that brought the festival of San Fermin to the attention of English speakers?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which novel by Hemingway brought the festival of San Fermin to the attention of English speakers and then find out who the publisher of that novel was.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Hemingway novel about San Fermin festival\"}\n\n[[ ## observation_0 ## ]]\n[1] The Sun Also Rises | The Sun Also Rises is a 1926 novel written by American author Ernest Hemingway about a group of American and British expatriates who travel from Paris to the Festival of San Ferm\u00edn in Pamplona to watch the running of the bulls and the bullfights. An early and enduring modernist novel, it received mixed reviews upon publication. Hemingway biographer Jeffrey Meyers writes that it is \"recognized as Hemingway's greatest work\", and Hemingway scholar Linda Wagner-Martin calls it his most important novel. The novel was published in the United States in October 1926 by the publishing house Scribner's. A year later, the London publishing house Jonathan Cape published the novel with the title of Fiesta. Since then it has been continuously in print.\n[2] San Ferm\u00edn | The festival of San Ferm\u00edn is a week-long, historically rooted celebration held annually in the city of Pamplona (in Navarre, Spain). The celebrations start at noon on the sixth of July, when the opening of the party is marked by setting off the pyrotechnic \"chupinazo\", and continue until midnight, on the fourteenth of July, with the singing of the \"Pobre de M\u00ed\". While its most famous event is the encierro, or the running of the bulls, which happens at 8:00 AM from the 7th of July to the 14th July, the festival involves many other traditional and folkloric events. It is known locally as \"Sanfermines\" and is held in honor of Saint Fermin, the co-patron of Navarre. Its events were central to the plot of \"The Sun Also Rises\", by Ernest Hemingway, which brought it to the general attention of English-speaking people. It has become probably the most internationally renowned fiesta in Spain. Over 1,000,000 people come to participate in this festival.\n[3] Fermina M\u00e1rquez | Fermina M\u00e1rquez is a short novel in twenty chapters written by French writer Valery Larbaud. It was considered for the Prix Goncourt in 1911 but did not win. Nonetheless, it is still considered to be a minor classic of French literature and one of Larbaud's best known works along with his \"Diary of A.O. Barnabooth\".\n\n[[ ## thought_1 ## ]]\nFrom the search results, it is clear that \"The Sun Also Rises\" is the novel by Hemingway that brought the festival of San Fermin to the attention of English speakers. Now I need to find out who the publisher of this novel was.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"publisher of The Sun Also Rises\"}\n\n[[ ## observation_1 ## ]]\n[1] The Sun Also Rises | The Sun Also Rises is a 1926 novel written by American author Ernest Hemingway about a group of American and British expatriates who travel from Paris to the Festival of San Ferm\u00edn in Pamplona to watch the running of the bulls and the bullfights. An early and enduring modernist novel, it received mixed reviews upon publication. Hemingway biographer Jeffrey Meyers writes that it is \"recognized as Hemingway's greatest work\", and Hemingway scholar Linda Wagner-Martin calls it his most important novel. The novel was published in the United States in October 1926 by the publishing house Scribner's. A year later, the London publishing house Jonathan Cape published the novel with the title of Fiesta. Since then it has been continuously in print.\n[2] The Sun Also Rises (disambiguation) | The Sun Also Rises is a 1926 Ernest Hemingway novel.\n[3] Sophie and the Rising Sun | Sophie and the Rising Sun is a novel written by American author Augusta Trobaugh. It was published in 2001 by publishing company Dutton. The novel was well received, especially throughout the southern states of America.\n\n[[ ## thought_2 ## ]]\nFrom the search results, it is clear that the novel \"The Sun Also Rises\" was published in the United States by Scribner's. Therefore, the publisher of the novel that brought the festival of San Fermin to the attention of English speakers is Scribner's.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Scribner's\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The novel \"The Sun Also Rises\" by Ernest Hemingway brought the festival of San Fermin to the attention of English speakers. The publisher of this novel in the United States was Scribner's.",
+        "answer": "Scribner's"
+      },
+      {
+        "augmented": true,
+        "question": "In which county is the race track at which the Endurance Gold Cup Stakes was held ? ",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to find out which race track hosted the Endurance Gold Cup Stakes. Once I have that information, I can then determine the county in which that race track is located.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Endurance Gold Cup Stakes race track\"}\n\n[[ ## observation_0 ## ]]\n[1] Endurance Gold Cup Stakes | The Endurance Gold Cup Stakes was an American Thoroughbred horse race run annually during the latter part of November at Bowie Race Track in Bowie, Maryland. Open to two-year-old horses, it was contested on dirt over a distance of a mile and a sixteenth (8.5 furlongs).\n[2] Belmont Gold Cup Invitational Stakes | The Belmont Gold Cup Invitational Stakes is a Grade III American Thoroughbred horse race for horses aged four years old and older held over a distance of two miles on the turf scheduled annually in early June at Belmont Park in Elmont, New York. The event currently carries a purse of $400,000.\n[3] Cheltenham Gold Cup | The Cheltenham Gold Cup is a Grade 1 National Hunt horse race run on the New Course at Cheltenham Racecourse in England, over a distance of 3 miles 2\u00bd furlongs (5,331 m), and during its running there are 22 fences to be jumped. The race is scheduled to take place each year during the Cheltenham Festival in March.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that the Endurance Gold Cup Stakes was held at Bowie Race Track in Bowie, Maryland. Now, I need to find out which county Bowie, Maryland is located in.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Bowie, Maryland county\"}\n\n[[ ## observation_1 ## ]]\n[1] Bowie, Maryland | Bowie is a city in Prince George's County, Maryland. The population was 54,727 at the 2010 U.S. Census. Bowie has grown from a small railroad stop to the largest municipality in Prince George's County, and the fifth most populous city and third largest city by area in the U.S. state of Maryland. In 2014 CNN Money ranked Bowie 28th in its Best Places to Live in America list.\n[2] Bowieville | Bowieville is a historic home located near Upper Marlboro in Prince George's County, Maryland, United States. It is an elegant two-part plantation house of the late Federal style, built of brick and covered with stucco. The architectural detail is transitional between the Federal and Greek Revival styles.\n[3] Bowie High School (Maryland) | Bowie High School is a public high school in Bowie, Maryland and a part of Prince George's County Public Schools.\n\n[[ ## thought_2 ## ]]\nThe search results indicate that Bowie, Maryland is located in Prince George's County. Therefore, the race track where the Endurance Gold Cup Stakes was held is in Prince George's County.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"The race track at which the Endurance Gold Cup Stakes was held is in Prince George's County, Maryland.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The Endurance Gold Cup Stakes was held at Bowie Race Track in Bowie, Maryland. Bowie, Maryland is located in Prince George's County. Therefore, the race track where the Endurance Gold Cup Stakes was held is in Prince George's County.",
+        "answer": "Prince George's County"
+      },
+      {
+        "augmented": true,
+        "question": "The Shark Tank investor that Cinnaholic rejected an offer from is originally from what country?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which Shark Tank investor Cinnaholic rejected an offer from and then find out which country that investor is from.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Cinnaholic Shark Tank investor rejected offer\"}\n\n[[ ## observation_0 ## ]]\n[1] Cinnaholic | Cinnaholic is a vegan bakery franchise that started in 2010 and currently operates in eight states. The company's owners appeared on the television show Shark Tank in 2014, which ended with them ultimately turning down a $200,000 investment offer from Robert Herjavec. The company has adopted a franchise business model and has plans to open 100 locations by 2020.\n[2] List of Shark Tank episodes | \"Shark Tank\" is an American reality television series produced by Mark Burnett. The show features a panel of potential venture capital investors, called \"sharks\", that considers offers from aspiring entrepreneurs seeking investments for their business or product. A one-hour pitch by the entrepreneur is edited down to \"a dramatic 10-minute segment\" for the episode. The entrepreneur can make a deal if one or more of the sharks are willing to meet or exceed the full investment amount they asked for. If all of the sharks opt out the entrepreneur leaves empty-handed.\n[3] Beyond the Tank | Beyond The Tank is an American reality television companion spin-off series on ABC, which follows up on aspiring entrepreneurs who made business presentations to a panel of potential investors on \"Shark Tank\". The show premiered on May 1, 2015, and was picked-up for 10 episodes, but only three episodes aired. It was renewed for a second season on May 7, 2015, which premiered on January 5, 2016, before airing in its regular time slot on January 7, 2016. Additional episodes started airing in March 2016 after ABC cancelled \"Of Kings and Prophets.\"\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Cinnaholic rejected an offer from Robert Herjavec on Shark Tank. Now I need to find out which country Robert Herjavec is from.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Robert Herjavec country of origin\"}\n\n[[ ## observation_1 ## ]]\n[1] Robert Herjavec | Robert Herjavec ( ; ] ; born September 14, 1962) is a Croatian-Canadian businessman, investor, and television personality. A native of Vara\u017edin, Croatia, he moved to Halifax, Canada after living and working on a farm with his family. After spending his youth in the relative middle class, he gained admission to the University of Toronto where he graduated with a double degree in political science and English.\n[2] Robert Shvarc | Robert Shvarc (10 December 1932 \u2013 25 April 2003) born in Sarajevo of Bosnia, 10 December 1932, is a Hebrew and Albanian, recognized as one of the best translators from German of the 20th century and beginning of new millennium, writer and poet. His parents were respectively mother from Elbasan and father an Hebrew from Austria and lived in Shkodra, Albania. There Robert Shvarc grew up as a lover of Albanian mother's language and is the first who brought for the Albanian reader some masterpieces of literature as the novels of Gabriel Garc\u00eda M\u00e1rquez, Erich Maria Remarque, Lion Feuchtwanger, dramas of Bertolt Brecht; books of poetry from Goethe, Schiller and Heine. Also Shvarc translated in German best books of many Albanian poets and writers.\n[3] Robertians | The Robertians, or Robertines, was the Frankish predecessor family of origin to the ruling houses of France; it emerged to prominence in the ancient Frankish kingdom of Austrasia as early as the eighth centuryin roughly the same region as present-day Belgiumand later emigrated to West Francia, between the Seine and the Loire rivers. The members were \u2018forefathers\u2019 of the Capetian dynasty. With fealty (sometimes mixed with rancor) to the Carolingians they held the power of West Francia through the whole period of the Carolingian Empire; and from 888 to 987 theirs was the last extant kingdom of that house until they were succeeded by their own (Robertian) lineage, the house of Capet.\n\n[[ ## thought_2 ## ]]\nFrom the search results, I found that Robert Herjavec is from Croatia.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Croatia\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Cinnaholic rejected an offer from Robert Herjavec on Shark Tank. Robert Herjavec is from Croatia.",
+        "answer": "Croatia"
+      },
+      {
+        "augmented": true,
+        "question": "Are the Harrier and King Shepherd both hybrids?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer the question, I need to find out if the Harrier and King Shepherd are both hybrids. I will start by searching for information about the Harrier.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Harrier dog breed\"}\n\n[[ ## observation_0 ## ]]\n[1] Harrier (dog) | The Harrier is a medium-sized dog breed of the hound class,\n[2] Beagle-Harrier | The Beagle-Harrier is a scenthound. It is a breed of dog originating from France.\n[3] Hamiltonst\u00f6vare | The Hamiltonst\u00f6vare is a breed of dog, bred as a hunting hound. The breed was developed in Sweden by the founder of the Swedish Kennel Club, Count Adolf Hamilton. Its ancestry includes several German hounds as well as English Foxhounds and Harriers.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it seems that the Harrier is a distinct breed and not a hybrid. I will now search for information about the King Shepherd to determine if it is a hybrid.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"King Shepherd dog breed\"}\n\n[[ ## observation_1 ## ]]\n[1] King Shepherd | The King Shepherd is a dog breed developed from crossing German Shepherd Dog with Shiloh Shepherd and long-coated European lines of German Shepherd along with the Great Pyrenees in the 1990s.\n[2] King Charles Spaniel | The King Charles Spaniel (also known as the English Toy Spaniel) is a small dog breed of the spaniel type. In 1903, the Kennel Club combined four separate toy spaniel breeds under this single title. The other varieties merged into this breed were the Blenheim, Ruby and Prince Charles Spaniels, each of which contributed one of the four colours available in the breed.\n[3] Topscore Contradiction | NORD Ch. Topscore Contradiction, also known as King, is a standard sized Poodle, who was the winner of the title of Best In Show at the Crufts dog show in 2002. He was the first overseas dog and the first undocked dog from a breed which was previously docked in the UK to win the title.\n\n[[ ## thought_2 ## ]]\nThe search results indicate that the King Shepherd is a hybrid breed developed from crossing the German Shepherd with other breeds. Now I can conclude that the Harrier is not a hybrid, while the King Shepherd is a hybrid.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": \"The Harrier is not a hybrid, while the King Shepherd is a hybrid.\"}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The Harrier is a distinct breed and not a hybrid. The King Shepherd, on the other hand, is a hybrid breed developed from crossing the German Shepherd with other breeds.",
+        "answer": "No"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

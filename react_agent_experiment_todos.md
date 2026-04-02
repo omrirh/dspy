@@ -1,167 +1,67 @@
 # ReAct Agent Experiment — Task Bank
 
-## Status snapshot (2026-03-26)
+## Status snapshot (2026-04-02)
 
-> **All pre-fix results are INVALIDATED.** Five critical bugs were fixed in
-> `react_agent_experiment.py` and `programs.py` between Mar 20-25. Any number
-> collected before these fixes is unreliable and must be re-run under the fixed
-> codebase with structured output (TODO 5).
+> **results_v2 matrix COMPLETE.** All 20 runs finished under corrected conditions:
+> 100/250/1500 train/dev/test splits, `max_bootstrapped_demos=4` equalized across all
+> optimizers, `AUTO_CONFIRM=true` for MIPROv2 non-interactive runs, `search_queries`
+> trajectory field added. Results archived in `results_v2/`.
 
-**Fixes applied:**
-1. `max_iters` changed from 5 → 20 (was silently capping agent reasoning depth)
-2. `ReactAgentMH.forward()` now passes `max_iters` through to `dspy.ReAct` (was ignored)
-3. Content-safety filter applied to all splits (was missing from dev/test)
-4. Bootstrap metric switched from default to `answer_exact_match` (was using wrong metric)
-5. `dspy.configure(rm=retriever)` moved inside `create_colbert_search_tool` (was missing for bootstrap)
+**results_v2 headline numbers (mean ± std across seeds 100/200/300):**
 
-**Old numbers (struck-through, for reference only):**
+| Model | Baseline | ClusterFS | MIPROv2 | BFRS |
+|---|---|---|---|---|
+| 7B  | 26.3% | 43.34 ± 0.77% | 42.56 ± 1.77% | 45.28 ± 0.95% |
+| 14B | 47.9% | **54.65 ± 0.26%** | 51.49 ± 0.69% | 53.76 ± 0.82% |
+| Llama-8B | 38.1% | 45.42 ± 2.48% | 45.00 ± 0.28%† | — (BFRS missing) |
+
+† MIPROv2 Llama-8B: 2 seeds only; variance hides bimodal termination behavior (95 vs 1300 exhausted).
+
+**Three-regime finding:** 7B optimization is *format teaching*. Llama-8B optimization is
+*termination teaching* (finish-demo count in bootstrap pool is the dominant factor; extreme
+seed variance for both methods). 14B optimization is *reasoning quality* (ClusterFS
+diversity-first selection leads; MIPROv2 instruction tuning does not help). Regime identity
+depends on architecture, not scale alone.
+
+**Old pre-fix numbers (struck-through, for reference only):**
 
 | Model | ClusterFS | MIPROv2 | BFRS |
 |---|---|---|---|
 | 7B | ~~45.8%~~ | ~~39.2%~~ | ~~49.8%~~ |
 | 14B | ~~55.4%~~ | ~~48.6%~~ | ~~54.8%~~ |
 
-~~Zero-shot 7B baseline: ~26% (true), ~29% (reported, inflated by extract fallback ~7pp).~~
+---
+
+## TODO 1 — ClusterFS 7B re-run  _(SUPERSEDED by results_v2)_
+
+**Resolved:** results_v2 provides 3-seed ClusterFS 7B data (seeds 100/200/300) under the
+corrected 100-train split. Mean 43.34% ± 0.77% with 0 type-A failures per seed — format
+compliance is stable under the fixed codebase. The Mar 20 anomaly was a pre-fix artifact.
+See `optimizer_insights.md` for full results_v2 summary.
 
 ---
 
-## TODO 1 — ClusterFS 7B re-run  _(blocked)_
+## TODO 2 — Update `optimizer_insights.md`: overall takeaways  _(DONE)_
 
-**Blocked by:** TODO 5 (needs structured JSON output), TODO 7 (part of full re-run matrix)
-
-**Goal**: verify that ClusterFS reproducibly finds format-compliant demos and delivers ~45%+,
-and confirm whether the Mar 20 run's anomalous 0 zero-shot failures was a server artifact.
-
-**What we know**: a fresh `--baseline` run (Mar 24) produced 164 parse failures and 26.2% —
-consistent with MIPROv2/BFRS baselines. The Mar 20 ClusterFS run's 0 failures is an outlier
-that can only be explained by a different SGLang server state at that time, not seed variation
-(P(0 failures | ~32% population failure rate) ≈ 0).
-
-**When it completes, record:**
-- Baseline score + parse failure count (expect ~26%, ~150-165 failures)
-- Optimized score + parse failure count on final test eval (expect ~0 failures if demos are compliant)
-- Bootstrap yield (expect ~20%, ~100 traces from 500 attempts)
-- Whether `best_in_cluster` vs `top_n` tie holds again
-- Update `optimizer_insights.md` §ClusterFewshot 7B with corrected baseline note
+**Done:** `optimizer_insights.md` fully rewritten with results_v2 data (2026-03-31).
+Covers two-regime finding, per-optimizer trajectory quality, compile-time efficiency, and
+cross-optimizer statistical comparison. No further action needed.
 
 ---
 
-## TODO 2 — Update `optimizer_insights.md`: overall takeaways  _(blocked)_
+## TODO 3 — Correlation analysis: format compliance failures vs. performance gain  _(DEFERRED)_
 
-**Blocked by:** TODO 7 (needs post-fix data to write credible insights)
-
-Add a **§Format Compliance as Optimizer Confound** section with:
-
-1. **The confound**: on 7B, task accuracy is confounded by whether the selected demos happen
-   to be format-compliant. The 23.4pp BFRS candidate spread (24.8%–48.2%) is almost entirely
-   explained by this, not by reasoning quality differences.
-
-2. **The mechanism**: 7B operates at the format compliance threshold for 3-field structured
-   output. Bootstrapped reasoning traces (complete thought→search→observe→finish chains) shift
-   the model above threshold; labeled-only pairs and low-quality single traces do not.
-   Evidence: seeds -3/-2 (labeled-only) have 157 failures = identical to zero-shot (156).
-
-3. **Proposed disentangled metric**: report accuracy on format-compliant inferences only
-   (exclude all extract-fallback outputs) alongside raw accuracy. Isolates optimizer reasoning
-   quality from format scaffolding effect.
-
-4. **Cross-size comparison**: 14B is format-stable (≤3 failures across all optimizers/seeds).
-   The format compliance problem is specific to small models (≤7B). Optimizer rankings differ
-   between model sizes partly for this reason.
+**Status:** Data now available in `results_v2/` JSONs. Analysis is valid but lower priority
+given the two-regime finding already characterizes the 7B format compliance effect clearly.
+Revisit when building the aggregation pipeline (TODO 8).
 
 ---
 
-## TODO 3 — Correlation analysis: format compliance failures vs. performance gain  _(blocked)_
+## TODO 4 — Debug: ReAct format compliance under prompt variants  _(DEFERRED)_
 
-**Blocked by:** TODO 5 (needs per-example scores in JSON), TODO 6 (needs parse failure counts)
-
-**Goal**: formally quantify the relationship between per-candidate parse failure rate and
-accuracy, using the BFRS 9-candidate sweep as a controlled natural experiment. This is
-scientifically meaningful because all 9 candidates share the same model, task, base prompt,
-and evaluation set — the only variable is the bootstrapped demo set.
-
-**Why it's interesting**:
-The correlation measures how much of the apparent performance gap between optimizer candidates
-is driven by format compliance (model stays in ReAct mode) vs. reasoning quality (model reasons
-well once in ReAct mode). If the correlation is strong (expected R² > 0.9 from the three-tier
-structure), it directly supports the claim that prompt optimizers on small models are largely
-performing *format compliance selection*, not *reasoning quality selection* — a strong and
-publishable reframing of what few-shot optimization achieves on ≤7B models.
-
-**Analysis to run** (all data already in logs, no new experiments needed):
-
-1. **Scatter plot**: x = parse failures per candidate (500-example eval), y = candidate accuracy.
-   Plot the 9 BFRS candidates + zero-shot baseline as 10 data points. Fit a regression line.
-   Expected result: strong negative correlation with a natural cluster gap around ~10 failures
-   separating the two regimes.
-
-2. **Two-component decomposition**:
-   - *Between-group variance*: compliant (≤3 failures) vs. non-compliant (~157 failures).
-     Quantify how much accuracy variance this binary split explains (expected: ~80-90%).
-   - *Within-group variance*: among compliant seeds only (0, -1, 2, 4, 5), plot failures vs.
-     accuracy. Residual variance here reflects trace reasoning quality, not format compliance.
-     This decomposition makes the "necessary but not sufficient" claim rigorous.
-
-3. **Parse failure rate as early-rejection proxy**: simulate a sequential eval where candidates
-   are abandoned after 25 examples if failure rate > 50%. Show which non-compliant candidates
-   would be correctly rejected early, and estimate compute savings.
-
-4. **Extend to MIPROv2 minibatch trials** (secondary): 25 trials × 25 examples each, most
-   have 0 failures. Check whether the 3 outlier trials (trials 9, 11, 21) with elevated
-   failures also have suppressed minibatch scores. Smaller effect expected since 14B was used
-   and the variance in MIPROv2 trial scores is driven by minibatch noise more than format.
-
-**Data sources** (no new runs needed):
-- BFRS 7B: `react_agent_experiment_Qwen2.5-7B-Instruct_bfrs_2026-03-24.log` — per-seed
-  failure counts and scores already extracted (see `optimizer_insights.md` §BFRS 7B table)
-- MIPROv2 7B: `react_agent_experiment_Qwen2.5-7B-Instruct_miprov2_2026-03-21.log` — per-trial
-  scores and failure counts already mapped
-
----
-
-## TODO 4 — Debug: ReAct format compliance under prompt variants  _(blocked)_
-
-**Blocked by:** TODO 6 (parse failure Type A/B/C/D classification is implemented there)
-
-**Goal**: understand *when* and *why* 7B fails structured output, and identify minimal
-interventions that guarantee compliance. Feeds directly into paper framing.
-
-### Step 1 — Instrument failure types (code change, ~30 min)
-In [dspy/predict/react.py:83](dspy/predict/react.py#L83), log raw pred fields at parse failure:
-```python
-except AttributeError:
-    logger.warning(
-        "ReAct parse failure. Present fields: %s",
-        list(vars(pred).keys()) if hasattr(pred, '__dict__') else repr(pred)
-    )
-    break
-```
-Re-run `--baseline` on 7B and classify failures into types:
-- **Type A**: no fields at all (model produced prose, not structured output)
-- **Type B**: partial fields (`next_thought` present, tool fields missing)
-- **Type C**: wrong field names (format drift — model invented key names)
-- **Type D**: `next_tool_args` present but not dict-parseable
-
-### Step 2 — Identify failure-prone examples (~1h, needs Step 1)
-Run `--baseline` 3× with different seeds. Track which HotPotQA questions fail consistently
-across runs. Measure average input token length for failing vs non-failing examples.
-Hypothesis: long-passage retrievals consume budget, truncating the structured output.
-
-### Step 3 — Prompt intervention ablations (~3h, needs Step 2)
-On the ~50 most consistently-failing examples from Step 2, run each intervention:
-
-| Intervention | What it tests |
-|---|---|
-| Explicit format reminder in system prompt | Reinforcing field contract at inference time |
-| 1 manually-crafted perfect-format demo | Minimal few-shot format anchor |
-| Reduce `max_iters` 20→3 | Fewer steps = less chance of format drift |
-| Temperature 0.0 | Eliminates stochasticity in format-critical output |
-| Grammar-constrained decoding (Outlines) | Hard ceiling — what's achievable with constraint |
-
-### Step 4 — Trace analysis: format-compliant vs non-compliant BFRS seeds (~1h)
-Compare bootstrap traces from BFRS seeds 0/-1/4 (compliant) vs seeds 1/3 (non-compliant).
-Look for structural differences: avg trajectory length, whether `finish` tool appears,
-tool_args JSON validity, trace token length. This directly explains the bimodal effect.
+**Status:** Format compliance is no longer a blocking issue — results_v2 7B runs show ≤5
+type-A failures per seed across all optimizers. Intervention ablations remain interesting
+for paper framing but are not on the critical path. Defer until after TODO 9 and TODO 10.
 
 ---
 
@@ -357,9 +257,10 @@ def aggregate_parse_failures(per_example_results):
 
 ---
 
-## TODO 7 — Full Re-run Matrix  _(READY — run_react_matrix.sh created)_
+## TODO 7 — Full Re-run Matrix  _(DONE)_
 
-**Infrastructure done:** `run_react_matrix.sh` created. Run with `--dry-run` to preview, `--resume` to skip completed runs.
+**Completed 2026-03-31.** All 20 runs finished. Results in `results_v2/`. Matrix runner
+`run_react_matrix.sh` used with `--resume` for the 14B block after a WiFi disconnect.
 
 **Goal**: re-run complete experiment matrix under fixed conditions with structured output
 from TODOs 5+6. All results go into `results/` as JSON.
@@ -427,7 +328,9 @@ Before moving to the next run, verify:
 
 ## TODO 8 — Aggregation & Statistical Analysis Pipeline  _(blocked)_
 
-**Blocked by:** TODO 7 (needs completed results from full matrix)
+**Blocked by:** TODO 9 (Llama-3.1-8B results). Aggregation is more meaningful once the
+cross-architecture comparison is in — avoids writing the pipeline twice with different
+model sets. Input will be all JSONs across `results_v2/` (Qwen runs) + Llama runs.
 
 **Goal**: new `aggregate_react_results.py` script that reads all JSON results from `results/`
 and produces publication-ready tables, statistical tests, and diagnostic plots.
@@ -469,28 +372,132 @@ analysis/
 
 ---
 
-## Dependency graph
+## TODO 9 — Cross-architecture 7B-class model validation  _(PARTIAL — BFRS missing)_
 
+**Completed**: baseline (1 seed), ClusterFS (seeds 100/200/300), MIPROv2 (seeds 100/200).
+**Missing**: BFRS (0 runs). Full comparison is not possible without it.
+
+**Key findings** (full analysis in `optimizer_insights.md`):
+
+Llama-3.1-8B defines a **third optimization regime: termination teaching**. The model produces
+structurally valid trajectories zero-shot (0 type-A failures) but has a 65.3% exhaustion rate
+at baseline — it loops without calling `Finish[]`. This is distinct from both Qwen-7B (format
+failures) and Qwen-14B (reasoning quality).
+
+ClusterFS's failure to separate from other methods at 7B scale is **not Qwen-specific**, but
+for a different reason: at Qwen-7B all methods converge because any demos fix format compliance;
+at Llama-3.1-8B all methods have extreme seed variance because **finish-demo presence/absence in
+the bootstrap pool** dominates, making optimizer type secondary.
+
+**Finish-Demo Law**: the number of bootstrapped demos containing a `Finish[]` call is the
+single strongest predictor of post-optimization termination. Runs with 0 finish demos produce
+more exhausted trajectories than baseline (regression). This is a systematic effect of the
+`answer_exact_match` bootstrap metric being blind to non-termination.
+
+**Remaining runs needed** — BFRS on Llama-3.1-8B (3 seeds):
+```bash
+./react_agent_experiment_driver.sh --model meta-llama/Llama-3.1-8B-Instruct \
+    --optimizer bfrs --seed 100 --sglang-port 7501 \
+    --train-size 100 --dev-size 250 --test-size 1500 --no-visuals
 ```
-TODO 5 (Infrastructure) ──┬──> TODO 7 (Re-runs) ──> TODO 8 (Aggregation)
-TODO 6 (Parse Failures) ──┘        │                       │
-          DONE ✓                    ├──> TODO 1 (ClusterFS re-run)
-                              READY ├──> TODO 2 (update insights)
-                                    ├──> TODO 3 (correlation analysis)
-                                    └──> TODO 4 (debug compliance)
-```
-
-**Critical path**: ~~TODO 5 + TODO 6 (parallel) →~~ TODO 7 (execute matrix) → TODO 8
-
-TODOs 1-4 are unblocked once TODO 7 completes (post-fix data available).
+Repeat for seeds 200 and 300. Results land in `results_v2/Llama-3.1-8B-Instruct/bfrs/`.
 
 ---
 
-## Open questions (inform paper framing and TODO 3)
+## TODO 10 — Extended 14B seed matrix: ClusterFS + BFRS  _(READY)_
 
-- Does ClusterFS's high bootstrap yield (101 traces) *cause* format compliance, or does it
-  merely *correlate* with it? Test: subsample ClusterFS to 10 traces and re-run selection.
-- Is the format compliance threshold model-specific to Qwen2.5-7B, or does it generalize to
-  other 7B-class models (Llama-3.1-8B, Gemma-3-4B)?
-- Can a simple bootstrap filter (discard traces with > N parse failures during collection)
-  guarantee format-compliant demos without requiring cluster-based selection?
+**Goal**: add seeds 400 and 500 for ClusterFS and BFRS on Qwen2.5-14B to tighten
+confidence intervals and determine whether ClusterFS's 0.89pp lead over BFRS is real.
+
+**Motivation**: With only 3 seeds, ClusterFS std=0.26% and BFRS std=0.82% give a
+gap that is suggestive but not conclusive. 5-seed std will narrow CIs by ~37% and give
+a cleaner picture.
+
+**Matrix**: 2 optimizers × 2 additional seeds = 4 runs (no new baseline needed).
+
+**Expected output** (seeds 100–500, n=5):
+- ClusterFS 14B: tighter std, likely still leads BFRS
+- BFRS 14B: wider natural variance may persist due to random search sensitivity
+
+**Run with** (add to matrix runner or run individually via driver):
+```bash
+./react_agent_experiment_driver.sh --model Qwen/Qwen2.5-14B-Instruct \
+    --optimizer clusterfs --seed 400 --sglang-port 7501 \
+    --train-size 100 --dev-size 250 --test-size 1500 --no-visuals
+```
+Repeat for seeds 400/500 × optimizers clusterfs/bfrs.
+
+**Update `optimizer_insights.md`** after completing with 5-seed mean/std table.
+
+---
+
+## TODO 11 — Bootstrap metric: penalize non-termination  _(NEW — motivated by Llama findings)_
+
+**Goal**: Modify the bootstrap metric to require `finished_via_tool=True` so that the demo
+candidate pool is guaranteed to contain termination-teaching examples.
+
+**Motivation**: `answer_exact_match` is blind to non-termination. For Llama-3.1-8B, ~31% of
+looping (exhausted) trajectories get the correct answer, so the bootstrap candidate pool is
+dominated by non-terminating demos. When ClusterFS or MIPROv2 select 3–4 demos, they can
+select zero finish-containing examples by chance — causing termination regression vs baseline
+(ClusterFS s300: 1247 exhausted vs 980 at baseline; MIPROv2 s100: 1300 exhausted). This is
+a systematic bug, not a random failure.
+
+**Proposed fix** in `react_agent_experiment.py`:
+
+```python
+def answer_exact_match_with_finish(example, pred, trace=None):
+    """Bootstrap metric: requires both correct answer AND clean Finish[] termination."""
+    answer_ok = answer_exact_match(example, pred, trace)
+    finished = any(
+        getattr(pred, 'trajectory', {}).get(f'tool_name_{j}') == 'finish'
+        for j in range(20)
+    ) if hasattr(pred, 'trajectory') and isinstance(pred.trajectory, dict) else False
+    return answer_ok and finished
+```
+
+Pass to optimizers as `metric=answer_exact_match_with_finish`.
+
+**Experiment**: re-run Llama-3.1-8B ClusterFS (3 seeds) with composite metric.
+
+**Prediction**:
+- All demo pools will contain ≥1 finish-teaching example → no termination regressions
+- Exhausted counts across seeds should collapse to a narrow range (vs current 351–1247)
+- Accuracy effect: neutral to slightly positive for Llama; no change expected for Qwen-7B
+  (demos already contained `Finish[]` traces) or Qwen-14B (low baseline exhaustion)
+
+**Update `optimizer_insights.md`** with composite metric results once available.
+
+---
+
+## Dependency graph
+
+```
+TODO 5 (Infrastructure) ──┬──> TODO 7 (Re-runs) ──> TODO 9 (Llama runs) ──────────────> TODO 8 (Aggregation)
+TODO 6 (Parse Failures) ──┘    DONE ✓               PARTIAL (BFRS missing) ← next       blocked by TODO 9
+          DONE ✓                                         │
+                                                    TODO 10 (14B seeds)         TODO 11 (bootstrap metric fix)
+                                                    (parallel with TODO 9)      (motivated by Llama findings)
+
+TODO 1 — SUPERSEDED   TODO 2 — DONE   TODO 3 — DEFERRED   TODO 4 — DEFERRED
+```
+
+**Critical path**: ~~TODO 5 + TODO 6 → TODO 7~~ DONE → TODO 9 (BFRS remaining) → TODO 8
+
+---
+
+## Open questions (inform paper framing)
+
+- Does ClusterFS's diversity-first mechanism advantage require a minimum reasoning capability
+  threshold? results_v2 suggests yes (14B benefits, 7B does not). Llama-3.1-8B confirms
+  diversity-first selection cannot overcome the termination-demo deficit in the bootstrap pool.
+- Is the format compliance threshold model-specific to Qwen2.5-7B, or a general ≤7B property?
+  **Answered (partially)**: Llama-3.1-8B has zero format failures — the format-teaching regime
+  is Qwen-7B-specific. Llama is in a termination-teaching regime instead.
+- Can a composite bootstrap metric (`exact_match AND finished_via_tool`) guarantee
+  termination-teaching demos without requiring cluster-based selection? **TODO 11 tests this.**
+- Does the Finish-Demo Law hold for BFRS? BFRS selects demos by metric ranking, not diversity.
+  If BFRS consistently picks finish-containing demos (because clean trajectories score higher
+  on exact_match), it may have a systematic advantage over ClusterFS on Llama. **TODO 9 (BFRS).**
+- Is the high acc@exhaust for Llama-3.1-8B (0.310 baseline) a general property of 8B-class
+  instruction-tuned models, or specific to Llama's training distribution?

@@ -1,0 +1,103 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "During which war did the Japanese troops commit mass murder and rape against civilians that is recorded in The Good Man of Nanking: The Diaries of John Rabe?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which war is recorded in The Good Man of Nanking: The Diaries of John Rabe, and during which the Japanese troops committed mass murder and rape against civilians.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"The Good Man of Nanking: The Diaries of John Rabe war\"}\n\n[[ ## observation_0 ## ]]\n[1] The Good Man of Nanking | The Good Man of Nanking: The Diaries of John Rabe is a collection of the personal journals of John Rabe, a German businessman who lived in Nanjing at the time of the Nanking Massacre in 1937\u20131938. The book contains the diaries that Rabe kept during the Nanking Massacre, writing from his personal experience and observation of the events that took place. It also excerpts Rabe's experience in immediate post-war Berlin, then occupied by Soviet troops. Rabe's diaries were made known and quoted by author Iris Chang during the research for her book, \"The Rape of Nanking\"; they were subsequently translated from German to English by John E. Woods and published in the United States in 1998.\n[2] Nanking (2007 film) | Nanking () is a 2007 film about the 1937 Nanking Massacre committed by the Japanese army in the former capital city Nanjing, China. It was inspired by Iris Chang's \"The Rape of Nanking\", which discussed the persecution and murder of the Chinese by the Imperial Japanese Army in the then-capital of Nanjing during the Second Sino-Japanese War. The film draws on letters and diaries from the era as well as archive footage and interviews with surviving victims and perpetrators of the massacre. Contemporary actors play the roles of the Western missionaries, professors, and businessmen who formed the Nanking Safety Zone to protect the city's civilians from Japanese forces. Particular attention is paid to Nazi Party member John Rabe, a German businessman who organized the Nanking Safety Zone, Robert O. Wilson, a surgeon who remained in Nanking to care for legions of victims, and Minnie Vautrin, a missionary educator who rendered aid to thousands of Nanking's women.\n[3] John Rabe | John Heinrich Detlev Rabe (November 23, 1882 \u2013 January 5, 1950) was a German businessman and Nazi Party member who is best known for his efforts to stop the atrocities of the Japanese army during the Nanking Occupation and his work to protect and help the Chinese civilians during the event. The Nanking Safety Zone, which he helped to establish, sheltered approximately 200,000 Chinese people from slaughter during the massacre.",
+        "next_thought": "The Good Man of Nanking: The Diaries of John Rabe is a collection of the personal journals of John Rabe, who lived in Nanjing during the Nanking Massacre in 1937-1938. The Japanese troops committed mass murder and rape against civilians during the Second Sino-Japanese War.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": "{'answer': 'The Second Sino-Japanese War'}"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Who is younger, Joe Camp or Boaz Yakin?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo determine who is younger between Joe Camp and Boaz Yakin, I need to find their birth years and compare them.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Joe Camp birth year, Boaz Yakin birth year\"}\n\n[[ ## observation_0 ## ]]\n[1] Joe Camp | Joseph S. Camp, Jr. (born April 20, 1939 in St. Louis, Missouri) is a motion picture director and writer who is best known as the creator and director of the Benji films as well as \"Hawmps! \" and \"The Double McGuffin\".\n[2] Joe Talirunili | Joe Talirunili (ca. 1893\u20131976) was an Inuit printmaker and sculptor, who would sometimes draw. There are two different places listed of where the artist was born, Qugaaluk River camp, Quebec, or 50 kilometers north of Puvirnituq in Nunavik Province, Quebec, at Neahungnik camp Another mystery is when the artist was born and when he died. The Department of Indian and Northern Affairs in Ottawa says he was born in 1893, but the artist claims that 1906 is the correct year, but there is no indication of when the month and day was. The dates of his death are September 13, 1976 or September 11, 1976.\n[3] Boaz Yakin | Boaz Yakin (born June 20, 1966) is an American screenwriter and film director based in New York City. He has written such screenplays as \"Fresh\" and \"A Price Above Rubies\", and he directed the feature film \"Remember the Titans\", among others.",
+        "next_thought": "From the search results, I found that Joe Camp was born in 1939 and Boaz Yakin was born in 1966. Therefore, Boaz Yakin is younger than Joe Camp.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {}
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "You are a knowledgeable researcher tasked with answering complex, multi-hop questions by leveraging a language model and a series of targeted Wikipedia searches. Think step-by-step: break down the given question into smaller components, issue targeted searches to gather relevant information, and synthesize this information into a concise and factual answer. The process is iterative, involving multiple steps of reasoning, tool invocation (searches), and observation (retrieving search results). The program uses a ReAct framework, which alternates between a thought phase (reasoning) and a tool phase (searching and observing). The goal is to drive the ReAct pipeline by making intelligent decisions about what the next step should be, based on the current situation and the task at hand. \n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Which filmmaker directed both dramas and comedies, David Gordon Green or Raoul Peck?",
+        "trajectory": "",
+        "reasoning": "To determine which filmmaker directed both dramas and comedies, we need to examine the filmography of both David Gordon Green and Raoul Peck. We will look for evidence of them directing films in both genres.\n\n1. **David Gordon Green**: He is known for directing dramas such as \"Pineapple Express\" and \"Paw Patrol: The Movie\" (which is a comedy), and also comedies like \"George A. Romero\" and \"The Sinner\".\n2. **Raoul Peck**: He is primarily known for his documentaries and dramas, such as \"I Am Not Your Negro\" and \"The Young Karl Marx\".\n\nBased on this information, David Gordon Green has directed both dramas and comedies.",
+        "answer": "David Gordon Green"
+      },
+      {
+        "augmented": true,
+        "question": "In what year was the Under Secretary of the Air Force replaced by a former member of the United States House of Representatives?",
+        "trajectory": "",
+        "reasoning": "To answer this question, we need to identify the Under Secretary of the Air Force who was replaced and the former member of the United States House of Representatives who took the position. We will search for the relevant information on Wikipedia.\n\n1. Identify the Under Secretary of the Air Force who was replaced.\n2. Find the date of the replacement.\n3. Identify the former member of the United States House of Representatives who took the position.\n\nAfter gathering the information, we can determine the year of the replacement.",
+        "answer": "2017"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nThought: Let's break down the question into smaller parts and find relevant information for each part.\nTool Name: search\nTool Args: {\"query\": \"question\"}\n\nObservation: Based on the search results, I will provide the next thought and the tool to use.\n\nThought: After analyzing the search results, I will determine the next step in the process and choose the appropriate tool and its arguments.\nTool Name: [Based on the search results, determine the next relevant tool to use]\nTool Args: [Based on the search results, provide the necessary arguments for the tool]\n\nObservation: After executing the chosen tool, I will analyze the resulting information and decide the next step.\n\nThought: Based on the observation, I will provide the next thought and the tool to use.\nTool Name: [Based on the observation, determine the next relevant tool to use]\nTool Args: [Based on the observation, provide the necessary arguments for the tool]\n\nObservation: After executing the chosen tool, I will analyze the resulting information and decide the next step.\n\nThought: Based on the analysis, I will provide the final concise and factual answer.\nTool Name: finish\nTool Args: {\"kwargs\": {\"answer\": \"The final concise and factual answer\"}} \n\nReasoning: Let's think step by step in order to [Provide the detailed reasoning based on the accumulated information from the search results and observations]\n\nAnswer: [The final concise and factual answer]",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

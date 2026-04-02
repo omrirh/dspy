@@ -1,0 +1,98 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Who directed this 1986 British biopic starring Gary Oldman and Chloe Webb, which was parodied in The Simpsons episode \"Love Springfieldian Style?\"",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which 1986 British biopic starring Gary Oldman and Chloe Webb was parodied in The Simpsons episode \"Love Springfieldian Style\". I will start by searching for the biopic.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"1986 British biopic starring Gary Oldman and Chloe Webb\"}\n\n[[ ## observation_0 ## ]]\n[1] Sid and Nancy | Sid and Nancy (also known as Sid and Nancy: Love Kills) is a 1986 British biopic directed by Alex Cox and co-written with Abbe Wool. The film portrays the life of Sid Vicious (Gary Oldman), bassist of the seminal punk rock band the Sex Pistols, and his relationship with girlfriend Nancy Spungen (Chloe Webb). The film also features supporting performances from David Hayman, Xander Berkeley, and Courtney Love.\n[2] Chloe Webb | Chloe Webb (born June 25, 1956) is an American actress, best known for her roles in films \"Sid and Nancy\" (1986), \"The Belly of an Architect\" (1987), \"Twins\" (1988), and \"Heart Condition\" (1990). She also was nominated for an Primetime Emmy Award for her role as Laurette Barber in the ABC drama series \"China Beach\", and had a recurring role as Monica Gallagher on the Showtime comedy-drama \"Shameless\".\n[3] Prick Up Your Ears | Prick Up Your Ears is a 1987 British film, directed by Stephen Frears, about the playwright Joe Orton and his lover Kenneth Halliwell. The screenplay was written by Alan Bennett, based on the biography by John Lahr. The film stars Gary Oldman as Orton, Alfred Molina as Halliwell, Wallace Shawn as Lahr and Vanessa Redgrave as Peggy Ramsay.",
+        "next_thought": "The search results indicate that the 1986 British biopic starring Gary Oldman and Chloe Webb is \"Sid and Nancy\". Now I need to find out if this film was parodied in The Simpsons episode \"Love Springfieldian Style\".",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "The Simpsons episode Love Springfieldian Style parody Sid and Nancy"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Which band was formed first Shiny Toy Guns or The Neighbourhood?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo determine which band was formed first, I need to find the formation years of both Shiny Toy Guns and The Neighbourhood.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Shiny Toy Guns formation year\"}\n\n[[ ## observation_0 ## ]]\n[1] Shiny Toy Guns | Shiny Toy Guns is an American rock band that formed in 2002 in Los Angeles, California. They released their first studio album \"We Are Pilots\" in 2006, after recording it two previous times. It featured three singles that peaked inside the top 30 in the Alternative Songs Chart. \"We Are Pilots\" was nominated for a Grammy Award. Their second album \"Season of Poison\" was released in 2008 and featured two singles that peaked inside the top 30 in the Alternative Songs Chart.\n[2] III (Shiny Toy Guns album) | III is the third studio album by American indie rock band Shiny Toy Guns. It was released on October 22, 2012 by Five Seven Music. The album features the return of the band's original female vocalist, Carah Faye Charnow. The album spawned three singles so far: \"Waiting Alone\", \"Fading Listening\", and \"Somewhere to Hide\".\n[3] Season of Poison | Season of Poison is the second studio album by American indie rock band Shiny Toy Guns. It was released on November 4, 2008 through Universal Motown Records Group. It peaked at #47 on the \"Billboard\" Hot 100 the following week. The album introduced the band's 3rd female vocalist, Sisely Treasure. The album featured two singles: \"Ricochet! \" and \"Ghost Town\".\n\n[[ ## thought_1 ## ]]\nI have found that Shiny Toy Guns was formed in 2002. Now I need to find the formation year of The Neighbourhood.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"The Neighbourhood formation year\"}\n\n[[ ## observation_1 ## ]]\n[1] The Neighbourhood | The Neighbourhood (sometimes rendered as \"THE NBHD\") is an American rock band formed in Newbury Park, California in 2011. The band is composed of vocalist Jesse Rutherford, guitarists Jeremy Freedman and Zach Abels, bassist Mikey Margott, and drummer Brandon Alexander Fried. After releasing three EPs, \"I'm Sorry...\", \"The Love Collection\" and \"Thank You\", The Neighbourhood released their first full-length album, \"I Love You. \", on April 23, 2013, via Columbia Records.\n[2] Neighbourhood (song) | \"Neighbourhood\" is a song by Space, written by band members Tommy Scott and Franny Griffiths, and released as the second single (though the band prefer it to be the first, as they consider \"Money\"\/\"Kill Me\" to be a \"test\" release) from their debut album \"Spiders\", and their third single altogether. It was originally released on 25 March 1996 and peaked at #56 in the UK charts, but it was later re-released on 21 October that year, this time peaking at #11. In Australia, \"Neighbourhood\" entered the ARIA top 100 singles chart on 9 February 1997 at #90, its peak. \"Neighbourhood\" peaked at #22 in New Zealand in March 1997.\n[3] Neighbourhood and Worker's Service Centre | The Neighbourhood and Worker's Service Centre (NWSC; ) is a pro-democracy political group in Hong Kong, holding one seat in the Legislative Council from 1995 to 1997, and since 1998. It was founded in 1985, with its roots in the New Youth Study Society founded in 1979. Politically it is identified as belonging to the pan-democracy camp. The sole member representing the NWSC in the Legislative Council is Leung Yiu Chung. It also holds 5 seats in the Kwai Tsing District Council.",
+        "next_thought": "I have found that The Neighbourhood was formed in 2011. Now I can compare the formation years of both bands to determine which one was formed first.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Shiny Toy Guns was formed first in 2002, while The Neighbourhood was formed in 2011."
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "You are a knowledge-seeking agent designed to answer multi-hop questions by searching Wikipedia for relevant passages. Think step-by-step: decompose the question, issue targeted searches to gather evidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "The place where John Laub is an American criminologist and Distinguished University Professor in the Department of Criminology and Criminal Justice at was founded in what year?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to find out which university John Laub is associated with.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"John Laub American criminologist Distinguished University Professor Department of Criminology and Criminal Justice\"}\n\n[[ ## observation_0 ## ]]\n[1] John Laub | John H. Laub (born 1953) is an American criminologist and Distinguished University Professor in the Department of Criminology and Criminal Justice at the University of Maryland, College Park.\n[2] Janet Lauritsen | Janet Lauritsen is an American criminologist and the Curators\u2019 Distinguished Professor of Criminology and Criminal Justice at the University of Missouri\u2013St. Louis.\n[3] Raymond Paternoster | Raymond \"Ray\" Paternoster (February 29, 1952 \u2013 March 5, 2017) was an American criminologist who taught at the University of Maryland from 1982 until his death in 2017, spending some of this time as a Distinguished Professor in the Department of Criminology and Criminal Justice there.\n\n[[ ## thought_1 ## ]]\nFrom the search results, it is clear that John Laub is associated with the University of Maryland, College Park. Now, I need to find out when the University of Maryland, College Park was founded.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"University of Maryland, College Park founded\"}\n\n[[ ## observation_1 ## ]]\n[1] University of Maryland, College Park | The University of Maryland, College Park (often referred to as the University of Maryland, Maryland, UM, UMD, UMCP, or College Park) is a public research university located in the city of College Park in Prince George's County, Maryland, approximately 4 mi from the northeast border of Washington, D.C. Founded in 1856, the university is the flagship institution of the University System of Maryland. With a fall 2010 enrollment of more than 37,000 students, over 100 undergraduate majors, and 120 graduate programs, Maryland is the largest university in the state and the largest in the Washington Metropolitan Area. It is a member of the Association of American Universities and competes in athletics as a member of the Big Ten Conference.\n[2] University of Maryland Golf Course | The University of Maryland Golf Course in College Park, Maryland, is the home of the Maryland Terrapins men's and women's golf teams. The semi-private championship course was designed in 1955 by George Cobb, the course has been a longtime host of state and regional tournaments and hosts over 50,000 rounds of golf annually. The course is located in the northern perimeter of the University of Maryland, College Park's campus, and is home to a 45-station driving range and a 5000 sqft putting green.\n[3] College Park\u2013University of Maryland station | College Park\u2013University of Maryland is a Washington Metro station in Prince George's County, Maryland on the Green Line.\n\n[[ ## thought_2 ## ]]\nThe search result indicates that the University of Maryland, College Park was founded in 1856. I can now conclude the answer.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"The University of Maryland, College Park, where John Laub is an American criminologist and Distinguished University Professor in the Department of Criminology and Criminal Justice, was founded in 1856.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "First, I identified that John Laub is associated with the University of Maryland, College Park. Then, I found that the University of Maryland, College Park was founded in 1856.",
+        "answer": "1856"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

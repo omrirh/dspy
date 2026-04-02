@@ -1,0 +1,105 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "which year was the coach of Houston Cougar's in the 2016-17 season born ?",
+        "trajectory": "[[ ## thought_0 ## ]]\nFirst, I need to find out who the coach of Houston Cougars was in the 2016-17 season.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Houston Cougars basketball coach 2016-17 season\"}\n\n[[ ## observation_0 ## ]]\n[1] 2016\u201317 Houston Cougars men's basketball team | The 2016\u201317 Houston Cougars men's basketball team represented the University of Houston during the 2016\u201317 NCAA Division I men's basketball season. The Cougars were led by third-year head coach Kelvin Sampson and were members of the American Athletic Conference. The Cougars played their home games at Hofheinz Pavilion. They finished the season 21\u201311, 12\u20136 in AAC play to finish in third place. They lost to Connecticut in the quarterfinals of the AAC Tournament. They received an at-large bid to the National Invitation Tournament as a No. 2 seed and lost in the first round to Akron.\n[2] 2016\u201317 Houston Cougars women's basketball team | The 2016\u201317 Houston Cougars women's basketball team represented the University of Houston during the 2016\u201317 NCAA Division I women's basketball season. The season marked the third for the Cougars as members of the American Athletic Conference. The Cougars, led by third year head coach Ronald Hughey, played their home games at Hofheinz Pavilion.\n[3] 2016\u201317 BYU Cougars men's basketball team | The 2016\u201317 BYU Cougars men's basketball team represented Brigham Young University in the 2016\u201317 NCAA Division I men's basketball season. It was head coach Dave Rose's twelfth season at BYU and the Cougars sixth season in the West Coast Conference. The Cougars played their home games at the Marriott Center in Provo, Utah. They finished the season 22\u201312, 12\u20136 in WCC play to finish in third place. They defeated Loyola Marymount in the quarterfinals of the WCC Tournament to advance to the semifinals where they lost to Saint Mary's. They were invited to the National Invitation Tournament where they lost in the first round to Texas\u2013Arlington.",
+        "next_thought": "The coach of Houston Cougars in the 2016-17 season was Kelvin Sampson. Now, I need to find out his birth year.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Kelvin Sampson birth year"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "When was the professional association football club formed for which Fulham's Craven Cottage was named?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which professional football club's stadium is called Craven Cottage and when it was formed.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"history of Craven Cottage football stadium\"}\n\n[[ ## observation_0 ## ]]\n[1] Craven Cottage | Craven Cottage is a football stadium located in Fulham, London. It has been the home ground of Fulham F.C. since 1896.\n[2] List of Premier League stadiums | Since the inception of the Premier League, England's highest level of association football annual league tournament, 58 football stadiums have been used to host matches. The inaugural round of Premier League matches took place on 15 August 1992 with eleven clubs hosting the opening fixtures. Following the Hillsborough Disaster in 1989, the Taylor Report recommended the abolition of standing terraces by the start of the 1994\u201395 season, to be replaced by all-seater stadiums. However, following Fulham's promotion from Division 1 in the 2000\u201301 season, terraces returned temporarily to the Premier League as The Football Association allowed the club extra time to complete renovations. The club were forced to play at Loftus Road after inadequate progress was made in converting Craven Cottage, but they returned to their home ground after building work was completed in time for the 2004\u201305 season.\n[3] 2002\u201303 Fulham F.C. season | The 2002\u201303 season was Fulham F.C.'s 105th season in professional football and second consecutive season in the FA Premier League. It was also the first season in over 115 years where Fulham did not play at Craven Cottage. Due to pending decisions on re-vamping the cottage, all home games (apart from two early-season fixtures) were played at Loftus Road, the home of Queens Park Rangers. Jean Tigana remained as Fulham manager up until his sacking in April 2003. Former Fulham player Chris Coleman had not long been retired from the game since suffering a career-ending injury in a car crash when he was appointed caretaker manager for the rest of the season.\n\n[[ ## thought_1 ## ]]\nThe stadium is named after Craven Cottage, and Fulham F.C. has been using it since 1896. I need to confirm if this is the club for which the stadium is named and when it was officially formed.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"when was Fulham F.C. officially formed\"}\n\n[[ ## observation_1 ## ]]\n[1] List of Fulham F.C. seasons | Fulham Football Club is an English professional football team based in Fulham in the London Borough of Hammersmith and Fulham. The club was formed in West Kensington in 1879 as Fulham St Andrew's Church Sunday School F.C., shortened to Fulham F.C. in 1888. They initially played at Fulham Fields before a move to Craven Cottage in 1896; the club played their first professional match in December 1898 and made their FA Cup debut in the 1902\u201303 season.\n[2] List of Fulham F.C. players (1\u201324 appearances) | Fulham Football Club is an English professional football team based in Fulham in the London Borough of Hammersmith and Fulham. The club was formed in West Kensington in 1879 as Fulham St Andrew's Church Sunday School F.C., before shortening it to Fulham F.C. in 1888. They initially played at Fulham Fields before a move to Craven Cottage in 1896. They played their first match as a professional football club in December 1898 and made their FA Cup debut in the 1902\u20131903 season. The club also competed in the Southern Football League until 1907, when they were accepted into the Football League Second Division. Having spent much of their history outside the top division, the team gained promotion to the Premier League in 2001. They have since spent more than ten years in the top flight and reached the final of the UEFA Europa League in 2010. In 2014 they were relegated to the Football League Championship.\n[3] Fulham F.C. league record by opponent | Fulham Football Club is an English professional football team based in Fulham in the London Borough of Hammersmith and Fulham. The club was formed in West Kensington in 1879 as Fulham St Andrew's Church Sunday School F.C., shortened to Fulham F.C. in 1888.",
+        "next_thought": "The stadium is named after Craven Cottage, and Fulham F.C. was officially formed in 1879. I can now provide the answer to the question.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": {
+            "answer": "Fulham's Craven Cottage was named after the stadium and the professional football club Fulham F.C. was officially formed in 1879."
+          }
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "which year was the coach of Houston Cougar's in the 2016-17 season born ?",
+        "trajectory": "[[ ## thought_0 ## ]]\nFirst, I need to find out who the coach of Houston Cougars was in the 2016-17 season.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Houston Cougars basketball coach 2016-17 season\"}\n\n[[ ## observation_0 ## ]]\n[1] 2016\u201317 Houston Cougars men's basketball team | The 2016\u201317 Houston Cougars men's basketball team represented the University of Houston during the 2016\u201317 NCAA Division I men's basketball season. The Cougars were led by third-year head coach Kelvin Sampson and were members of the American Athletic Conference. The Cougars played their home games at Hofheinz Pavilion. They finished the season 21\u201311, 12\u20136 in AAC play to finish in third place. They lost to Connecticut in the quarterfinals of the AAC Tournament. They received an at-large bid to the National Invitation Tournament as a No. 2 seed and lost in the first round to Akron.\n[2] 2016\u201317 Houston Cougars women's basketball team | The 2016\u201317 Houston Cougars women's basketball team represented the University of Houston during the 2016\u201317 NCAA Division I women's basketball season. The season marked the third for the Cougars as members of the American Athletic Conference. The Cougars, led by third year head coach Ronald Hughey, played their home games at Hofheinz Pavilion.\n[3] 2016\u201317 BYU Cougars men's basketball team | The 2016\u201317 BYU Cougars men's basketball team represented Brigham Young University in the 2016\u201317 NCAA Division I men's basketball season. It was head coach Dave Rose's twelfth season at BYU and the Cougars sixth season in the West Coast Conference. The Cougars played their home games at the Marriott Center in Provo, Utah. They finished the season 22\u201312, 12\u20136 in WCC play to finish in third place. They defeated Loyola Marymount in the quarterfinals of the WCC Tournament to advance to the semifinals where they lost to Saint Mary's. They were invited to the National Invitation Tournament where they lost in the first round to Texas\u2013Arlington.\n\n[[ ## thought_1 ## ]]\nThe coach of Houston Cougars in the 2016-17 season was Kelvin Sampson. Now, I need to find out his birth year.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Kelvin Sampson birth year\"}\n\n[[ ## observation_1 ## ]]\n[1] Kelvin Sampson | Kelvin Matthew Sampson (born October 5, 1955) is an American basketball coach who is currently the head coach of the Houston Cougars men's basketball team. He was a head coach at Montana Tech from 1981 to 1985, Washington State University from 1987 to 1994, the University of Oklahoma from 1994 to 2006, and Indiana University 2006 to 2008. He has also been an assistant coach for several NBA teams including the Milwaukee Bucks and Houston Rockets.\n[2] Malcolm Sampson | Malcolm \"Mal\" \"Sammy\" Sampson (12 March 1940 \u2013 10 October 2012 (aged 72)) birth registered in Lower Agbrigg, was a professional rugby league footballer who played in the 1950s, 1960s, and 1970s, playing at club level for Wakefield Trinity (twice) (Heritage \u2116 660), Hull, and Bramley, as a prop , i.e. number 8 or 10, during the era of contested scrums.\n[3] Kelvin Earl | Kelvin \"Kel\" W. Earl (birth registered July\u2192September 1951) birth registered in Littleborough, Lancashire, is a professional rugby league footballer who played in the 1970s, playing at club level for Rochdale Hornets (twice), St. Helens, Bradford Northern, and Swinton as a prop , i.e. number 8 or 10, during the era of contested scrums.\n\n[[ ## thought_2 ## ]]\nThe birth year of Kelvin Sampson, the coach of Houston Cougars in the 2016-17 season, is 1955.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"The coach of Houston Cougars in the 2016-17 season, Kelvin Sampson, was born in 1955.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "First, I found out that the coach of Houston Cougars in the 2016-17 season was Kelvin Sampson. Then, I searched for his birth year and found that he was born on October 5, 1955.",
+        "answer": "1955"
+      },
+      {
+        "augmented": true,
+        "question": "When was the professional association football club formed for which Fulham's Craven Cottage was named?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which professional football club's stadium is called Craven Cottage and when it was formed.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"history of Craven Cottage football stadium\"}\n\n[[ ## observation_0 ## ]]\n[1] Craven Cottage | Craven Cottage is a football stadium located in Fulham, London. It has been the home ground of Fulham F.C. since 1896.\n[2] List of Premier League stadiums | Since the inception of the Premier League, England's highest level of association football annual league tournament, 58 football stadiums have been used to host matches. The inaugural round of Premier League matches took place on 15 August 1992 with eleven clubs hosting the opening fixtures. Following the Hillsborough Disaster in 1989, the Taylor Report recommended the abolition of standing terraces by the start of the 1994\u201395 season, to be replaced by all-seater stadiums. However, following Fulham's promotion from Division 1 in the 2000\u201301 season, terraces returned temporarily to the Premier League as The Football Association allowed the club extra time to complete renovations. The club were forced to play at Loftus Road after inadequate progress was made in converting Craven Cottage, but they returned to their home ground after building work was completed in time for the 2004\u201305 season.\n[3] 2002\u201303 Fulham F.C. season | The 2002\u201303 season was Fulham F.C.'s 105th season in professional football and second consecutive season in the FA Premier League. It was also the first season in over 115 years where Fulham did not play at Craven Cottage. Due to pending decisions on re-vamping the cottage, all home games (apart from two early-season fixtures) were played at Loftus Road, the home of Queens Park Rangers. Jean Tigana remained as Fulham manager up until his sacking in April 2003. Former Fulham player Chris Coleman had not long been retired from the game since suffering a career-ending injury in a car crash when he was appointed caretaker manager for the rest of the season.\n\n[[ ## thought_1 ## ]]\nThe stadium is named after Craven Cottage, and Fulham F.C. has been using it since 1896. I need to confirm if this is the club for which the stadium is named and when it was officially formed.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"when was Fulham F.C. officially formed\"}\n\n[[ ## observation_1 ## ]]\n[1] List of Fulham F.C. seasons | Fulham Football Club is an English professional football team based in Fulham in the London Borough of Hammersmith and Fulham. The club was formed in West Kensington in 1879 as Fulham St Andrew's Church Sunday School F.C., shortened to Fulham F.C. in 1888. They initially played at Fulham Fields before a move to Craven Cottage in 1896; the club played their first professional match in December 1898 and made their FA Cup debut in the 1902\u201303 season.\n[2] List of Fulham F.C. players (1\u201324 appearances) | Fulham Football Club is an English professional football team based in Fulham in the London Borough of Hammersmith and Fulham. The club was formed in West Kensington in 1879 as Fulham St Andrew's Church Sunday School F.C., before shortening it to Fulham F.C. in 1888. They initially played at Fulham Fields before a move to Craven Cottage in 1896. They played their first match as a professional football club in December 1898 and made their FA Cup debut in the 1902\u20131903 season. The club also competed in the Southern Football League until 1907, when they were accepted into the Football League Second Division. Having spent much of their history outside the top division, the team gained promotion to the Premier League in 2001. They have since spent more than ten years in the top flight and reached the final of the UEFA Europa League in 2010. In 2014 they were relegated to the Football League Championship.\n[3] Fulham F.C. league record by opponent | Fulham Football Club is an English professional football team based in Fulham in the London Borough of Hammersmith and Fulham. The club was formed in West Kensington in 1879 as Fulham St Andrew's Church Sunday School F.C., shortened to Fulham F.C. in 1888.\n\n[[ ## thought_2 ## ]]\nThe stadium is named after Craven Cottage, and Fulham F.C. was officially formed in 1879. I can now provide the answer to the question.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Fulham's Craven Cottage was named after the stadium and the professional football club Fulham F.C. was officially formed in 1879.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "The stadium is named after Craven Cottage, and Fulham F.C. was officially formed in 1879.",
+        "answer": "1879"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

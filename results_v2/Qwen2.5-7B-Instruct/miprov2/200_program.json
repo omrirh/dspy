@@ -1,0 +1,89 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "You are a historian specializing in detailed fact retrieval. Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Chili Con Carnage and Total Overdose are games both developed by which company?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which game development company created both Chili Con Carnage and Total Overdose.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Chili Con Carnage and Total Overdose game developers\"}\n\n[[ ## observation_0 ## ]]\n[1] Chili Con Carnage | Chili Con Carnage is an action\/adventure third-person shooter video game. It was developed by Deadline Games and published by Sci Entertainment in Europe and by Eidos in North America. Its predecessor \"Total Overdose\" was released September 27, 2005. \"Chili Con Carnage\" is not actually a true sequel to \"Total Overdose\", as it goes by a different title and has a story that has nothing to do with \"Total Overdose\". Many reviews of the game classify it as a remake of \"Total Overdose\" for the PlayStation Portable.\n[2] Total Overdose | Total Overdose (also known as Total Overdose: A Gunslinger's Tale in Mexico; abbreviated as TOD) is an open world action\/adventure third-person shooter video game that was developed by Deadline Games and Square Enix, published by Sci Entertainment in Europe and by Eidos Interactive in North America. It contains a demo for \"\" on the PlayStation 2 and Xbox versions. \" Chili Con Carnage\", a PlayStation Portable game using some of the original characters but following a different plotline than \"Total Overdose\", was released on February 13, 2007. A sequel was originally planned named Total Overdose 2: Tequila Gunrise. It would have featured the entire map of Mexico, but it was cancelled after Eidos pulled out of it.\n[3] Chris Mottes | Chris Mottes is CEO of Deadline Games, a games development group based out of Denmark. He is responsible for overseeing games like Chili Con Carnage. He had started up the games development group after running an underground television network with a friend.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I can see that both Chili Con Carnage and Total Overdose were developed by Deadline Games. I need to confirm this information and then provide the answer.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "Both Chili Con Carnage and Total Overdose were developed by Deadline Games, as evidenced by the search results.",
+        "answer": "Deadline Games"
+      },
+      {
+        "augmented": true,
+        "question": "Both John Davis and Blind Tom Wiggins are known for playing what musical instrument? ",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to search for information on John Davis and Blind Tom Wiggins to confirm they are known for playing the piano.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"John Davis piano player\"}\n\n[[ ## observation_0 ## ]]\n[1] John Davis (pianist) | John Davis (born October 22, 1957) is an American classical pianist, concert performer, recording artist, and historian. Born in Chapel Hill, North Carolina and raised in Providence, Rhode Island, Davis now lives in Brooklyn, New York. He has specialized in reviving the forgotten music of several 19th Century African-American pianists, including Blind Tom Wiggins and Blind Boone. He has recorded albums of works by both composers for the Newport Classic label.\n[2] John Davison (composer) | John Davison (31 May 1930 \u2013 1999) was an American composer and pianist.\n[3] Blind John Davis | Blind John Davis (December 7, 1913 \u2013 October 12, 1985) was an African-American blues, jazz and boogie-woogie pianist and singer. He is best remembered for his recordings, including \"A Little Every Day\" and \"Everybody's Boogie\".\n\n[[ ## thought_1 ## ]]\nI have found that John Davis is a pianist, but I still need to search for information on Blind Tom Wiggins to confirm if he is also known for playing the piano.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Blind Tom Wiggins piano player\"}\n\n[[ ## observation_1 ## ]]\n[1] Blind Tom Wiggins | Thomas \"Blind Tom\" Wiggins (May 25, 1849June 14, 1908, age 59) was an African American musical prodigy on the piano. He had numerous original compositions published and had a lengthy and largely successful performing career throughout the United States. During the 19th century, he was one of the best-known American performing pianists. Although he lived and died before autism was described, he is now regarded as an autistic savant.\n[2] John Davis (pianist) | John Davis (born October 22, 1957) is an American classical pianist, concert performer, recording artist, and historian. Born in Chapel Hill, North Carolina and raised in Providence, Rhode Island, Davis now lives in Brooklyn, New York. He has specialized in reviving the forgotten music of several 19th Century African-American pianists, including Blind Tom Wiggins and Blind Boone. He has recorded albums of works by both composers for the Newport Classic label.\n[3] Song of the Shank | The publisher described the novel as following: At the heart of this remarkable novel is Thomas Greene Wiggins, a nineteenth-century slave and improbable musical genius who performed under the name Blind Tom.\n\n[[ ## thought_2 ## ]]\nBoth John Davis and Blind Tom Wiggins are known for playing the piano based on the search results.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I searched for information on John Davis and Blind Tom Wiggins and found that both are known for playing the piano. John Davis is a contemporary pianist who has revived the music of 19th Century African-American pianists, including Blind Tom Wiggins. Additionally, Blind Tom Wiggins was an African American musical prodigy on the piano, known for his numerous original compositions and successful performing career.",
+        "answer": "piano"
+      },
+      {
+        "augmented": true,
+        "question": "When did the band who sang \"Rango\" win a Brit Award for British Breakthrough act?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which band sang 'Rango' and when they won a Brit Award for British Breakthrough act.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"band who sang Rango and Brit Award for British Breakthrough act\"}\n\n[[ ## observation_0 ## ]]\n[1] Rango (song) | \"Rango\" is the second single by Welsh indie rock band, Catfish and the Bottlemen. The song was included in their EP, \"Kathleen and the Other Three\", and their debut studio album, \"The Balcony\". The single was released on 13 August 2013.\n[2] Brit Award for British Breakthrough Act | The Brit Award for British Breakthrough Act is an award given by the British Phonographic Industry (BPI), an organisation which represents record companies and artists in the United Kingdom. The accolade is presented at the Brit Awards, an annual celebration of British and international music. The winners and nominees are determined by the BRIT Awards voting academy with over 1,000 members, which comprise record labels, publishers, managers, agents, media, and previous winners and nominees.\n[3] Ed Sheeran | Edward Christopher Sheeran, {'1': \", '2': \", '3': \", '4': \"} (born 17 February 1991) is an English singer-songwriter, guitarist, and record producer. He was born in Halifax, West Yorkshire, and raised in Framlingham, Suffolk. He attended the Academy of Contemporary Music in Guildford, Surrey, as an undergraduate from the age of 18 in 2009. In early 2011, Sheeran independently released the extended play, \"No. 5 Collaborations Project\". After signing with Asylum Records, his debut album, \"+\" (read as \"plus\"), was released on 9 September 2011 and has since been certified seven-times platinum in the UK. The album contains the single \"The A Team\", which earned him the Ivor Novello Award for Best Song Musically and Lyrically. In 2012, Sheeran won the Brit Awards for Best British Male Solo Artist and British Breakthrough Act.\n\n[[ ## thought_1 ## ]]\nThe band that sang \"Rango\" is Catfish and the Bottlemen. Now, I need to find out if they won a Brit Award for British Breakthrough Act and, if so, when.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Catfish and the Bottlemen Brit Award for British Breakthrough Act\"}\n\n[[ ## observation_1 ## ]]\n[1] Catfish and the Bottlemen | Catfish and the Bottlemen are a British rock band, formed in Llandudno, Wales in 2007. Their debut album, \"The Balcony\", reached number 10 in the UK Albums Chart and achieved Platinum status on 30 December 2016. The band have toured in South America, Japan, UK, Europe, North America, and Australia and have featured in a number of festivals including Lollapalooza, Glastonbury, Latitude, Community festival, Reading and Leeds, T in the Park, Governors Ball and Bonnaroo. They won a Brit Award for British Breakthrough act on 24 February 2016. On 27 May 2016, they released their second album, \"The Ride\".\n[2] The Balcony (album) | The Balcony is the debut studio album by Welsh rock band Catfish and the Bottlemen. It was released on 15 September 2014 in the United Kingdom and 15 January 2015 in the United States. On 20 March 2015, \"The Balcony\" was awarded a Gold certification from the British Phonographic Industry. The album cover depicts outlines of two headless people pleasuring each other's genitals. The illustration is by New York artist Tim Lahan who originally posted it to his Flickr account in 2009 and was subsequently contacted by the band.\n[3] Billy Bibby &amp; The Wry Smiles | Billy Bibby & The Wry Smiles are a British indie rock band formed in the autumn of 2015 in the area around Llandudno, North Wales and Chester, UK. The band is fronted by Billy Bibby, former lead guitarist and founding member of Catfish and the Bottlemen. Bibby parted ways with Catfish and the Bottlemen in the summer of 2014, shortly after co-writing and recording their Platinum selling debut album, \"The Balcony\". Soon thereafter, Billy Bibby began writing songs and playing acoustic shows in various UK cities in order to test public response to his new music. In the spring of 2015, Billy Bibby began seeking musicians to form a new band. Auditions were conducted with the help of Simon Jones, formerly of The Verve. Band members Rob Jones (lead guitar), Matt Bassy (bass), and Michael Pearce (drums) were selected to form the four-piece ensemble.\n\n[[ ## thought_2 ## ]]\nThe band Catfish and the Bottlemen won a Brit Award for British Breakthrough Act on 24 February 2016.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Catfish and the Bottlemen won a Brit Award for British Breakthrough Act on 24 February 2016.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I first identified the band that sang \"Rango\" as Catfish and the Bottlemen. Then, I searched for information on when they won a Brit Award for British Breakthrough Act and found that they won it on 24 February 2016.",
+        "answer": "24 February 2016"
+      }
+    ],
+    "signature": {
+      "instructions": "You are a knowledgeable researcher tasked with answering multi-hop questions by searching for relevant information. Decompose the question into manageable parts, search Wikipedia for each part, and synthesize the findings into a concise factual answer. Think step-by-step and provide a detailed reasoning process for each step. \n\nTrajectory: [[ ## thought_0 ## ]]\nThought: I need to identify the Tennis Masters Cup champion in 2000 between Gustavo Kuerten and Stan Wawrinka.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

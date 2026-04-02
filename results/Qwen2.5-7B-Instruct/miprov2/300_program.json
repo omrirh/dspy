@@ -1,0 +1,118 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "The Flower Boy album by rapper Tyler featured what Norwegian artist known for her \"soft, soul-bearing electro-pop\"?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which Norwegian artist is featured on Tyler's Flower Boy album and is known for her 'soft, soul-bearing electro-pop'. I will start by searching for information about the album and its featured artists.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Tyler Flower Boy album Norwegian artist soft soul-bearing electro-pop\"}\n\n[[ ## observation_0 ## ]]\n[1] Flower Boy | Flower Boy (alternatively titled Scum Fuck Flower Boy) is the fourth studio album by American rapper Tyler, The Creator. The album, which is his first under a major record label, was released on July 21, 2017, by Columbia Records. Although the album's production was handled entirely by Tyler, The Creator himself, it features guest vocals from a range of artists, including Frank Ocean, ASAP Rocky, Anna of the North, Lil Wayne, Kali Uchis, Steve Lacy, Estelle, Jaden Smith and Rex Orange County.\n[2] 911 \/ Mr. Lonely | \"911 \/ Mr. Lonely\" is a song by American rapper Tyler, The Creator. It was released on June 30, 2017 alongside, \"Who Dat Boy\" through Columbia Records, as the lead singles from his fourth studio album \"Flower Boy\". The song was produced by Tyler himself and features vocals from Frank Ocean, The Internet's Steve Lacy and Norwegian singer Anna of the North.\n[3] Who Dat Boy | \"Who Dat Boy\" is a song by American rapper Tyler, The Creator. It was released on June 30, 2017 alongside, \"911 \/ Mr. Lonely\" through Columbia Records, as the lead singles from his fourth studio album \"Flower Boy\". The song features vocals from ASAP Rocky.",
+        "next_thought": "From the search results, I found that the Norwegian artist featured on Tyler's Flower Boy album is Anna of the North. I need to confirm if she is known for her 'soft, soul-bearing electro-pop'.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Anna of the North soft soul-bearing electro-pop"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Honor the Earth participated in protests about land near what reservation?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which reservation Honor the Earth participated in protests about land near. I will start by searching for information about Honor the Earth and their protests.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Honor the Earth protests land reservation\"}\n\n[[ ## observation_0 ## ]]\n[1] Honor the Earth | Honor The Earth is a non-profit organization founded to raise awareness and financial support for Indigenous environmental justice. The organization was founded by Indigo Girls Amy Ray and Emily Saliers after meeting Winona LaDuke, and after consultation with members of the Indigenous Environmental Network, Indigenous Women's Network and Seventh Generation Fund. In 2016, Winona LaDuke and other members of Honor the Earth are active in the Dakota Access Pipeline protests.\n[2] White Earth Land Recovery Project | The White Earth Land Recovery Project (WELRP) is a nonprofit, grassroots organization that seeks to recover land for the Anishinaabeg people on the White Earth Indian Reservation in western Minnesota and develop programs to achieve sustainability and environmental preservation. The organization was founded in 1989 by tribal member and former vice presidential candidate Winona La Duke.\n[3] White Earth Indian Reservation | The White Earth Indian Reservation (or \"Gaa-waabaabiganikaag\" (lit. \"Where there is an abundance of white clay\") in the Ojibwe language) is the home to the White Earth Band, located in northwestern Minnesota. It is the largest Indian reservation in that state by land area. The reservation includes all of Mahnomen County, plus parts of Becker and Clearwater counties in the northwest part of the state, along the Wild Rice and White Earth rivers. It is about 225 miles (362 km) from Minneapolis-St. Paul and roughly 65 miles (105 km) from Fargo-Moorhead.",
+        "next_thought": "From the search results, I found that Honor the Earth was involved in the Dakota Access Pipeline protests. I need to determine which reservation was near the protest site.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Dakota Access Pipeline protests reservation"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Are both Alien Ant Farm and The White Stripes formed in the 1990's?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the formation years of both Alien Ant Farm and The White Stripes to answer the question.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"formation year of Alien Ant Farm, The White Stripes\"}\n\n[[ ## observation_0 ## ]]\n[1] Alien Ant Farm | Alien Ant Farm is an American rock band that formed in Riverside, California, United States, in 1996. Their name comes from an idea original guitarist Terry Corso had about aliens and the Earth: \"it was just my daydream about our planet being seeded by entities from other dimensions.\" They have released five studio albums, and have sold over 5 million units worldwide. The band is best known for their Michael Jackson cover \"Smooth Criminal.\"\n[2] Anthology (Alien Ant Farm album) | Anthology (styled as ANThology) is the second album by Alien Ant Farm released on March 6, 2001 in the United States and March 19, 2001 in Australia and the UK. It is the first major label album of the band. Similarly to how their debut album was entitled \"Greatest Hits\", the album is not a compilation album.\n[3] The White Stripes | The White Stripes were an American rock duo formed in 1997 in Detroit, Michigan. The group consisted of Jack White (songwriter, vocals, guitar, piano, and mandolin) and Meg White (drums and vocals). After releasing several singles and three albums within the Detroit music scene, The White Stripes rose to prominence in 2002, as part of the garage rock revival scene. Their successful and critically acclaimed albums \"White Blood Cells\" and \"Elephant\" drew attention from a large variety of media outlets in the United States and the United Kingdom, with the single \"Seven Nation Army\" and its guitar line becoming their signature song. The band recorded two more albums, \"Get Behind Me Satan\" in 2005 and \"Icky Thump\" in 2007, and dissolved in 2011 after a lengthy hiatus from performing and recording.",
+        "next_thought": "Both Alien Ant Farm and The White Stripes were indeed formed in the 1990's. Alien Ant Farm was formed in 1996 and The White Stripes in 1997.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Next Thought, and Next Tool Name, Next Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Next Thought can encapsulate the current state of reasoning. Next Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.\n\nRespond with the corresponding output fields, starting with the field `[[ ## next_thought ## ]]`, and then ending with the marker for `[[ ## next_tool_name ## ]]` and `[[ ## next_tool_args ## ]]`.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "The Flower Boy album by rapper Tyler featured what Norwegian artist known for her \"soft, soul-bearing electro-pop\"?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which Norwegian artist is featured on Tyler's Flower Boy album and is known for her 'soft, soul-bearing electro-pop'. I will start by searching for information about the album and its featured artists.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Tyler Flower Boy album Norwegian artist soft soul-bearing electro-pop\"}\n\n[[ ## observation_0 ## ]]\n[1] Flower Boy | Flower Boy (alternatively titled Scum Fuck Flower Boy) is the fourth studio album by American rapper Tyler, The Creator. The album, which is his first under a major record label, was released on July 21, 2017, by Columbia Records. Although the album's production was handled entirely by Tyler, The Creator himself, it features guest vocals from a range of artists, including Frank Ocean, ASAP Rocky, Anna of the North, Lil Wayne, Kali Uchis, Steve Lacy, Estelle, Jaden Smith and Rex Orange County.\n[2] 911 \/ Mr. Lonely | \"911 \/ Mr. Lonely\" is a song by American rapper Tyler, The Creator. It was released on June 30, 2017 alongside, \"Who Dat Boy\" through Columbia Records, as the lead singles from his fourth studio album \"Flower Boy\". The song was produced by Tyler himself and features vocals from Frank Ocean, The Internet's Steve Lacy and Norwegian singer Anna of the North.\n[3] Who Dat Boy | \"Who Dat Boy\" is a song by American rapper Tyler, The Creator. It was released on June 30, 2017 alongside, \"911 \/ Mr. Lonely\" through Columbia Records, as the lead singles from his fourth studio album \"Flower Boy\". The song features vocals from ASAP Rocky.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that the Norwegian artist featured on Tyler's Flower Boy album is Anna of the North. I need to confirm if she is known for her 'soft, soul-bearing electro-pop'.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Anna of the North soft soul-bearing electro-pop\"}\n\n[[ ## observation_1 ## ]]\n[1] Anna of the North | Anna Lotterud (born 8 June 1989), better known by her stage name Anna of the North, is an Oslo-based Norwegian singer-songwriter from Gj\u00f8vik. Her music has been regarded as \"soft, soul-bearing electro-pop\".\n[2] Adult contemporary music | Adult contemporary music (AC) is a North American term used to describe a form of radio-played popular music, ranging from 1960s vocal and 1970s soft rock music to predominantly ballad-heavy music of the present day, with varying degrees of easy listening, pop, soul, rhythm and blues, quiet storm, and rock influence. Adult contemporary is rather a continuation of the easy listening and soft rock style that became popular in the 1960s and 1970s with some adjustments that reflect the evolution of pop\/rock music.\n[3] Marina Schiptjenko | Anna \"Marina\" Schiptjenko (born July 27, 1965 in Malm\u00f6, Sweden) is the only female member of the Swedish electronic pop group Bodies Without Organs (now known as BWO). Her mother is Swedish and her father was a Ukrainian refugee from the Soviet Union, thus her Ukrainian surname.\n\n[[ ## thought_2 ## ]]\nThe search results confirm that Anna of the North is a Norwegian singer-songwriter known for her 'soft, soul-bearing electro-pop'. This matches the description in the question.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Anna of the North\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I first searched for information about Tyler's Flower Boy album and found that it features a range of artists, including Anna of the North. Then, I searched for information about Anna of the North and confirmed that she is known for her 'soft, soul-bearing electro-pop'.",
+        "answer": "Anna of the North"
+      },
+      {
+        "augmented": true,
+        "question": "Honor the Earth participated in protests about land near what reservation?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which reservation Honor the Earth participated in protests about land near. I will start by searching for information about Honor the Earth and their protests.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Honor the Earth protests land reservation\"}\n\n[[ ## observation_0 ## ]]\n[1] Honor the Earth | Honor The Earth is a non-profit organization founded to raise awareness and financial support for Indigenous environmental justice. The organization was founded by Indigo Girls Amy Ray and Emily Saliers after meeting Winona LaDuke, and after consultation with members of the Indigenous Environmental Network, Indigenous Women's Network and Seventh Generation Fund. In 2016, Winona LaDuke and other members of Honor the Earth are active in the Dakota Access Pipeline protests.\n[2] White Earth Land Recovery Project | The White Earth Land Recovery Project (WELRP) is a nonprofit, grassroots organization that seeks to recover land for the Anishinaabeg people on the White Earth Indian Reservation in western Minnesota and develop programs to achieve sustainability and environmental preservation. The organization was founded in 1989 by tribal member and former vice presidential candidate Winona La Duke.\n[3] White Earth Indian Reservation | The White Earth Indian Reservation (or \"Gaa-waabaabiganikaag\" (lit. \"Where there is an abundance of white clay\") in the Ojibwe language) is the home to the White Earth Band, located in northwestern Minnesota. It is the largest Indian reservation in that state by land area. The reservation includes all of Mahnomen County, plus parts of Becker and Clearwater counties in the northwest part of the state, along the Wild Rice and White Earth rivers. It is about 225 miles (362 km) from Minneapolis-St. Paul and roughly 65 miles (105 km) from Fargo-Moorhead.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Honor the Earth was involved in the Dakota Access Pipeline protests. I need to determine which reservation was near the protest site.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Dakota Access Pipeline protests reservation\"}\n\n[[ ## observation_1 ## ]]\n[1] Dakota Access Pipeline protests | The Dakota Access Pipeline protests, also known by the hashtag #NoDAPL, are grassroots movements that began in early 2016 in reaction to the approved construction of Energy Transfer Partners' Dakota Access Pipeline in the northern United States. The pipeline was projected to run from the Bakken oil fields in western North Dakota to southern Illinois, crossing beneath the Missouri and Mississippi Rivers, as well as under part of Lake Oahe near the Standing Rock Indian Reservation. Many in the Standing Rock tribe consider the pipeline and its intended crossing of the Missouri River to constitute a threat to the region's clean water and to ancient burial grounds. In April, Standing Rock Sioux elder LaDonna Brave Bull Allard established a camp as a center for cultural preservation and spiritual resistance to the pipeline; over the summer the camp grew to thousands of people.\n[2] LaDonna Brave Bull Allard | Ladonna Brave Bull Allard is a Lakota historian and activist. In April 2016, she founded the first resistance camp of the Dakota Access Pipeline protests, Sacred Stones, aimed at halting the Dakota Access Pipeline near the Standing Rock Indian Reservation in North Dakota.\n[3] Dakota Access Pipeline | The Dakota Access Pipeline (DAPL) or Bakken pipeline is a 1172 mi underground oil pipeline in the United States. It begins in the Bakken shale oil fields in northwest North Dakota and continues through South Dakota and Iowa to the oil tank farm near Patoka, Illinois. Together with the Energy Transfer Crude Oil Pipeline from Patoka to Nederland, Texas, it forms the Bakken system.\n\n[[ ## thought_2 ## ]]\nThe Dakota Access Pipeline protests were near the Standing Rock Indian Reservation. I can now provide the answer to the question.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"Honor the Earth participated in protests about land near the Standing Rock Indian Reservation.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "I first searched for information about Honor the Earth and their protests, which led me to find that they were involved in the Dakota Access Pipeline protests. Further research on the Dakota Access Pipeline protests revealed that they were near the Standing Rock Indian Reservation.",
+        "answer": "Standing Rock Indian Reservation"
+      },
+      {
+        "augmented": true,
+        "question": "Are both Alien Ant Farm and The White Stripes formed in the 1990's?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find the formation years of both Alien Ant Farm and The White Stripes to answer the question.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"formation year of Alien Ant Farm, The White Stripes\"}\n\n[[ ## observation_0 ## ]]\n[1] Alien Ant Farm | Alien Ant Farm is an American rock band that formed in Riverside, California, United States, in 1996. Their name comes from an idea original guitarist Terry Corso had about aliens and the Earth: \"it was just my daydream about our planet being seeded by entities from other dimensions.\" They have released five studio albums, and have sold over 5 million units worldwide. The band is best known for their Michael Jackson cover \"Smooth Criminal.\"\n[2] Anthology (Alien Ant Farm album) | Anthology (styled as ANThology) is the second album by Alien Ant Farm released on March 6, 2001 in the United States and March 19, 2001 in Australia and the UK. It is the first major label album of the band. Similarly to how their debut album was entitled \"Greatest Hits\", the album is not a compilation album.\n[3] The White Stripes | The White Stripes were an American rock duo formed in 1997 in Detroit, Michigan. The group consisted of Jack White (songwriter, vocals, guitar, piano, and mandolin) and Meg White (drums and vocals). After releasing several singles and three albums within the Detroit music scene, The White Stripes rose to prominence in 2002, as part of the garage rock revival scene. Their successful and critically acclaimed albums \"White Blood Cells\" and \"Elephant\" drew attention from a large variety of media outlets in the United States and the United Kingdom, with the single \"Seven Nation Army\" and its guitar line becoming their signature song. The band recorded two more albums, \"Get Behind Me Satan\" in 2005 and \"Icky Thump\" in 2007, and dissolved in 2011 after a lengthy hiatus from performing and recording.\n\n[[ ## thought_1 ## ]]\nBoth Alien Ant Farm and The White Stripes were indeed formed in the 1990's. Alien Ant Farm was formed in 1996 and The White Stripes in 1997.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "I found that Alien Ant Farm was formed in 1996 and The White Stripes in 1997, both in the 1990's.",
+        "answer": "yes"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages. Think step-by-step: break down the question into smaller parts, issue targeted searches to gather evidence, and synthesize the findings to provide a concise and factual answer. Use the given `question` and `trajectory` to generate the `reasoning` and `answer`. Interleave your thoughts, select the appropriate tool (search or finish), and specify the tool's arguments. Continue updating the `trajectory` with each step until the task is completed or the maximum number of iterations is reached.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

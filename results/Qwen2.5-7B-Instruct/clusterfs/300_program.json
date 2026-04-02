@@ -1,0 +1,114 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Are Tweedia and Nematanthus both a genus of flowering plants?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to check if Tweedia and Nematanthus are both genera of flowering plants. I will start by searching for information on Tweedia and Nematanthus.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Tweedia and Nematanthus\"}\n\n[[ ## observation_0 ## ]]\n[1] Tweedia | \"Tweedia\" is a genus of flowering plants in the Apocynaceae family, first described as a genus in 1835. The genus is native to South America. An ornamental plant, \"Oxypetalum coeruleum\", formerly included in this genus is commonly referred to as \"tweedia\".\n[2] Tweedieia | Tweedieia is a genus of crabs in the family Xanthidae, containing the following species:\n[3] Nematanthus | Nematanthus is a genus of flowering plants of the family Gesneriaceae. All of its species are endemic to Brazil. Compared to other gesneriads, \"Nematanthus\" has leaves that are small, succulent, and hard-surfaced. The plant has a trailing, branching, and spreading habit; it is generally an epiphyte in nature and a hanging-basket plant in cultivation.",
+        "next_thought": "From the search results, I found that Tweedia is a genus of flowering plants in the Apocynaceae family, while Nematanthus is a genus of flowering plants in the Gesneriaceae family. Both are indeed genera of flowering plants.",
+        "next_tool_name": "finish",
+        "next_tool_args": {
+          "kwargs": "Both Tweedia and Nematanthus are genera of flowering plants."
+        }
+      },
+      {
+        "augmented": true,
+        "question": "What book on Christian existentialism is by what Danish philosopher?",
+        "trajectory": "",
+        "answer": null
+      },
+      {
+        "augmented": true,
+        "question": "Megan Amram was a staff writer for which Disney Channel show between 1997-2002?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which Disney Channel show Megan Amram was a staff writer for between 1997-2002.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Megan Amram Disney Channel show 1997-2002\"}\n\n[[ ## observation_0 ## ]]\n[1] Megan Amram | Megan Amram (born September 3, 1987) is an American comedian and writer. She became well known after 2010 through her Twitter account (@MeganAmram), where she posts one-liners that make use of subtle wordplay, absurdism, and dark humor. She was a staff writer for the Disney Channel television sitcom \"A.N.T. Farm\", NBC's \"Parks and Recreation\", and \"Childrens Hospital\".\n[2] Megan Mullally | Megan Mullally (born November 12, 1958) is an American actress and singer. She is best known for her role as Karen Walker on the NBC sitcom \"Will & Grace\" (1998\u20132006, 2017-), for which she received 7 consecutive Primetime Emmy Award nominations for Outstanding Supporting Actress in a Comedy Series, winning twice in 2000 and 2006. She also received nominations for numerous other accolades for her portrayal, including 7 consecutive Screen Actors Guild Awards nominations for Outstanding Performance by a Female Actor in a Comedy Series, winning 3 times in 2001, 2002, and 2003, as well as receiving 4 Golden Globe Award nominations.\n[3] Megan Parlen | Megan Sloan Parlen (born July 9, 1980 in Los Angeles, California, U.S.) is an American actress. She is best known for her role as Mary-Beth Pepperton on the NBC series \"Hang Time\" (1995\u20132000).",
+        "next_thought": "The search result mentions that Megan Amram was a staff writer for the Disney Channel sitcom 'A.N.T. Farm' between 1997-2002. I can now provide the answer to the question.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Are Tweedia and Nematanthus both a genus of flowering plants?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to check if Tweedia and Nematanthus are both genera of flowering plants. I will start by searching for information on Tweedia and Nematanthus.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Tweedia and Nematanthus\"}\n\n[[ ## observation_0 ## ]]\n[1] Tweedia | \"Tweedia\" is a genus of flowering plants in the Apocynaceae family, first described as a genus in 1835. The genus is native to South America. An ornamental plant, \"Oxypetalum coeruleum\", formerly included in this genus is commonly referred to as \"tweedia\".\n[2] Tweedieia | Tweedieia is a genus of crabs in the family Xanthidae, containing the following species:\n[3] Nematanthus | Nematanthus is a genus of flowering plants of the family Gesneriaceae. All of its species are endemic to Brazil. Compared to other gesneriads, \"Nematanthus\" has leaves that are small, succulent, and hard-surfaced. The plant has a trailing, branching, and spreading habit; it is generally an epiphyte in nature and a hanging-basket plant in cultivation.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Tweedia is a genus of flowering plants in the Apocynaceae family, while Nematanthus is a genus of flowering plants in the Gesneriaceae family. Both are indeed genera of flowering plants.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{\"kwargs\": \"Both Tweedia and Nematanthus are genera of flowering plants.\"}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "I searched for information on Tweedia and Nematanthus and found that both are genera of flowering plants. Tweedia belongs to the Apocynaceae family, and Nematanthus belongs to the Gesneriaceae family.",
+        "answer": "Yes"
+      },
+      {
+        "augmented": true,
+        "question": "What book on Christian existentialism is by what Danish philosopher?",
+        "trajectory": "",
+        "reasoning": "To answer this question, we need to identify a Danish philosopher who wrote a book on Christian existentialism. We will search for Danish philosophers known for existentialist or Christian philosophical works and then check if they have a book on Christian existentialism.",
+        "answer": "S\u00f8ren Kierkegaard"
+      },
+      {
+        "augmented": true,
+        "question": "Megan Amram was a staff writer for which Disney Channel show between 1997-2002?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which Disney Channel show Megan Amram was a staff writer for between 1997-2002.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Megan Amram Disney Channel show 1997-2002\"}\n\n[[ ## observation_0 ## ]]\n[1] Megan Amram | Megan Amram (born September 3, 1987) is an American comedian and writer. She became well known after 2010 through her Twitter account (@MeganAmram), where she posts one-liners that make use of subtle wordplay, absurdism, and dark humor. She was a staff writer for the Disney Channel television sitcom \"A.N.T. Farm\", NBC's \"Parks and Recreation\", and \"Childrens Hospital\".\n[2] Megan Mullally | Megan Mullally (born November 12, 1958) is an American actress and singer. She is best known for her role as Karen Walker on the NBC sitcom \"Will & Grace\" (1998\u20132006, 2017-), for which she received 7 consecutive Primetime Emmy Award nominations for Outstanding Supporting Actress in a Comedy Series, winning twice in 2000 and 2006. She also received nominations for numerous other accolades for her portrayal, including 7 consecutive Screen Actors Guild Awards nominations for Outstanding Performance by a Female Actor in a Comedy Series, winning 3 times in 2001, 2002, and 2003, as well as receiving 4 Golden Globe Award nominations.\n[3] Megan Parlen | Megan Sloan Parlen (born July 9, 1980 in Los Angeles, California, U.S.) is an American actress. She is best known for her role as Mary-Beth Pepperton on the NBC series \"Hang Time\" (1995\u20132000).\n\n[[ ## thought_1 ## ]]\nThe search result mentions that Megan Amram was a staff writer for the Disney Channel sitcom 'A.N.T. Farm' between 1997-2002. I can now provide the answer to the question.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "The search result indicates that Megan Amram was a staff writer for the Disney Channel sitcom \"A.N.T. Farm\" between 1997-2002.",
+        "answer": "A.N.T. Farm"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

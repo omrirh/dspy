@@ -1,0 +1,130 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Wyndham Lake Buena Vista is located across from a shopping complex opened in what year?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out when the shopping complex opposite Wyndham Lake Buena Vista was opened. I will start by searching for information about Wyndham Lake Buena Vista and the shopping complex near it.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Wyndham Lake Buena Vista shopping complex\"}\n\n[[ ## observation_0 ## ]]\n[1] Wyndham Lake Buena Vista | Wyndham Lake Buena Vista is a 626-room resort situated on the property of Walt Disney World Resort in Lake Buena Vista, Florida. It is located at 1850 Hotel Plaza Blvd., across from the Disney Springs area.\n[2] Disney Springs | Disney Springs (previously known as Lake Buena Vista Shopping Village in 1975, Walt Disney World Village in 1977, Disney Village Marketplace in 1989, and Downtown Disney in 1997) is an outdoor shopping, dining, and entertainment complex at the Walt Disney World Resort in Bay Lake, Florida, near Orlando. The complex opened on March 22, 1975, and has been expanded and renamed at other times over the years, until 2013, when plans were announced for a three-year renovation and expansion of the complex, and on September 29, 2015, the name officially changed to Disney Springs.\n[3] Hilton Orlando Lake Buena Vista | The Hilton Orlando Lake Buena Vista is an AAA Four-Diamond hotel located adjacent to the Disney Springs complex located on Walt Disney World Resort property in Lake Buena Vista, Florida. The 23 acre hotel, which opened in November 1983, is among seven hotels that make up the Disney Springs Resort Area. The Disney Springs Resort Area Hotels are located on the property of the Walt Disney World Resort in Lake Buena Vista, Florida, but are not operated by Disney.",
+        "next_thought": "From the search results, I can see that the shopping complex opposite Wyndham Lake Buena Vista is Disney Springs, which opened on March 22, 1975. However, it's worth noting that the name has changed over the years. To provide a precise answer, I will confirm the opening year of Disney Springs.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Disney Springs opening year"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "William Goldman wrote The Ghost and the Darkness, which was made into a movie, who portrayed by which actors?",
+        "trajectory": "",
+        "next_thought": "To answer this question, I need to find out which actors portrayed the main characters in the movie adaptation of \"The Ghost and the Darkness\" written by William Goldman.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "actors in the movie The Ghost and the Darkness"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Back to the Future: The Ride was previously located at Universal studios where it has since been replaced by that simulator ride based on the animated television series \"The Simpsons\"",
+        "trajectory": "",
+        "next_thought": "I need to find out what simulator ride replaced Back to the Future: The Ride at Universal Studios.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "what replaced back to the future the ride at universal studios"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "Are Arthropodium and Peraphyllum in the same family?",
+        "trajectory": "",
+        "next_thought": "To determine if Arthropodium and Peraphyllum are in the same family, I need to find information about their taxonomic classifications.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Arthropodium taxonomic classification"
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "Given a complex question, your task is to generate a step-by-step plan to answer it. This involves breaking down the question into smaller parts, searching for relevant information, and synthesizing the findings into a concise factual answer. You will output a sequence of thoughts, tool names, and tool arguments that guide the process. The tool names and arguments should be formatted in JSON. Here are the steps to follow:\n\n1. **Thought**: Explain what part of the question you are addressing and what information you need to find.\n2. **Tool Name**: Choose a tool to use for gathering information. Available tools are:\n   - `search`: Search Wikipedia for relevant passages. It takes a query string.\n   - `finish`: Signal that you have enough information to provide a final answer.\n3. **Tool Args**: Provide the arguments for the chosen tool in JSON format. For `search`, this includes the query string.\n\nYou will receive an \"Observation\" after each tool execution, which you can use to inform your next steps.\n\nExample:\n```\nThought: To answer this question, I need to find out [relevant information].\nTool Name: search\nTool Args: {\"query\": \"[relevant search query]\"}\n```\n\nRemember to keep your thoughts and actions focused on answering the question accurately and efficiently.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "What hit film did Lee Eun-ju star in besides one about a police detective who investigates a murder case?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I first need to find out what films Lee Eun-ju has starred in besides the one about a police detective who investigates a murder case.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Lee Eun-ju filmography\"}\n\n[[ ## observation_0 ## ]]\n[1] Lee Eun-ju | Lee Eun-ju (22 December 1980 \u2013 February 22, 2005) was a South Korean actress. She was the star of hit films including \"Taegukgi\" and \"The Scarlet Letter\". She committed suicide at age 24.\n[2] Lee Eun | Lee Eun (born July 10, 1961) is a director and producer of films in South Korea.\n[3] Lee Eun-ju (disambiguation) | Lee Eun-ju (\uc774\uc740\uc8fc; 1980\u20132005) was a South Korean actress.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Lee Eun-ju starred in \"Taegukgi\" and \"The Scarlet Letter\". The question mentions a film about a police detective who investigates a murder case, which is likely \"A Bittersweet Life\". So, the film besides \"A Bittersweet Life\" that Lee Eun-ju starred in is \"Taegukgi\".\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{\"kwargs\": {\"answer\": \"Taegukgi\"}}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "Lee Eun-ju starred in several films, including \"Taegukgi\" and \"The Scarlet Letter\". The question mentions a film about a police detective who investigates a murder case, which is likely \"A Bittersweet Life\". Therefore, the film besides \"A Bittersweet Life\" that Lee Eun-ju starred in is \"Taegukgi\".",
+        "answer": "Taegukgi"
+      },
+      {
+        "augmented": true,
+        "question": "Which director is also an actor, Hampton Del Ruth or Ryan Murphy?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out if Hampton Del Ruth or Ryan Murphy is both a director and an actor. I will start by searching for Hampton Del Ruth.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Hampton Del Ruth\"}\n\n[[ ## observation_0 ## ]]\n[1] Hampton Del Ruth | Hampton Del Ruth (September 7, 1879 \u2013 May 15, 1958) was an American film actor, director, screenwriter, and film producer. Among other work, he wrote the intertitles for the final American studio-made silent film \"\" (1935).\n[2] Hampton Yount | Hampton Yount ( , as in \"blunt\"; born June 14, 1984) is an American stand-up comedian, writer, and actor.\n[3] Ruth Hall (actress) | Ruth Hall (born Ruth Gloria Blasco Ib\u00e1\u00f1ez; December 29, 1910, Jacksonville, Florida \u2013 October 9, 2003, Glendale, California) was an American film actress. She was married to cinematographer Lee Garmes from 1933 until his death on August 31, 1978; the couple had two daughters.\n\n[[ ## thought_1 ## ]]\nThe search results indicate that Hampton Del Ruth was indeed both a director and an actor. Now I need to search for Ryan Murphy to see if he is also both a director and an actor.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"Ryan Murphy\"}\n\n[[ ## observation_1 ## ]]\n[1] Ryan Murphy (ice hockey, born 1983) | Ryan Murphy (born January 23, 1983) is an American former professional ice hockey forward who played five seasons in the AHL with the Manchester Monarchs, Hartford Wolf Pack, and Peoria Rivermen. He also played in the ECHL with the Charlotte Checkers. Murphy was selected by the Los Angeles Kings in the 6th round (185th overall) of the 2002 NHL Entry Draft. He was an assistant coach for the Bakersfield Condors of the ECHL in the 2013\u201314 season. He has been an assistant coach for the Hershey Bears of the American Hockey League since the 2014\u201315 season.\n[2] Ryan Murphy (American football) | Ryan Murphy (born October 14, 1992) is an American football strong safety for the New York Giants of the National Football League (NFL). He played in college for the Oregon State Beavers, and was drafted by the Seattle Seahawks in the seventh round of the 2015 NFL Draft.\n[3] Ryan Murphy (ice hockey, born 1979) | Ryan J. Murphy (born March 21, 1979) is an American professional ice hockey forward who played the 2009\u201310 season in both the AHL and SM-liiga. He was selected by the Carolina Hurricanes in the 4th round (113th overall) of the 1999 NHL Entry Draft.\n\n[[ ## thought_2 ## ]]\nThe search results for Ryan Murphy are not relevant to the question. I need to refine the search to find Ryan Murphy who is a director and actor.\n\n[[ ## tool_name_2 ## ]]\nsearch\n\n[[ ## tool_args_2 ## ]]\n{\"query\": \"Ryan Murphy director actor\"}\n\n[[ ## observation_2 ## ]]\n[1] Ryan Murphy (writer) | Ryan Patrick Murphy (born November 30, 1965) is an American screenwriter, director and producer. Murphy is best known for creating\/co-creating\/producing a number of successful television series, including the FX medical drama \"Nip\/Tuck\" (2003\u201310), the Fox musical comedy-drama \"Glee\" (2009\u201315), and the FX anthology series \"American Horror Story\" (2011\u2013present), \"American Crime Story\" (2016\u2013present) and \"Feud\" (2017\u2013present). He is also known for directing the 2010 film adaptation of Elizabeth Gilbert's bestselling memoir \"Eat, Pray, Love\" and the 2014 HBO film adaptation of Larry Kramer's \"The Normal Heart\", which earned a Primetime Emmy Award for Outstanding Television Movie.\n[2] Kevin Connolly (actor) | Kevin Connolly (born March 5, 1974) is an American actor and director. He is best known for his role as Eric Murphy in the HBO series \"Entourage\", and his role as the eldest son Ryan Malloy in the 1990s television sitcom \"Unhappily Ever After\".\n[3] Brett Murphy | Brett Murphy (born October 4, 1991) is an American actor who is notable for his role as Ryan in the 2004 film \"Fever Pitch\" and as Edwin in the American sitcom \"Hope & Faith.\n\n[[ ## thought_3 ## ]]\nFrom the search results, it is clear that Ryan Murphy is a director and screenwriter, and not an actor. Therefore, Hampton Del Ruth is the director who is also an actor.\n\n[[ ## tool_name_3 ## ]]\nfinish\n\n[[ ## tool_args_3 ## ]]\n{\"kwargs\": {\"answer\": \"Hampton Del Ruth is the director who is also an actor.\"}}\n\n[[ ## observation_3 ## ]]\nCompleted.",
+        "reasoning": "Hampton Del Ruth was found to be both a director and an actor. Ryan Murphy, on the other hand, is a director and screenwriter, but not an actor.",
+        "answer": "Hampton Del Ruth"
+      },
+      {
+        "augmented": true,
+        "question": "Which owner of Up has its hub at Ben Gurion Airport?",
+        "trajectory": "[[ ## thought_0 ## ]]\nTo answer this question, I need to find out which airline owns Up and where its hub is located. I will start by searching for information about the airline Up.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"airline Up\"}\n\n[[ ## observation_0 ## ]]\n[1] Up (airline) | Up (styled as UP) is a low-cost brand of Israeli airline El Al.\n[2] Star Per\u00fa | Star Per\u00fa, formerly called Star Up, is an airline based at Jorge Ch\u00e1vez International Airport in Lima, Peru. It is a scheduled airline operating passenger and cargo flights within Peru. The carrier mostly flies domestic routes in Peru from its base in Lima, as well as Santiago de Chile.\n[3] Airlines (video game) | Airlines is an MS-DOS based construction and management simulation game created by Interactivision later renamed InterActive Vision. The main object of the game was to successfully set up an airline by buying aircraft, planning routes, setting ticket prices and dealing with events such as hostage and oil crises. The game had 4 airlines, a minimum of one of which was human controlled, the rest computer controlled. The game begins with the year set as 1970 and as time progresses more aircraft models become available corresponding with their first flights in reality.\n\n[[ ## thought_1 ## ]]\nFrom the search results, I found that Up is a low-cost brand of the Israeli airline El Al. Now I need to find out if El Al has a hub at Ben Gurion Airport.\n\n[[ ## tool_name_1 ## ]]\nsearch\n\n[[ ## tool_args_1 ## ]]\n{\"query\": \"El Al Ben Gurion Airport\"}\n\n[[ ## observation_1 ## ]]\n[1] Ben Gurion Airport | Ben Gurion International Airport (Hebrew: \u05e0\u05de\u05dc \u05d4\u05ea\u05e2\u05d5\u05e4\u05d4 \u05d4\u05d1\u05d9\u05e0\u05dc\u05d0\u05d5\u05de\u05d9 \u05d1\u05df \u05d2\u05d5\u05e8\u05d9\u05d5\u05df\u200e \u200e ; Arabic: \u0645\u0637\u0627\u0631 \u0628\u0646 \u063a\u0648\u0631\u064a\u0648\u0646 \u0627\u0644\u062f\u0648\u0644\u064a\u200e \u200e ) (IATA: TLV, ICAO: LLBG) , often referred to as Natbag (\u05e0\u05ea\u05d1\u05f4\u05d2 ) is the main international airport of Israel and by far the busiest airport in the country, located 19 km to the southeast of Tel Aviv. Named after Israel's first Prime Minister David Ben-Gurion, the airport serves as a hub for El Al, Israir Airlines, Arkia, Up and Sun D'Or. In 2016, it handled approximately 18 million passengers, making it the 48th busiest airport in Asia. Ben Gurion Airport is operated by the Israel Airports Authority, a government-owned corporation that manages all public airports and border crossings in Israel.\n[2] El Al | El Al Israel Airlines Ltd. (TASE: ELAL), trading as El Al (Hebrew: \u05d0\u05dc \u05e2\u05dc\u200e \u200e , \"To the Skies\" or \"Skywards\", Arabic: \u0625\u0644-\u0639\u0627\u0644\u200e \u200e ), is the flag carrier of Israel. Since its inaugural flight from Geneva to Tel Aviv in September 1948, the airline has grown to serve over 50 destinations, operating scheduled domestic and international services and cargo flights within Israel and to Europe, Middle East, Americas, Africa and the Far East from its main base in Ben Gurion Airport.\n[3] Sun d'Or | Sun d'Or (Hebrew: \u05e1\u05d0\u05df \u05d3\u05d5\u05e8\u200e \u200e , also styled as Sund'or) is an Israeli airline brand and former airline with its base at Tel Aviv's Ben Gurion Airport. It is a fully owned subsidiary of El Al which uses the brand mainly for seasonal scheduled and charter services mostly to European destinations. All of their flights are operated by El Al, as Sun d'Or's own license was suspended in 2011.\n\n[[ ## thought_2 ## ]]\nFrom the search results, I found that El Al has a hub at Ben Gurion Airport. Since Up is a low-cost brand of El Al, it also has its hub at Ben Gurion Airport.\n\n[[ ## tool_name_2 ## ]]\nfinish\n\n[[ ## tool_args_2 ## ]]\n{\"kwargs\": {\"answer\": \"El Al, the owner of Up, has its hub at Ben Gurion Airport.\"}}\n\n[[ ## observation_2 ## ]]\nCompleted.",
+        "reasoning": "Up is a low-cost brand of the Israeli airline El Al. El Al has its hub at Ben Gurion Airport. Therefore, the owner of Up, El Al, has its hub at Ben Gurion Airport.",
+        "answer": "El Al"
+      }
+    ],
+    "signature": {
+      "instructions": "Given a multi-hop question, use the provided trajectory to generate a concise and factual answer along with a step-by-step reasoning explanation. The trajectory includes thoughts, tool names, tool arguments, and observations from previous steps. Use this information to synthesize a final answer that directly addresses the question at hand.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

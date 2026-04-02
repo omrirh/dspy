@@ -1,0 +1,103 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "The Austrian band that released War of Ages in 2013 was originally formed when?",
+        "trajectory": "",
+        "next_thought": "I need to find the Austrian band that released War of Ages in 2013 and then determine when they were originally formed.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Austrian band released War of Ages 2013 formation year"
+        }
+      },
+      {
+        "augmented": true,
+        "question": "In what year was the movie Dragon Fist starring Nora Miao released?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to search for information about the movie Dragon Fist starring Nora Miao to find its release year.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Dragon Fist starring Nora Miao release year\"}\n\n[[ ## observation_0 ## ]]\n[1] Dragon Fist | Dragon Fist () is a 1979 Hong Kong martial arts film directed and produced by Lo Wei, starring Jackie Chan, Nora Miao and James Tien. The film was released in Hong Kong on 21 April 1979.\n[2] Way of the Dragon | The Way of the Dragon (, released in the United States as Return of the Dragon) is a 1972 Hong Kong martial arts action comedy film written, produced and directed by Bruce Lee, who also stars in the lead role. This is Lee's only complete directorial film. The film co-stars Nora Miao, Chuck Norris, Robert Wall and Hwang In-shik. \"Way of the Dragon\" was released in Hong Kong on 30 December 1972.\n[3] Dragon Fist (disambiguation) | Dragon Fist is 1979 Hong Kong action film starring Jackie Chan.",
+        "next_thought": "The search results indicate that there are multiple movies with the title \"Dragon Fist\". I need to find the one starring Nora Miao and determine its release year.",
+        "next_tool_name": "search",
+        "next_tool_args": {
+          "query": "Dragon Fist starring Nora Miao 1979 release year"
+        }
+      }
+    ],
+    "signature": {
+      "instructions": "You are a researcher tasked with answering multi-hop questions by searching Wikipedia for relevant passages. Think step-by-step: decompose the question, issue targeted searches to gather evidence, and synthesize findings into a concise factual answer. \n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Which is the smaller dog,  Dalmatian or Norfolk Terrier?",
+        "trajectory": "",
+        "reasoning": "To determine which is the smaller dog between a Dalmatian and a Norfolk Terrier, we need to compare their average sizes. A Dalmatian is a large breed, typically weighing between 45-60 pounds (20-27 kg) and standing 19-24 inches (48-61 cm) tall. On the other hand, a Norfolk Terrier is a small breed, usually weighing between 11-14 pounds (5-6 kg) and standing 10-12 inches (25-30 cm) tall.",
+        "answer": "Norfolk Terrier"
+      },
+      {
+        "augmented": true,
+        "question": "Which building was constructed first - 1095 Avenue of the Americas or One Vanderbilt Place?",
+        "trajectory": "",
+        "reasoning": "To determine which building was constructed first between 1095 Avenue of the Americas and One Vanderbilt Place, we need to find the construction dates of both buildings. We can search Wikipedia for the construction dates of each building.\n\n1. For 1095 Avenue of the Americas, we need to find its construction date.\n2. For One Vanderbilt Place, we need to find its construction date.\n3. Compare the two dates to determine which building was constructed first.",
+        "answer": "1095 Avenue of the Americas"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop trivia questions by searching the dataset for relevant information.\nThink step-by-step: carefully analyze the question, issue targeted searches to gather\nevidence from the dataset, and synthesize the findings to provide a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}

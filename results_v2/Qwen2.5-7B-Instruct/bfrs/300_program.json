@@ -1,0 +1,84 @@
+{
+  "agent.react": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Mavin Records is home to the Nigerian recording artist best known for which semi-gospel\/pop song?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which Nigerian recording artist is associated with Mavin Records and their semi-gospel\/pop song.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Mavin Records Nigerian artist semi-gospel\/pop song\"}\n\n[[ ## observation_0 ## ]]\n[1] Korede Bello | Korede Bello (born 29 February 1996) is a Nigerian singer and songwriter currently signed to Mavin Records. He is best known for his hit single \"Godwin\", a semi-gospel and pop song which topped many music charts in Nigeria.\n[2] Mavin Records | Mavin Records (also known as the Supreme Mavin Dynasty) is a revamped Nigerian-based record label founded by recording artist and record producer Don Jazzy on May 8, 2012. The label's inception came to fruition following the closure of Mo' Hits Records, a record label owned by the aforementioned producer and D'banj. The label is home to recording artists such as Tiwa Savage, Iyanya, Dr SID, D'Prince, Di'Ja, Reekado Banks, Korede Bello, Johnny Drille, Poe, and the DNA Twins. The label also houses a roster of producers such as Jazzy himself, Altims and Baby Fresh. In 2014, DJ Big N became the label's official disc jockey. Wande Coal was formerly signed to the label. On May 8, 2012, the label released a compilation album titled \"Solar Plexus\".\n[3] R.E.D (Tiwa Savage album) | R.E.D is the second studio album by Nigerian singer-songwriter Tiwa Savage. It was released by Mavin Records on 19 December 2015, and features guest appearances from Don Jazzy, Olamide, Dr SID, Iceberg Slim, 2face Idibia, D'Prince, Busy Signal and Reekado Banks. The album was predominantly produced by Don Jazzy, with additional work from Baby Fresh, Altims, Spellz and P2J. \"My Darlin'\" and \"African Waist\" were released as two singles from the album. The former was released on 8 October 2014, and the latter was released on 21 December 2015.",
+        "next_thought": "Based on the search results, Korede Bello is the Nigerian recording artist associated with Mavin Records and is best known for the semi-gospel\/pop song 'Godwin'.",
+        "next_tool_name": "finish",
+        "next_tool_args": {}
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.\n\nYou will be given `question` and your goal is to finish with `answer`.\n\nTo do this, you will interleave Thought, Tool Name, and Tool Args, and receive a resulting Observation.\n\nThought can reason about the current situation, and Tool Name can be the following types:\n\n(1) search, whose description is <desc>Search Wikipedia for relevant passages. Returns the top passages as text.<\/desc>. It takes arguments {'query': {'type': 'string'}} in JSON format.\n(2) finish, whose description is <desc>Signals that the final outputs, i.e. `answer`, are now available and marks the task as complete.<\/desc>. It takes arguments {'kwargs': 'Any'} in JSON format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Next Thought:",
+          "description": "${next_thought}"
+        },
+        {
+          "prefix": "Next Tool Name:",
+          "description": "${next_tool_name}"
+        },
+        {
+          "prefix": "Next Tool Args:",
+          "description": "${next_tool_args}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "agent.extract.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Mavin Records is home to the Nigerian recording artist best known for which semi-gospel\/pop song?",
+        "trajectory": "[[ ## thought_0 ## ]]\nI need to find out which Nigerian recording artist is associated with Mavin Records and their semi-gospel\/pop song.\n\n[[ ## tool_name_0 ## ]]\nsearch\n\n[[ ## tool_args_0 ## ]]\n{\"query\": \"Mavin Records Nigerian artist semi-gospel\/pop song\"}\n\n[[ ## observation_0 ## ]]\n[1] Korede Bello | Korede Bello (born 29 February 1996) is a Nigerian singer and songwriter currently signed to Mavin Records. He is best known for his hit single \"Godwin\", a semi-gospel and pop song which topped many music charts in Nigeria.\n[2] Mavin Records | Mavin Records (also known as the Supreme Mavin Dynasty) is a revamped Nigerian-based record label founded by recording artist and record producer Don Jazzy on May 8, 2012. The label's inception came to fruition following the closure of Mo' Hits Records, a record label owned by the aforementioned producer and D'banj. The label is home to recording artists such as Tiwa Savage, Iyanya, Dr SID, D'Prince, Di'Ja, Reekado Banks, Korede Bello, Johnny Drille, Poe, and the DNA Twins. The label also houses a roster of producers such as Jazzy himself, Altims and Baby Fresh. In 2014, DJ Big N became the label's official disc jockey. Wande Coal was formerly signed to the label. On May 8, 2012, the label released a compilation album titled \"Solar Plexus\".\n[3] R.E.D (Tiwa Savage album) | R.E.D is the second studio album by Nigerian singer-songwriter Tiwa Savage. It was released by Mavin Records on 19 December 2015, and features guest appearances from Don Jazzy, Olamide, Dr SID, Iceberg Slim, 2face Idibia, D'Prince, Busy Signal and Reekado Banks. The album was predominantly produced by Don Jazzy, with additional work from Baby Fresh, Altims, Spellz and P2J. \"My Darlin'\" and \"African Waist\" were released as two singles from the album. The former was released on 8 October 2014, and the latter was released on 21 December 2015.\n\n[[ ## thought_1 ## ]]\nBased on the search results, Korede Bello is the Nigerian recording artist associated with Mavin Records and is best known for the semi-gospel\/pop song 'Godwin'.\n\n[[ ## tool_name_1 ## ]]\nfinish\n\n[[ ## tool_args_1 ## ]]\n{}\n\n[[ ## observation_1 ## ]]\nCompleted.",
+        "reasoning": "Based on the information gathered, Korede Bello is the Nigerian recording artist associated with Mavin Records, and he is best known for the semi-gospel\/pop song \"Godwin\".",
+        "answer": "Godwin"
+      }
+    ],
+    "signature": {
+      "instructions": "Answer multi-hop questions by searching Wikipedia for relevant passages.\nThink step-by-step: decompose the question, issue targeted searches to gather\nevidence, and synthesize findings into a concise factual answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Trajectory:",
+          "description": "${trajectory}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "A short, factual answer (entity name, date, or yes\/no)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "2.6.10",
+      "cloudpickle": "3.1"
+    }
+  }
+}
