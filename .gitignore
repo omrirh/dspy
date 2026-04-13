@@ -67,3 +67,6 @@ docs/docs/**/*.json*
 # LLM tools
 .claude/
 .mcp.json
+
+# Context Papers
+*.pdf
