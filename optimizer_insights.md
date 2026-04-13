@@ -24,7 +24,7 @@ At Qwen-14B, format and termination are pre-solved zero-shot; optimizers compete
 
 ---
 
-## Results — Llama-3.1-8B-Instruct (100/250/1500, max_iters=20, 3+2 seeds; BFRS missing)
+## Results — Llama-3.1-8B-Instruct (100/250/1500, max_iters=20, ClusterFS/MIPROv2 3 seeds; BFRS seed 100 only)
 
 | Optimizer | Seed | Baseline | Optimized | Δ (pp) | Step std | Exhausted | fin_tool% | Compile (s) |
 |---|---|---|---|---|---|---|---|---|
@@ -34,23 +34,27 @@ At Qwen-14B, format and termination are pre-solved zero-shot; optimizers compete
 | ClusterFS | 300 | 37.47% | 43.13% | +5.7 | 6.39 | **1247†** | 16.9% | 5224 |
 | MIPROv2 | 100 | 41.53% | 44.80% | +3.3 | 5.93 | **1300‡** | 13.3% | 9591 |
 | MIPROv2 | 200 | 38.67% | 45.20% | +6.5 | **4.45** | 95 | **93.7%** | 6474 |
+| MIPROv2 | 300 | 38.40% | 46.73% | +8.3 | 7.90 | 503 | 66.5% | 6254 |
+| BFRS | 100 | 40.33% | 47.53% | +7.2 | 7.87 | 491 | 67.3% | 7664 |
 
 † ClusterFS s300 exhausted (1247) exceeds baseline (980) — termination regression, not improvement.
 ‡ MIPROv2 s100 exhausted (1300) exceeds baseline — caused by hallucinated instruction (see Anomalies).
 
-**Cross-optimizer summary — Llama-3.1-8B** *(BFRS absent; ClusterFS vs MIPROv2 only)*
+**Cross-optimizer summary — Llama-3.1-8B** *(BFRS partial — seed 100 only; seeds 200/300 pending)*
 
-| | ClusterFS | MIPROv2 |
-|---|---|---|
-| Seeds available | 3 | 2 |
-| Mean optimized | **45.42%** | 45.00% |
-| Seed std | ±2.48pp | **±0.28pp** |
-| Mean Δ | **+6.6pp** | +4.9pp |
-| Exhausted range | 351–1247 | 95–1300 |
-| fin_tool% range | 16.9–76.6% | 13.3–93.7% |
-| Mean compile (s) | **4272** | 8033 |
+| | ClusterFS | MIPROv2 | BFRS |
+|---|---|---|---|
+| Seeds available | 3 | 3 | 1 (incomplete) |
+| Mean optimized | 45.42% | **45.58%** | 47.53%§ |
+| Seed std | ±2.48pp | ±1.02pp | — |
+| Mean Δ | +6.6pp | +6.0pp | — |
+| Exhausted range | 351–1247 | 95–1300 | 491 |
+| fin_tool% range | 16.9–76.6% | 13.3–93.7% | 67.3% |
+| Mean compile (s) | **4272** | 7440 | 7664 |
 
-ClusterFS marginally leads on mean accuracy (+0.42pp) and is **1.9× faster to compile**. MIPROv2 has lower score variance (±0.28pp vs ±2.48pp), but across only 2 seeds these represent qualitatively distinct behavioral regimes (catastrophic vs excellent termination), not a smooth distribution. The fin_tool% range for both methods (16.9–93.7%) dwarfs any accuracy signal and is the primary diagnostic metric here.
+§ Single seed only — not statistically comparable.
+
+With 3 seeds each, ClusterFS and MIPROv2 are essentially tied on mean accuracy (45.42% vs 45.58%). MIPROv2's variance narrows to ±1.02pp (from the misleadingly low ±0.28pp at 2 seeds), but the exhausted range (95–1300) remains extreme — the 3-seed mean obscures the bimodal regime distinction. MIPROv2 s300 and BFRS s100 land in a **moderate-termination cluster** (~33% exhausted, ~67% fin_tool, step-std ~7.9), distinct from both the catastrophic (0 finish demos, ≥1247 exhausted) and excellent (MIPROv2 s200, 95 exhausted) outcomes. ClusterFS compile advantage holds (1.9× faster than MIPROv2). The fin_tool% range across all methods (13.3–93.7%) dwarfs any accuracy signal and remains the primary diagnostic metric.
 
 ---
 
@@ -129,15 +133,19 @@ in the selected demo's truncated trajectory):
 |---|---|---|---|
 | ClusterFS s300 | 0 / 4 | 16.9% | 1247 (**regression vs baseline**) |
 | MIPROv2 s100 | 0 / 3 | 13.3% | 1300 (**regression vs baseline**) |
+| BFRS s100 | 0 / 2 | 67.3% | 491 |
 | ClusterFS s100 | 1 / 3 | 58.1% | 628 |
+| MIPROv2 s300 | 1 / 4 | 66.5% | 503 |
 | MIPROv2 s200 | 1 / 2 | 93.7% | 95 |
 | ClusterFS s200 | 2 / 4 | 76.6% | 351 |
 
-Runs with 0 finish demos produce **more** exhausted trajectories than the zero-shot baseline (980/1500 = 65.3%). The relationship is monotone: each additional finish demo improves termination. MIPROv2 s200 outperforms ClusterFS s100 (both have 1 finish demo) because its instruction also explicitly reinforces the `Finish[]` contract — demonstrating an additive effect of demo + instruction.
+The monotone relationship holds for fixed demo-pool size: 0/4 → catastrophic regression; 1/4 → moderate improvement; 2/4 → best ClusterFS result. MIPROv2 s200 (1/2 demos, explicit termination instruction) outperforms ClusterFS s100 (1/3 demos) at identical finish-demo count, confirming the additive effect of demo + instruction.
+
+**BFRS s100 exception:** 0 finish demos yet 491 exhausted — well below baseline (980), not a regression. BFRS bootstrapped only **2 demos** (not 4); with a smaller non-terminating demo pool the model's zero-shot termination signal is less suppressed. This attenuates but does not reverse the law: the regression seen at 0/3–0/4 requires enough search-only demos to override default behavior. BFRS seeds 200/300 (pending) will test whether this holds across seeds or is a lucky bootstrap outcome.
 
 **Root cause — bootstrap metric blindness:** `answer_exact_match` treats a 20-step looping trajectory with the correct final answer identically to a clean 2-step finish. For Llama-3.1-8B, ~31% of looping trajectories still get the right answer (acc@exhaust = 0.310 at baseline), so the bootstrapped candidate pool is dominated by non-terminating traces. Neither ClusterFS's diversity-first selection nor MIPROv2's metric-based selection has any mechanism to prefer finish-containing demos when the pool rarely contains them.
 
-**Fix:** composite bootstrap metric `= exact_match AND finished_via_tool`. This filters the candidate pool to only include traces that called `Finish[]`, guaranteeing at least some finish-teaching demos are available for selection (see TODO 11).
+**Fix:** composite bootstrap metric `= exact_match AND finished_via_tool`. This filters the candidate pool to only include traces that called `Finish[]`, guaranteeing at least some finish-teaching demos are available for selection (see results_v3 / TODO 11).
 
 ### Step variance — behavioral stability indicator
 
@@ -170,6 +178,8 @@ When clustering succeeds (yield >50%), ClusterFS achieves the lowest step-std in
 | Llama-8B ClusterFS s200 | 18.1% | 39.5% | 16.4% | 2.6% | **23.4%** | 76.6% |
 | Llama-8B ClusterFS mean | 16.0% | 32.6% | 13.6% | 3.3% | **47.7%** | 50.5% |
 | Llama-8B MIPROv2 s200 | 37.6% | 40.3% | 12.9% | 2.7% | **6.4%** | 93.7% |
+| Llama-8B MIPROv2 s300 | 7.4% | 36.8% | 19.7% | 2.5% | **33.5%** | 66.5% |
+| Llama-8B BFRS s100 | 8.8% | 37.7% | 16.3% | 4.3% | **32.8%** | 67.3% |
 
 † 7B baseline's high ≤2-step share is inflated by type-A failures (step=0); not directly comparable with post-opt distributions.
 
@@ -185,8 +195,10 @@ At 7B, all demo-based methods collapse the exhausted tail (7.8% → ~1–2%) and
 | ClusterFS s200 | **.638** | .570 | .467 | .282 |
 | ClusterFS mean | .598 | .526 | .501 | .343 |
 | MIPROv2 s200 | .480 | .501 | .387 | .188 |
+| MIPROv2 s300 | .505 | **.580** | .514 | .320 |
+| BFRS s100 | .614 | .572 | .514 | .327 |
 
-**acc@exhaust is abnormally high for Llama** (0.188–0.412) compared to Qwen-14B (0.074–0.179). The model often answers correctly while looping because it accumulates relevant observations over many steps and guesses well. This inflates raw accuracy scores and masks exhaustion severity — fin_tool% is essential for correctly diagnosing Llama. MIPROv2 s200's acc@exhaust drops to 0.188 because, with 93.7% termination, almost no examples reach the exhausted bucket; those that do are the hardest questions. ClusterFS s200 shows the highest acc@≤2 (0.638) — diversity-first demos teach faster confident termination on straightforward questions, consistent with the 14B pattern.
+**acc@exhaust is abnormally high for Llama** (0.188–0.412) compared to Qwen-14B (0.074–0.179). The model often answers correctly while looping because it accumulates relevant observations over many steps and guesses well. This inflates raw accuracy scores and masks exhaustion severity — fin_tool% is essential for correctly diagnosing Llama. MIPROv2 s200's acc@exhaust drops to 0.188 because, with 93.7% termination, almost no examples reach the exhausted bucket; those that do are the hardest questions. BFRS s100 and MIPROv2 s300 — both moderate-termination runs (~33% exhausted) — have acc@exhaust near the baseline (.327/.320 vs .310), confirming that partial termination improvement does not substantially change which examples loop or their accuracy when they do. ClusterFS s200 shows the highest acc@≤2 (0.638) — diversity-first demos teach faster confident termination on straightforward questions, consistent with the 14B pattern.
 
 **7B — optimized runs (mean across seeds)**
 
@@ -224,11 +236,13 @@ Measured as fraction of repeated queries per multi-search trajectory (lower = le
 | | 7B repeat rate | 14B repeat rate | Llama-8B repeat rate |
 |---|---|---|---|
 | Baseline | 10.9% | 21.9% | 55.1% |
-| BFRS mean | **8.3%** | 12.9% | — |
+| BFRS mean | **8.3%** | 12.9% | 69.4%§ |
 | ClusterFS mean | 8.6% | **12.6%** | 44.5% |
-| MIPROv2 mean | 13.9% | 14.1% | 49.2% |
+| MIPROv2 mean | 13.9% | 14.1% | 57.2% |
 
-Llama-3.1-8B baseline repeat rate (55.1%) is 2–5× higher than either Qwen model — the model systematically re-issues identical queries when it cannot make progress. This is the mechanism behind the 65.5% exhaustion rate: the model loops on the same search rather than reformulating or terminating. Among Llama optimized runs, repeat rate tracks exhaustion severity perfectly: ClusterFS s200 (best termination) drops to 27.4%; ClusterFS s300 and MIPROv2 s100 (catastrophic termination) reach 79.5% and 85.0% — higher than baseline. Correct trajectories have higher uniqueness ratios than wrong ones across all conditions; the delta (correct_unique − wrong_unique) ranges from 0.05 to 0.14 for Qwen models. For Llama, teaching termination simultaneously reduces query repetition, suggesting the two behaviors are coupled: a model that commits to answering stops re-searching.
+§ BFRS Llama: single seed (s100) only.
+
+Llama-3.1-8B baseline repeat rate (55.1%) is 2–5× higher than either Qwen model — the model systematically re-issues identical queries when it cannot make progress. This is the mechanism behind the 65.5% exhaustion rate: the model loops on the same search rather than reformulating or terminating. Among Llama optimized runs, repeat rate tracks exhaustion severity: ClusterFS s200 (best termination, 76.6% fin_tool) drops to 27.4%; catastrophic runs (ClusterFS s300, MIPROv2 s100) reach 79.5% and 85.0% — above baseline. The moderate-termination cluster (BFRS s100, MIPROv2 s300, ~67% fin_tool) sits at 69–73% — also above baseline, confirming that partial termination improvement does not reduce looping behavior proportionally; query repetition reduction requires near-complete termination improvement. Correct trajectories have higher uniqueness ratios than wrong ones across all conditions; the delta (correct_unique − wrong_unique) ranges from 0.05 to 0.14 for Qwen models. For Llama, teaching termination simultaneously reduces query repetition, suggesting the two behaviors are coupled: a model that commits to answering stops re-searching.
 
 The Qwen findings are unchanged: BFRS and ClusterFS reduce repeat rates comparably; MIPROv2 leaves the most repetitive search behavior. Outlier cases (MIPROv2 7B s300: 20.7%; ClusterFS 14B s300: 18.9%) co-occur with elevated step-std and exhausted counts, consistent with the Llama pattern.
 

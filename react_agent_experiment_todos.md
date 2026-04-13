@@ -13,9 +13,9 @@
 |---|---|---|---|---|
 | 7B  | 26.3% | 43.34 ± 0.77% | 42.56 ± 1.77% | 45.28 ± 0.95% |
 | 14B | 47.9% | **54.65 ± 0.26%** | 51.49 ± 0.69% | 53.76 ± 0.82% |
-| Llama-8B | 38.1% | 45.42 ± 2.48% | 45.00 ± 0.28%† | — (BFRS missing) |
+| Llama-8B | 38.1% | 45.42 ± 2.48% | 45.58 ± 1.02% | 47.53%† |
 
-† MIPROv2 Llama-8B: 2 seeds only; variance hides bimodal termination behavior (95 vs 1300 exhausted).
+† BFRS Llama-8B: seed 100 only (s200/s300 pending). MIPROv2 now 3 seeds; variance hides bimodal termination (95 vs 1300 exhausted across seeds).
 
 **Three-regime finding:** 7B optimization is *format teaching*. Llama-8B optimization is
 *termination teaching* (finish-demo count in bootstrap pool is the dominant factor; extreme
@@ -372,10 +372,11 @@ analysis/
 
 ---
 
-## TODO 9 — Cross-architecture 7B-class model validation  _(PARTIAL — BFRS missing)_
+## TODO 9 — Cross-architecture 7B-class model validation  _(PARTIAL — BFRS seeds 200/300 missing)_
 
-**Completed**: baseline (1 seed), ClusterFS (seeds 100/200/300), MIPROv2 (seeds 100/200).
-**Missing**: BFRS (0 runs). Full comparison is not possible without it.
+**Completed**: baseline (1 seed), ClusterFS (seeds 100/200/300), MIPROv2 (seeds 100/200/300),
+BFRS (seed 100 only).
+**Missing**: BFRS seeds 200 and 300.
 
 **Key findings** (full analysis in `optimizer_insights.md`):
 
@@ -390,21 +391,25 @@ at Llama-3.1-8B all methods have extreme seed variance because **finish-demo pre
 the bootstrap pool** dominates, making optimizer type secondary.
 
 **Finish-Demo Law**: the number of bootstrapped demos containing a `Finish[]` call is the
-single strongest predictor of post-optimization termination. Runs with 0 finish demos produce
-more exhausted trajectories than baseline (regression). This is a systematic effect of the
-`answer_exact_match` bootstrap metric being blind to non-termination.
+single strongest predictor of post-optimization termination. Runs with 0/4 finish demos produce
+termination regression; BFRS s100 (0/2 demos, 491 exhausted) is a partial exception — fewer
+demos attenuate but don't reverse the law. See `optimizer_insights.md` for full analysis.
 
-**Remaining runs needed** — BFRS on Llama-3.1-8B (3 seeds):
+**Remaining runs needed** — BFRS on Llama-3.1-8B (seeds 200 and 300):
 ```bash
 ./react_agent_experiment_driver.sh --model meta-llama/Llama-3.1-8B-Instruct \
-    --optimizer bfrs --seed 100 --sglang-port 7501 \
+    --optimizer bfrs --seed 200 --sglang-port 7501 \
     --train-size 100 --dev-size 250 --test-size 1500 --no-visuals
 ```
-Repeat for seeds 200 and 300. Results land in `results_v2/Llama-3.1-8B-Instruct/bfrs/`.
+Repeat for seed 300. Results land in `results_v2/Llama-3.1-8B-Instruct/bfrs/`.
+
+**Key open question**: does BFRS's metric-based selection consistently bootstrap only 2 demos
+(as in s100), and does that partial-pool behavior reliably avoid termination regression? If BFRS
+s200/s300 also show 0 finish demos with <baseline exhaustion, the law needs a demo-count term.
 
 ---
 
-## TODO 10 — Extended 14B seed matrix: ClusterFS + BFRS  _(READY)_
+## TODO 10 — Extended 14B seed matrix: ClusterFS + BFRS  _(DEFERRED — v3 scope)_
 
 **Goal**: add seeds 400 and 500 for ClusterFS and BFRS on Qwen2.5-14B to tighten
 confidence intervals and determine whether ClusterFS's 0.89pp lead over BFRS is real.
@@ -431,7 +436,7 @@ Repeat for seeds 400/500 × optimizers clusterfs/bfrs.
 
 ---
 
-## TODO 11 — Bootstrap metric: penalize non-termination  _(NEW — motivated by Llama findings)_
+## TODO 11 — Bootstrap metric: penalize non-termination  _(v3 — composite metric experiment)_
 
 **Goal**: Modify the bootstrap metric to require `finished_via_tool=True` so that the demo
 candidate pool is guaranteed to contain termination-teaching examples.
@@ -473,16 +478,20 @@ Pass to optimizers as `metric=answer_exact_match_with_finish`.
 ## Dependency graph
 
 ```
-TODO 5 (Infrastructure) ──┬──> TODO 7 (Re-runs) ──> TODO 9 (Llama runs) ──────────────> TODO 8 (Aggregation)
-TODO 6 (Parse Failures) ──┘    DONE ✓               PARTIAL (BFRS missing) ← next       blocked by TODO 9
-          DONE ✓                                         │
-                                                    TODO 10 (14B seeds)         TODO 11 (bootstrap metric fix)
-                                                    (parallel with TODO 9)      (motivated by Llama findings)
+TODO 5 (Infrastructure) ──┬──> TODO 7 (Re-runs) ──> TODO 9 (Llama) ──────────────────> TODO 8 (Aggregation)
+TODO 6 (Parse Failures) ──┘    DONE ✓               ClusterFS/MIPROv2 DONE              blocked by BFRS s200/300
+          DONE ✓                                     BFRS s100 DONE
+                                                     BFRS s200/300 ← only gap
+
+                                                    [results_v2 scope ends here]
+
+                                                    TODO 10 (14B seeds)         TODO 11 (composite metric)
+                                                    DEFERRED → results_v3       DEFERRED → results_v3
 
 TODO 1 — SUPERSEDED   TODO 2 — DONE   TODO 3 — DEFERRED   TODO 4 — DEFERRED
 ```
 
-**Critical path**: ~~TODO 5 + TODO 6 → TODO 7~~ DONE → TODO 9 (BFRS remaining) → TODO 8
+**Critical path**: ~~TODO 5 + TODO 6 → TODO 7~~ DONE → TODO 9 (BFRS s200/300) → TODO 8 → **results_v2 complete**
 
 ---
 
@@ -496,8 +505,8 @@ TODO 1 — SUPERSEDED   TODO 2 — DONE   TODO 3 — DEFERRED   TODO 4 — DEFER
   is Qwen-7B-specific. Llama is in a termination-teaching regime instead.
 - Can a composite bootstrap metric (`exact_match AND finished_via_tool`) guarantee
   termination-teaching demos without requiring cluster-based selection? **TODO 11 tests this.**
-- Does the Finish-Demo Law hold for BFRS? BFRS selects demos by metric ranking, not diversity.
-  If BFRS consistently picks finish-containing demos (because clean trajectories score higher
-  on exact_match), it may have a systematic advantage over ClusterFS on Llama. **TODO 9 (BFRS).**
+- Does the Finish-Demo Law hold for BFRS? BFRS s100 selected only 2 demos (0 finish), yet
+  avoided regression (491 exhausted vs 980 baseline). Law appears attenuated at lower demo
+  count, not reversed. **Requires BFRS s200/300 to determine if this is consistent.**
 - Is the high acc@exhaust for Llama-3.1-8B (0.310 baseline) a general property of 8B-class
   instruction-tuned models, or specific to Llama's training distribution?
