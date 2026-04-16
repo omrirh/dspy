@@ -260,3 +260,89 @@ refactor `GEPA.compile()` to accept a factory callable for the adapter object
 (`adapter_cls` or `_make_adapter()`), which would allow `GEPAFewShot` to simply
 override that factory rather than duplicating the full method body.  This is not
 done now to keep the parent class unmodified.
+
+---
+
+## 7. Experiment matrix and results infrastructure
+
+### 7.1 Supported optimizers
+
+`run_experiment.py` supports five optimizer IDs:
+
+| ID | Class | Notes |
+|---|---|---|
+| `baseline` | — | Zero-shot eval; no optimization |
+| `gepa` | `GEPA(use_merge=False)` | Vanilla GEPA, merge disabled |
+| `gepa_merge` | `GEPA(use_merge=True)` | GEPA with merge enabled (upstream default) |
+| `gepa_fewshot` | `GEPAFewShot(use_merge=False)` | Our extension; merge forced off |
+| `miprov2` | `MIPROv2` | DSPy's Bayesian instruction+demo optimizer |
+
+`gepa` and `gepa_merge` are distinguished to support an ablation on the merge
+mechanism independent of the few-shot extension.
+
+### 7.2 Reproducibility: `--seed`
+
+`run_experiment.py` accepts `--seed INT`.  When provided:
+- `RANDOM_SEED` (used by all GEPA / MIPROv2 internals) is set to the given value.
+- Python's `random` module and NumPy are also seeded.
+- The seed is included in the `run_tag` directory name and written to `config.json`
+  and `results.json`.
+
+When `--seed` is omitted, `RANDOM_SEED` falls back to `int(time.time())` (prior
+behaviour), giving a unique but non-reproducible seed.
+
+### 7.3 Per-dataset split configuration
+
+Split sizes differ per dataset and are encoded in `run_matrix.py:DATASET_CONFIGS`:
+
+| Dataset | train | val | test |
+|---|---|---|---|
+| GSM8K | 100 | 250 | 1500 (≥ full test set) |
+| Iris | 15 | 35 | 50 |
+
+`run_experiment.py` CLI flags (`--train-size`, `--val-size`, `--test-size`) override
+these for ad-hoc single runs.
+
+### 7.4 Matrix driver (`run_matrix.py`)
+
+`run_matrix.py` enumerates all `(dataset, model, optimizer, seed)` combinations and
+calls `run_experiment.py` as a subprocess for process isolation.  Runs are grouped by
+model (outer loop) to minimise SGLang server swaps.
+
+Key flags:
+- `--dry-run` — print commands without executing
+- `--resume` — skip combinations whose `results.json` already exists
+- `--keep-going` — continue even if a run fails
+- `--summary-only` — recompute `matrix_summary.json` without running new experiments
+- `--models / --datasets / --optimizers / --seeds` — subset the matrix
+
+After all runs complete, `write_summary()` scans `results_v1/` and writes:
+- `matrix_summary.json` — per-group stats (mean, std, CI, runtime, per-seed breakdown)
+
+### 7.5 `results.json` schema
+
+Each completed run writes `results.json` with:
+
+| Field | Type | Description |
+|---|---|---|
+| `run_tag` | str | Unique run identifier (includes seed) |
+| `seed` | int | Random seed used |
+| `dataset` / `optimizer` / `model` / `auto` | str | Run identity |
+| `test_score` | float | Accuracy on test set |
+| `runtime_opt_s` | float | Optimization wall-clock time (seconds) |
+| `runtime_eval_s` | float | Test-set evaluation time (seconds) |
+| `total_metric_calls` | int or null | Total GEPA metric calls (GEPA runs only) |
+| `optimized_instructions` | dict | Final instruction per predictor |
+| `demos_per_predictor` | dict | Demo count per predictor |
+| `n_demos_total` | int | Sum of demos across all predictors |
+| `train_size` / `val_size` / `test_size` | int | Actual split sizes used |
+| `k_demos` | int | Demos per candidate (GEPAFewShot only; 0 otherwise) |
+
+### 7.6 Statistical analysis (`analyze_results.py`)
+
+`--aggregate` mode groups runs by `(dataset, model, optimizer)` and computes:
+- Cross-seed accuracy: mean, std, 95% CI (t-distribution for n ≤ 5, z=1.96 for n > 5)
+- Optimization time: mean, std, median, min, max (reported in minutes)
+- Sample efficiency: mean and std of `total_metric_calls` (GEPA runs only)
+
+Output: printed table + `aggregate_stats.json` written alongside `matrix_summary.json`.

@@ -31,7 +31,7 @@ uv pip install "sglang==0.4.6.post4"
 command -v nvidia-smi >/dev/null 2>&1 || { echo "ERROR: NVIDIA drivers missing."; exit 1; }
 
 # Authenticate with HuggingFace
-huggingface-cli login --token "$HF_TOKEN"
+hf auth login --token "$HF_TOKEN"
 
 SERVER_CMD="python -m sglang.launch_server --model-path \"$MODEL_NAME\" --port $PORT"
 

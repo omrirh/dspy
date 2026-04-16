@@ -27,6 +27,7 @@ import argparse
 import json
 import logging
 import os
+import random
 import sys
 import time
 
@@ -49,7 +50,8 @@ logging.basicConfig(
 logger = logging.getLogger("run_experiment")
 
 dspy.settings.experimental = True
-RANDOM_SEED = int(time.time())
+# RANDOM_SEED is set in main() after CLI parsing so --seed is respected.
+RANDOM_SEED: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -107,7 +109,7 @@ def build_dataset(dataset_name: str, train_size: int, val_size: int, test_size: 
     elif dataset_name == "iris":
         from dspy.datasets.iris import IrisDataset
 
-        dataset  = IrisDataset(seed=0)
+        dataset  = IrisDataset(seed=RANDOM_SEED)
         trainset, valset, testset = dataset.get_data_splits()
         trainset = trainset[:train_size]
         valset   = valset[:val_size]
@@ -165,9 +167,12 @@ def build_optimizer(optimizer_name: str, metric, gepa_metric, args, gepa_log_dir
         **reflection_lm_kwargs,
     )
 
-    if optimizer_name == "gepa":
+    if optimizer_name in ("gepa", "gepa_merge"):
         from dspy.teleprompt.gepa import GEPA
 
+        # gepa       = Vanilla GEPA, merge disabled (cleaner ablation baseline)
+        # gepa_merge = GEPA with merge enabled (upstream default behaviour)
+        use_merge = optimizer_name == "gepa_merge"
         return GEPA(
             metric=gepa_metric,
             auto=args.auto,
@@ -176,6 +181,8 @@ def build_optimizer(optimizer_name: str, metric, gepa_metric, args, gepa_log_dir
             seed=RANDOM_SEED,
             log_dir=gepa_log_dir,
             track_stats=True,
+            use_merge=use_merge,
+            reflection_minibatch_size=args.reflection_minibatch_size,
             reflection_prompt_template=BETTER_REFLECTION_PROMPT,
         )
 
@@ -219,10 +226,21 @@ def build_optimizer(optimizer_name: str, metric, gepa_metric, args, gepa_log_dir
 # ---------------------------------------------------------------------------
 
 def main(args):
+    # ---- Seed — set globally so all random draws in this process are reproducible ----
+    global RANDOM_SEED
+    RANDOM_SEED = args.seed if args.seed is not None else int(time.time())
+    random.seed(RANDOM_SEED)
+    try:
+        import numpy as np
+        np.random.seed(RANDOM_SEED % (2**31))
+    except ImportError:
+        pass
+
+    seed_tag = f"seed{RANDOM_SEED}"
     run_tag = (
         f"{args.dataset}__{args.optimizer}__"
         f"{os.path.basename(args.model)}__{args.auto or 'custom'}__"
-        f"{time.strftime('%Y-%m-%d_%H-%M')}"
+        f"{seed_tag}__{time.strftime('%Y-%m-%d_%H-%M')}"
     )
     log_dir      = os.path.join(args.log_dir, run_tag)
     gepa_log_dir = os.path.join(log_dir, "gepa")
@@ -265,14 +283,19 @@ def main(args):
     )
     student = build_student(args.dataset)
 
-    # ---- Optimize ----
-    optimizer = build_optimizer(args.optimizer, metric, gepa_metric, args, gepa_log_dir)
-
-    logger.info(f"Starting optimization with {args.optimizer.upper()} ...")
-    t0 = time.time()
-    optimized = optimizer.compile(student, trainset=trainset, valset=valset)
-    runtime_opt = time.time() - t0
-    logger.info(f"Optimization done in {runtime_opt:.1f}s")
+    # ---- Optimize (or skip for baseline) ----
+    if args.optimizer == "baseline":
+        # Baseline: evaluate the unoptimized student program directly.
+        logger.info("Optimizer: BASELINE — skipping optimization, evaluating zero-shot.")
+        optimized    = student
+        runtime_opt  = 0.0
+    else:
+        optimizer = build_optimizer(args.optimizer, metric, gepa_metric, args, gepa_log_dir)
+        logger.info(f"Starting optimization with {args.optimizer.upper()} ...")
+        t0 = time.time()
+        optimized = optimizer.compile(student, trainset=trainset, valset=valset)
+        runtime_opt = time.time() - t0
+        logger.info(f"Optimization done in {runtime_opt:.1f}s")
 
     # ---- Report optimized instructions ----
     logger.info("--- Optimized instructions ---")
@@ -307,25 +330,54 @@ def main(args):
     logger.info(f"Eval runtime  : {runtime_eval:.1f}s")
 
     # ---- Persist results ----
+    # n_demos_total: total demo slots filled across all predictors in the final program.
+    n_demos_total = sum(demos_report.values())
+
+    # total_metric_calls: available on optimized.detailed_results when track_stats=True
+    # (set for all GEPA / GEPAFewShot runs).  None for baseline and MIPROv2.
+    total_metric_calls = None
+    detailed = getattr(optimized, "detailed_results", None)
+    if detailed is not None:
+        total_metric_calls = getattr(detailed, "total_metric_calls", None)
+    if total_metric_calls is not None:
+        logger.info(f"Total metric calls (optimization): {total_metric_calls}")
+
     results = {
-        "run_tag":              run_tag,
-        "seed":                 RANDOM_SEED,
+        # Identification
+        "run_tag":    run_tag,
+        "seed":       RANDOM_SEED,
+        "dataset":    args.dataset,
+        "optimizer":  args.optimizer,
+        "model":      os.path.basename(args.model),
+        "auto":       args.auto,
+        # Performance
         "test_score":           test_score,
         "runtime_opt_s":        runtime_opt,
         "runtime_eval_s":       runtime_eval,
+        # Optimization cost (GEPA only; None for baseline / MIPROv2)
+        "total_metric_calls":   total_metric_calls,
+        # Program config
         "optimized_instructions": instructions_report,
-        "demos_per_predictor":  demos_report,
+        "demos_per_predictor":    demos_report,
+        "n_demos_total":          n_demos_total,
+        # Hyperparams for traceability
+        "train_size":  len(trainset),
+        "val_size":    len(valset),
+        "test_size":   len(testset),   # actual size, not requested (may differ if dataset is smaller)
+        "k_demos":     args.k_demos if args.optimizer == "gepa_fewshot" else 0,
     }
     with open(os.path.join(log_dir, "results.json"), "w") as f:
         json.dump(results, f, indent=2)
 
-    optimized.save(os.path.join(log_dir, "optimized_program.json"))
+    if args.optimizer != "baseline":
+        optimized.save(os.path.join(log_dir, "optimized_program.json"))
 
     print(f"\n{'='*60}")
     print(f"  Dataset    : {args.dataset}")
     print(f"  Optimizer  : {args.optimizer}")
     print(f"  Model      : {args.model}")
     print(f"  Budget     : {args.auto}")
+    print(f"  Seed       : {RANDOM_SEED}")
     print(f"  Test acc   : {test_score:.4f}")
     print(f"  Opt time   : {runtime_opt:.1f}s")
     print(f"  Log dir    : {log_dir}")
@@ -348,8 +400,13 @@ if __name__ == "__main__":
     parser.add_argument("--dataset",   required=True, choices=["gsm8k", "iris"],
                         help="Benchmark dataset")
     parser.add_argument("--optimizer", required=True,
-                        choices=["gepa", "gepa_fewshot", "miprov2"],
-                        help="Prompt optimizer")
+                        choices=["baseline", "gepa", "gepa_merge", "gepa_fewshot", "miprov2"],
+                        help="Prompt optimizer. "
+                             "baseline=zero-shot eval; "
+                             "gepa=Vanilla GEPA (use_merge=False); "
+                             "gepa_merge=GEPA with merge enabled; "
+                             "gepa_fewshot=GEPA+FewShot; "
+                             "miprov2=MIPROv2.")
     parser.add_argument("--model",     required=True,
                         help="Task LM (e.g. meta-llama/Llama-3.2-3B-Instruct)")
 
@@ -383,6 +440,12 @@ if __name__ == "__main__":
     parser.add_argument("--train-size", type=int, default=200)
     parser.add_argument("--val-size",   type=int, default=100)
     parser.add_argument("--test-size",  type=int, default=300)
+
+    # Reproducibility
+    parser.add_argument("--seed", type=int, default=None,
+                        help="Random seed for reproducibility. "
+                             "Defaults to None (time-based). "
+                             "Pass an explicit value for matrix runs.")
 
     # Misc
     parser.add_argument("--num-threads", type=int, default=4)

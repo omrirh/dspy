@@ -8,8 +8,10 @@
 #       --optimizer gepa_fewshot \
 #       --model meta-llama/Llama-3.2-3B-Instruct
 
-source vm_vars.env
-source dspy_venv/bin/activate
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+[[ -f "$REPO_ROOT/../vm_vars.env" ]] && source "$REPO_ROOT/../vm_vars.env"
+source "$REPO_ROOT/../dspy_venv/bin/activate"
 
 # Defaults
 DATASET="gsm8k"
@@ -28,11 +30,12 @@ API_BASE="http://localhost:30000/v1"
 MAX_TOKENS=""         # empty = no limit (model decides)
 REFLECTION_MODEL=""   # empty = same as task model
 REFLECTION_MINIBATCH_SIZE=10
+SEED=""           # empty = time-based (non-deterministic)
 LOG_LEVEL="INFO"
 
 # Supported values
 VALID_DATASETS=("gsm8k" "iris")
-VALID_OPTIMIZERS=("gepa" "gepa_fewshot" "miprov2")
+VALID_OPTIMIZERS=("baseline" "gepa" "gepa_merge" "gepa_fewshot" "miprov2")
 VALID_AUTO=("light" "medium" "heavy")
 VALID_MODELS=(
     "meta-llama/Llama-3.2-3B-Instruct"
@@ -67,6 +70,7 @@ while [[ "$#" -gt 0 ]]; do
         --reflection-model)         REFLECTION_MODEL="$2";           shift ;;
         --reflection-minibatch-size) REFLECTION_MINIBATCH_SIZE="$2"; shift ;;
         --log-level)                LOG_LEVEL="$2";                  shift ;;
+        --seed)                     SEED="$2";                       shift ;;
         -h|--help)
             echo "Usage: $0 [options]"
             echo ""
@@ -119,18 +123,22 @@ fi
 if [[ -n "$MAX_TOKENS" ]]; then
     EXTRA_ARGS="$EXTRA_ARGS --max-tokens $MAX_TOKENS"
 fi
+if [[ -n "$SEED" ]]; then
+    EXTRA_ARGS="$EXTRA_ARGS --seed $SEED"
+fi
 if [[ "$OPTIMIZER" == "gepa_fewshot" ]]; then
     EXTRA_ARGS="$EXTRA_ARGS --k-demos $K_DEMOS --demo-mutation-strategy $DEMO_MUTATION_STRATEGY"
 fi
 
 # Log file
-LOG_FILE="experiment__${DATASET}__${OPTIMIZER}__$(basename "$MODEL")__${AUTO}__$(date +'%Y-%m-%d').log"
+LOG_FILE="$REPO_ROOT/experiments/logs/experiment__${DATASET}__${OPTIMIZER}__$(basename "$MODEL")__${AUTO}__$(date +'%Y-%m-%d').log"
+mkdir -p "$REPO_ROOT/experiments/logs"
 
 # Raise open-files limit (prevents LiteLLM SQLite exhaustion)
 ulimit -n 65535
 
 # Run
-nohup python3.11 experiments/run_experiment.py \
+nohup python3.11 "$REPO_ROOT/experiments/run_experiment.py" \
     --dataset        "$DATASET" \
     --optimizer      "$OPTIMIZER" \
     --model          "$MODEL" \
@@ -145,7 +153,7 @@ nohup python3.11 experiments/run_experiment.py \
     --reflection-minibatch-size "$REFLECTION_MINIBATCH_SIZE" \
     --log-level                 "$LOG_LEVEL" \
     $EXTRA_ARGS \
-    2>&1 | tee "experiments/logs/$LOG_FILE" &
+    2>&1 | tee "$LOG_FILE" &
 
 echo ""
 echo "Experiment launched"
@@ -155,5 +163,5 @@ echo "  Optimizer  : $OPTIMIZER"
 echo "  Model      : $MODEL"
 echo "  Budget     : $AUTO"
 echo "  Threads    : $NUM_THREADS"
-echo "  Log file   : experiments/logs/$LOG_FILE"
+echo "  Log file   : $LOG_FILE"
 echo ""

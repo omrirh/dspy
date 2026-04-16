@@ -1,0 +1,762 @@
+{
+  "gsm8k|Llama-3.2-3B-Instruct|baseline": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 66.19,
+      "std": 0.0,
+      "ci95": 0.0,
+      "min": 66.19,
+      "max": 66.19,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 66.19,
+      "1337": 66.19,
+      "42": 66.19,
+      "456": 66.19,
+      "789": 66.19
+    },
+    "sample_instructions": {
+      "prog.predict": "Given the fields `question`, produce the fields `answer`."
+    }
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|gepa": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 70.402,
+      "std": 3.25787,
+      "ci95": 4.04453,
+      "min": 65.88,
+      "max": 74.3,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 651.5,
+      "min": 578.1,
+      "max": 1177.4
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 65.88,
+      "1337": 68.92,
+      "42": 72.55,
+      "456": 74.3,
+      "789": 70.36
+    },
+    "sample_instructions": {
+      "prog.predict": "## For questions with multiple steps,\n### reasoning\nList all the initial conditions and any assumptions made. Then, break down the problem into smaller, manageable parts. For each step, explain the reasoning and any relevant mathematical or logical operations.\n\n### answer\nProvide a clear and concise answer that directly addresses the question.\n\n## For questions with calculations,\n### reasoning\nWhen calculating, specify the units for each value and the operation being performed. Ensure all units are consistent throughout the calculation.\n\n### answer\nEnsure the answer includes the units and is a numerical value.\n\n## When evaluating the answer,\n### evaluation\nCompare your answer to the expected result and provide a clear justification for your evaluation."
+    }
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|gepa_fewshot": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 75.208,
+      "std": 2.14317,
+      "ci95": 2.66067,
+      "min": 72.25,
+      "max": 77.56,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 760.9,
+      "min": 706.8,
+      "max": 892.9
+    },
+    "n_demos_total": {
+      "mean": 2.6
+    },
+    "per_seed_scores": {
+      "123": 75.59,
+      "1337": 72.25,
+      "42": 77.56,
+      "456": 73.92,
+      "789": 76.72
+    },
+    "sample_instructions": {
+      "prog.predict": "## Inputs\n### question\nGiven a set of values representing a number of days off per week, hours streamed per day, hourly wage, total money available, number of items, and respective quantities, produce a set of values representing the total money earned per week.\n\n### reasoning\nTo calculate the total money earned per week, we need to follow these steps:\n1. Calculate the number of days streamed per week by subtracting days off per week from 7.\n2. Calculate the total hours streamed per week by multiplying the number of hours streamed per day by the number of days streamed per week.\n3. Calculate the total amount earned per week by multiplying the total hours streamed per week by the hourly wage.\n4. If applicable, subtract the cost of goods and any other expenses from the total amount earned.\n\n### answer\nThe total money earned per week.\n\n### constraints\n- Ensure all calculations are performed with precision, avoiding approximation errors.\n- Verify that all inputs are valid and consistent (e.g., days off per week should be less than or equal to 7).\n- Consider the domain-specific rules for calculating total money earned per week, such as applying taxes or other deductions.\n\n### output format\n- Provide the total money earned per week as a single numeric value.\n- Consider including a range of possible values or an estimated margin of error if the inputs are uncertain."
+    }
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|gepa_merge": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 71.342,
+      "std": 2.23192,
+      "ci95": 2.77085,
+      "min": 69.07,
+      "max": 74.3,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 401.7,
+      "min": 206.2,
+      "max": 745.4
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 69.22,
+      "1337": 71.57,
+      "42": 72.55,
+      "456": 74.3,
+      "789": 69.07
+    },
+    "sample_instructions": {
+      "prog.predict": "## For each question type, apply the following rules:\n- If the question type is \"numeral\", \n  - Check if the answer is a whole number and provide a clear explanation of why the answer is not a whole number if not.\n  - Otherwise, provide the answer as is.\n- If the question type is \"sequence\", \n  - Check if the reasoning correctly identifies the number of elements in the sequence by comparing the answer to the known correct answer.\n  - If not, provide the correct number of elements identified by the reasoning.\n  - Otherwise, check if the reasoning correctly identifies the last element of the sequence.\n    + If not, provide the correct last element identified by the reasoning.\n    + If correct, provide the answer as is."
+    }
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|miprov2": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "miprov2",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 75.678,
+      "std": 0.97132,
+      "ci95": 1.20586,
+      "min": 74.53,
+      "max": 76.95,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 665.6,
+      "min": 566.8,
+      "max": 1006.0
+    },
+    "n_demos_total": {
+      "mean": 10.0
+    },
+    "per_seed_scores": {
+      "123": 75.66,
+      "1337": 74.98,
+      "42": 76.27,
+      "456": 74.53,
+      "789": 76.95
+    },
+    "sample_instructions": {
+      "prog.predict": "Given the fields `question`, provide a step-by-step reasoning for solving the problem by articulating the process of evaluation, calculation, and deduction, and then output the corresponding `answer`."
+    }
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|baseline": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 74.0,
+      "std": 0.0,
+      "ci95": 0.0,
+      "min": 74.0,
+      "max": 74.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 74.0,
+      "1337": 74.0,
+      "42": 74.0,
+      "456": 74.0,
+      "789": 74.0
+    },
+    "sample_instructions": {
+      "prog.predict": "Given the fields `question`, produce the fields `answer`."
+    }
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|gepa": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 83.85,
+      "std": 1.15046,
+      "ci95": 1.42825,
+      "min": 82.18,
+      "max": 84.99,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 1452.5,
+      "min": 1428.9,
+      "max": 1531.2
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 84.53,
+      "1337": 84.38,
+      "42": 82.18,
+      "456": 84.99,
+      "789": 83.17
+    },
+    "sample_instructions": {
+      "prog.predict": "Given the field `question`, generate the fields `reasoning` and `answer`. Ensure that the reasoning clearly outlines the steps needed to solve the problem, and the answer is presented in a clear and complete numerical or textual form. Perform all necessary calculations to arrive at the final answer. Specifically, ensure that:\n1. The total quantity or value is correctly calculated from the given information.\n2. Any damaged or discarded items are properly accounted for.\n3. All steps are logically connected and clearly explained.\n4. The final answer is explicitly stated and matches the units or format required by the question.\n\nExample 1:\n## Inputs\n### question\nHammond carves life-sized statues out of marble. His latest set of four statues started with an 80-pound block of marble. The first statue he carved weighed 10 pounds. The second statue weighed 18. The remaining two statues weighed the same amount. The marble he discarded after carving it off the statues weighed 22 pounds. How much did each of the remaining statues Hammond carved weigh?\n\n## Reasoning\n1. Calculate the total marble used in the statues and discarded: 80 pounds (initial block) - 22 pounds (discarded) = 58 pounds.\n2. The first two statues weigh a total of 10 pounds + 18 pounds = 28 pounds.\n3. The combined weight of the last two statues is 58 pounds (total used) - 28 pounds (first two) = 30 pounds.\n4. Each of the remaining statues weighs 30 pounds / 2 = 15 pounds.\n\n## Answer\nEach of the remaining statues Hammond carved weighed 15 pounds.\n\nExample 2:\n## Inputs\n### question\nLogan's father receives 50 cartons delivery for his milk business, each carton having 20 jars of milk. On a particular week, he received 20 cartons less when the delivery was done, and during offloading, he realized 3 jars in 5 cartons each was damaged, and one carton was totally damaged. How many jars of milk were good for sale that week?\n\n## Reasoning\n1. Calculate the total number of jars originally received: 50 cartons * 20 jars/carton = 1000 jars.\n2. Calculate the reduced number of jars after receiving 20 cartons less: (50 - 20) cartons * 20 jars/carton = 30 cartons * 20 jars/carton = 600 jars.\n3. Calculate the total number of damaged jars: In 5 cartons, 3 jars each were damaged, so 5 * 3 = 15 jars. Additionally, one whole carton (20 jars) was damaged.\n4. The total number of damaged jars is 15 (from the 5 cartons) + 20 (from the whole carton) = 35 jars.\n5. Subtract the damaged jars from the total jars to find the jars available for sale: 600 jars - 35 jars = 565 jars.\n\n## Answer\n565 jars\n\nExample 3:\n## Inputs\n### question\nAlan went to the market and bought 20 eggs at the price of $2 per egg. He bought 6 chickens for the price of $8 per chicken. How much money did Alan spend at the market?\n\n## Reasoning\n1. Calculate the total cost of the eggs: 20 eggs * $2/egg = $40.\n2. Calculate the total cost of the chickens: 6 chickens * $8/chicken = $48.\n3. Add the total cost of the eggs and the total cost of the chickens to get the total amount of money Alan spent: $40 + $48 = $88.\n\n## Answer\n$88\n\nEnsure that you follow these guidelines to correctly solve and explain the problem."
+    }
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|gepa_fewshot": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 84.854,
+      "std": 2.06111,
+      "ci95": 2.5588,
+      "min": 82.79,
+      "max": 87.04,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 1361.3,
+      "min": 1227.5,
+      "max": 1483.6
+    },
+    "n_demos_total": {
+      "mean": 2.6
+    },
+    "per_seed_scores": {
+      "123": 87.04,
+      "1337": 82.79,
+      "42": 86.96,
+      "456": 84.46,
+      "789": 83.02
+    },
+    "sample_instructions": {
+      "prog.predict": "Given the field `question`, produce the fields `reasoning` and `answer`. Ensure your response includes a clear, step-by-step reasoning process and the final answer. Pay special attention to accurately calculating and summarizing the results for each problem. Make sure to include all necessary calculations and logical steps in the `reasoning` field before providing the `answer`.\n\nAlways verify that:\n- The calculations are correct.\n- The logic is sound and follows from the given information.\n- The final answer is clearly stated and correctly derived from the `reasoning`.\n\nFor multi-step problems, break down each step and ensure all intermediate results are shown. Use appropriate units and clarify any assumptions made. Format your response as follows:\n\n### reasoning\n[List all necessary steps and calculations here, ensuring clarity and accuracy.]\n\n### answer\nState the final answer clearly and concisely.\n\nExample:\n### reasoning\n1. Calculate the total cost of items.\n2. Apply any discounts or additional charges.\n3. Summarize the final amount.\n\n### answer\nState the final amount."
+    }
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|gepa_merge": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 84.488,
+      "std": 1.22122,
+      "ci95": 1.5161,
+      "min": 83.17,
+      "max": 86.28,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 962.6,
+      "min": 814.3,
+      "max": 1191.8
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 86.28,
+      "1337": 84.38,
+      "42": 83.62,
+      "456": 84.99,
+      "789": 83.17
+    },
+    "sample_instructions": {
+      "prog.predict": "Given the field `question`, generate the fields `reasoning` and `answer`. Ensure that the reasoning clearly outlines the steps needed to solve the problem, and the answer is presented in a clear and complete numerical or textual form. Perform all necessary calculations to arrive at the final answer. Specifically, ensure that:\n1. The total quantity or value is correctly calculated from the given information.\n2. Any damaged or discarded items are properly accounted for.\n3. All steps are logically connected and clearly explained.\n4. The final answer is explicitly stated and matches the units or format required by the question.\n\nExample 1:\n## Inputs\n### question\nHammond carves life-sized statues out of marble. His latest set of four statues started with an 80-pound block of marble. The first statue he carved weighed 10 pounds. The second statue weighed 18. The remaining two statues weighed the same amount. The marble he discarded after carving it off the statues weighed 22 pounds. How much did each of the remaining statues Hammond carved weigh?\n\n## Reasoning\n1. Calculate the total marble used in the statues and discarded: 80 pounds (initial block) - 22 pounds (discarded) = 58 pounds.\n2. The first two statues weigh a total of 10 pounds + 18 pounds = 28 pounds.\n3. The combined weight of the last two statues is 58 pounds (total used) - 28 pounds (first two) = 30 pounds.\n4. Each of the remaining statues weighs 30 pounds / 2 = 15 pounds.\n\n## Answer\nEach of the remaining statues Hammond carved weighed 15 pounds.\n\nExample 2:\n## Inputs\n### question\nLogan's father receives 50 cartons delivery for his milk business, each carton having 20 jars of milk. On a particular week, he received 20 cartons less when the delivery was done, and during offloading, he realized 3 jars in 5 cartons each was damaged, and one carton was totally damaged. How many jars of milk were good for sale that week?\n\n## Reasoning\n1. Calculate the total number of jars originally received: 50 cartons * 20 jars/carton = 1000 jars.\n2. Calculate the reduced number of jars after receiving 20 cartons less: (50 - 20) cartons * 20 jars/carton = 30 cartons * 20 jars/carton = 600 jars.\n3. Calculate the total number of damaged jars: In 5 cartons, 3 jars each were damaged, so 5 * 3 = 15 jars. Additionally, one whole carton (20 jars) was damaged.\n4. The total number of damaged jars is 15 (from the 5 cartons) + 20 (from the whole carton) = 35 jars.\n5. Subtract the damaged jars from the total jars to find the jars available for sale: 600 jars - 35 jars = 565 jars.\n\n## Answer\n565 jars\n\nExample 3:\n## Inputs\n### question\nAlan went to the market and bought 20 eggs at the price of $2 per egg. He bought 6 chickens for the price of $8 per chicken. How much money did Alan spend at the market?\n\n## Reasoning\n1. Calculate the total cost of the eggs: 20 eggs * $2/egg = $40.\n2. Calculate the total cost of the chickens: 6 chickens * $8/chicken = $48.\n3. Add the total cost of the eggs and the total cost of the chickens to get the total amount of money Alan spent: $40 + $48 = $88.\n\n## Answer\n$88\n\nEnsure that you follow these guidelines to correctly solve and explain the problem."
+    }
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|miprov2": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "miprov2",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 83.988,
+      "std": 2.10287,
+      "ci95": 2.61064,
+      "min": 80.44,
+      "max": 85.52,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 1125.5,
+      "min": 1044.1,
+      "max": 1255.7
+    },
+    "n_demos_total": {
+      "mean": 9.8
+    },
+    "per_seed_scores": {
+      "123": 83.85,
+      "1337": 80.44,
+      "42": 85.52,
+      "456": 85.52,
+      "789": 84.61
+    },
+    "sample_instructions": {
+      "prog.predict": "You are a math teacher, and your task is to guide students through solving a math problem by providing a step-by-step reasoning process and the final answer. Given the field `question`, produce the field `reasoning` detailing the steps to solve the problem and the field `answer` with the final solution."
+    }
+  },
+  "iris|Llama-3.2-3B-Instruct|baseline": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 34.0,
+      "std": 0.0,
+      "ci95": 0.0,
+      "min": 34.0,
+      "max": 34.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 34.0,
+      "1337": 34.0,
+      "42": 34.0,
+      "456": 34.0,
+      "789": 34.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species."
+    }
+  },
+  "iris|Llama-3.2-3B-Instruct|gepa": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 41.2,
+      "std": 10.82589,
+      "ci95": 13.43997,
+      "min": 28.0,
+      "max": 54.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 315.5,
+      "min": 286.7,
+      "max": 502.0
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 54.0,
+      "1337": 46.0,
+      "42": 28.0,
+      "456": 32.0,
+      "789": 46.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "## DIAGNOSE and IMPROVE Iris Classification\n### petal_length\n### petal_width\n### sepal_length\n### sepal_width\n\n## OUTPUT\n### answer\n### reasoning\n\n## OUTPUT FORMAT\n- answer: one of 'setosa', 'versicolor', or 'virginica'\n- reasoning:\n    1. Compare petal lengths and widths:\n        - if both petal length and width are above 5.0, classify as 'virginica'\n        - if both petal length and width are below 3.0, classify as 'setosa'\n        - otherwise, assign petal length as the primary factor and width as secondary\n    2. Compare sepal lengths and widths:\n        - if both sepal length and width are above 5.5, classify as 'virginica'\n        - if both sepal length and width are below 2.0, classify as 'setosa'\n        - otherwise, assign sepal length as the primary factor and width as secondary\n    3. Evaluate petal and sepal length consistency:\n        - if primary factor (petal or sepal) is above 3.0 and secondary factor is below 2.0, reclassify\n    4. Verify sepal length and width consistency:\n        - if primary factor (petal or sepal) is above 3.0 and secondary factor is above 5.5, reclassify\n\n## FEEDBACK RULES\n- True: if the classification matches the expected outcome based on the provided reasoning.\n- False: if the classification does not match the expected outcome, and the provided reasoning contains at least one incorrect assumption or inconsistency."
+    }
+  },
+  "iris|Llama-3.2-3B-Instruct|gepa_fewshot": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 64.4,
+      "std": 7.12741,
+      "ci95": 8.84843,
+      "min": 54.0,
+      "max": 70.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 228.8,
+      "min": 169.7,
+      "max": 259.4
+    },
+    "n_demos_total": {
+      "mean": 2.6
+    },
+    "per_seed_scores": {
+      "123": 60.0,
+      "1337": 70.0,
+      "42": 68.0,
+      "456": 70.0,
+      "789": 54.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "## Inputs\n### petal_length\n{float}\n\n### petal_width\n{float}\n\n### sepal_length\n{float}\n\n### sepal_width\n{float}\n\n## Output Format\n- setosa\n- versicolor\n- virginica\n\n## Evaluation Criteria\n- Iris species classification score (True/False)\n- Reasoning trace with associated scores for each species classification (setosa, versicolor, virginica)\n\n## Rule-Based Classification\n1. Check if petal length and width are both non-zero. If not, classify as versicolor or virginica.\n2. Calculate the petal length to width ratio. If > 2, classify as virginica.\n3. Calculate the sepal length to width ratio. If > 2, classify as virginica.\n4. Compare the petal length and sepal length. If both are below 4, classify as setosa.\n5. Check for ambiguous cases: \n    - If petal length is above 4 but below 4.5, consider setosa classification.\n    - If sepal length is above 4 but below 4.5, consider setosa classification.\n    - If both petal and sepal length are above 4 but not above 4.5, classify as versicolor.\n6. Combine the results of steps 2-5 to determine the final iris species classification.\n\n## Note\nThe classification score is determined based on the accuracy of the final classification. If the score is True, the classification is correct; otherwise, it's False."
+    }
+  },
+  "iris|Llama-3.2-3B-Instruct|gepa_merge": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 50.4,
+      "std": 11.43678,
+      "ci95": 14.19836,
+      "min": 34.0,
+      "max": 64.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 314.0,
+      "min": 223.2,
+      "max": 494.1
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 58.0,
+      "1337": 64.0,
+      "42": 48.0,
+      "456": 34.0,
+      "789": 48.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Generate Predicted Iris Species\n### reasoning\n1. Calculate the Euclidean distance between the input dimensions and the mean/standard deviation values for each species:\n    * Setosa: distance = sqrt((petal_length - 3.1)^2 + (petal_width - 0.5)^2 + (sepal_length - 5.1)^2 + (sepal_width - 3.3)^2)\n    * Versicolor: distance = sqrt((petal_length - 4.9)^2 + (petal_width - 1.2)^2 + (sepal_length - 5.7)^2 + (sepal_width - 3.0)^2)\n    * Virginica: distance = sqrt((petal_length - 6.4)^2 + (petal_width - 1.2)^2 + (sepal_length - 5.7)^2 + (sepal_width - 3.0)^2)\n2. Compare the distances to determine the closest species:\n    * Minimum distance corresponds to the species\n3. Output the species name\n\n### answer\nsetosa | versicolor | virginica\n\n### Output Format\nResponse should be one of the three iris species ('setosa', 'versicolor', 'virginica')."
+    }
+  },
+  "iris|Llama-3.2-3B-Instruct|miprov2": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "miprov2",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 69.2,
+      "std": 10.63955,
+      "ci95": 13.20863,
+      "min": 54.0,
+      "max": 78.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 116.2,
+      "min": 101.9,
+      "max": 122.3
+    },
+    "n_demos_total": {
+      "mean": 4.8
+    },
+    "per_seed_scores": {
+      "123": 76.0,
+      "1337": 76.0,
+      "42": 78.0,
+      "456": 54.0,
+      "789": 62.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species."
+    }
+  },
+  "iris|Qwen2.5-7B-Instruct|baseline": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 59.2,
+      "std": 5.21536,
+      "ci95": 6.47469,
+      "min": 52.0,
+      "max": 66.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 66.0,
+      "1337": 62.0,
+      "42": 58.0,
+      "456": 52.0,
+      "789": 58.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species."
+    }
+  },
+  "iris|Qwen2.5-7B-Instruct|gepa": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 80.8,
+      "std": 6.87023,
+      "ci95": 8.52914,
+      "min": 74.0,
+      "max": 90.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 905.5,
+      "min": 692.0,
+      "max": 1417.5
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 82.0,
+      "1337": 74.0,
+      "42": 84.0,
+      "456": 74.0,
+      "789": 90.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. Ensure your response includes a detailed reasoning process and the correct species prediction. Pay special attention to the following:\n\n1. **Iris Setosa**:\n   - Petal Length: Less than 1.5 cm\n   - Petal Width: Less than 0.5 cm\n   - Sepal Length: Less than 5 cm\n   - Sepal Width: Less than 2.5 cm\n\n2. **Iris Versicolor**:\n   - Petal Length: Between 1.5 cm and 5 cm\n   - Petal Width: Between 0.5 cm and 2 cm\n   - Sepal Length: Between 4.5 cm and 7 cm\n   - Sepal Width: Between 2.5 cm and 4.5 cm\n\n3. **Iris Virginica**:\n   - Petal Length: Greater than or equal to 5 cm\n   - Petal Width: Greater than or equal to 2 cm\n   - Sepal Length: Greater than or equal to 5 cm\n   - Sepal Width: Greater than or equal to 3.5 cm\n\n## Inputs\n### petal_length\n5.0\n\n### petal_width\n1.4\n\n### sepal_length\n6.8\n\n### sepal_width\n3.1\n\n## Generated Outputs\n### reasoning\nThe input measurements are as follows: petal length = 5.0 cm, petal width = 1.4 cm, sepal length = 6.8 cm, and sepal width = 3.1 cm. Based on the provided thresholds:\n- The petal length of 5.0 cm and petal width of 1.4 cm are within the range for *versicolor*.\n- The sepal length of 6.8 cm and sepal width of 3.1 cm are also within the range for *versicolor*.\n\nTherefore, these dimensions are consistent with the characteristics of the *versicolor* species.\n\n### answer\nversicolor"
+    }
+  },
+  "iris|Qwen2.5-7B-Instruct|gepa_fewshot": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 72.8,
+      "std": 5.93296,
+      "ci95": 7.36556,
+      "min": 66.0,
+      "max": 80.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 332.8,
+      "min": 22.6,
+      "max": 475.7
+    },
+    "n_demos_total": {
+      "mean": 2.4
+    },
+    "per_seed_scores": {
+      "123": 66.0,
+      "1337": 80.0,
+      "42": 70.0,
+      "456": 70.0,
+      "789": 78.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species."
+    }
+  },
+  "iris|Qwen2.5-7B-Instruct|gepa_merge": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 82.4,
+      "std": 6.9857,
+      "ci95": 8.6725,
+      "min": 76.0,
+      "max": 94.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 581.1,
+      "min": 518.1,
+      "max": 1095.5
+    },
+    "n_demos_total": {
+      "mean": 0.0
+    },
+    "per_seed_scores": {
+      "123": 82.0,
+      "1337": 78.0,
+      "42": 76.0,
+      "456": 94.0,
+      "789": 82.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. Follow these steps:\n\n1. **Check Iris Setosa Characteristics:**\n   - Petal Length: Less than 1.5 cm.\n   - Petal Width: Less than 1.5 cm.\n   - Sepal Length: Less than 5 cm.\n   - Sepal Width: Less than 3.5 cm.\n   - Ensure that the petal and sepal dimensions do not exceed the maximum allowed for other species.\n\n2. **Check Iris Versicolor Characteristics:**\n   - Petal Length: 3-5 cm.\n   - Petal Width: 1.4-2.5 cm.\n   - Sepal Length: 4.9-6.5 cm.\n   - Sepal Width: 1.3-2.3 cm.\n   - Ensure that the petal and sepal dimensions do not exceed the maximum allowed for other species.\n\n3. **Check Iris Virginica Characteristics:**\n   - Petal Length: Greater than 4.9 cm.\n   - Petal Width: Greater than 1.4 cm.\n   - Sepal Length: Greater than 5 cm.\n   - Sepal Width: Greater than 2.0 cm.\n   - Ensure that the petal and sepal dimensions do not exceed the maximum allowed for other species.\n\n4. **Reasoning Steps:**\n   - If the petal and sepal dimensions exactly match the characteristics of Iris Setosa, Iris Versicolor, or Iris Virginica, predict the corresponding species.\n   - If the measurements do not perfectly match but are within the range for a specific species, predict that species.\n   - If the measurements exceed the maximum limits for any species, re-evaluate within the context of the species characteristics.\n   - Ensure that the measurements do not contradict the characteristics of any other species.\n\n5. **Output Format:**\n   - Provide a clear \"reasoning\" section explaining how the measurements align with the species characteristics.\n   - Provide a single \"answer\" with the predicted iris species.\n\n6. **Specific Hints:**\n   - For Iris Setosa, ensure that the petal length and width are significantly less than 1.5 cm.\n   - For Iris Versicolor, ensure that the petal and sepal dimensions are within the specified ranges, and check that they do not exceed the upper limits for other species.\n   - For Iris Virginica, ensure that the petal and sepal dimensions are clearly above the minimum thresholds and check that they do not exceed the upper limits for other species.\n\n7. **Example Inputs and Outputs:**\n   - If the measurements are not precise but are within the range for a species, provide clear reasoning and select the most likely species.\n   - Re-evaluate measurements that exceed the maximum limits and explain the re-evaluation process.\n\n## Example Inputs\n### petal_length\n5.2\n\n### petal_width\n2.0\n\n### sepal_length\n6.5\n\n### sepal_width\n3.0\n\n## Expected Outputs\n### reasoning\nThe petal and sepal dimensions provided suggest the species of Iris. The petal length is 5.2 cm, the petal width is 2.0 cm, the sepal length is 6.5 cm, and the sepal width is 3.0 cm. According to the given characteristics, these measurements align with the characteristics of Iris Virginica.\n\n- Petal Length (5.2 cm) and Sepal Length (6.5 cm) exceed the maximum limits for Iris Setosa and Iris Versicolor.\n- Petal Width (2.0 cm) exceeds the maximum for Iris Versicolor.\n- Sepal Width (3.0 cm) exceeds the maximum for Iris Versicolor but not for Iris Virginica.\n\nThese measurements align with the characteristics of Iris Virginica.\n\n### answer\nvirginica"
+    }
+  },
+  "iris|Qwen2.5-7B-Instruct|miprov2": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "miprov2",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "accuracy": {
+      "mean": 79.2,
+      "std": 4.60435,
+      "ci95": 5.71613,
+      "min": 72.0,
+      "max": 84.0,
+      "n": 5
+    },
+    "opt_time_s": {
+      "median": 250.3,
+      "min": 220.4,
+      "max": 273.3
+    },
+    "n_demos_total": {
+      "mean": 8.0
+    },
+    "per_seed_scores": {
+      "123": 78.0,
+      "1337": 72.0,
+      "42": 80.0,
+      "456": 84.0,
+      "789": 82.0
+    },
+    "sample_instructions": {
+      "generate_answer.predict": "As a botanist facing a critical extinction case, you must identify a rare but endangered Iris species from a set of floral specimens using only the petal and sepal dimensions provided. Given petal and sepal dimensions in cm, predict the iris species. Provide a step-by-step rationale for your prediction.\n\nThe petal length is [Petal Length (cm)].\nThe petal width is [Petal Width (cm)].\nThe sepal length is [Sepal Length (cm)].\nThe sepal width is [Sepal Width (cm)].\n\nReasoning: Let's think step by step in order to predict the iris species based on these critical measurements. Your reasoning should highlight any distinguishing features and provide a clear, logically sound justification for your prediction.\n\nAnswer: [Iris Species (setosa, versicolor, or virginica)]"
+    }
+  }
+}

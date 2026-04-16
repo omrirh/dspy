@@ -10,13 +10,17 @@ from transformers import (
 )
 from remote_setup.utils import assign_local_lm, deploy_sglang_model, stop_server_and_clean_resources
 from datasets import Dataset
-from peft import (
-    LoraConfig,
-    get_peft_model,
-    PeftModel,
-    prepare_model_for_kbit_training,
-)
-from trl import SFTTrainer, SFTConfig
+try:
+    from peft import (
+        LoraConfig,
+        get_peft_model,
+        PeftModel,
+        prepare_model_for_kbit_training,
+    )
+    from trl import SFTTrainer, SFTConfig
+except ImportError:
+    LoraConfig = get_peft_model = PeftModel = prepare_model_for_kbit_training = None
+    SFTTrainer = SFTConfig = None
 from transformers import DataCollatorForLanguageModeling
 from dspy.clients.provider import TrainingJob, Provider
 from dspy.clients.utils_finetune import TrainDataFormat, TrainingStatus
@@ -50,7 +54,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 class TrainingJobHF(TrainingJob):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.trainer: Optional[SFTTrainer] = None
+        self.trainer = None  # Optional[SFTTrainer]
 
     def cancel(self):
         if self.trainer is not None:

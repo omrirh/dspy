@@ -3,16 +3,28 @@
 # Run once after provisioning a new remote instance.
 #
 # Validated stack: sglang==0.4.6.post4, CUDA 12.4, SM80 (Ampere), torch 2.6.0+cu124
+#
+# Creates the venv at <repo-parent>/dspy_venv so it lives outside the repo
+# and is never tracked by git.
+#
+# Usage (always run from the parent of the repo):
+#   bash dspy/remote_setup/prepare_virtualenv.sh
 
 set -e
 
-sudo apt update && sudo apt install -y software-properties-common
-sudo add-apt-repository -y ppa:deadsnakes/ppa
-sudo apt update
-sudo apt install -y python3.11 python3.11-venv python3.11-dev
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_DIR="$(realpath -m "$REPO_ROOT/../dspy_venv")"
 
-python3.11 -m venv dspy_venv
-source dspy_venv/bin/activate
+if ! command -v python3.11 &>/dev/null || ! python3.11 -c "import venv" &>/dev/null 2>&1; then
+    sudo apt update && sudo apt install -y software-properties-common
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt install -y python3.11 python3.11-venv python3.11-dev
+fi
+
+echo "Creating venv at: $VENV_DIR"
+python3.11 -m venv "$VENV_DIR"
+source "$VENV_DIR/bin/activate"
 pip install --upgrade pip
 pip install uv
 
@@ -29,7 +41,11 @@ uv pip install flashinfer-python==0.2.5 \
 # SGLang — install base package only (runtime deps are pinned in requirements.txt)
 uv pip install "sglang==0.4.6.post4"
 
-# All remaining dependencies (pinned versions, see requirements.txt for rationale)
-uv pip install -r remote_setup/requirements.txt
+# All remaining dependencies (pinned versions, see requirements.txt for rationale).
+# requirements.txt contains `-e .` which installs DSPy from the repo in editable
+# mode — pip resolves `.` relative to CWD, so we set CWD to the repo root.
+(cd "$REPO_ROOT" && uv pip install -r "$REPO_ROOT/remote_setup/requirements.txt")
 
-echo "Virtualenv ready. Activate with: source dspy_venv/bin/activate"
+echo ""
+echo "Virtualenv ready at: $VENV_DIR"
+echo "Activate with:       source $VENV_DIR/bin/activate"
