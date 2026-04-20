@@ -1,0 +1,45 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Tom's rabbit can run at 25 miles per hour.  His cat can run 20 miles per hour.  The cat gets a 15-minute head start.  In hours, how long will it take for the rabbit to catch up?",
+        "reasoning": "To find out how long it will take for the rabbit to catch up to the cat, we first need to calculate the distance the cat has covered during the 15-minute (which is 0.25 hours) head start. The distance is found by multiplying the speed of the cat (20 miles per hour) by the time (0.25 hours). This gives the initial distance gap the rabbit needs to cover. Then, we calculate the relative speed difference between the rabbit and the cat, which is 25 miles per hour (rabbit's speed) - 20 miles per hour (cat's speed) = 5 miles per hour. Finally, the time it takes for the rabbit to cover this gap is the distance gap (which is the cat's 15-minute head start distance) divided by the relative speed.\n\n\\[ \\text{Distance gap} = 20 \\, \\text{miles/hour} \\times 0.25 \\, \\text{hours} = 5 \\, \\text{miles} \\]\n\\[ \\text{Time to catch up} = \\frac{5 \\, \\text{miles}}{5 \\, \\text{miles/hour}} = 1 \\, \\text{hour} \\]",
+        "answer": "1"
+      },
+      {
+        "augmented": true,
+        "question": "In 2004, there were some kids at a cookout. In 2005, half the number of kids came to the cookout as compared to 2004. In 2006, 2/3 as many kids came to the cookout as in 2005. If there were 20 kids at the cookout in 2006, how many kids came to the cookout in 2004?",
+        "reasoning": "We know that in 2006, 2/3 of the number of kids from 2005 attended, and this was equal to 20 kids. Therefore, in 2005, the number of kids was \\(20 \\div (2/3) = 20 \\times (3/2) = 30\\). We also know that in 2005, there were half the number of kids compared to 2004. Therefore, in 2004, the number of kids was \\(30 \\times 2 = 60\\).",
+        "answer": "60"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `reasoning` and `answer`. Always include a clear step-by-step reasoning process to solve the problem, and ensure your final `answer` is clearly stated. Use the format:\n\n### reasoning\n[Provide detailed step-by-step reasoning here, ensuring to address all parts of the question and include all necessary calculations or logical steps.]\n\n### answer\n[Provide the final answer here, clearly and unambiguously stated.]\n\nAvoid making assumptions not supported by the question. Ensure all calculations and logical steps are clearly shown. Double-check that the total reasoning and calculations align with the final answer.\n\nIf the question involves multiple parts or scenarios, break down the problem into smaller, manageable steps. Ensure each step is logically connected and clearly explained.\n\nBe concise and direct in your reasoning and answer, ensuring that the solution is clear and unambiguous.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa__Llama-3.2-3B-Instruct__medium__seed456__2026-04-19_09-29",
+  "seed": 456,
+  "dataset": "gsm8k",
+  "optimizer": "gepa",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 75.44,
+  "runtime_opt_s": 635.6810114383698,
+  "runtime_eval_s": 1357.2074460983276,
+  "total_metric_calls": 2000,
+  "optimized_instructions": {
+    "prog.predict": "## Inputs\n### question\nGiven the fields `question`, produce the fields `answer`, where:\n- `answer` is the numerical solution to the problem if possible\n- `answer` is the final value calculated after following the step-by-step reasoning process\n- `answer` is the output format should be in the format of a number (e.g. 12, 3.14) or as a string of numbers separated by commas (e.g. \"1, 2, 3\") or as a simple expression (e.g. \"2x\") depending on the context of the problem\n- The reasoning process should provide explicit and detailed mathematical operations, conversions, or other steps required to solve the problem\n- Ensure all calculations are expressed with precision, avoiding implicit assumptions (e.g., explicitly specify rounding rules)\n- In complex calculations, provide intermediate steps to facilitate verification and correctness checks"
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

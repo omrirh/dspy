@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Qwen2.5-7B-Instruct__medium__seed456__2026-04-18_22-11",
+  "seed": 456,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 92.0,
+  "runtime_opt_s": 457.080274105072,
+  "runtime_eval_s": 22.89555597305298,
+  "total_metric_calls": 830,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. Follow these guidelines to ensure accurate predictions:\n\n1. **Identify Key Features**: Recognize that petal dimensions (length and width) are more distinctive for Iris setosa, while sepal dimensions (length and width) are more indicative of Iris versicolor and virginica.\n2. **Setosa Criteria**: If both petal length and petal width are very small (typically less than 1.5 cm), and sepal dimensions are relatively small, predict Iris setosa.\n3. **Versicolor Criteria**: If petal dimensions suggest versicolor (petal length usually between 1.5 cm and 4.5 cm, petal width between 0.2 cm and 1.4 cm), and sepal dimensions are intermediate (sepal length usually between 4.5 cm and 6.5 cm, sepal width between 1.2 cm and 1.8 cm), predict Iris versicolor.\n4. **Virginica Criteria**: If petal dimensions suggest virginica (petal length usually greater than 4.5 cm, petal width usually greater than 1.4 cm), and sepal dimensions are large (sepal length usually greater than 6.5 cm, sepal width usually greater than 1.8 cm), predict Iris virginica.\n5. **Consistency Check**: Ensure that the combination of petal and sepal dimensions aligns with the identified species. If the petal measurements are more indicative of setosa, but sepal measurements suggest versicolor, prioritize the petal measurements unless they are extremely inconsistent. Also, if there is a close overlap, consider additional features such as the specific ranges for sepal width (setosa <1.2, versicolor 1.2-1.8, virginica >1.8) and sepal length (setosa <5.0, versicolor 4.5-6.5, virginica >6.5) to make the decision.\n\n### Example Inputs\n### petal_length\n4.7\n\n### petal_width\n1.4\n\n### sepal_length\n7.0\n\n### sepal_width\n3.2\n\n### Example Outputs\n### reasoning\nThe petal length of 4.7 cm and petal width of 1.4 cm are indicative of the Iris virginica species, as these measurements are within the typical range for virginica. The sepal length of 7.0 cm and sepal width of 3.2 cm are also consistent with the dimensions typically observed in Iris virginica. Therefore, the combination of these measurements strongly points towards Iris virginica.\n\n### answer\nvirginica\n\n### Format\n- **reasoning**: Provide a detailed explanation of how the measurements align with the identified species. Include specific range checks for sepal dimensions and petal measurements. Explicitly mention if the petal or sepal measurements are more indicative of a certain species and justify your choice.\n- **answer**: Clearly state the predicted iris species.\n\n### Additional Notes\n- If there is a close overlap in measurements, use the specific ranges for sepal width (setosa <1.2, versicolor 1.2-1.8, virginica >1.8) and sepal length (setosa <5.0, versicolor 4.5-6.5, virginica >6.5) to make the final decision.\n- Always prioritize the petal measurements if they are more indicative of a species, unless they are extremely inconsistent with the sepal measurements.\n\n### SPECIFIC REVISIONS\n- Ensure that measurements are strictly within the specified ranges to avoid ambiguity.\n- For petal dimensions, clearly state if they are indicative of setosa, versicolor, or virginica and provide a detailed justification.\n- For sepal dimensions, explicitly check if they fall within the specified ranges for versicolor and virginica.\n- If there is a close overlap, specifically mention which species the measurements align more closely with, and justify your choice."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 3
+}

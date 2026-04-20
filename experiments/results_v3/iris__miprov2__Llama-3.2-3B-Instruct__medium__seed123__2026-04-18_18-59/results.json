@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__miprov2__Llama-3.2-3B-Instruct__medium__seed123__2026-04-18_18-59",
+  "seed": 123,
+  "dataset": "iris",
+  "optimizer": "miprov2",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 80.0,
+  "runtime_opt_s": 108.35045909881592,
+  "runtime_eval_s": 5.1434547901153564,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species by leveraging the Predict module and chaining it with the IrisProgram, processing the input data using predefined rules to determine the most likely species."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 8
+  },
+  "n_demos_total": 8,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

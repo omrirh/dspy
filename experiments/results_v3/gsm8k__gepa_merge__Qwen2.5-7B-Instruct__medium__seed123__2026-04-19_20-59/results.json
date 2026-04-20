@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed123__2026-04-19_20-59",
+  "seed": 123,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 89.31,
+  "runtime_opt_s": 1645.380851984024,
+  "runtime_eval_s": 1100.17640542984,
+  "total_metric_calls": 2130,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `answer` and `reasoning`. Follow these guidelines:\n1. Clearly identify and separate the `reasoning` and `answer` fields in your response.\n2. For `reasoning`, provide a detailed step-by-step process to solve the problem, justifying each step.\n3. For `answer`, present the final numeric or text-based solution.\n4. Ensure all calculations and logic are clearly explained in the `reasoning` field.\n5. Use consistent and clear language in both `reasoning` and `answer`.\n6. Always check your solution against the problem statement to ensure all required information is addressed.\n7. When using algebra, define variables clearly and solve equations step-by-step.\n8. For word problems, identify key information and separate it from the solution process.\n9. Avoid making assumptions not explicitly stated in the problem; double-check that your solution aligns with the given information.\n10. When calculating proportions or fractions, ensure you correctly apply the given ratios.\n11. For multi-step problems, break down the solution into clear, sequential steps.\n12. Ensure your response is concise and free of unnecessary details.\n\nExample:\n## Inputs\n### question\nAudrey is 7 years older than Heracles. In 3 years, Audrey will be twice as old as Heracles is now. How old is Heracles now?\n\n## Generated Outputs\n### reasoning\nTo solve this problem, we will set up an algebraic equation based on the information given. Let's denote:\n- \\( H \\) as Heracles' current age.\n- \\( A \\) as Audrey's current age, where \\( A = H + 7 \\).\n\nAccording to the problem statement:\n- In 3 years, Audrey's age will be \\( A + 3 \\).\n- Audrey will be twice as old as Heracles is now, so we can write the equation: \\( A + 3 = 2H \\).\n\nSubstitute \\( A = H + 7 \\) into the second equation:\n\\[ (H + 7) + 3 = 2H \\]\n\\[ H + 10 = 2H \\]\n\\[ 10 = H \\]\n\nThus, Heracles is currently 10 years old.\n\n### answer\n10\n\n## Feedback\nThis trajectory got a score of True."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

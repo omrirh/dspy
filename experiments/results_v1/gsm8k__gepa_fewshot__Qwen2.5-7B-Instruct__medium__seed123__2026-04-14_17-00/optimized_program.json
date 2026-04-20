@@ -1,0 +1,45 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Stephen made 10 round trips up and down a 40,000 foot tall mountain. If he reached 3/4 of the mountain's height on each of his trips, calculate the total distance he covered.",
+        "reasoning": "Stephen made 10 round trips, and on each trip, he reached 3/4 of the mountain's height. The total distance for one round trip is the ascent and descent, which is twice the height he climbed. \n\n1. Calculate the height Stephen climbed on one trip: \\(40,000 \\text{ feet} \\times \\frac{3}{4} = 30,000 \\text{ feet}\\).\n2. Since it's a round trip, the total distance for one trip is \\(30,000 \\text{ feet} \\times 2 = 60,000 \\text{ feet}\\).\n3. Stephen made 10 of these round trips, so the total distance is \\(60,000 \\text{ feet} \\times 10 = 600,000 \\text{ feet}\\).",
+        "answer": "600000"
+      },
+      {
+        "augmented": true,
+        "question": "Alice and Bob are each given $2000 to invest. Alice puts all of her money in the stock market and doubles her money. Bob invests in real estate and makes five times more money than he invested. How much more money does Bob have now than Alice?",
+        "reasoning": "Alice doubles her money, so she ends up with $2000 * 2 = $4000. Bob makes five times more money than he invested, which means he makes $2000 * 5 = $10000 more than what he invested. Thus, he ends up with $2000 + $10000 = $12000. The difference in their money is the amount Bob has minus the amount Alice has, which is $12000 - $4000 = $8000.",
+        "answer": "$8000"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `answer` following these steps:\n1. Read and understand the problem statement carefully.\n2. Identify and list all the given information and what is being asked.\n3. Formulate a step-by-step solution, showing all necessary calculations and reasoning.\n4. Ensure that the final answer is clearly stated and formatted correctly.\n5. Double-check your calculations and reasoning for any logical errors or misinterpretations.\n6. Provide the answer in a single, clear sentence or number.\n\nRemember to:\n- Use concise and clear language.\n- Include all necessary calculations and steps in your `reasoning` field.\n- Format the `answer` as a single, clear value.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

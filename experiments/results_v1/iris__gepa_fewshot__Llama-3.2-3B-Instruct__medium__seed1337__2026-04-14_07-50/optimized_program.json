@@ -1,0 +1,70 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "sepal_length": 4.6,
+        "sepal_width": 3.2,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.2,
+        "sepal_length": 5.2,
+        "sepal_width": 3.5,
+        "reasoning": "The given petal and sepal dimensions are within the range of the Iris species, but to provide a more accurate prediction, we need to refer to the known characteristics of each species. \n\nThe Iris setosa is known for having relatively short stems and short petal lengths, typically less than 5 cm. It also has a narrower petal width compared to the other species. On the other hand, the Iris versicolor and virginica tend to have longer petal lengths and wider petal widths. Given the petal length of 1.5 cm and the petal width of 0.2 cm, which is narrower than average for versicolor and virginica but closer to the average setosa, we can make an educated guess that the iris is more likely to be setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.4,
+        "sepal_length": 5.1,
+        "sepal_width": 3.7,
+        "reasoning": "The iris species can be predicted based on the sepal and petal measurements.",
+        "answer": "setosa"
+      }
+    ],
+    "signature": {
+      "instructions": "## Instructions for Improved Iris Species Classification\n\n## Inputs\n### petal_length\np float\n\n### petal_width\np float\n\n### sepal_length\ns float\n\n### sepal_width\ns float\n\n## Output Formats\n### answer\niris species name (setosa, versicolor, virginica)\n\n### reasoning\nstring explaining the classification decision\n\n## Rules\n1. If the combined petal length and width are greater than 2.5 * (sepal length + sepal width),\n   classify as virginica if sepal length is greater than 6.5 and sepal width is greater than 2.8\n   or otherwise classify as versicolor.\n2. If the combined petal length and width are less than or equal to 2.5 * (sepal length + sepal width),\n   calculate sepal and petal ratios and compare to setosa reference ranges.\n3. If none of the above conditions are met, classify as setosa if sepal length is less than 5.5\n   and sepal width is less than 3.2 and petal length and width are within setosa reference ranges.\n\n## Evaluations\nThe classification will be considered correct if the output answer matches the true label.\n\n## Additional Checks\n- For rules 1 and 2, verify that the calculated ratios are within valid ranges for the respective species.\n- For rule 3, verify that the sepal length, sepal width, petal length, and petal width are all within the setosa reference ranges.\n\n## Handling Edge Cases\n- If the combined petal length and width are equal to 2.5 times the sum of sepal length and sepal width, classify as setosa if the sepal length and sepal width are both less than 4.5.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

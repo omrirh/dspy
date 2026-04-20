@@ -1,0 +1,126 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.6,
+        "petal_width": 0.2,
+        "sepal_length": 4.7,
+        "sepal_width": 3.2,
+        "reasoning": "The petal length and petal width are very small, indicating a setosa species. Additionally, the sepal length and sepal width are also within the range typically observed for setosa iris.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "The petal length and petal width indicate a smaller petal size, which is characteristic of Iris setosa. The sepal length and sepal width are also within the range typically observed for Iris setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.0,
+        "petal_width": 1.3,
+        "sepal_length": 5.5,
+        "sepal_width": 2.3,
+        "reasoning": "Based on the petal and sepal dimensions, the petal length of 4.0 cm and petal width of 1.3 cm are relatively small, while the sepal length of 5.5 cm and sepal width of 2.3 cm indicate a larger sepal size. These characteristics are more indicative of Iris versicolor.",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 5.0,
+        "petal_width": 1.5,
+        "sepal_length": 6.0,
+        "sepal_width": 2.2,
+        "reasoning": "The petal length and petal width are within the range typically seen for Iris virginica, but the sepal length and sepal width are closer to the boundary between Iris virginica and Iris versicolor. Given the dimensions, it is still more likely to be Iris virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 6.1,
+        "petal_width": 2.3,
+        "sepal_length": 7.7,
+        "sepal_width": 3.0,
+        "reasoning": "The petal length and petal width measurements of 6.1 and 2.3 respectively, suggest a larger petal size, which is more characteristic of Iris virginica. Additionally, the sepal length and sepal width measurements of 7.7 and 3.0 indicate a larger sepal size, which is also more indicative of Iris virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.9,
+        "petal_width": 1.8,
+        "sepal_length": 6.3,
+        "sepal_width": 2.7,
+        "reasoning": "Based on the provided measurements, the petal length of 4.9 cm, petal width of 1.8 cm, sepal length of 6.3 cm, and sepal width of 2.7 cm, these characteristics are more indicative of the virginica species. The relatively large sepal and petal dimensions suggest this classification.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.2,
+        "petal_width": 0.2,
+        "sepal_length": 5.8,
+        "sepal_width": 4.0,
+        "reasoning": "The given measurements are for a setosa species of iris. The petal length and petal width are very small, and the sepal length and sepal width are larger, which are characteristic of Iris setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.2,
+        "sepal_length": 5.2,
+        "sepal_width": 3.5,
+        "reasoning": "The petal length and petal width are very small, which is characteristic of setosa species. The sepal length and sepal width also support this classification, as they fall within the range typically observed for setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+        "sepal_length": 4.6,
+        "sepal_width": 3.2,
+        "reasoning": "The petal length and width are very small, which is characteristic of the setosa species. However, the sepal length and width also need to be considered. The sepal dimensions are more indicative of versicolor or virginica, but the very small petal dimensions are a strong indicator of setosa.",
+        "answer": "setosa"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in cm, predict the iris species.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

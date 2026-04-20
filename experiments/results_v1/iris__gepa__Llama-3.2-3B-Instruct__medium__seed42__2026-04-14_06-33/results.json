@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa__Llama-3.2-3B-Instruct__medium__seed42__2026-04-14_06-33",
+  "seed": 42,
+  "dataset": "iris",
+  "optimizer": "gepa",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 28.0,
+  "runtime_opt_s": 315.5073425769806,
+  "runtime_eval_s": 10.607729434967041,
+  "total_metric_calls": 817,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Inputs\n### petal_length\n### petal_width\n### sepal_length\n### sepal_width\n\n## Generated Outputs\n### prediction\nsetosa, versicolor, or virginica\n\n## Feedback\nThis trajectory will get a score of True if the predicted species matches the actual species.\n### scoring\n1. Calculate the ratio of petal length to petal width.\n2. Compare the ratio to predefined thresholds for each species.\n   - setosa: ratio <= 0.5\n   - versicolor: 0.5 < ratio <= 1.5\n   - virginica: ratio > 1.5\n3. If the ratio falls within a species' threshold range, predict that species.\n4. If the ratio does not fall within any threshold range, prioritize the species with the highest petal ratio.\n5. If no ratio matches either sepal or petal dimensions, predict the species with the highest petal ratio.\n6. Check that the sepal ratio matches the actual sepal dimensions before making a final prediction.\n   * If sepal ratio matches, predict the species corresponding to the sepal dimensions.\n   * If sepal ratio does not match, predict the species corresponding to the petal dimensions.\n7. If all else fails, predict the species with the highest petal ratio.\n8. If no ratio matches either sepal or petal dimensions, prioritize the species with the highest petal ratio.\n9. Check that the sepal ratio matches the actual sepal dimensions before making a final prediction.\n   * If sepal ratio matches, predict the species corresponding to the sepal dimensions.\n   * If sepal ratio does not match, predict the species corresponding to the petal dimensions.\n10. If a ratio does not match any species' threshold range, check the sepal dimensions to avoid infinite recursion.\n11. If the sepal ratio still does not match, check the petal dimensions to avoid infinite recursion.\n\n## Reasoning Format\nThe reasoning step should include a clear explanation of the prediction and how it was calculated.\n\n## Output Format\nThe prediction should be enclosed in single quotes.\n\n## Additional Hints\n- If a ratio does not match any species' threshold range, check the sepal dimensions to avoid infinite recursion.\n- If the sepal ratio still does not match, check the petal dimensions to avoid infinite recursion.\n- If no ratio matches either sepal or petal dimensions, prioritize the species with the highest petal ratio."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_merge__Llama-3.2-3B-Instruct__medium__seed456__2026-04-18_19-32",
+  "seed": 456,
+  "dataset": "iris",
+  "optimizer": "gepa_merge",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 42.0,
+  "runtime_opt_s": 149.38356471061707,
+  "runtime_eval_s": 8.307627439498901,
+  "total_metric_calls": 825,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Given the petal and sepal dimensions in cm, predict the iris species.\n## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Outputs\n### answer\none of setosa, versicolor, virginica\n\n## Reasoning\n### if petal_length is less than 1.5 and petal_width is less than 0.3, answer is setosa.\n### if petal_length is between 1.5 and 4.0 and petal_width is between 0.3 and 1.2, answer is versicolor.\n### if petal_length is greater than or equal to 4.0 and petal_width is greater than or equal to 1.2, answer is virginica.\n### if sepal_length is greater than or equal to 5.0 and sepal_width is greater than or equal to 3.0, answer is virginica.\n### if none of the above conditions are met, answer is setosa or versicolor.\n\n## Output Format\n- setosa\n- versicolor\n- virginica\n- Unknown"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

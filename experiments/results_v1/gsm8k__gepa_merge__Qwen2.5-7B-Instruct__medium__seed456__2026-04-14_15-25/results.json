@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed456__2026-04-14_15-25",
+  "seed": 456,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 84.99,
+  "runtime_opt_s": 1191.8446741104126,
+  "runtime_eval_s": 8.716753005981445,
+  "total_metric_calls": 2150,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `answer` with the following guidelines:\n1. Clearly identify and perform each step of the calculation or logical reasoning required to solve the problem.\n2. Use a structured format for the `reasoning` section, clearly showing each step and the calculations involved.\n3. Provide the final answer in a clear, concise sentence in the `answer` field.\n4. Double-check the arithmetic and logic in the `reasoning` section before finalizing the `answer`.\n\n# Example\n## Inputs\n### question\nA rectangle has a length of 10 units and a width of 5 units. What is the area of the rectangle?\n\n## Generated Outputs\n### reasoning\nTo find the area of the rectangle, we use the formula:\n\n\\[ \\text{Area} = \\text{length} \\times \\text{width} \\]\n\nGiven the length is 10 units and the width is 5 units:\n\n\\[ \\text{Area} = 10 \\times 5 = 50 \\]\n\nTherefore, the area of the rectangle is 50 square units.\n\n### answer\nThe area of the rectangle is 50 square units.\n\n## Feedback\nThis trajectory got a score of True."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1500,
+  "k_demos": 0
+}

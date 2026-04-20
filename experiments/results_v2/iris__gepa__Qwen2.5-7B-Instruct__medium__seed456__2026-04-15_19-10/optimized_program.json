@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in cm, predict the iris species. Use the following steps for accurate prediction:\n\n1. Compare the petal length and width to the known ranges for Iris setosa (petal length < 1.5 cm, petal width < 0.2 cm), Iris versicolor (petal length 4-5.5 cm, petal width 1.0-1.8 cm), and Iris virginica (petal length > 5 cm, petal width 1.8-2.5 cm).\n2. Compare the sepal length and width to the known ranges for Iris setosa (sepal length < 4.5 cm, sepal width < 3.0 cm), Iris versicolor (sepal length 4.9-5.7 cm, sepal width 1.4-1.8 cm), and Iris virginica (sepal length > 6.5 cm, sepal width 2.5-3.5 cm).\n3. If the petal dimensions align with Iris setosa and the sepal dimensions also align (sepal length < 4.5 cm, sepal width < 3.0 cm), predict Iris setosa.\n4. If the petal dimensions align with Iris versicolor and the sepal dimensions also align (sepal length 4.9-5.7 cm, sepal width 1.4-1.8 cm), predict Iris versicolor.\n5. If the petal and sepal dimensions align with Iris virginica (petal length > 5 cm, petal width 1.8-2.5 cm, sepal length > 6.5 cm, sepal width 2.5-3.5 cm), predict Iris virginica.\n6. If the dimensions do not align clearly with any of the above species, re-evaluate the measurements carefully to ensure correct classification.\n\n### Output Format\n- **reasoning**: A detailed explanation of the reasoning process based on the comparison of the input dimensions to the known species characteristics.\n- **answer**: The predicted iris species (setosa, versicolor, or virginica).\n\n### Example\n## Inputs\n### petal_length\n4.9\n\n### petal_width\n1.5\n\n### sepal_length\n6.9\n\n### sepal_width\n3.1\n\n## Generated Outputs\n### reasoning\nThe petal length (4.9 cm) and width (1.5 cm) are within the range of Iris virginica (petal length > 5 cm, petal width 1.8-2.5 cm). The sepal length (6.9 cm) and width (3.1 cm) also align with Iris virginica (sepal length > 6.5 cm, sepal width 2.5-3.5 cm). Therefore, the data points closely match the characteristics of Iris virginica.\n\n### answer\nvirginica",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

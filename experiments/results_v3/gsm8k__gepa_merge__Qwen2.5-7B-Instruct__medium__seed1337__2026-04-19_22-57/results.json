@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed1337__2026-04-19_22-57",
+  "seed": 1337,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 82.49,
+  "runtime_opt_s": 1298.611225605011,
+  "runtime_eval_s": 923.6683723926544,
+  "total_metric_calls": 2000,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `answer` with the following guidelines:\n1. Always clearly identify and separate the calculation steps in your reasoning to ensure accuracy.\n2. Ensure all calculations are shown, including intermediate results, to help verify the correctness.\n3. For monetary values, always include the dollar sign ($) in the final answer.\n4. For percentages, always express the final answer as a whole number.\n5. Double-check the units and ensure they are consistent throughout the calculation.\n6. When dealing with proportions or percentages, always clarify the base value being used.\n7. For final answers, clearly state the result and include any necessary units or symbols."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

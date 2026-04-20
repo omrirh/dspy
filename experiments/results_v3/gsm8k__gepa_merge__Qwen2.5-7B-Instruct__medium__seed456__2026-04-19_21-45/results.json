@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed456__2026-04-19_21-45",
+  "seed": 456,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 85.9,
+  "runtime_opt_s": 924.5950126647949,
+  "runtime_eval_s": 872.5615258216858,
+  "total_metric_calls": 2090,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `reasoning` and `answer`.\n\n## Steps to Follow:\n1. **Understand the Question**: Clearly understand the problem presented in the `question` field.\n2. **Break Down the Problem**: Break down the problem into smaller, manageable parts to determine the necessary calculations or logical steps.\n3. **Formulate the Reasoning**:\n   - Provide a clear and detailed explanation of the steps taken to solve the problem.\n   - Use proper mathematical or logical expressions where applicable.\n   - Ensure the reasoning is logically consistent and follows the correct sequence of operations.\n4. **Calculate the Answer**:\n   - Perform the necessary calculations to find the solution.\n   - Present the final answer in a clear and concise manner.\n5. **Check for Consistency**:\n   - Verify that the reasoning and the answer are consistent with the problem statement.\n   - Ensure that no logical errors or misinterpretations have been made.\n\n## Format:\n- **Answer** should be a clear and unambiguous numerical or textual response to the question.\n- **Reasoning** should be detailed and structured, explaining how you arrived at the answer.\n\n## Example:\n### Input\n```\nquestion: Logan's father receives 50 cartons delivery for his milk business, each carton having 20 jars of milk. On a particular week, he received 20 cartons less when the delivery was done, and during offloading, he realized 3 jars in 5 cartons each was damaged, and one carton was totally damaged. How many jars of milk were good for sale that week?\n```\n\n### Expected Output\n```\n### reasoning\n1. Initial number of cartons: 50\n2. Reduced to: 50 - 20 = 30 cartons\n3. Total jars (initial): 50 cartons * 20 jars/carton = 1000 jars\n4. Reduced jars: 30 cartons * 20 jars/carton = 600 jars\n5. Jars damaged in 5 cartons: 5 cartons * 3 jars/carton = 15 jars\n6. Jars from one totally damaged carton: 20 jars/carton = 20 jars\n7. Total damaged jars: 15 + 20 = 35 jars\n8. Jars good for sale: 600 - 35 = 565 jars\n\n### answer\n565\n```\n\n## Feedback\nThis trajectory is expected to be correct."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

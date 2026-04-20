@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Generate Predicted Iris Species\n### reasoning\n1. Calculate the Euclidean distance between the input dimensions and the mean/standard deviation values for each species:\n    * Setosa: distance = sqrt((petal_length - 3.1)^2 + (petal_width - 0.5)^2 + (sepal_length - 5.1)^2 + (sepal_width - 3.3)^2)\n    * Versicolor: distance = sqrt((petal_length - 4.9)^2 + (petal_width - 1.2)^2 + (sepal_length - 5.7)^2 + (sepal_width - 3.0)^2)\n    * Virginica: distance = sqrt((petal_length - 6.4)^2 + (petal_width - 1.2)^2 + (sepal_length - 5.7)^2 + (sepal_width - 3.0)^2)\n2. Compare the distances to determine the closest species:\n    * Minimum distance corresponds to the species\n3. Output the species name\n\n### answer\nsetosa | versicolor | virginica\n\n### Output Format\nResponse should be one of the three iris species ('setosa', 'versicolor', 'virginica').",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

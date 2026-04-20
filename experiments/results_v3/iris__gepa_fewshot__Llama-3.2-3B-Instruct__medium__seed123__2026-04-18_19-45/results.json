@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Llama-3.2-3B-Instruct__medium__seed123__2026-04-18_19-45",
+  "seed": 123,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 36.0,
+  "runtime_opt_s": 150.37635493278503,
+  "runtime_eval_s": 5.695202589035034,
+  "total_metric_calls": 825,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Instructions\n### Diagnose\nIdentify when the assistant predicts an incorrect species, and it contains phrases such as \"the combination of petal length and width\" or \"high petal dimensions and relatively long sepal dimensions\".\n\n### Preserve\nKeep the strategy of classifying the iris species based on sepal and petal dimensions, as it is the most accurate approach.\n\n### Specify\nWhen the assistant predicts an incorrect species due to combining dimensions, specify that the assistant should use either sepal dimensions or petal dimensions as the sole indicator of the species, but not both.\n\n### Be Concise\nFor each example, provide a clear and concise reasoning step explaining why the assistant should not combine dimensions.\n\n## Format\nFor each example, the output format should include:\n- The predicted iris species\n- A clear and concise reasoning step explaining the prediction\n- The correct iris species\n\n## Feedback\nProvide feedback in the format:\n- This trajectory got a score of [True/False]\n- The correct answer was [species]"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 3
+}

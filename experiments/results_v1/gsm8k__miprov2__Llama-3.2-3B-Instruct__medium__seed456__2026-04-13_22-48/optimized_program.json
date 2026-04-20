@@ -1,0 +1,99 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "A party hall has 3 decorative light bulbs; a red light bulb which comes on every 2 seconds, a green one every 3 seconds and a blue one every 4 seconds. If they are put on at the same time, what is the shortest time after which the three bulbs will be on at the same time?",
+        "reasoning": "To find the shortest time after which all three bulbs will be on at the same time, we need to find the least common multiple (LCM) of the times at which each bulb turns on. \n\nThe LCM of 2, 3, and 4 is 12. \n\nTherefore, after 12 seconds, all three bulbs will be on at the same time.",
+        "answer": "12"
+      },
+      {
+        "augmented": true,
+        "question": "Rocky boxed 190 fights in his career.  50 percent of his fights were knockouts, and 20 percent of the knockouts were in the first round.  How many knockouts did Rocky have in the first round?",
+        "reasoning": "To find the number of knockouts in the first round, first find the total number of knockouts. Since 50 percent of Rocky's 190 fights were knockouts, multiply 190 by 0.5 to get 95 knockouts. Then find 20 percent of those knockouts, which is 0.2 * 95 = 19 knockouts in the first round.",
+        "answer": "19"
+      },
+      {
+        "augmented": true,
+        "question": "A store gives a 10% discount for the amount of the sell that was over $1000.  John buys 7 items that each cost $200.  What does his order cost after the discount?",
+        "reasoning": "To find the total cost of John's order, first calculate the total cost without any discount. Since he buys 7 items at $200 each, the total cost is 7 * $200 = $1400. Since the discount is only applied to the amount over $1000, subtract $1000 from the total cost to find the eligible amount for the discount: $1400 - $1000 = $400. Then, calculate the discount by multiplying the eligible amount by 10%: $400 * 0.1 = $40. Finally, subtract the discount from the original total cost to find the final cost: $1400 - $40 = $1360.",
+        "answer": "$1360"
+      },
+      {
+        "augmented": true,
+        "question": "The Kwik-e-Tax Center charges $50 for a federal return, $30 for a state return, and $80 for quarterly business taxes. If they sell 60 federal returns, 20 state returns, and 10 quarterly returns in one day, what was their total revenue for the day?",
+        "reasoning": "To find the total revenue, we need to calculate the revenue from each type of tax return and add them together. \nThe revenue from federal returns is 60 x $50 = $3000. \nThe revenue from state returns is 20 x $30 = $600. \nThe revenue from quarterly business taxes is 10 x $80 = $800. \nSo, the total revenue for the day is $3000 + $600 + $800 = $4400.",
+        "answer": "4400"
+      },
+      {
+        "augmented": true,
+        "question": "A gumball machine has red, green, and blue gumballs. The machine has half as many blue gumballs as red gumballs. For each blue gumball, the machine has 4 times as many green gumballs. If the machine has 16 red gumballs how many gumballs are in the machine?",
+        "reasoning": "Let's start by identifying the number of blue gumballs. Since there are half as many blue gumballs as red gumballs, and there are 16 red gumballs, we can calculate the number of blue gumballs as follows: \nblue gumballs = red gumballs / 2\nblue gumballs = 16 / 2\nblue gumballs = 8\n\nNext, we can calculate the number of green gumballs. Since there are 4 times as many green gumballs as blue gumballs, we can calculate the number of green gumballs as follows: \ngreen gumballs = blue gumballs * 4\ngreen gumballs = 8 * 4\ngreen gumballs = 32\n\nTo find the total number of gumballs, we need to add up the number of red, blue, and green gumballs:\ntotal gumballs = red gumballs + blue gumballs + green gumballs\ntotal gumballs = 16 + 8 + 32\ntotal gumballs = 56",
+        "answer": "56"
+      },
+      {
+        "augmented": true,
+        "question": "Mindy has 7 less than 9 times as many emails waiting for her as phone messages. If she has a total of 93 emails and phone messages combined, how many emails does she have?",
+        "reasoning": "Let's say the number of phone messages is x. Since Mindy has 7 less than 9 times as many emails waiting for her as phone messages, the number of emails is 9x - 7. We know that the total number of emails and phone messages is 93. So, we can write the equation: x + (9x - 7) = 93.\n\nSimplifying the equation: 10x - 7 = 93.\n\nAdding 7 to both sides: 10x = 100.\n\nDividing both sides by 10: x = 10.\n\nSince x represents the number of phone messages, we can substitute it back into the equation for the number of emails: 9(10) - 7 = 90 - 7 = 83.",
+        "answer": "83"
+      },
+      {
+        "augmented": true,
+        "question": "It’s spring! The gardener at Parc Municipal orders flowers. He takes 250 tulips, 375 carnations and 320 roses. Each flower is sold for 2€. Calculate the total expenses.",
+        "reasoning": "To find the total expenses, we need to calculate the cost of each type of flower and then add them together.\nThe cost of tulips is 250 x 2€ = 500€\nThe cost of carnations is 375 x 2€ = 750€\nThe cost of roses is 320 x 2€ = 640€\nNow, we add the costs of all the flowers: 500€ + 750€ + 640€ = 1890€\nSo, the total expenses are 1890€.",
+        "answer": "1890"
+      },
+      {
+        "augmented": true,
+        "question": "Laura took six trips to park.  On each trip, she spent 2 hours at the park and an additinal 30 minutes walking to and from the park.  What percentage of the total time she took for her trips to the park did Laura spend in the park?",
+        "reasoning": "To find the percentage of total time spent in the park, we need to find the total time spent in the park and the total time spent on all trips.\nTime spent in the park per trip = 2 hours\nTime spent walking to and from the park per trip = 0.5 hours (since 30 minutes is half an hour)\nTotal time spent per trip = 2 hours + 0.5 hours = 2.5 hours\nTime spent in the park per trip = 2 hours = 120 minutes\nTime spent in the park for 6 trips = 120 minutes * 6 = 720 minutes\nTotal time spent on 6 trips = 2.5 hours * 6 = 15 hours\nPercentage of time spent in the park = (time spent in the park / total time spent) * 100\n= (720 minutes / 900 minutes) * 100\n= 0.8 * 100\n= 80%",
+        "answer": "80"
+      },
+      {
+        "augmented": true,
+        "question": "To upgrade her kitchen, Amanda is changing out the doorknobs/pulls.  She’s replacing 18 cabinet knobs, which cost $2.50 each and 8 drawer pulls which cost $4.00.  How much will the kitchen upgrade cost her?",
+        "reasoning": "First, calculate the cost of the cabinet knobs: 18 knobs * $2.50 = $45.\nThen, calculate the cost of the drawer pulls: 8 pulls * $4.00 = $32.\nFinally, add the costs together: $45 + $32 = $77.",
+        "answer": "$77"
+      },
+      {
+        "augmented": true,
+        "question": "To get to work, Ryan bikes one day a week takes the bus three times a week and gets a ride from a friend once a week. It takes him thirty minutes to bike to work. The bus takes ten minutes longer since it stops at every bus stop for other passengers. His friend driving him is the fastest and cuts two-thirds off his biking time. How many minutes does he spend every week commuting to work?",
+        "reasoning": "First, we need to find the time it takes Ryan to bike to work, which is 30 minutes. The time it takes the bus to reach his work is 10 minutes more than biking, so it's 30 + 10 = 40 minutes. His friend drives him and cuts 2/3 of the biking time, so it's 30 - (2/3 * 30) = 30 - 20 = 10 minutes. \n\nTo find the total time spent commuting, we need to calculate the time spent by each mode of transportation and add them up. Since Ryan bikes once a week, the bus takes him three times a week, and his friend drives him once a week, we need to multiply each mode of transportation by its frequency. \n\nSo, the total time spent biking is 1 * 30 = 30 minutes, the total time spent on the bus is 3 * 40 = 120 minutes, and the total time spent with his friend is 1 * 10 = 10 minutes. \n\nNow, we can add up the time spent by each mode of transportation to find the total time spent commuting. 30 + 120 + 10 = 160 minutes.",
+        "answer": "160"
+      },
+      {
+        "augmented": true,
+        "question": "Julia had to make 6 cakes for the party. Each cake takes 12 minutes to mix and needs 9 more minutes to bake than mix. Then it takes 6 more minutes to cool and decorate than to bake. How many hours will it take to make all 6 cakes?",
+        "reasoning": "To make one cake, it takes 12 minutes to mix, then 9 + 12 = 21 minutes to bake, and finally 6 + 21 = 27 minutes to cool and decorate. So, in total, it takes 12 + 21 + 27 = 60 minutes to make one cake. To make 6 cakes, it takes 60 * 6 = 360 minutes. There are 60 minutes in an hour, so the total time in hours is 360 / 60 = 6 hours.",
+        "answer": "6"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `answer`.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

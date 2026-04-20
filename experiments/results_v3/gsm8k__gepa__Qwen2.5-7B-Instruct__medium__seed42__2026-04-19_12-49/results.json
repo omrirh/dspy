@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa__Qwen2.5-7B-Instruct__medium__seed42__2026-04-19_12-49",
+  "seed": 42,
+  "dataset": "gsm8k",
+  "optimizer": "gepa",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 81.43,
+  "runtime_opt_s": 1411.827758550644,
+  "runtime_eval_s": 945.3718106746674,
+  "total_metric_calls": 1950,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `answer` and `reasoning` by following these steps:\n1. Carefully read and understand the question.\n2. Identify the key information and numbers provided.\n3. Determine the appropriate mathematical or logical operations needed to find the answer.\n4. Perform the necessary calculations and show the steps if the process is complex.\n5. Provide the final answer in a clear and concise format.\n6. Verify the answer by checking if it logically solves the problem presented in the question.\n7. Ensure all units and calculations are included in the `reasoning` field.\n8. Double-check that the answer directly addresses the question and is accurate.\n\nRemember to clearly outline your thought process in the `reasoning` field, and ensure that the `answer` is well-formatted and directly addresses the question."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

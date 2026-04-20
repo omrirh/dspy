@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_merge__Llama-3.2-3B-Instruct__medium__seed123__2026-04-14_07-10",
+  "seed": 123,
+  "dataset": "iris",
+  "optimizer": "gepa_merge",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 58.0,
+  "runtime_opt_s": 348.98227882385254,
+  "runtime_eval_s": 15.955259084701538,
+  "total_metric_calls": 842,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Diagnose and Improve Iris Classification\n\n## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Generate Classification\n1. Compare the average petal length and width to thresholds for each species:\n   - Setosa: average petal length < 1.2, average petal width < 0.6\n   - Versicolor: average petal length < 2.5, average petal width < 1.8\n   - Virginica: average petal length < 4.0, average petal width < 2.2\n2. Calculate the sepal length and width ratios to Iris Versicolor and Virginica:\n   - Versicolor: sepal length < 5.5, sepal width < 4.0\n   - Virginica: sepal length < 6.3, sepal width < 4.3\n3. Classify the iris species based on the calculated thresholds and ratios.\n\n## Reasoning\n- **Calculate average petal dimensions**: (petal_length + petal_width) / 2\n- **Check petal length and width thresholds**: If average petal dimensions meet Setosa, Versicolor, or Virginica thresholds, assign species accordingly.\n- **Calculate sepal length and width ratios**: sepal_length / 5.5, sepal_width / 4.0 for Versicolor, and sepal_length / 6.3, sepal_width / 4.3 for Virginica.\n- **Determine predicted iris species**: Based on petal and sepal ratio comparisons.\n\n## Format Output\nThe output will be a string indicating the predicted iris species.\n\n## Feedback\nPlease provide the new classification results with a score of True or False to assess the performance of this instruction."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

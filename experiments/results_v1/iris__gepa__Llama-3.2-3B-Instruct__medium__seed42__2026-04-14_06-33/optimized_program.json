@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\n### petal_width\n### sepal_length\n### sepal_width\n\n## Generated Outputs\n### prediction\nsetosa, versicolor, or virginica\n\n## Feedback\nThis trajectory will get a score of True if the predicted species matches the actual species.\n### scoring\n1. Calculate the ratio of petal length to petal width.\n2. Compare the ratio to predefined thresholds for each species.\n   - setosa: ratio <= 0.5\n   - versicolor: 0.5 < ratio <= 1.5\n   - virginica: ratio > 1.5\n3. If the ratio falls within a species' threshold range, predict that species.\n4. If the ratio does not fall within any threshold range, prioritize the species with the highest petal ratio.\n5. If no ratio matches either sepal or petal dimensions, predict the species with the highest petal ratio.\n6. Check that the sepal ratio matches the actual sepal dimensions before making a final prediction.\n   * If sepal ratio matches, predict the species corresponding to the sepal dimensions.\n   * If sepal ratio does not match, predict the species corresponding to the petal dimensions.\n7. If all else fails, predict the species with the highest petal ratio.\n8. If no ratio matches either sepal or petal dimensions, prioritize the species with the highest petal ratio.\n9. Check that the sepal ratio matches the actual sepal dimensions before making a final prediction.\n   * If sepal ratio matches, predict the species corresponding to the sepal dimensions.\n   * If sepal ratio does not match, predict the species corresponding to the petal dimensions.\n10. If a ratio does not match any species' threshold range, check the sepal dimensions to avoid infinite recursion.\n11. If the sepal ratio still does not match, check the petal dimensions to avoid infinite recursion.\n\n## Reasoning Format\nThe reasoning step should include a clear explanation of the prediction and how it was calculated.\n\n## Output Format\nThe prediction should be enclosed in single quotes.\n\n## Additional Hints\n- If a ratio does not match any species' threshold range, check the sepal dimensions to avoid infinite recursion.\n- If the sepal ratio still does not match, check the petal dimensions to avoid infinite recursion.\n- If no ratio matches either sepal or petal dimensions, prioritize the species with the highest petal ratio.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

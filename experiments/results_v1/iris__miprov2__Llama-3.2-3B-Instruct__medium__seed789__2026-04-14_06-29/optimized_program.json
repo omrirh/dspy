@@ -1,0 +1,117 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.6,
+        "petal_width": 0.2,
+        "sepal_length": 4.7,
+        "sepal_width": 3.2,
+        "reasoning": "This data point falls within the range of petal length and width for Iris setosa, and sepal length for Iris setosa, but sepal width is more characteristic of Iris versicolor and virginica. However, the combination of petal characteristics and sepal characteristics most closely match Iris setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 5.8,
+        "petal_width": 1.8,
+        "sepal_length": 6.7,
+        "sepal_width": 2.5,
+        "reasoning": "This iris specimen exhibits larger petal lengths and widths, and sepal lengths, which are more characteristic of the virginica species.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 6.1,
+        "petal_width": 2.3,
+        "sepal_length": 7.7,
+        "sepal_width": 3.0,
+        "reasoning": "This instance has larger petal length and sepal length compared to the majority of the dataset, indicating a higher likelihood of being a virginica iris. Although the petal width and sepal width are within the ranges of the dataset, the overall dimensions suggest a greater distance from the mean, further supporting the classification as virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.9,
+        "petal_width": 1.8,
+        "sepal_length": 6.3,
+        "sepal_width": 2.7,
+        "reasoning": "This iris has both larger petals and sepal measurements than the majority of samples, indicating it is likely a virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+        "sepal_length": 4.6,
+        "sepal_width": 3.2,
+        "reasoning": "This is a low petal length and width, and a medium to high sepal length and width for an Iris flower, which is characteristic of the setosa species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "These values are similar to the species setosa, with sepal length and width within a relatively small range, and petal length slightly higher than petal width.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.4,
+        "sepal_length": 5.1,
+        "sepal_width": 3.7,
+        "reasoning": "This is a typical setosa iris flower, as indicated by its petal and sepal dimensions.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.2,
+        "sepal_length": 5.2,
+        "sepal_width": 3.5,
+        "reasoning": "This data suggests that the iris has a short petal length and a short petal width, which is consistent with the characteristics of the setosa species.",
+        "answer": "setosa"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in cm, predict the iris species.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_fewshot__Llama-3.2-3B-Instruct__medium__seed789__2026-04-14_05-14",
+  "seed": 789,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_fewshot",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 76.72,
+  "runtime_opt_s": 887.2560398578644,
+  "runtime_eval_s": 669.0120558738708,
+  "total_metric_calls": 1980,
+  "optimized_instructions": {
+    "prog.predict": "## Inputs\n### question\nGiven a set of values representing a number of days off per week, hours streamed per day, hourly wage, total money available, number of items, and respective quantities, produce a set of values representing the total money earned per week.\n\n### reasoning\nTo calculate the total money earned per week, we need to follow these steps:\n1. Calculate the number of days streamed per week by subtracting days off per week from 7.\n2. Calculate the total hours streamed per week by multiplying the number of hours streamed per day by the number of days streamed per week.\n3. Calculate the total amount earned per week by multiplying the total hours streamed per week by the hourly wage.\n4. If applicable, subtract the cost of goods and any other expenses from the total amount earned.\n\n### answer\nThe total money earned per week.\n\n### constraints\n- Ensure all calculations are performed with precision, avoiding approximation errors.\n- Verify that all inputs are valid and consistent (e.g., days off per week should be less than or equal to 7).\n- Consider the domain-specific rules for calculating total money earned per week, such as applying taxes or other deductions.\n\n### output format\n- Provide the total money earned per week as a single numeric value.\n- Consider including a range of possible values or an estimated margin of error if the inputs are uncertain."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1500,
+  "k_demos": 3
+}

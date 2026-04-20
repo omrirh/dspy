@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Llama-3.2-3B-Instruct__medium__seed456__2026-04-18_19-48",
+  "seed": 456,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 74.0,
+  "runtime_opt_s": 183.6600317955017,
+  "runtime_eval_s": 8.788954496383667,
+  "total_metric_calls": 830,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Predict Iris Species\n### answer\none_of ['setosa', 'versicolor', 'virginica']\n\n### reasoning\n1. Compare petal and sepal length and width to known characteristic ranges:\n   - Iris setosa: short petal length (< 4.9), short sepal length (< 5.5)\n   - Iris versicolor: medium to large petal length (4.9-7.9), variable sepal length\n   - Iris virginica: large to very large petal length (> 7.9), long sepal length\n2. Determine the most likely species based on the comparison:\n   - If petal length < 4.9 and sepal length < 5.5, predict setosa.\n   - If petal length >= 4.9 and sepal length < 5.5, predict versicolor.\n   - If petal length >= 7.9 and sepal length >= 5.5, predict virginica.\n   - If none of the above conditions are met, predict versicolor.\n3. Output a final prediction with a score:\n   - Set a score of True for correct predictions and False otherwise.\n   - If the predicted species is not one of the three main species, assign a score of False."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 3
+}

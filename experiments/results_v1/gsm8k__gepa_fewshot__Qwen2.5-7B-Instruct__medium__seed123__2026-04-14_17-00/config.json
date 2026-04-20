@@ -1,0 +1,25 @@
+{
+  "args": {
+    "dataset": "gsm8k",
+    "optimizer": "gepa_fewshot",
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "api_base": "http://localhost:30000/v1",
+    "api_key": "local",
+    "max_tokens": null,
+    "reflection_model": null,
+    "auto": "medium",
+    "k_demos": 3,
+    "max_bootstrapped_demos": 16,
+    "max_labeled_demos": 4,
+    "demo_mutation_strategy": "metric_based",
+    "reflection_minibatch_size": 10,
+    "train_size": 100,
+    "val_size": 250,
+    "test_size": 1500,
+    "seed": 123,
+    "num_threads": 4,
+    "log_dir": "experiments/results_v1",
+    "log_level": "INFO"
+  },
+  "seed": 123
+}

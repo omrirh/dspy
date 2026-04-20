@@ -109,7 +109,7 @@ def build_dataset(dataset_name: str, train_size: int, val_size: int, test_size: 
     elif dataset_name == "iris":
         from dspy.datasets.iris import IrisDataset
 
-        dataset  = IrisDataset(seed=RANDOM_SEED)
+        dataset  = IrisDataset(seed=0)  # fixed shuffle: cross-seed variance reflects optimizer randomness only
         trainset, valset, testset = dataset.get_data_splits()
         trainset = trainset[:train_size]
         valset   = valset[:val_size]
@@ -233,6 +233,11 @@ def main(args):
     try:
         import numpy as np
         np.random.seed(RANDOM_SEED % (2**31))
+    except ImportError:
+        pass
+    try:
+        import torch
+        torch.manual_seed(RANDOM_SEED)
     except ImportError:
         pass
 

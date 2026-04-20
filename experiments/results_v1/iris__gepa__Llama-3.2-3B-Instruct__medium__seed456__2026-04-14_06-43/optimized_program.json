@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Enhanced Diagnosis and Prediction of Iris Species\n\n## Inputs\n### petal_length\nvalue\n\n### petal_width\nvalue\n\n### sepal_length\nvalue\n\n### sepal_width\nvalue\n\n## Specify Output Format\n### answer\niris species (virginica, versicolor, or setosa)\n\n### reasoning\nincluding:\n- petal and sepal length/width comparison (e.g., ratio, difference, proportion)\n- relationship with known iris species characteristics\n- classification probability (> 0.7 for a classification)\n- further analysis:\n  - compare petal length and sepal length\n  - compare petal width and sepal width\n  - consider the ratio of petal length to sepal length\n  - If the sepal width to petal width ratio exceeds 2, assign as setosa\n  - If the ratio of petal length to sepal length is < 0.7, assign as versicolor\n\n## Additional Constraints\n- petal length > 0\n- petal width > 0\n- sepal length > 0\n- sepal width > 0",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

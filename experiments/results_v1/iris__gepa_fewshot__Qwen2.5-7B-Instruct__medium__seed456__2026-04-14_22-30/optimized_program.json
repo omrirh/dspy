@@ -1,0 +1,70 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 5.1,
+        "petal_width": 2.3,
+        "sepal_length": 6.9,
+        "sepal_width": 3.1,
+        "reasoning": "Based on the provided measurements, the petal length is 5.1 cm, the petal width is 2.3 cm, the sepal length is 6.9 cm, and the sepal width is 3.1 cm. These measurements are indicative of the *Iris virginica* species. The petal length and width of *Iris virginica* are typically longer than those of *Iris setosa* and *Iris versicolor*, and the sepal dimensions are also larger, fitting the description of *Iris virginica*.",
+        "answer": "virginica"
+      },
+      {
+        "sepal_length": 7.7,
+        "sepal_width": 3.8,
+        "petal_length": 6.7,
+        "petal_width": 2.2,
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.2,
+        "petal_width": 1.3,
+        "sepal_length": 5.6,
+        "sepal_width": 2.7,
+        "reasoning": "Based on the given measurements, the petal length is 4.2 cm, the petal width is 1.3 cm, the sepal length is 5.6 cm, and the sepal width is 2.7 cm. These dimensions suggest that the iris is likely to be *versicolor* as these measurements are characteristic of this species. The petal dimensions are relatively small, and the sepal dimensions are also in the range typical of *versicolor*.",
+        "answer": "versicolor"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in cm, predict the iris species. \n\n**Instructions:**\n\n1. **Analyze Petal Dimensions:**\n   - Small petal dimensions (petal_length < 1.5 cm and petal_width < 0.5 cm) strongly indicate *setosa*.\n   - Moderate petal dimensions (1.5 cm ≤ petal_length < 4.5 cm and 0.5 cm ≤ petal_width < 1.5 cm) are more indicative of *versicolor*.\n   - Large petal dimensions (petal_length ≥ 4.5 cm and petal_width ≥ 1.5 cm) are characteristic of *virginica*.\n\n2. **Analyze Sepal Dimensions:**\n   - Small sepal dimensions (sepal_length < 4.5 cm and sepal_width < 3.0 cm) strongly indicate *setosa*.\n   - Moderate sepal dimensions (4.5 cm ≤ sepal_length < 6.0 cm and 3.0 cm ≤ sepal_width < 4.0 cm) are more indicative of *versicolor*.\n   - Large sepal dimensions (sepal_length ≥ 6.0 cm and sepal_width ≥ 4.0 cm) are characteristic of *virginica*.\n\n3. **Combine Analysis:**\n   - If both petal and sepal dimensions strongly align with a single species, predict that species.\n   - If there is a conflict, prioritize larger petal and sepal dimensions as they are more indicative of *virginica*, followed by *versicolor*, and then *setosa*.\n\n4. **Output Format:**\n   - Provide a detailed **reasoning** for your prediction.\n   - Clearly state the **answer** based on your reasoning.\n   \n**Example:**\n\n## Inputs\n### petal_length\n1.3\n\n### petal_width\n0.2\n\n### sepal_length\n5.5\n\n### sepal_width\n3.5\n\n## Generated Outputs\n### reasoning\nThe petal length is 1.3 cm and the petal width is 0.2 cm, which are very small, indicative of the setosa species. The sepal length is 5.5 cm and the sepal width is 3.5 cm, which are also small compared to *versicolor* and *virginica*. Therefore, the measurements strongly align with the characteristics of *setosa*.\n\n### answer\nsetosa",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

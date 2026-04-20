@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_merge__Llama-3.2-3B-Instruct__medium__seed42__2026-04-15_12-27",
+  "seed": 42,
+  "dataset": "iris",
+  "optimizer": "gepa_merge",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 48.0,
+  "runtime_opt_s": 202.0220377445221,
+  "runtime_eval_s": 8.915725231170654,
+  "total_metric_calls": 845,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Diagnosis\nThe current instruction struggled with:\n- Overly vague output formats\n- Insufficient use of domain-specific knowledge\n- Failure to account for multiple prediction scenarios\n- Incorrect handling of threshold values\n\n## Preservation\nThe current instruction's strengths include:\n- Using simple language for inputs and outputs\n- Providing basic reasoning steps for classification\n- Keeping the output answer format\n\n## Specification\n### Inputs\n### petal_length\n4.2\n\n### petal_width\n1.2\n\n### sepal_length\n5.7\n\n### sepal_width\n3.0\n\n## Generate Output\n### answer\nIf the average petal length is less than 3.0 cm, predict setosa (default answer).\nOtherwise, if any petal dimension is above 6.0 cm or sepal dimensions are above 7.0 cm, predict virginica.\nOtherwise, predict versicolor.\n\n## Feedback"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

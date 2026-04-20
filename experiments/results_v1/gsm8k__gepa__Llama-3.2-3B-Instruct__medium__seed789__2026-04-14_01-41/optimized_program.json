@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## For questions with multiple steps,\n### reasoning\nList all the initial conditions and any assumptions made. Then, break down the problem into smaller, manageable parts. For each step, explain the reasoning and any relevant mathematical or logical operations.\n\n### answer\nProvide a clear and concise answer that directly addresses the question.\n\n## For questions with calculations,\n### reasoning\nWhen calculating, specify the units for each value and the operation being performed. Ensure all units are consistent throughout the calculation.\n\n### answer\nEnsure the answer includes the units and is a numerical value.\n\n## When evaluating the answer,\n### evaluation\nCompare your answer to the expected result and provide a clear justification for your evaluation.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

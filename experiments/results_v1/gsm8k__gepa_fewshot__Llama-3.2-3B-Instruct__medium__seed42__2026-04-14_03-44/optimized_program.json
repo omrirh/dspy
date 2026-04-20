@@ -1,0 +1,45 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "The result from the 40-item Statistics exam Marion and Ella took already came out. Ella got 4 incorrect answers while Marion got 6 more than half the score of Ella. What is Marion's score?",
+        "reasoning": "To find Marion's score, we first need to find Ella's score. We know that Ella got 4 incorrect answers, so we can assume her score is the total number of questions minus the incorrect answers. Since the exam had 40 items, Ella's score is 40 - 4 = 36.\n\nMarion got 6 more than half of Ella's score. Half of Ella's score is 36 / 2 = 18. Marion got 6 more than that, so Marion's score is 18 + 6 = 24.",
+        "answer": "24"
+      },
+      {
+        "augmented": true,
+        "question": "The average score on last week's Spanish test was 90.  Marco scored 10% less than the average test score and Margaret received 5 more points than Marco.  What score did Margaret receive on her test?",
+        "reasoning": "To find Margaret's score, we need to first calculate Marco's score, which is 10% less than the average test score. The average score was 90, so Marco scored 90 - 0.10(90) = 90 - 9 = 81.\n\nSince Margaret received 5 more points than Marco, we add 5 to Marco's score to find Margaret's score. So, Margaret's score is 81 + 5 = 86.",
+        "answer": "86"
+      }
+    ],
+    "signature": {
+      "instructions": "## Inputs\n### question\nstring\n## Generated Outputs\n### answer\nnumber\n### reasoning\n1. Parse the question to extract the relevant data (e.g., the question's keywords and context).\n2. Determine the type of answer that is expected (e.g., a number, a boolean, etc.).\n3. Use parsing and natural language processing techniques to extract relevant information from the question.\n4. Apply domain-specific rules, algorithms, or mathematical operations to derive the answer.\n5. Format the answer according to the specified output format (e.g., a number).",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

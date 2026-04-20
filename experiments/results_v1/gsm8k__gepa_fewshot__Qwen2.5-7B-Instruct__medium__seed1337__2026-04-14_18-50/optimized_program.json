@@ -1,0 +1,51 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "A tank contains 6000 liters of water, 2000 liters evaporated, and then 3500 liters were drained by Bob. How many liters are in the tank if it now rains for 30 minutes and every 10 minutes 350 liters of rain are added to the tank?",
+        "reasoning": "To determine the final amount of water in the tank, we need to follow the sequence of events:\n\n1. Start with the initial 6000 liters.\n2. Subtract the 2000 liters that evaporated.\n3. Subtract the 3500 liters that were drained by Bob.\n4. Add the amount of rain that falls over 30 minutes, noting that 350 liters are added every 10 minutes.\n\nLet's calculate the total rain added:\n- Rainfall rate: 350 liters/10 minutes\n- Total time: 30 minutes\n- Number of 10-minute intervals in 30 minutes: 30 / 10 = 3\n- Total rain added: 350 liters/interval * 3 intervals = 1050 liters\n\nThus, the calculation for the final amount of water is:\n6000 - 2000 - 3500 + 1050",
+        "answer": "6000 - 2000 - 3500 + 1050 = 1550 liters"
+      },
+      {
+        "augmented": true,
+        "question": "John takes 3 days off of streaming per week.  On the days he does stream, he streams for 4 hours at a time and makes $10 an hour.  How much does he make a week?",
+        "reasoning": "John takes 3 days off each week, meaning he streams for 7 - 3 = 4 days. He streams for 4 hours each day he streams, so in total, he streams 4 * 4 = 16 hours. Given that he makes $10 an hour, his weekly earnings would be 16 * $10 = $160.",
+        "answer": "John makes $160 a week."
+      },
+      {
+        "augmented": true,
+        "question": "Tom's rabbit can run at 25 miles per hour.  His cat can run 20 miles per hour.  The cat gets a 15-minute head start.  In hours, how long will it take for the rabbit to catch up?",
+        "reasoning": "To find out how long it will take for the rabbit to catch up to the cat, we first need to calculate the distance the cat has covered during the 15-minute (which is 0.25 hours) head start. The distance is found by multiplying the speed of the cat (20 miles per hour) by the time (0.25 hours). This gives the initial distance gap the rabbit needs to cover. Then, we calculate the relative speed difference between the rabbit and the cat, which is 25 miles per hour (rabbit's speed) - 20 miles per hour (cat's speed) = 5 miles per hour. Finally, the time it takes for the rabbit to cover this gap is the distance gap (which is the cat's 15-minute head start distance) divided by the relative speed.\n\n\\[ \\text{Distance gap} = 20 \\, \\text{miles/hour} \\times 0.25 \\, \\text{hours} = 5 \\, \\text{miles} \\]\n\\[ \\text{Time to catch up} = \\frac{5 \\, \\text{miles}}{5 \\, \\text{miles/hour}} = 1 \\, \\text{hour} \\]",
+        "answer": "1"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `answer` and `reasoning`. Ensure your response includes both the `answer` and a clear `reasoning` that explains how you arrived at the answer. Follow these guidelines:\n1. Break down the problem into clear, actionable steps.\n2. Use specific calculations and logical steps to derive the `answer`.\n3. Format the `reasoning` as a sequence of logical statements.\n4. Ensure all necessary information is provided in the `question` to avoid making assumptions.\n5. Verify that the `answer` logically follows from the `reasoning`.\n6. When dealing with multiple types of items or categories, explicitly calculate each component before summing them up.\n7. Always check your final `answer` by reviewing the calculations and ensuring consistency with the question.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

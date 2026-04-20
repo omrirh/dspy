@@ -1,0 +1,144 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.4,
+        "sepal_length": 5.1,
+        "sepal_width": 3.7,
+        "reasoning": "This iris has a short petal length, a short petal width, a relatively long sepal length, and a relatively long sepal width, which is characteristic of the setosa species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+        "sepal_length": 4.6,
+        "sepal_width": 3.2,
+        "reasoning": "This example falls within the range of petal lengths and widths for the species Iris setosa. The sepal dimensions match with Iris setosa as well.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "This is likely a Iris setosa, as the petal length and width are relatively short and the sepal length and width are within a normal range for this species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.0,
+        "petal_width": 1.3,
+        "sepal_length": 5.5,
+        "sepal_width": 2.3,
+        "reasoning": "This dataset corresponds to the Iris species \"versicolor\" because the sepal length and width are higher than those of \"setosa\", and the petal length is higher than that of \"setosa\" but lower than that of \"virginica\", fitting the interval values of \"versicolor\".",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.9,
+        "petal_width": 1.8,
+        "sepal_length": 6.3,
+        "sepal_width": 2.7,
+        "reasoning": "This iris specimen appears to have longer petals and sepal lengths than the majority of specimens in the dataset, suggesting it is likely to be of the virginica species.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.5,
+        "petal_width": 1.5,
+        "sepal_length": 6.2,
+        "sepal_width": 2.2,
+        "reasoning": "The combination of petal length and petal width values falls within the range of versicolor, while the sepal length and sepal width values are not typical of setosa or virginica.",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.2,
+        "petal_width": 1.2,
+        "sepal_length": 5.7,
+        "sepal_width": 3.0,
+        "reasoning": "This example lies in the middle of the distribution of petal lengths, which is a characteristic of the versicolor species in the iris dataset.",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.2,
+        "petal_width": 0.2,
+        "sepal_length": 5.8,
+        "sepal_width": 4.0,
+        "reasoning": "This iris specimen has a short petal length and a relatively long sepal length, which are characteristic of the setosa iris species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.2,
+        "sepal_length": 5.2,
+        "sepal_width": 3.5,
+        "reasoning": "The iris species can be identified as setosa due to the small petal length and width.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 5.0,
+        "petal_width": 1.5,
+        "sepal_length": 6.0,
+        "sepal_width": 2.2,
+        "reasoning": "The combination of petal length and petal width (5.0, 1.5) does not match any of the patterns for setosa or versicolor. The petal length of 5.0 is greater than that of most setosa flowers, and the petal width of 1.5 is also greater than that of most versicolor flowers. Therefore, the flower is most likely to be virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.6,
+        "petal_width": 0.2,
+        "sepal_length": 4.7,
+        "sepal_width": 3.2,
+        "reasoning": "The provided measurements fall within the range of values commonly associated with the 'setosa' iris species.",
+        "answer": "setosa"
+      }
+    ],
+    "signature": {
+      "instructions": "Please provide a new instruction that asks the language model to predict the setosa or versicolor species when the sepal width is less than 2.5 cm, building upon your existing program. For example, 'Predict the setosa or versicolor species when sepal width is less than 2.5 cm.'",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

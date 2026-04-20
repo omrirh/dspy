@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\nfloat\n\n### petal_width\nfloat\n\n### sepal_length\nfloat\n\n### sepal_width\nfloat\n\n## Generated Outputs\n### answer\nstr\n\n## Reasoning\n### classification\n- **Setosa Prediction**: If sepal length is <= 5.5 and petal length is <= 1.5, predict as setosa.\n- **Versicolor Prediction**: If sepal length is > 5.5 and petal length is > 1.5, predict as versicolor.\n- **Virginica Prediction**: Otherwise, predict as virginica.\n- **Setosa Width Influence**: If sepal width is > 3.0, increase the chance of virginica by 0.2.\n- **Setosa Width Check**: If petal width is > 1.5, decrease the chance of setosa by 0.2.\n- **Versicolor Width Check**: If sepal width is <= 3.0, increase the chance of versicolor by 0.2.\n\n## Feedback\nThis trajectory got a score of True if answer is correct.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

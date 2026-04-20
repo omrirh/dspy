@@ -1,0 +1,45 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "The result from the 40-item Statistics exam Marion and Ella took already came out. Ella got 4 incorrect answers while Marion got 6 more than half the score of Ella. What is Marion's score?",
+        "reasoning": "To find Marion's score, we first need to find Ella's score. We know that Ella got 4 incorrect answers, so we can assume her score is the total number of questions minus the incorrect answers. Since the exam had 40 items, Ella's score is 40 - 4 = 36.\n\nMarion got 6 more than half of Ella's score. Half of Ella's score is 36 / 2 = 18. Marion got 6 more than that, so Marion's score is 18 + 6 = 24.",
+        "answer": "24"
+      },
+      {
+        "augmented": true,
+        "question": "Bridget counted 14 shooting stars in the night sky.  Reginald counted two fewer shooting stars than did Bridget, but Sam counted four more shooting stars than did Reginald.  How many more shooting stars did Sam count in the night sky than was the average number of shooting stars observed for the three of them?",
+        "reasoning": "Reginald counted two fewer shooting stars than Bridget, so Reginald counted 14 - 2 = 12 shooting stars. Sam counted four more shooting stars than Reginald, so Sam counted 12 + 4 = 16 shooting stars.\n\nTo find the average number of shooting stars observed by the three of them, we need to add up the number of shooting stars each person counted and divide by the total number of people. In this case, the sum of the shooting stars is 14 (Bridget) + 12 (Reginald) + 16 (Sam) = 42. There are three people, so the average number of shooting stars is 42 / 3 = 14.\n\nSince Sam counted 16 shooting stars, we need to subtract the average number of shooting stars (14) from the number of shooting stars Sam counted (16) to find out how many more Sam counted. 16 - 14 = 2.",
+        "answer": "2"
+      }
+    ],
+    "signature": {
+      "instructions": "## Inputs\n### question\nGiven the fields `question`, produce the fields `answer`, `reasoning`, and `feedback`.\n\n### Output Format\n### answer\nNumber or value that solves the problem.\n\n### reasoning\nStep-by-step explanation of the solution.\n\n### feedback\nExplanation of why the answer was correct or incorrect, including the score.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

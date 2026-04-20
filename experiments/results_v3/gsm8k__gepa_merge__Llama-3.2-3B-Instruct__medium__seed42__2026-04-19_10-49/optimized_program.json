@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Instructions\n## Inputs\n### question\nProduce the field `answer` with the following format: an integer or a string based on the type of calculation performed.\n\n### reasoning\nProvide a clear and concise step-by-step reasoning for the calculation, including any relevant formulas, conversions, or assumptions made.\n\n### answer\nOutput the final answer as an integer or string, following the specified format.\n\n### Example Input/Output\nFor example:\n\"Given the fields `question` with `x + 3 = 5`, produce the fields `answer` with the solution `x = 2`.\"\n\nThis instruction aims to improve the assistant's performance by providing more detailed and structured reasoning for calculations, ensuring that the output is accurate and follows a consistent format.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

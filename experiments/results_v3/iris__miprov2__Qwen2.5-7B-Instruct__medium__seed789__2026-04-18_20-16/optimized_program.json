@@ -1,0 +1,144 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 5.0,
+        "petal_width": 1.5,
+        "sepal_length": 6.0,
+        "sepal_width": 2.2,
+        "reasoning": "The petal length of 5.0 cm and petal width of 1.5 cm suggest a relatively large petal size, while the sepal length of 6.0 cm and sepal width of 2.2 cm indicate a sepal size that is also relatively large. These dimensions are more consistent with the characteristics of Iris virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.6,
+        "petal_width": 0.2,
+        "sepal_length": 4.7,
+        "sepal_width": 3.2,
+        "reasoning": "Based on the petal and sepal dimensions, the iris is likely to be setosa. The petal length and width are relatively small, and the sepal length and width are also within the range typical for setosa species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+        "sepal_length": 4.6,
+        "sepal_width": 3.2,
+        "reasoning": "The petal length and petal width are very small, which are characteristic of the setosa species. The sepal length and sepal width also suggest it could be setosa as these measurements are within the range typically observed for this species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 6.1,
+        "petal_width": 2.3,
+        "sepal_length": 7.7,
+        "sepal_width": 3.0,
+        "reasoning": "The petal length and petal width are quite large, which are characteristic of the Iris virginica species. The sepal length and sepal width are also indicative of Iris virginica, being larger than those typically seen in Iris setosa or Iris versicolor.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 5.1,
+        "petal_width": 1.8,
+        "sepal_length": 5.9,
+        "sepal_width": 3.0,
+        "reasoning": "The petal length of 5.1 cm and petal width of 1.8 cm indicate a relatively large petal, which is characteristic of Iris virginica. The sepal length of 5.9 cm and sepal width of 3.0 cm are also within the range observed for Iris virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.9,
+        "petal_width": 1.8,
+        "sepal_length": 6.3,
+        "sepal_width": 2.7,
+        "reasoning": "The petal length and petal width suggest a larger iris species, while the sepal length and sepal width are also indicative of a plant from the Iris virginica species. The combination of these measurements aligns closely with the characteristics of Iris virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 5.8,
+        "petal_width": 1.8,
+        "sepal_length": 6.7,
+        "sepal_width": 2.5,
+        "reasoning": "The petal length of 5.8 cm and petal width of 1.8 cm are relatively large, which are characteristic of Iris virginica. Additionally, the sepal length of 6.7 cm and sepal width of 2.5 cm also align well with the dimensions of Iris virginica.",
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.0,
+        "petal_width": 1.3,
+        "sepal_length": 5.5,
+        "sepal_width": 2.3,
+        "reasoning": "The petal length and petal width suggest a species with moderate-sized petals, which is more characteristic of versicolor. The sepal length and sepal width also align with the dimensions typically observed in versicolor.",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "The petal length and petal width are relatively small, which are characteristic of setosa species. Although the sepal length and width suggest a larger sepal, the combination still aligns closely with the setosa species in the Iris dataset.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.5,
+        "petal_width": 1.5,
+        "sepal_length": 6.2,
+        "sepal_width": 2.2,
+        "reasoning": "Based on the petal and sepal dimensions, the iris species can be predicted using a decision tree or a trained model. The petal length and width suggest it could be a virginica, but the sepal length and width are more indicative of versicolor.",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.2,
+        "petal_width": 1.2,
+        "sepal_length": 5.7,
+        "sepal_width": 3.0,
+        "reasoning": "Considering the petal length and width, which are 4.2 and 1.2 respectively, they are closer to the characteristics of versicolor. The sepal length and width of 5.7 and 3.0 also align more closely with versicolor than with setosa or virginica.",
+        "answer": "versicolor"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in centimeters (Petal Length: [value], Petal Width: [value], Sepal Length: [value], Sepal Width: [value]), apply an analytical and detailed step-by-step thought process to determine the likely species of an Iris flower. Document each step of your reasoning to clearly illustrate why the specified species is the best prediction based on the measurements provided. The prediction must be either \"setosa\", \"versicolor\", or \"virginica\", and your rationale should cover all relevant features such as the distinct petal and sepal dimensions noted for each species in the Iris dataset.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

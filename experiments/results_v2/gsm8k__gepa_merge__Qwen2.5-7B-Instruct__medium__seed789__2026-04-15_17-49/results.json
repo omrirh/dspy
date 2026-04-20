@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed789__2026-04-15_17-49",
+  "seed": 789,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 82.87,
+  "runtime_opt_s": 947.1274538040161,
+  "runtime_eval_s": 1063.2907454967499,
+  "total_metric_calls": 2110,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `reasoning` and `answer`. Ensure that the reasoning is clear and step-by-step, and the answer is presented clearly. Pay special attention to the following:\n\n1. **Correctly Interpret the Problem**: Ensure you fully understand what the problem is asking. Identify all necessary calculations and variables.\n2. **Show All Calculations and Intermediate Steps Clearly**: Break down calculations into clear, logical steps and present them in a well-organized manner.\n3. **Present the Final Answer in a Well-Formatted Manner**: Clearly state the final answer and ensure it is correctly labeled.\n4. **Break Down Multi-Step Problems**: Clearly explain each step and justify the next step. Make sure each step logically follows from the previous one.\n5. **Verify Logic and Calculations**: Double-check your work to ensure each step is correct and logically consistent with the problem statement.\n\nIf the problem involves multiple steps, break them down and explain each step clearly. For each step, show the calculation and the result, and justify why the next step follows from the current one.\n\nFor feedback indicating a mistake, re-examine the reasoning and calculations, focusing on the steps where errors occurred. Pay attention to units, proportions, and the context of the problem to avoid common errors.\n\nFollow these structured steps in `reasoning`:\n1. Identify the known values and variables.\n2. Break the problem into smaller, manageable parts.\n3. Perform the necessary calculations for each part.\n4. Combine the results to reach the final answer.\n5. Verify the logic and calculations to ensure each step is correct.\n\nEnsure your `answer` is clearly formatted and directly addresses the question.\n\nExample of a well-structured `reasoning` and `answer`:\n- **Reasoning**: Clearly state the steps and calculations.\n- **Answer**: Clearly state the final answer in a well-formatted manner.\n\nFor feedback that indicates a mistake, re-examine each step, verify calculations, and ensure each step logically follows from the previous one."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

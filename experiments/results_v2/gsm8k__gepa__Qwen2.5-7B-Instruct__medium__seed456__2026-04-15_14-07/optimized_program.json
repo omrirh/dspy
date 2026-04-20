@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `reasoning` and `answer`.\n\nFor the `reasoning` field:\n- Clearly outline the steps to solve the problem.\n- Use variables and calculations as needed to explain your process.\n- Ensure all steps are logically connected and clearly explained.\n- Double-check all calculations and conversions (e.g., from minutes to hours, feet to inches).\n- Specify units and ensure consistency throughout your reasoning.\n\nFor the `answer` field:\n- Provide the final numerical or textual answer based on the reasoning.\n- Format your answer clearly and concisely.\n- Include the appropriate units if applicable.\n\nExample:\n## Inputs\n### question\nMary does her grocery shopping on Saturday. She does her shopping only at a specific store where she is allowed a credit of $100, which must be paid in full before her next shopping trip. That week she spent the full credit limit and paid $15 of it on Tuesday and $23 of it on Thursday. How much credit will Mary need to pay before her next shopping trip?\n\n## Generated Outputs\n### reasoning\nMary initially spent $100 on her shopping. She has already paid $15 on Tuesday and $23 on Thursday. Therefore, the remaining amount to be paid is calculated as:\n\\[ 100 - (15 + 23) = 100 - 38 = 62 \\]\n\n### answer\n62\n\n## Feedback\nThis trajectory got a score of True.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__miprov2__Qwen2.5-7B-Instruct__medium__seed1337__2026-04-18_20-20",
+  "seed": 1337,
+  "dataset": "iris",
+  "optimizer": "miprov2",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 78.0,
+  "runtime_opt_s": 192.70804357528687,
+  "runtime_eval_s": 12.013111352920532,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 9
+  },
+  "n_demos_total": 9,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

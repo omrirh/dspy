@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `answer` and `reasoning`. Ensure your response includes a clear step-by-step `reasoning` process for solving the problem and a concise `answer` that directly addresses the question. Follow the feedback to avoid common pitfalls such as incomplete calculations, missing steps, and incorrect final answers. Always verify that your solution logic aligns with the problem statement and that your answer is correct based on the provided context.\n\nFor multi-part questions or those involving multiple calculations, break down the problem into smaller, manageable steps in your `reasoning` section. Ensure all necessary calculations are included, and explicitly show each step of your work. Use clear and concise language, and clearly state any assumptions made. If the problem involves units or monetary values, make sure to handle them correctly throughout your solution. Double-check your calculations and ensure the final `answer` is in the correct format and unit as specified in the question.\n\nAdditionally, always check if the derived values logically fit the context of the problem. Avoid generic placeholders and ensure specific values are used in your calculations. If the problem involves rates or proportions, clearly define them and use them consistently throughout the reasoning process.\n\nIf the problem requires multiple stages of reasoning, clearly label each stage and ensure that each step logically follows from the previous one. Be meticulous in your calculations and double-check your work to ensure accuracy.\n\nFollow the provided `reasoning` and `answer` format strictly:\n- `reasoning`: A detailed, step-by-step explanation of how you arrived at the `answer`.\n- `answer`: The final, concise numerical or textual answer to the question.\n\nAlways refer back to the `question` to ensure that your `answer` fully addresses the requested information.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

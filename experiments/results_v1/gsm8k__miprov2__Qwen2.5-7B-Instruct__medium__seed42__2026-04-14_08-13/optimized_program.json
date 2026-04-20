@@ -1,0 +1,105 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "A river is to be used for a boat race. If each boat is 3 feet across and they must have at least 2 feet between them or the riverbank, how many boats can race in a river that is 42 feet across?",
+        "reasoning": "To determine the number of boats that can race, we need to account for the width of each boat and the space required between the boats and the riverbanks. Each boat is 3 feet across, and there needs to be at least 2 feet between each boat and a total of 2 feet between the last boat and the riverbank. Thus, each segment occupied by a boat or the required space is 3 + 2 = 5 feet. We need to find out how many such 5-foot segments can fit into a 42-foot wide river.\n\nLet's denote the number of boats by \\( n \\). The total width occupied by \\( n \\) boats and the required spaces can be expressed as:\n\n\\[ 5n \\leq 42 \\]\n\nWe solve for \\( n \\) by dividing 42 by 5:\n\n\\[ n \\leq \\frac{42}{5} = 8.4 \\]\n\nSince \\( n \\) must be a whole number, the maximum number of boats that can fit is 8.",
+        "answer": "8"
+      },
+      {
+        "augmented": true,
+        "question": "Ben has $2000 for his business operations costs. He orders goods from his supplier and writes them a cheque for $600. His debtor pays him $800 from the purchases they had made on credit. Mr. Ben then decides to do equipment maintenance and spends $1200 on the whole operation. How much money is Mr. Ben remaining with?",
+        "reasoning": "To determine how much money Mr. Ben is remaining with, we need to start with his initial amount of $2000 and then account for all the transactions he has made. He first writes a cheque for $600 to his supplier, reducing his funds to $2000 - $600. Then, his debtor pays him $800, increasing his funds to the previous total plus $800. Finally, he spends $1200 on equipment maintenance, which reduces his funds by that amount.\n\nInitial amount: $2000\n- Cheque to supplier: $2000 - $600 = $1400\n+ Payment from debtor: $1400 + $800 = $2200\n- Equipment maintenance: $2200 - $1200 = $1000",
+        "answer": "$1000"
+      },
+      {
+        "augmented": true,
+        "question": "Hammond carves life-sized statues out of marble. His latest set of four statues started with an 80-pound block of marble. The first statue he carved weighed 10 pounds. The second statue weighed 18. The remaining two statues weighed the same amount. The marble he discarded after carving it off the statues weighed 22 pounds. How much did each of the remaining statues Hammond carved weigh?",
+        "reasoning": "To find the weight of the remaining two statues, we need to subtract the total weight of the first two statues and the discarded marble from the initial weight of the marble block. The remaining weight will be equally divided between the two statues.\n\n1. Start with the initial weight of the marble block: 80 pounds.\n2. Subtract the weight of the first statue: 80 - 10 = 70 pounds.\n3. Subtract the weight of the second statue: 70 - 18 = 52 pounds.\n4. Subtract the discarded marble: 52 - 22 = 30 pounds.\n\nThis remaining 30 pounds is the combined weight of the two remaining statues. Since they weigh the same, we can divide 30 by 2 to find the weight of each statue.",
+        "answer": "Each of the remaining statues Hammond carved weighed 15 pounds."
+      },
+      {
+        "augmented": true,
+        "question": "Central Park had 8 more than half of the number of trash cans as in Veteran's Park.  Then one night, someone took half of the trash cans from Central Park and put them in Veteran's Park.  If originally there were 24 trash cans in Veteran's Park, how many trash cans are now in Veteran's Park?",
+        "reasoning": "First, we need to find out how many trash cans were originally in Central Park. According to the problem, the number of trash cans in Central Park was 8 more than half the number of trash cans in Veteran's Park. Given that Veteran's Park originally had 24 trash cans, half of that is 12. So, Central Park originally had 12 + 8 = 20 trash cans.\n\nNext, we need to determine how many trash cans were moved. Since someone took half of the trash cans from Central Park, they took half of 20, which is 10 trash cans. These 10 trash cans were moved to Veteran's Park.\n\nNow, we need to find out the new total number of trash cans in Veteran's Park. Initially, Veteran's Park had 24 trash cans, and 10 more were added. Thus, the new total is 24 + 10 = 34 trash cans.",
+        "answer": "34"
+      },
+      {
+        "augmented": true,
+        "question": "Audrey is 7 years older than Heracles. In 3 years, Audrey will be twice as old as Heracles is now. How old is Heracles now?",
+        "reasoning": "Let's denote Audrey's current age as \\( A \\) and Heracles' current age as \\( H \\). According to the problem, Audrey is 7 years older than Heracles, so we can write the first equation as:\n\\[ A = H + 7 \\]\n\nWe are also given that in 3 years, Audrey will be twice as old as Heracles is now. Therefore, the second equation is:\n\\[ A + 3 = 2H \\]\n\nWe can substitute the expression for \\( A \\) from the first equation into the second equation:\n\\[ (H + 7) + 3 = 2H \\]\n\nSimplify and solve for \\( H \\):\n\\[ H + 10 = 2H \\]\n\\[ 10 = 2H - H \\]\n\\[ 10 = H \\]\n\nSo, Heracles is currently 10 years old.",
+        "answer": "10"
+      },
+      {
+        "augmented": true,
+        "question": "A psychologist believes one in every four people has a disorder he calls ZYX syndrome. The clinic where he works has recently doubled its previous number of 26 patients. How many patients is the psychologist likely to diagnose with ZYX syndrome?",
+        "reasoning": "The psychologist believes that one in every four people has ZYX syndrome. Initially, the clinic had 26 patients. The number of patients has now doubled, making it 26 * 2 = 52 patients. Since one in every four people is diagnosed with the syndrome, we can calculate the expected number of diagnoses by dividing the total number of patients by 4.",
+        "answer": "13"
+      },
+      {
+        "augmented": true,
+        "question": "Kim has 4 dozen shirts.  She lets her sister have 1/3 of them.  How many shirts does she have left?",
+        "reasoning": "Kim initially has 4 dozen shirts. Since one dozen equals 12 shirts, 4 dozen shirts equal 4 * 12 = 48 shirts. She lets her sister have 1/3 of these shirts. To find out how many shirts her sister gets, we calculate 1/3 of 48, which is 48 / 3 = 16 shirts. We then subtract the 16 shirts given to her sister from the original 48 shirts to determine how many shirts Kim has left.",
+        "answer": "32"
+      },
+      {
+        "augmented": true,
+        "question": "John takes 3 days off of streaming per week.  On the days he does stream, he streams for 4 hours at a time and makes $10 an hour.  How much does he make a week?",
+        "reasoning": "First, we need to determine how many days John streams per week. Since there are 7 days in a week and he takes 3 days off, he streams for 7 - 3 = 4 days a week. Next, we need to find out how many hours he streams in a week. Since he streams for 4 hours each day he streams, he streams for 4 * 4 = 16 hours a week. Finally, since he makes $10 an hour, we can calculate his weekly earnings by multiplying the number of hours he streams by his hourly rate: 16 * $10 = $160.",
+        "answer": "$160"
+      },
+      {
+        "augmented": true,
+        "question": "Julia had to make 6 cakes for the party. Each cake takes 12 minutes to mix and needs 9 more minutes to bake than mix. Then it takes 6 more minutes to cool and decorate than to bake. How many hours will it take to make all 6 cakes?",
+        "reasoning": "To find the total time to make all 6 cakes, we need to first determine the time required for each cake. We break down the process into three stages: mixing, baking, and cooling/decorating.\n\n1. Mixing time for one cake: 12 minutes\n2. Baking time for one cake: 12 minutes (mixing) + 9 minutes = 21 minutes\n3. Cooling and decorating time for one cake: 21 minutes (baking) + 6 minutes = 27 minutes\n\nSo, the total time to make one cake is the sum of these three stages: 12 minutes (mixing) + 21 minutes (baking) + 27 minutes (cooling/decorating) = 60 minutes.\n\nSince Julia needs to make 6 cakes, the total time is 60 minutes per cake * 6 cakes = 360 minutes. We then convert this into hours: 360 minutes / 60 minutes per hour = 6 hours.",
+        "answer": "6"
+      },
+      {
+        "augmented": true,
+        "question": "Paul and his sister Paula went to the cookie store to buy some cookies. Paula bought 3 fewer cookies than Paul, who bought 45 cookies. How many cookies do they have altogether?",
+        "reasoning": "Paul bought 45 cookies. Paula bought 3 fewer cookies than Paul, so Paula bought \\(45 - 3 = 42\\) cookies. Therefore, the total number of cookies they bought together is the sum of the cookies bought by Paul and Paula.",
+        "answer": "87"
+      },
+      {
+        "augmented": true,
+        "question": "Ariana is past due on three bills. The first bill for $200 charges 10% simple interest for each overdue month and it's 2 months overdue. The second bill for $130 charges a flat $50 late fee per month and is 6 months overdue. The last bill is two months late and charges a $40 fee the first month overdue and twice that fee the second month overdue and is for $444. How much does Ariana owe in total?",
+        "reasoning": "To find out how much Ariana owes in total, we need to calculate the overdue charges for each bill separately and then sum them up. \n\n1. **First Bill**: \n   - Principal: $200\n   - Interest rate: 10% per month\n   - Overdue: 2 months\n   - Total interest = $200 * 10% * 2 = $40\n   - Total for the first bill = $200 + $40 = $240\n\n2. **Second Bill**: \n   - Principal: $130\n   - Flat late fee: $50 per month\n   - Overdue: 6 months\n   - Total late fee = $50 * 6 = $300\n   - Total for the second bill = $130 + $300 = $430\n\n3. **Third Bill**: \n   - Principal: $444\n   - Late fee: $40 for the first month and $80 for the second month (twice the first month's fee)\n   - Overdue: 2 months\n   - Total late fee = $40 + $80 = $120\n   - Total for the third bill = $444 + $120 = $564\n\nAdding these totals together, we get the total amount Ariana owes.",
+        "answer": "$1234"
+      },
+      {
+        "augmented": true,
+        "question": "Jesse received $50 as a gift to buy what she wants. She goes to the mall and falls in love with a novel that costs her $7. Then she went to lunch because she was very hungry and spent twice as much as the novel cost her. How much money did Jesse have left after going to the mall?",
+        "reasoning": "First, we need to calculate the cost of the lunch. According to the problem, Jesse spent twice as much on lunch as she did on the novel. The novel cost $7, so the lunch cost \\(2 \\times 7 = 14\\) dollars. Next, we need to determine the total amount spent by Jesse. She spent $7 on the novel and $14 on lunch, so the total expenditure is \\(7 + 14 = 21\\) dollars. Jesse initially had $50, so the money she has left is \\(50 - 21 = 29\\) dollars.",
+        "answer": "29"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the input `question`, generate the fields `reasoning` and `answer` by providing a detailed step-by-step explanation of how the answer was calculated and the final computed result.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

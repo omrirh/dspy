@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa__Llama-3.2-3B-Instruct__medium__seed456__2026-04-14_06-43",
+  "seed": 456,
+  "dataset": "iris",
+  "optimizer": "gepa",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 32.0,
+  "runtime_opt_s": 353.42810559272766,
+  "runtime_eval_s": 15.410824298858643,
+  "total_metric_calls": 818,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Enhanced Diagnosis and Prediction of Iris Species\n\n## Inputs\n### petal_length\nvalue\n\n### petal_width\nvalue\n\n### sepal_length\nvalue\n\n### sepal_width\nvalue\n\n## Specify Output Format\n### answer\niris species (virginica, versicolor, or setosa)\n\n### reasoning\nincluding:\n- petal and sepal length/width comparison (e.g., ratio, difference, proportion)\n- relationship with known iris species characteristics\n- classification probability (> 0.7 for a classification)\n- further analysis:\n  - compare petal length and sepal length\n  - compare petal width and sepal width\n  - consider the ratio of petal length to sepal length\n  - If the sepal width to petal width ratio exceeds 2, assign as setosa\n  - If the ratio of petal length to sepal length is < 0.7, assign as versicolor\n\n## Additional Constraints\n- petal length > 0\n- petal width > 0\n- sepal length > 0\n- sepal width > 0"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

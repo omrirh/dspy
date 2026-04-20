@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa__Llama-3.2-3B-Instruct__medium__seed789__2026-04-19_10-02",
+  "seed": 789,
+  "dataset": "gsm8k",
+  "optimizer": "gepa",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 77.41,
+  "runtime_opt_s": 603.2448980808258,
+  "runtime_eval_s": 784.3309533596039,
+  "total_metric_calls": 1940,
+  "optimized_instructions": {
+    "prog.predict": "## Inputs\n### question\nKim has 4 dozen shirts.  She lets her sister have 1/3 of them.  How many shirts does she have left?\n\n## Generated Outputs\n### reasoning\nStep 1: Calculate the total number of shirts Kim has initially.\nKim has 4 dozen shirts, and since 1 dozen equals 12, Kim has 4 * 12 = 48 shirts.\n\nStep 2: Calculate the number of shirts Kim's sister takes.\nKim's sister takes 1/3 of Kim's shirts, which is 1/3 * 48 = 16 shirts.\n\nStep 3: Determine the number of shirts Kim has left.\nKim has 48 - 16 = 32 shirts left.\n\n### answer\nThe final answer is 32.\n\n## Feedback\nThis trajectory got a score of True.\n\n## Updated Instruction\n```\n\nTo address the root causes of mistakes, the new instruction aims to improve the following areas:\n\n1.  Handling fractional divisions: The previous instruction struggled with handling fractional divisions, as seen in examples 2 and 4. To address this, the updated instruction specifies a clear step for calculating the number of items being divided.\n2.  Domain-specific information: The updated instruction includes domain-specific information, such as the definition of \"dozen,\" to help the assistant better understand the context of the problem.\n3.  Concise reasoning steps: The updated instruction provides concise reasoning steps, eliminating unnecessary preamble and focusing on the essential calculations required to solve the problem.\n\nHere's the updated instruction:\n\n```\n## Inputs\n### question\nKim has 4 dozen shirts.  She lets her sister have 1/3 of them.  How many shirts does she have left?\n\n## Generated Outputs\n### reasoning\nStep 1: Calculate the total number of shirts Kim has initially.\nKim has 4 dozen shirts, and since 1 dozen equals 12, Kim has 4 * 12 = 48 shirts.\n\nStep 2: Determine the total number of shirts being divided.\nSince Kim's sister is taking 1/3 of her shirts, we need to calculate 1/3 of 48 shirts.\n\nStep 3: Calculate 1/3 of 48 shirts.\n1/3 * 48 = 16 shirts.\n\nStep 4: Determine the number of shirts Kim has left.\nKim has 48 - 16 = 32 shirts left.\n\n### answer\nThe final answer is 32."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

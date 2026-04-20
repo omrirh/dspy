@@ -1,0 +1,90 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.6,
+        "petal_width": 0.2,
+        "sepal_length": 4.7,
+        "sepal_width": 3.2,
+        "reasoning": "This iris flower has a relatively small petal length and a small petal width, combined with a medium sepal length and a medium sepal width. These characteristics are most similar to those of the setosa iris species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.2,
+        "sepal_length": 5.2,
+        "sepal_width": 3.5,
+        "reasoning": "This iris specimen is classified as setosa due to its petal length and sepal dimensions being within the typical ranges of the setosa species.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.4,
+        "sepal_length": 5.1,
+        "sepal_width": 3.7,
+        "reasoning": "This iris is a small species with a relatively short petal length and a short sepal length.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.2,
+        "petal_width": 0.2,
+        "sepal_length": 5.8,
+        "sepal_width": 4.0,
+        "reasoning": "The sepal width (4.0 cm) is greater than the sepal width of most setosa iris flowers (3.5 cm) and virginica iris flowers (3.0-4.2 cm), suggesting that the iris is more likely to be virginica. However, the petal length (1.2 cm) and petal width (0.2 cm) are within the range of variation for setosa iris flowers.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 4.9,
+        "petal_width": 1.8,
+        "sepal_length": 6.3,
+        "sepal_width": 2.7,
+        "reasoning": "This iris has larger petal length and width, and longer sepal length compared to the majority of setosa instances. Therefore, it is classified as a non-setosa species, and the closest match is virginica.",
+        "answer": "virginica"
+      }
+    ],
+    "signature": {
+      "instructions": "Please provide the petal and sepal dimensions in cm, and the language model will predict the iris species (setosa, versicolor, or virginica) based on these measurements.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 4.5,
+        "petal_width": 1.5,
+        "sepal_length": 6.2,
+        "sepal_width": 2.2,
+        "reasoning": "This is a clear case of a flower with a medium petal length, but a broad petal width, indicating it is a member of the Versicolor species.",
+        "answer": "versicolor"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "The sepal length and width are within a suitable range for both setosa and versicolor species. However, the petal length is greater than 1.5 cm, which is more characteristic of setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.6,
+        "petal_width": 0.2,
+        "sepal_length": 4.7,
+        "sepal_width": 3.2,
+        "reasoning": "This example is likely to be a member of the setosa iris species, as the petal length and width are relatively small compared to the sepal dimensions.",
+        "answer": "setosa"
+      },
+      {
+        "sepal_length": 5.5,
+        "sepal_width": 2.3,
+        "petal_length": 4.0,
+        "petal_width": 1.3,
+        "answer": "versicolor"
+      }
+    ],
+    "signature": {
+      "instructions": "You are a botanical researcher tasked with classifying a new iris species based on its petal and sepal dimensions in centimeters. Given these dimensions, predict the iris species.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

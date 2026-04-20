@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### question\nBarney washes his kitchen towels once a week. He owns eighteen towels and uses two at a time that he changes to clean towels daily. He missed one week of laundry. How many days the following week will Barney not have clean towels?\n\n## Generated Outputs\n### reasoning\nTo solve this problem, let's calculate the number of towels Barney uses in one week.\nHe uses 2 towels per day for 7 days, so the total number of towels used in a week is 2 towels/day x 7 days = 14 towels.\n\nSince Barney missed one week of laundry, he now has 18 - 14 = 4 clean towels left.\n\nFor the second week, he will use 2 towels per day until he runs out. To find out how many days he will have clean towels, we can divide the total number of clean towels by the number of clean towels used per day:\n4 clean towels / 2 clean towels/day = 2 days.\n\nSince he has clean towels for the first 2 days of the second week, he will not have clean towels for the remaining 7 - 2 = 5 days.\n\n### answer\n5",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Bob gets paid $5 an hour for the regular hours he works and $6 an hour for any overtime hours he works. All hours over 40 in a week are considered overtime. If Bob works 44  hours in the first week and 48 hours in the second week, how much did he make?",
+        "reasoning": "To calculate Bob's total earnings for the first week, we need to calculate his regular and overtime hours. \nRegular hours in the first week: 40 hours\nOvertime hours in the first week: 44 - 40 = 4 hours\nEarnings for regular hours in the first week: 40 * $5 = $200\nEarnings for overtime hours in the first week: 4 * $6 = $24\nTotal earnings for the first week: $200 + $24 = $224\n\nTo calculate Bob's total earnings for the second week, we can do the same:\nRegular hours in the second week: 40 hours\nOvertime hours in the second week: 48 - 40 = 8 hours\nEarnings for regular hours in the second week: 40 * $5 = $200\nEarnings for overtime hours in the second week: 8 * $6 = $48\nTotal earnings for the second week: $200 + $48 = $248\n\nNow, we add the total earnings for both weeks to get Bob's total earnings:\nTotal earnings = Total earnings for the first week + Total earnings for the second week\nTotal earnings = $224 + $248 = $472",
+        "answer": "472"
+      },
+      {
+        "augmented": true,
+        "question": "Bert's golden retriever has grown tremendously since it was a puppy.  At 7 weeks old, the puppy weighed 6 pounds, but doubled in weight by week 9.  It doubled in weight again at 3 months old, and doubled again at 5 months old.  Finally, the dog reached its final adult weight by adding another 30 pounds by the time it was one year old.  What is the dog's full adult weight, in pounds?",
+        "reasoning": "The dog's weight at 7 weeks old is 6 pounds. It doubles in weight by week 9, so its weight is 6 * 2 = 12 pounds. It doubles again at 3 months old, so its weight is 12 * 2 = 24 pounds. It doubles once more at 5 months old, so its weight is 24 * 2 = 48 pounds. Finally, the dog adds 30 pounds to reach its adult weight.",
+        "answer": "78"
+      },
+      {
+        "augmented": true,
+        "question": "Jeff bought 6 pairs of shoes and 4 jerseys for $560. Jerseys cost 1/4 price of one pair of shoes. Find the shoe's price total price.",
+        "reasoning": "Let's denote the price of one pair of shoes as 'S'. Since jerseys cost 1/4 the price of one pair of shoes, the price of one jersey is S/4. \nJeff bought 6 pairs of shoes, so the total cost of shoes is 6S. \nHe also bought 4 jerseys, so the total cost of jerseys is 4(S/4) = S. \nThe total cost is given as $560, so we can set up the equation: \n6S + S = 560 \nCombine like terms: 7S = 560 \nDivide both sides by 7: S = 80 \nThis means one pair of shoes costs $80. \nTo find the total price of the shoes, multiply the price of one pair by the number of pairs: \n6S = 6 * 80 = 480",
+        "answer": "480"
+      },
+      {
+        "augmented": true,
+        "question": "Jan buys 1000 feet of cable.  She splits it up into 25-foot sections.  She gives 1/4 of that to a friend.  She then puts half of the rest in storage. How much does she keep on hand?",
+        "reasoning": "First, find the total number of sections: 1000 feet / 25 feet per section = 40 sections. \nThen, find 1/4 of the sections: 40 sections * 1/4 = 10 sections. \nSo, Jan gave 10 sections to her friend. \nNow, subtract those sections from the total: 40 sections - 10 sections = 30 sections. \nThen, find half of the remaining sections: 30 sections / 2 = 15 sections. \nNow, subtract those sections from the remaining sections: 30 sections - 15 sections = 15 sections. \nSo, Jan keeps 15 sections of cable on hand.",
+        "answer": "15"
+      },
+      {
+        "augmented": true,
+        "question": "Mr Julien's store has 400 marbles remaining after the previous day's sales. Twenty customers came into the store, and each bought 15 marbles. How many marbles remain in the store?",
+        "reasoning": "First, let's find the total number of marbles sold to the customers. There were 20 customers, each buying 15 marbles. To find the total number of marbles sold, we multiply 20 by 15.\n20 * 15 = 300\nNow, we need to find the number of marbles remaining in the store. We know that there were 400 marbles initially, and 300 were sold. To find the number of marbles remaining, we subtract 300 from 400.\n400 - 300 = 100",
+        "answer": "100"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the fields `question`, provide a step-by-step reasoning for solving the problem by articulating the process of evaluation, calculation, and deduction, and then output the corresponding `answer`.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

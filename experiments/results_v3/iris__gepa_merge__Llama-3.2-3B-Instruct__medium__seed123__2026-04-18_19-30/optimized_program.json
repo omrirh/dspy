@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\nfloat\n\n### petal_width\nfloat\n\n### sepal_length\nfloat\n\n### sepal_width\nfloat\n\n## Output Format\n### answer\nstr (setosa, versicolor, or virginica)\n\n## Reasoning\n### threshold_tests\n* If petal_width < 1.5 cm or sepal_length < 5.9 cm, setosa\n* If petal_width >= 1.8 cm and sepal_length < 6.3 cm, cautious_classification_threshold\n* If petal_width >= 1.8 cm and sepal_length >= 6.3 cm, virginica\n\n### cautious_classification_threshold\n* If both petal_width >= 1.8 cm and sepal_length < 6.3 cm, verify sepal width and length for classification\n\n### cautionary_notation\n* Setosa: typically characterized by lower petal width and longer sepal length; sepal length and width bias towards virginica\n* Virginica: more indicative of petal dimensions; sepal length and width bias towards virginica; caution when sepal width is near threshold\n* Versicolor: fall-back classification when petal width and/or sepal length are near thresholds\n\n### domain_hints\n- Petal dimensions are more indicative of species virginica, especially when petal width is above 1.8 cm\n- Setosa is typically characterized by lower petal width and longer sepal length; sepal length and width bias towards virginica",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Llama-3.2-3B-Instruct__medium__seed1337__2026-04-14_07-50",
+  "seed": 1337,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 70.0,
+  "runtime_opt_s": 228.84775185585022,
+  "runtime_eval_s": 12.221198558807373,
+  "total_metric_calls": 830,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Instructions for Improved Iris Species Classification\n\n## Inputs\n### petal_length\np float\n\n### petal_width\np float\n\n### sepal_length\ns float\n\n### sepal_width\ns float\n\n## Output Formats\n### answer\niris species name (setosa, versicolor, virginica)\n\n### reasoning\nstring explaining the classification decision\n\n## Rules\n1. If the combined petal length and width are greater than 2.5 * (sepal length + sepal width),\n   classify as virginica if sepal length is greater than 6.5 and sepal width is greater than 2.8\n   or otherwise classify as versicolor.\n2. If the combined petal length and width are less than or equal to 2.5 * (sepal length + sepal width),\n   calculate sepal and petal ratios and compare to setosa reference ranges.\n3. If none of the above conditions are met, classify as setosa if sepal length is less than 5.5\n   and sepal width is less than 3.2 and petal length and width are within setosa reference ranges.\n\n## Evaluations\nThe classification will be considered correct if the output answer matches the true label.\n\n## Additional Checks\n- For rules 1 and 2, verify that the calculated ratios are within valid ranges for the respective species.\n- For rule 3, verify that the sepal length, sepal width, petal length, and petal width are all within the setosa reference ranges.\n\n## Handling Edge Cases\n- If the combined petal length and width are equal to 2.5 times the sum of sepal length and sepal width, classify as setosa if the sepal length and sepal width are both less than 4.5."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 3
+}

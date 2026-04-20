@@ -1,0 +1,70 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "The iris species can be identified based on the given petal and sepal dimensions. After analyzing the data, it appears that the measurements are consistent with the species Iris setosa.",
+        "answer": "setosa"
+      },
+      {
+        "sepal_length": 6.3,
+        "sepal_width": 2.7,
+        "petal_length": 4.9,
+        "petal_width": 1.8,
+        "answer": "virginica"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.4,
+        "sepal_length": 5.1,
+        "sepal_width": 3.7,
+        "reasoning": "The reasoning for this classification is based on the dimensions provided, which fall within the general ranges of the Iris species. Specifically, the lower petal width and longer sepal length suggest a more typical range for Iris setosa.",
+        "answer": "setosa"
+      }
+    ],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Predict Iris Species\n### answer\none_of ['setosa', 'versicolor', 'virginica']\n\n### reasoning\n1. Compare petal and sepal length and width to known characteristic ranges:\n   - Iris setosa: short petal length (< 4.9), short sepal length (< 5.5)\n   - Iris versicolor: medium to large petal length (4.9-7.9), variable sepal length\n   - Iris virginica: large to very large petal length (> 7.9), long sepal length\n2. Determine the most likely species based on the comparison:\n   - If petal length < 4.9 and sepal length < 5.5, predict setosa.\n   - If petal length >= 4.9 and sepal length < 5.5, predict versicolor.\n   - If petal length >= 7.9 and sepal length >= 5.5, predict virginica.\n   - If none of the above conditions are met, predict versicolor.\n3. Output a final prediction with a score:\n   - Set a score of True for correct predictions and False otherwise.\n   - If the predicted species is not one of the three main species, assign a score of False.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

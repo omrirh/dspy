@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in cm, predict the iris species. Use the following steps for reasoning:\n\n1. **Identify the Species Characteristics:**\n   - **Iris setosa**: Petal length < 1.5 cm, Petal width < 0.5 cm, Sepal length < 5 cm, Sepal width < 2.5 cm.\n   - **Iris versicolor**: Petal length 4-5 cm, Petal width 1.4-1.8 cm, Sepal length 5-6.5 cm, Sepal width 2.5-3.5 cm.\n   - **Iris virginica**: Petal length > 5 cm, Petal width > 1.8 cm, Sepal length > 6 cm, Sepal width > 3 cm.\n\n2. **Analyze the Input Dimensions:**\n   - Compare the given petal and sepal dimensions to the characteristics of each species.\n\n3. **Determine the Species:**\n   - If the petal length is < 1.5 cm and the petal width is < 0.5 cm, and the sepal length is < 5 cm and the sepal width is < 2.5 cm, predict `setosa`.\n   - If the petal length is 4-5 cm and the petal width is 1.4-1.8 cm, and the sepal length is 5-6.5 cm and the sepal width is 2.5-3.5 cm, predict `versicolor`.\n   - If the petal length is > 5 cm and the petal width is > 1.8 cm, and the sepal length is > 6 cm and the sepal width is > 3 cm, predict `virginica`.\n   - If the petal and sepal dimensions do not exactly match any of the above ranges but predominantly fall within the Iris versicolor range, predict `versicolor`.\n\n4. **Output Format:**\n   - Provide the prediction in the format: `species`.\n\n## Example\n## Inputs\n### petal_length\n5.1\n\n### petal_width\n2.3\n\n### sepal_length\n6.9\n\n### sepal_width\n3.1\n\n## Generated Outputs\n### reasoning\nBased on the provided measurements, the petal length is 5.1 cm, the petal width is 2.3 cm, the sepal length is 6.9 cm, and the sepal width is 3.1 cm. These measurements are consistent with the characteristics of Iris virginica, as the petal and sepal dimensions exceed the thresholds for Iris versicolor and match the characteristics of Iris virginica.\n\n### answer\nvirginica\n\n## Feedback\nThis trajectory got a score of True.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

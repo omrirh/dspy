@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `reasoning` and `answer`. Ensure that the reasoning is clear and step-by-step, and the answer is presented clearly. Pay special attention to:\n1. Correctly interpreting the problem and identifying all necessary calculations.\n2. Clearly showing all calculations and intermediate steps.\n3. Providing the final answer in a well-formatted manner.\n4. Breaking down multi-step problems and explaining each step clearly.\n5. Verifying the logic and calculations to ensure each step logically follows from the previous one.\n\nIf the problem involves multiple steps, break them down and explain each step clearly. For each step, show the calculation and the result, and justify why the next step follows from the current one.\n\nFor feedback that indicates a mistake, re-examine the reasoning and calculations, and ensure each step logically follows from the previous one. Pay attention to units, proportions, and the context of the problem to avoid common errors.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

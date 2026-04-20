@@ -1,0 +1,105 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Sandy bought 1 million Safe Moon tokens. She has 4 siblings. She wants to keep half of them to herself and divide the remaining tokens among her siblings. After splitting it up, how many more tokens will she have than any of her siblings?",
+        "reasoning": "To find the total number of tokens Sandy will keep for herself, we need to divide the total number of tokens by 2. This is because she wants to keep half of them for herself. \n\nTotal tokens = 1,000,000\nTokens Sandy keeps = Total tokens / 2 = 500,000\n\nThe remaining tokens will be divided among Sandy's siblings, who are 4 in number. So, the total number of tokens to be divided is:\n1,000,000 - 500,000 = 500,000\n\nEach sibling will get an equal share of the remaining tokens. \nTokens each sibling gets = 500,000 / 4 = 125,000\n\nNow, we need to find out how many more tokens Sandy will have than any of her siblings. \nDifference = Tokens Sandy keeps - Tokens each sibling gets\n= 500,000 - 125,000\n= 375,000",
+        "answer": "375,000"
+      },
+      {
+        "augmented": true,
+        "question": "Trevor needs to go downtown for a restaurant date. An Uber ride downtown costs $3 more than a Lyft ride. A Lyft ride costs $4 more than a taxi ride. The Uber ride costs $22. If Trevor takes a taxi downtown and tips the taxi driver 20% of the original cost of the ride, what is the total cost of the ride downtown?",
+        "reasoning": "First, let's find the cost of the Lyft ride. Since the Uber ride costs $3 more than the Lyft ride, and the Uber ride costs $22, we can set up the equation:\nUber ride = Lyft ride + $3\n22 = Lyft ride + $3\nLyft ride = 22 - $3\nLyft ride = $19\n\nNext, we know that the Lyft ride costs $4 more than the taxi ride. So, we can set up another equation:\nLyft ride = taxi ride + $4\n$19 = taxi ride + $4\ntaxi ride = $19 - $4\ntaxi ride = $15\n\nNow, let's calculate the total cost of the ride with a 20% tip. We'll first calculate 20% of the taxi ride cost:\n20% of $15 = 0.20 * $15\n= $3\n\nFinally, we add the tip to the original taxi ride cost to get the total cost:\nTotal cost = taxi ride + tip\n= $15 + $3\n= $18",
+        "answer": "18"
+      },
+      {
+        "augmented": true,
+        "question": "Stephen made 10 round trips up and down a 40,000 foot tall mountain. If he reached 3/4 of the mountain's height on each of his trips, calculate the total distance he covered.",
+        "reasoning": "To find the total distance Stephen covered, we need to first calculate the distance he traveled on each trip. Since he reached 3/4 of the mountain's height on each trip, we need to find the distance he traveled at 3/4 of 40,000 feet. This is (3/4) * 40,000 = 30,000 feet. Since he made a round trip, the distance for each trip is 2 * 30,000 = 60,000 feet. Since Stephen made 10 round trips, the total distance covered is 10 * 60,000 = 600,000 feet.",
+        "answer": "600,000"
+      },
+      {
+        "augmented": true,
+        "question": "Kristine traveled to Paris in France to visit her friend. On the way, she has driven a train for 300 km and a bus for half that distance. After arriving in the city, she had to take a cab and drove three times fewer kilometers than she rode the bus. How many kilometers in total had Kristine traveled to reach her destination?",
+        "reasoning": "Kristine traveled 300 km by train. She traveled half that distance by bus, which is 300 / 2 = 150 km. Then, she drove a cab for three times fewer kilometers than she rode the bus, which is 150 / 3 = 50 km. To find the total distance, add the distances traveled by train, bus, and cab: 300 + 150 + 50 = 500 km.",
+        "answer": "500"
+      },
+      {
+        "augmented": true,
+        "question": "Alan went to the market and bought 20 eggs at the price of $2 per egg. He bought 6 chickens for the price of $8 per chicken. How much money did Alan spend at the market?",
+        "reasoning": "First, we need to find the total cost of the eggs. Since Alan bought 20 eggs at the price of $2 per egg, the total cost of the eggs is 20 x $2 = $40.\n\nNext, we need to find the total cost of the chickens. Since Alan bought 6 chickens at the price of $8 per chicken, the total cost of the chickens is 6 x $8 = $48.\n\nFinally, to find the total amount of money Alan spent at the market, we need to add the total cost of the eggs and the chickens together. $40 + $48 = $88.",
+        "answer": "88"
+      },
+      {
+        "augmented": true,
+        "question": "Stan can type 50 words per minute. He needs to write a 5-page paper. Each page will contain 400 words. Each hour that he types he needs to drink 15 ounces of water. How much water does he need to drink while writing his paper?",
+        "reasoning": "First, we calculate the total number of words Stan needs to write. He has a 5-page paper with 400 words per page, so that's 5 x 400 = 2000 words. Since Stan can type 50 words per minute, he will need 2000 / 50 = 40 minutes to write the paper. Since there are 60 minutes in an hour, he will need 40 minutes / 60 minutes per hour = 2/3 hour to write the paper. Stan needs 15 ounces of water per hour, so for 2/3 hour, he will need 2/3 hour x 15 ounces/hour = 10 ounces of water.",
+        "answer": "10"
+      },
+      {
+        "augmented": true,
+        "question": "Ben has $2000 for his business operations costs. He orders goods from his supplier and writes them a cheque for $600. His debtor pays him $800 from the purchases they had made on credit. Mr. Ben then decides to do equipment maintenance and spends $1200 on the whole operation. How much money is Mr. Ben remaining with?",
+        "reasoning": "Ben starts with $2000. \nHe spends $600, leaving him with $2000 - $600 = $1400. \nThen, his debtor pays him $800, increasing his funds to $1400 + $800 = $2200. \nFinally, he spends $1200, leaving him with $2200 - $1200 = $1000.",
+        "answer": "$1000"
+      },
+      {
+        "augmented": true,
+        "question": "Billy is breeding mice for an experiment. He starts with 8 mice, who each have 6 pups. When the pups grow up, all the mice have another 6 pups. Then each adult mouse eats 2 of their pups due to the stress of overcrowding. How many mice are left?",
+        "reasoning": "First, we need to find out how many mice Billy starts with. He initially has 8 mice, who each have 6 pups. So the total number of mice will be:\n8 (initial mice) + 8 x 6 (pups) = 8 + 48 = 56\n\nThen, all the mice (including the initial 8 and the 48 pups) have another 6 pups. So the new total number of mice will be:\n56 (previous mice) + 56 x 6 (new pups) = 56 + 336 = 392\n\nHowever, each adult mouse eats 2 of their pups due to overcrowding. There are 56 adult mice (initial 8 + 48 pups), and each eats 2 pups. So, a total of 56 x 2 = 112 pups are eaten.\n\nTherefore, the total number of mice left will be:\n392 (total mice) - 112 (eaten pups) = 280",
+        "answer": "280"
+      },
+      {
+        "augmented": true,
+        "question": "Penny's canoe can carry 6 people, but if she wants to take her dog, she will only fit 2/3 of that number inside. If every person in a trip where Penny had her dog inside the canoe weighed 140 pounds, and the dog 1/4 as much weight, calculate the total weight the canoe was carrying?",
+        "reasoning": "To calculate the total weight the canoe was carrying, we first need to calculate the number of people the canoe can carry when the dog is inside. Since the canoe can carry 6 people but only 2/3 of that number when the dog is included, we multiply 6 by 2/3 to get 4 people. This leaves 2 spaces for the dog and other items.\n\nWe know that each person weighs 140 pounds and the dog weighs 1/4 of that amount, so the dog weighs 140 / 4 = 35 pounds.\n\nThe total weight of the people is 4 * 140 = 560 pounds, and the total weight of the dog is 35 pounds. So, the total weight the canoe was carrying is 560 + 35 = 595 pounds.",
+        "answer": "595"
+      },
+      {
+        "augmented": true,
+        "question": "Lara is baking cookies using four baking trays. She places five rows of cookies on a baking tray where there are six cookies in one row. How many cookies is she baking?",
+        "reasoning": "To find the total number of cookies Lara is baking, we need to multiply the number of rows in one tray by the number of rows in all trays, then multiply that by the number of cookies in one row. Lara has 5 rows in one tray, she has 4 trays, and each row contains 6 cookies.\n\nSo we multiply first the rows per tray by the number of trays: 5 rows * 4 trays = 20 rows\nThen, we multiply the total number of rows by the number of cookies per row: 20 rows * 6 cookies = 120 cookies",
+        "answer": "120"
+      },
+      {
+        "augmented": true,
+        "question": "In a restaurant, the chef prepared 17 meals to sell for lunch. During lunch, he sold 12 meals. After lunch, the chef prepared another 5 meals for dinner. How many meals does the chef have for dinner, assuming he can use the remaining lunch meals as well?",
+        "reasoning": "The chef prepared 17 meals for lunch, but only sold 12 of them. This means there are 17 - 12 = 5 meals left from lunch. Then, the chef prepared another 5 meals for dinner. So, to find the total number of meals available for dinner, we add the remaining lunch meals to the new dinner meals: 5 (remaining lunch meals) + 5 (new dinner meals) = 10.",
+        "answer": "10"
+      },
+      {
+        "augmented": true,
+        "question": "Bob gets paid $5 an hour for the regular hours he works and $6 an hour for any overtime hours he works. All hours over 40 in a week are considered overtime. If Bob works 44  hours in the first week and 48 hours in the second week, how much did he make?",
+        "reasoning": "To find the total amount Bob made, we need to calculate his regular and overtime hours for each week.\nIn the first week, Bob worked 40 hours (regular) and 4 hours of overtime.\nIn the second week, Bob worked 40 hours (regular) and 8 hours of overtime.\n\nWe will calculate the total amount for each week separately:\n- First week: Regular hours = 40 * $5 = $200, Overtime hours = 4 * $6 = $24, Total = $200 + $24 = $224.\n- Second week: Regular hours = 40 * $5 = $200, Overtime hours = 8 * $6 = $48, Total = $200 + $48 = $248.\nNow, we will add the total amount for both weeks to find the overall amount Bob made.\nTotal amount = $224 + $248 = $472.",
+        "answer": "472"
+      }
+    ],
+    "signature": {
+      "instructions": "Given a math-based problem-solving example with two input fields (question and reasoning), produce the corresponding answer and reasoning used to solve the problem.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

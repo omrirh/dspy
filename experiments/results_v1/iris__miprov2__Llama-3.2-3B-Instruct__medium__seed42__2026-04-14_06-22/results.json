@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__miprov2__Llama-3.2-3B-Instruct__medium__seed42__2026-04-14_06-22",
+  "seed": 42,
+  "dataset": "iris",
+  "optimizer": "miprov2",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 78.0,
+  "runtime_opt_s": 122.32966876029968,
+  "runtime_eval_s": 8.01661205291748,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "generate_answer.predict": "Use reasoning and machine learning to identify the iris species given the petal and sepal dimensions in cm and output the predicted classification along with an explanation of the reasoning behind your prediction."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 4
+  },
+  "n_demos_total": 4,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

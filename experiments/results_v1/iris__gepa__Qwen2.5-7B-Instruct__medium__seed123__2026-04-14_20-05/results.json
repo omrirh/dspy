@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa__Qwen2.5-7B-Instruct__medium__seed123__2026-04-14_20-05",
+  "seed": 123,
+  "dataset": "iris",
+  "optimizer": "gepa",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 82.0,
+  "runtime_opt_s": 928.1162731647491,
+  "runtime_eval_s": 59.56306338310242,
+  "total_metric_calls": 816,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. Ensure that your reasoning is based on accurate comparisons of the provided measurements with the known characteristics of each iris species: *setosa*, *versicolor*, and *virginica*. Specifically, pay attention to the following:\n\n1. Petal dimensions are generally more distinctive than sepal dimensions.\n2. Iris *setosa* has the smallest petals and sepals.\n3. Iris *versicolor* has intermediary petal and sepal sizes.\n4. Iris *virginica* has the largest petals and often the largest sepals.\n\n### Instructions\n- Start by listing the given petal and sepal dimensions.\n- Compare these dimensions to the known characteristics of each species, focusing on both petal and sepal measurements.\n- Identify the species with the closest matching petal and sepal dimensions.\n- Provide a detailed reasoning that explains how the given measurements align (or do not align) with the characteristics of each species.\n- If the measurements are closest to the characteristics of one species, predict that species. If the measurements fall between two species, choose the one with the more pronounced characteristics.\n- Output the predicted species followed by your reasoning.\n\n### Example 1\n## Inputs\n### petal_length\n4.9\n\n### petal_width\n1.8\n\n### sepal_length\n6.1\n\n### sepal_width\n3.0\n\n## Generated Outputs\n### reasoning\nThe given dimensions are: petal length = 4.9 cm, petal width = 1.8 cm, sepal length = 6.1 cm, and sepal width = 3.0 cm. These dimensions are indicative of the *versicolor* species. Petal length and width are notably larger than those typically seen in *setosa*, while the sepal dimensions are also larger than *virginica*. \n\n*versicolor* is characterized by petal lengths and widths between *setosa* and *virginica*, and the sepal dimensions are also in the intermediary range. The measurements closely align with these characteristics, making *versicolor* the most likely prediction.\n\n### answer\nversicolor\n\n### Example 2\n## Inputs\n### petal_length\n1.4\n\n### petal_width\n0.3\n\n### sepal_length\n4.8\n\n### sepal_width\n3.0\n\n## Generated Outputs\n### reasoning\nBased on the measurements provided, the petal length is 1.4 cm, petal width is 0.3 cm, sepal length is 4.8 cm, and sepal width is 3.0 cm. These dimensions are characteristic of Iris setosa. Specifically, Iris setosa typically has a petal length and width significantly shorter than those of Iris versicolor and Iris virginica, and the sepal dimensions are also smaller than those of Iris virginica. The measurements are closest to the characteristics of *setosa*.\n\n### answer\nsetosa\n\n### Example 3\n## Inputs\n### petal_length\n5.7\n\n### petal_width\n2.3\n\n### sepal_length\n6.9\n\n### sepal_width\n3.2\n\n## Generated Outputs\n### reasoning\nConsidering the measurements, the petal length of 5.7 cm and petal width of 2.3 cm are relatively large, which is more indicative of Iris virginica. The sepal length of 6.9 cm and sepal width of 3.2 cm also support this, as these dimensions are within the typical ranges for Iris virginica. Iris setosa and Iris versicolor have distinctly narrower petals and smaller sepals.\n\nGiven the dimensions, the measurements fall within the larger ranges typical of *virginica*, making it the most probable prediction.\n\n### answer\nvirginica"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

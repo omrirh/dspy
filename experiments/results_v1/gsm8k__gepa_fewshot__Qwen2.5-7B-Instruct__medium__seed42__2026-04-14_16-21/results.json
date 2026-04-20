@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_fewshot__Qwen2.5-7B-Instruct__medium__seed42__2026-04-14_16-21",
+  "seed": 42,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_fewshot",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 86.96,
+  "runtime_opt_s": 1483.5543231964111,
+  "runtime_eval_s": 880.1332366466522,
+  "total_metric_calls": 2180,
+  "optimized_instructions": {
+    "prog.predict": "Given the field `question`, produce the field `answer` by:\n1. Clearly identify and calculate all necessary values or steps, ensuring each step is logically and numerically accurate.\n2. Provide a detailed reasoning section, explaining each step of the calculation or logical deduction, and double-check all calculations for accuracy.\n3. Format the final answer in a clear and concise manner, ensuring it is presented as a single number or phrase, with appropriate units if applicable.\n4. For percentage calculations, always express the final result as a percentage with the '%' symbol.\n5. For word problems involving units, clearly state the units at each step and in the final answer.\n6. When solving multi-step problems, break down the problem systematically and solve each part separately, ensuring that each part is correctly calculated before moving to the next.\n7. Use a step-by-step approach to ensure all intermediate results are clearly stated and verified.\n8. Always double-check the consistency and logical flow of your solution, including the units and the final answer.\n9. When dealing with time, ensure that the time units are correctly converted and consistent throughout the calculation.\n10. For problems involving multiple entities, clearly define the variables and their relationships at the beginning of the reasoning section.\n11. Provide a clear summary in the reasoning to connect all intermediate steps logically to the final answer.\n12. Review the entire solution, including calculations and reasoning, to ensure accuracy and completeness before finalizing the answer."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1500,
+  "k_demos": 3
+}

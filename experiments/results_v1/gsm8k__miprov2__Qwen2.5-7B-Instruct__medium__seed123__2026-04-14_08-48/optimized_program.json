@@ -1,0 +1,75 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Louise is baking cakes for a gathering. She needs 60 cakes in total, and has already produced half this many. Today, she calculates how many cakes she has left to make and bakes half this amount. The next day, she again calculates how many cakes she has left to make and bakes a third of this amount. How many more cakes does Louise need to bake?",
+        "reasoning": "Louise needs to bake 60 cakes in total. She has already produced half this many, which is 30 cakes. Therefore, she has 30 cakes left to bake. Today, she bakes half the remaining amount, which is 15 cakes, so she now has 15 cakes left to bake. The next day, she bakes a third of the remaining cakes, which is 5 cakes. So, after this, she has 10 cakes left to bake.",
+        "answer": "10"
+      },
+      {
+        "augmented": true,
+        "question": "Today, at the school science lesson, Jake learned that there are 8 more solar systems for every planet in the galaxy. If there are 20 planets in the galaxy, how many solar systems and planets are there altogether?",
+        "reasoning": "The problem states that there are 8 more solar systems for every planet in the galaxy. If there are 20 planets, then the number of solar systems would be the number of planets plus 8 times the number of planets. We need to find the total number of solar systems and planets combined.\n\nFirst, calculate the number of solar systems:\n\\[ \\text{Number of solar systems} = 20 + 8 \\times 20 = 20 + 160 = 180 \\]\n\nNext, add the number of planets to the number of solar systems to get the total:\n\\[ \\text{Total} = 20 + 180 = 200 \\]",
+        "answer": "200"
+      },
+      {
+        "augmented": true,
+        "question": "Sandy bought 1 million Safe Moon tokens. She has 4 siblings. She wants to keep half of them to herself and divide the remaining tokens among her siblings. After splitting it up, how many more tokens will she have than any of her siblings?",
+        "reasoning": "Sandy initially has 1 million tokens. She wants to keep half for herself, which means she keeps 1,000,000 / 2 = 500,000 tokens. The remaining 500,000 tokens are to be divided among her 4 siblings. Each sibling will receive 500,000 / 4 = 125,000 tokens. To find out how many more tokens Sandy has than any of her siblings, subtract the number of tokens one sibling gets from the number Sandy keeps, which is 500,000 - 125,000.",
+        "answer": "375000"
+      },
+      {
+        "augmented": true,
+        "question": "Sally is selling boxes of crackers for her scout troop's fund-raiser. If she sells 50% more on Sunday than she sold on Saturday, then she'll have sold a total of 150 boxes on the two days. How many boxes did she sell on Saturday?",
+        "reasoning": "Let's denote the number of boxes Sally sold on Saturday as \\( x \\). According to the problem, on Sunday, she sells 50% more than on Saturday, which translates to \\( 1.5x \\). The total number of boxes sold over the two days is 150. Therefore, we can set up the following equation:\n\n\\[ x + 1.5x = 150 \\]\n\nCombining the terms on the left side, we get:\n\n\\[ 2.5x = 150 \\]\n\nTo find \\( x \\), we divide both sides of the equation by 2.5:\n\n\\[ x = \\frac{150}{2.5} \\]\n\nSimplifying the right side of the equation, we get:\n\n\\[ x = 60 \\]\n\nSo, Sally sold 60 boxes on Saturday.",
+        "answer": "60"
+      },
+      {
+        "augmented": true,
+        "question": "Georgina owns a parrot and is teaching it to speak. So far, the parrot knows seventeen phrases. If she is teaching it two phrases a week and it already knew three phrases when she bought it, how many days has Georgina had it?",
+        "reasoning": "To determine how many days Georgina has had the parrot, we need to figure out how many weeks she has had it based on the information that the parrot knows seventeen phrases, she has been teaching it at a rate of two phrases a week, and the parrot already knew three phrases when she bought it. We can then convert the number of weeks into days.\n\nFirst, we calculate the total number of phrases the parrot has learned since Georgina bought it. This is the total number of phrases the parrot now knows minus the number of phrases it already knew: 17 - 3 = 14 phrases. Given that Georgina has been teaching it two phrases a week, the number of weeks she has had the parrot is 14 / 2 = 7 weeks. Since there are 7 days in a week, the number of days Georgina has had the parrot is 7 * 7 = 49 days.",
+        "answer": "49"
+      },
+      {
+        "augmented": true,
+        "question": "Ellie takes her little brother down to the pond to teach him how to skip stones. After he takes his first throw, she gives him pointers to improve his technique. His second throw skips two more times across the water than his first. His third throw skips twice as many times as his second. His fourth throw skips 3 fewer times than his third throw. His fifth throw skips one more time than the fourth throw. If his fifth throw skipped 8 times across the water, how many skips did he make in total between all of his throws?",
+        "reasoning": "Let's denote the number of skips in his first throw as \\( x \\).\n\nFrom the information, we know:\n1. His second throw skips 2 more times than his first. So the second throw skips \\( x + 2 \\) times.\n2. His third throw skips twice as many times as his second. So the third throw skips \\( 2(x + 2) \\) times.\n3. His fourth throw skips 3 fewer times than his third. So the fourth throw skips \\( 2(x + 2) - 3 \\) times.\n4. His fifth throw skips 1 more time than his fourth. So the fifth throw skips \\( 2(x + 2) - 3 + 1 \\) times.\n\nWe know that his fifth throw skipped 8 times, so we can set up the equation:\n\\[ 2(x + 2) - 3 + 1 = 8 \\]\n\nSimplify the equation:\n\\[ 2(x + 2) - 2 = 8 \\]\n\\[ 2(x + 2) = 10 \\]\n\\[ x + 2 = 5 \\]\n\\[ x = 3 \\]\n\nNow, we can calculate the number of skips for each throw:\n1. First throw: \\( x = 3 \\)\n2. Second throw: \\( x + 2 = 3 + 2 = 5 \\)\n3. Third throw: \\( 2(x + 2) = 2 \\times 5 = 10 \\)\n4. Fourth throw: \\( 2(x + 2) - 3 = 10 - 3 = 7 \\)\n5. Fifth throw: \\( 2(x + 2) - 3 + 1 = 7 + 1 = 8 \\)\n\nAdding all these skips together:\n\\[ 3 + 5 + 10 + 7 + 8 = 33 \\]\n\nSo, the total number of skips is 33.",
+        "answer": "33"
+      },
+      {
+        "augmented": true,
+        "question": "Alice and Bob are each given $2000 to invest. Alice puts all of her money in the stock market and doubles her money. Bob invests in real estate and makes five times more money than he invested. How much more money does Bob have now than Alice?",
+        "reasoning": "Alice initially has $2000. She doubles her money, so she ends up with $2000 * 2 = $4000. \n\nBob also starts with $2000 and makes five times more money than he invested. This means he makes 5 * $2000 = $10000 in profit. His total amount of money is then $2000 (initial investment) + $10000 (profit) = $12000.\n\nTo find out how much more money Bob has than Alice, we subtract Alice's total amount from Bob's total amount: $12000 - $4000 = $8000.",
+        "answer": "8000"
+      }
+    ],
+    "signature": {
+      "instructions": "During a critical final exam, Sarah faces a crucial question: \"A local charity received a grant to distribute food to 400 families. If they have already distributed food to 250 families and plan to distribute the remaining food in 5 more days, how many families can they distribute food to each day on average?\" Given the field `question`, provide the detailed `reasoning` and the accurate `answer` explaining your step-by-step thought process.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

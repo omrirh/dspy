@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Instructions\n## Inputs\n### question\nProduce the field `answer` with the following format: an integer or a string based on the type of calculation performed.\n\n### reasoning\nProvide a clear and concise step-by-step reasoning for the calculation, including any relevant formulas, conversions, or assumptions made.\n\n### answer\nOutput the final answer as an integer or string, following the specified format.\n\n### Example Input/Output\nFor example:\n\"Given the fields `question` with `x + 3 = 5`, produce the fields `answer` with the solution `x = 2`.\"\n\n### Additional Guidance\n- When the calculation involves a percentage or fraction, explicitly state the calculation in the format `value * (percentage/numerator) = result` or `value / denominator = result`.\n- When calculating averages, explicitly state the calculation in the format `sum of values / number of values = average`.\n- For calculations involving multiple steps, use clear section headings (`## Step 1`, `## Step 2`, etc.) to organize the reasoning.\n- Always calculate the final answer based on the specific input provided in the `question` field.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Mark donates soup to the 6 homeless shelters.  Each one services 30 people and he decides to buy 10 cans of soup per person.  How many cans of soup does Mark donate?",
+        "reasoning": "To find the total number of cans of soup donated, first find the total number of people served. Since there are 6 homeless shelters, each serving 30 people, the total number of people served is 6 * 30 = 180 people. Since Mark decides to buy 10 cans of soup per person, the total number of cans donated is 180 * 10 = 1800 cans.",
+        "answer": "1800"
+      },
+      {
+        "augmented": true,
+        "question": "Kendra tracks the different species of birds they spot on their birdwatching trip. On Monday they visited 5 sites and saw an average of 7 birds at each site. On Tuesday, Kendra visited 5 sites and saw an average of 5 birds at each site. On Wednesday visited 10 sites and saw an average of 8 birds at each site. On average, how many different birds did Kendra see on each site?",
+        "reasoning": "To find the average number of different birds Kendra saw on each site, we need to calculate the total number of birds she saw across all sites and then divide by the total number of sites.\n\nOn Monday, she saw 5 sites and 7 birds at each site, so she saw 5 x 7 = 35 birds.\n\nOn Tuesday, she saw 5 sites and 5 birds at each site, so she saw 5 x 5 = 25 birds.\n\nOn Wednesday, she saw 10 sites and 8 birds at each site, so she saw 10 x 8 = 80 birds.\n\nThe total number of birds she saw is 35 + 25 + 80 = 140 birds.\n\nThe total number of sites she visited is 5 + 5 + 10 = 20 sites.\n\nSo, the average number of different birds Kendra saw on each site is 140 / 20 = 7.",
+        "answer": "7"
+      },
+      {
+        "augmented": true,
+        "question": "Marion’s bike cost $356. Stephanie’s bike is worth twice as much. What is the total price of their bikes?",
+        "reasoning": "Stephanie's bike is worth twice as much as Marion's bike, so we need to multiply the cost of Marion's bike by 2 to find the cost of Stephanie's bike. \n\nCost of Stephanie's bike = 2 * Cost of Marion's bike\n= 2 * $356\n= $712\n\nThe total price of their bikes is the sum of the prices of their bikes.\nTotal price = Cost of Marion's bike + Cost of Stephanie's bike\n= $356 + $712\n= $1068",
+        "answer": "1068"
+      },
+      {
+        "augmented": true,
+        "question": "A third of the contestants at a singing competition are female, and the rest are male. If there are 18 contestants in total, how many of them are male?",
+        "reasoning": "A third of the contestants are female. Since there are 18 contestants in total, the number of female contestants is 18 / 3 = 6. \n\nThe rest of the contestants, which are male, are 18 - 6 = 12.",
+        "answer": "12"
+      },
+      {
+        "augmented": true,
+        "question": "A psychologist believes one in every four people has a disorder he calls ZYX syndrome. The clinic where he works has recently doubled its previous number of 26 patients. How many patients is the psychologist likely to diagnose with ZYX syndrome?",
+        "reasoning": "The psychologist believes one in every four people has ZYX syndrome. If the clinic has 52 patients (26 * 2), then we can divide 52 by 4 to find the number of people with ZYX syndrome.",
+        "answer": "13"
+      },
+      {
+        "augmented": true,
+        "question": "Barney washes his kitchen towels once a week. He owns eighteen towels and uses two at a time that he changes to clean towels daily. He missed one week of laundry. How many days the following week will Barney not have clean towels?",
+        "reasoning": "Barney has 18 towels and uses 2 at a time, so he has 18 / 2 = 9 sets of clean towels. Since he washes the towels once a week, in a normal week, he would have 9 sets of clean towels. However, he missed one week of laundry, so he still has 9 sets of clean towels. To find out how many days the following week he will not have clean towels, we need to divide the number of sets of clean towels he has by the number of clean towels he uses per day. Since he uses 2 towels at a time, he uses 1 set per day. \n\nSo, he has 9 sets of clean towels and uses 1 set per day, so he can have clean towels for 9 days.\n\nThe following week, he will not have clean towels for 7 - 9 = -2 days, but since we cannot have negative days, we need to reconsider our approach. Let's recalculate: \nIn the week he missed laundry, he would have had clean towels for 7 days. Now, we need to find out how many clean towels he has. He has 18 towels, but he used 2 towels per day for 7 days, so he used 14 towels. Therefore, he has 18 - 14 = 4 clean towels. Since he uses 2 towels per day, he can have clean towels for 4 / 2 = 2 days.\n\nSo, for the following week, he will not have clean towels for 7 - 2 = 5 days.",
+        "answer": "5"
+      },
+      {
+        "augmented": true,
+        "question": "Bob gets paid $5 an hour for the regular hours he works and $6 an hour for any overtime hours he works. All hours over 40 in a week are considered overtime. If Bob works 44  hours in the first week and 48 hours in the second week, how much did he make?",
+        "reasoning": "In the first week, Bob worked 44 hours. This means he worked 4 overtime hours. The regular hours for the first week are 40, so the amount he earned for regular hours is 40 x $5 = $200. The overtime hours will be 4 x $6 = $24. The total for the first week is $200 + $24 = $224.\nIn the second week, Bob worked 48 hours. This means he worked 8 overtime hours. The regular hours for the second week are 40, so the amount he earned for regular hours is 40 x $5 = $200. The overtime hours will be 8 x $6 = $48. The total for the second week is $200 + $48 = $248.\nTo find the total amount Bob made, we need to add the total amount for the first week and the total amount for the second week, which is $224 + $248 = $472.",
+        "answer": "472"
+      },
+      {
+        "augmented": true,
+        "question": "John takes 3 days off of streaming per week.  On the days he does stream, he streams for 4 hours at a time and makes $10 an hour.  How much does he make a week?",
+        "reasoning": "To find the total amount of money John makes per week, first calculate the number of days he streams per week. He takes 3 days off, so he streams 7 - 3 = 4 days a week. Then, multiply the number of days he streams by the number of hours he streams per day. 4 days * 4 hours/day = 16 hours/week. Finally, multiply the total hours he streams per week by his hourly wage. 16 hours/week * $10/hour = $160/week.",
+        "answer": "$160"
+      },
+      {
+        "augmented": true,
+        "question": "Lara is baking cookies using four baking trays. She places five rows of cookies on a baking tray where there are six cookies in one row. How many cookies is she baking?",
+        "reasoning": "To find the total number of cookies being baked, we need to calculate the total number of cookies on one tray and then multiply it by the number of trays.\n\nSince there are 5 rows and 6 cookies in each row, we can multiply 5 and 6 to get the total number of cookies on one tray. 5 * 6 = 30\n\nNow, multiply 30 by 4 (the number of trays) to get the total number of cookies. 30 * 4 = 120",
+        "answer": "120"
+      },
+      {
+        "augmented": true,
+        "question": "There were 8000 jelly beans in a certain barrel, and 10 people lined up to take some. The first six people each took twice as many jelly beans as each of the last four people took. If the last four people each took 400 jelly beans, how many jelly beans remained in the container?",
+        "reasoning": "First, we need to find out how many jelly beans the last four people took in total. Since each of them took 400 jelly beans, the total amount they took is 4 x 400 = 1600 jelly beans.\n\nNext, we need to find out how many jelly beans the first six people took in total. Since each of them took twice as many jelly beans as the last four people, we'll find out how many jelly beans each of the first six people took. Since they took twice as many as the last four people, each of the first six people took 2 x 400 = 800 jelly beans. \n\nNow, we multiply this by 6 to find the total amount the first six people took. 6 x 800 = 4800 jelly beans.\n\nThe total amount of jelly beans taken by all ten people is the sum of the jelly beans taken by the first six people and the last four people. So, 4800 + 1600 = 6400 jelly beans.\n\nFinally, we subtract this from the initial amount of jelly beans in the barrel to find the remaining amount. 8000 - 6400 = 1600.",
+        "answer": "1600"
+      },
+      {
+        "augmented": true,
+        "question": "In a restaurant, the chef prepared 17 meals to sell for lunch. During lunch, he sold 12 meals. After lunch, the chef prepared another 5 meals for dinner. How many meals does the chef have for dinner, assuming he can use the remaining lunch meals as well?",
+        "reasoning": "The chef initially prepared 17 meals for lunch. He sold 12 meals, leaving 17 - 12 = 5 meals. Since he can use the remaining lunch meals for dinner, he has 5 meals from lunch plus the additional 5 meals he prepared for dinner. So, he has 5 + 5 = 10 meals for dinner.",
+        "answer": "10"
+      },
+      {
+        "augmented": true,
+        "question": "Bridget counted 14 shooting stars in the night sky.  Reginald counted two fewer shooting stars than did Bridget, but Sam counted four more shooting stars than did Reginald.  How many more shooting stars did Sam count in the night sky than was the average number of shooting stars observed for the three of them?",
+        "reasoning": "To find the average number of shooting stars observed for the three of them, we need to find out how many each of them counted. Bridget counted 14. Reginald counted two fewer than Bridget, so 14 - 2 = 12. Sam counted four more than Reginald, so 12 + 4 = 16. \n\nThe average is found by adding up all the numbers and dividing by the number of people. The sum is 14 + 12 + 16 = 42. Since there are 3 people, the average is 42 / 3 = 14. \n\nTo find how many more shooting stars Sam counted than the average, we subtract the average from the number Sam counted, which is 16 - 14 = 2.",
+        "answer": "2"
+      },
+      {
+        "augmented": true,
+        "question": "Megan pays $16 for a shirt that costs $22 before sales. What is the amount of the discount?",
+        "reasoning": "To find the amount of the discount, subtract the price Megan paid for the shirt ($16) from the original price of the shirt ($22).",
+        "answer": "6"
+      },
+      {
+        "augmented": true,
+        "question": "Two years ago, Jared was twice as old as Tom. If Tom will be 30 in five years, how old is Jared now?",
+        "reasoning": "Tom's current age is 30 - 5 = 25 years. Two years ago, Tom was 25 - 2 = 23 years old. Jared was twice as old as Tom two years ago, so Jared was 2 * 23 = 46 years old. Jared's current age is 46 + 2 = 48 years.",
+        "answer": "48"
+      }
+    ],
+    "signature": {
+      "instructions": "Given a question, generate a step-by-step reasoning and provide the answer, similar to the examples provided in the task demos, where the model explains its thought process and arrives at a final answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

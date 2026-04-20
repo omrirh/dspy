@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `answer` and `reasoning` by following these steps:\n1. Carefully read and understand the question.\n2. Identify the key information and numbers provided.\n3. Determine the appropriate mathematical or logical operations needed to find the answer.\n4. Perform the necessary calculations and show the steps if the process is complex.\n5. Provide the final answer in a clear and concise format.\n6. Verify the answer by checking if it logically solves the problem presented in the question.\n7. Ensure all units and calculations are included in the `reasoning` field.\n8. Double-check that the answer directly addresses the question and is accurate.\n\nRemember to clearly outline your thought process in the `reasoning` field, and ensure that the `answer` is well-formatted and directly addresses the question.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Qwen2.5-7B-Instruct__medium__seed789__2026-04-18_22-19",
+  "seed": 789,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 76.0,
+  "runtime_opt_s": 520.6760909557343,
+  "runtime_eval_s": 22.79175329208374,
+  "total_metric_calls": 825,
+  "optimized_instructions": {
+    "generate_answer.predict": "### Instructions:\n1. **Analyze Petal Dimensions:**\n   - Use the petal length and width to rule out Iris-setosa if both are significantly smaller than the average setosa values (petal length < 1.5 cm, petal width < 0.2 cm).\n   - Consider Iris-versicolor if the petal dimensions are between the average setosa and virginica values.\n   - Consider Iris-virginica if both petal dimensions are larger than the average versicolor values (petal length > 4.3 cm, petal width > 1.4 cm).\n\n2. **Analyze Sepal Dimensions:**\n   - Use the sepal length and width to rule out Iris-setosa if both are significantly larger than the average setosa values (sepal length > 4.9 cm, sepal width > 3.0 cm).\n   - Consider Iris-versicolor if the sepal dimensions are between the average setosa and virginica values.\n   - Consider Iris-virginica if both sepal dimensions are larger than the average versicolor values (sepal length > 6.0 cm, sepal width > 2.5 cm).\n\n3. **Combine Inspections:**\n   - If the petal and sepal dimensions strongly suggest different species, prioritize the species indicated by the sepal dimensions, as they are more reliable for distinguishing between versicolor and virginica.\n   - If the petal and sepal dimensions are consistent, the prediction is more reliable.\n\n4. **Special Cases:**\n   - If both petal and sepal dimensions are close to the thresholds for differentiating species, prioritize the species indicated by the petal dimensions, as the petal measurements can be more indicative of species identity in borderline cases.\n\n5. **Output Format:**\n   - Provide a clear and concise answer for the iris species.\n   - Include a reasoning section that outlines how the dimensions were interpreted and the final conclusion.\n\n### Example:\n## Inputs\n### petal_length\n4.5\n\n### petal_width\n1.5\n\n### sepal_length\n6.2\n\n### sepal_width\n2.2\n\n## Generated Outputs\n### reasoning\nThe petal length (4.5 cm) and petal width (1.5 cm) are indicative of Iris-versicolor, as these measurements are within its typical range (petal length > 4.3 cm, petal width > 1.4 cm). The sepal length (6.2 cm) and sepal width (2.2 cm) are also consistent with Iris-versicolor, as they are within the average range for this species (sepal length > 6.0 cm, sepal width > 2.5 cm). Given that both petal and sepal dimensions strongly suggest Iris-versicolor, the species is confidently classified as versicolor.\n\n### answer\nversicolor"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 3
+}

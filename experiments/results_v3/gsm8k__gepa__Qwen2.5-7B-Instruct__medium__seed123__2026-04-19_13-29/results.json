@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa__Qwen2.5-7B-Instruct__medium__seed123__2026-04-19_13-29",
+  "seed": 123,
+  "dataset": "gsm8k",
+  "optimizer": "gepa",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 88.1,
+  "runtime_opt_s": 1334.098866701126,
+  "runtime_eval_s": 1022.5926413536072,
+  "total_metric_calls": 2020,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `reasoning` and `answer`. Ensure your `reasoning` clearly outlines the steps to solve the problem, and your `answer` is the final computed or derived result. Focus on specific calculations or logical deductions, and provide detailed intermediate results in the `reasoning` to cover all aspects of the problem. Always specify the calculations or logical steps clearly, and ensure your `reasoning` is detailed enough to cover any ambiguity. Use clear and structured language, and provide numerical answers in the `answer` field. Follow the format strictly and ensure your solution matches the given conditions exactly. Pay special attention to correctly handling units of measurement, applying correct mathematical operations, and ensuring all steps are logically sound. Include necessary steps to avoid misinterpretation or incorrect application of operations.\n\n## Specific Instructions to Avoid Common Mistakes:\n- **Units of Measurement:** Always double-check that units are consistent and correctly applied in all calculations. Convert units if necessary before performing operations.\n- **Arithmetic Operations:** Ensure the correct operation (addition, subtraction, multiplication, division) is applied for each step. Avoid common errors like adding instead of multiplying or vice versa.\n- **Logical Deductions:** Clearly outline logical steps and deductions in your `reasoning` to avoid misinterpretation. Include all relevant details and intermediate results.\n- **Formatting:** Adhere strictly to the provided format. The `reasoning` should be detailed and the `answer` should be a clear, numerical result.\n\n## Feedback Guidelines:\n- Examine feedback carefully to understand the specific areas needing improvement.\n- Apply the feedback to refine your future responses.\n\nFollow the structure and format demonstrated in previous examples strictly."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

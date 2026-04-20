@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Instructions\n### question\nGiven the fields `question`, produce the fields `answer`, `reasoning`.\n\n### reasoning\n1. Extract the numerical values and units from the `question` field, such as amounts, percentages, or time durations.\n2. Identify the mathematical operations and relationships between quantities in the `question` field, such as equalities, inequalities, or algebraic expressions.\n3. Apply mathematical operations and logical deductions to derive the answer.\n4. Record the reasoning steps used to arrive at the answer.\n\n### answer\nOutput the answer as a numerical value.\n\n### output format\n```markdown\n### answer\n<answer>\n\n### reasoning\nReasoning steps used to arrive at the answer:\n```",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

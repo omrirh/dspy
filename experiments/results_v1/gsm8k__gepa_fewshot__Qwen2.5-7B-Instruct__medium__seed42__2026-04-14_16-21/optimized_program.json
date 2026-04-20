@@ -1,0 +1,51 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "John needs to replace his shoes so he decides to buy a $150 pair of Nikes and a $120 pair of work boots.  Tax is 10%.  How much did he pay for everything?",
+        "reasoning": "First, we need to calculate the total cost of the shoes before tax, which is $150 for the Nikes and $120 for the work boots. Then, we calculate the 10% tax on the total cost and add it to the total cost to get the final amount paid.\n\nTotal cost of shoes before tax = $150 + $120 = $270.\nTax = 10% of $270 = 0.10 * $270 = $27.\nTotal cost with tax = $270 + $27 = $297.",
+        "answer": "$297"
+      },
+      {
+        "augmented": true,
+        "question": "Billy is breeding mice for an experiment. He starts with 8 mice, who each have 6 pups. When the pups grow up, all the mice have another 6 pups. Then each adult mouse eats 2 of their pups due to the stress of overcrowding. How many mice are left?",
+        "reasoning": "1. Initially, Billy has 8 mice.\n2. Each of the 8 mice has 6 pups, resulting in 8 * 6 = 48 pups.\n3. Adding the pups to the original mice, we get 8 + 48 = 56 mice.\n4. All 56 mice then have another 6 pups each, resulting in 56 * 6 = 336 pups.\n5. Adding these pups to the existing mice, we get 56 + 336 = 392 mice.\n6. Each of the 56 adult mice eats 2 of their pups, resulting in 56 * 2 = 112 pups eaten.\n7. Subtracting the eaten pups from the total, we are left with 392 - 112 = 280 mice.",
+        "answer": "280"
+      },
+      {
+        "augmented": true,
+        "question": "A tank contains 6000 liters of water, 2000 liters evaporated, and then 3500 liters were drained by Bob. How many liters are in the tank if it now rains for 30 minutes and every 10 minutes 350 liters of rain are added to the tank?",
+        "reasoning": "To determine the final amount of water in the tank, we need to follow the sequence of events:\n\n1. Start with the initial 6000 liters.\n2. Subtract the 2000 liters that evaporated.\n3. Subtract the 3500 liters that were drained by Bob.\n4. Add the amount of rain that falls over 30 minutes, noting that 350 liters are added every 10 minutes.\n\nLet's calculate the total rain added:\n- Rainfall rate: 350 liters/10 minutes\n- Total time: 30 minutes\n- Number of 10-minute intervals in 30 minutes: 30 / 10 = 3\n- Total rain added: 350 liters/interval * 3 intervals = 1050 liters\n\nThus, the calculation for the final amount of water is:\n6000 - 2000 - 3500 + 1050",
+        "answer": "6000 - 2000 - 3500 + 1050 = 1550 liters"
+      }
+    ],
+    "signature": {
+      "instructions": "Given the field `question`, produce the field `answer` by:\n1. Clearly identify and calculate all necessary values or steps, ensuring each step is logically and numerically accurate.\n2. Provide a detailed reasoning section, explaining each step of the calculation or logical deduction, and double-check all calculations for accuracy.\n3. Format the final answer in a clear and concise manner, ensuring it is presented as a single number or phrase, with appropriate units if applicable.\n4. For percentage calculations, always express the final result as a percentage with the '%' symbol.\n5. For word problems involving units, clearly state the units at each step and in the final answer.\n6. When solving multi-step problems, break down the problem systematically and solve each part separately, ensuring that each part is correctly calculated before moving to the next.\n7. Use a step-by-step approach to ensure all intermediate results are clearly stated and verified.\n8. Always double-check the consistency and logical flow of your solution, including the units and the final answer.\n9. When dealing with time, ensure that the time units are correctly converted and consistent throughout the calculation.\n10. For problems involving multiple entities, clearly define the variables and their relationships at the beginning of the reasoning section.\n11. Provide a clear summary in the reasoning to connect all intermediate steps logically to the final answer.\n12. Review the entire solution, including calculations and reasoning, to ensure accuracy and completeness before finalizing the answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

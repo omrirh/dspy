@@ -1,0 +1,658 @@
+{
+  "gsm8k|Llama-3.2-3B-Instruct|baseline": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 66.19,
+    "std_acc": 0.0,
+    "ci95_acc": 0.0,
+    "min_acc": 66.19,
+    "max_acc": 66.19,
+    "mean_opt_s": 0.0,
+    "std_opt_s": 0.0,
+    "median_opt_s": 0.0,
+    "min_opt_s": 0.0,
+    "max_opt_s": 0.0,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 66.19,
+      "1337": 66.19,
+      "42": 66.19,
+      "456": 66.19,
+      "789": 66.19
+    },
+    "per_seed_opt_s": {
+      "123": 0.0,
+      "1337": 0.0,
+      "42": 0.0,
+      "456": 0.0,
+      "789": 0.0
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|gepa": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 74.314,
+    "std_acc": 3.56866,
+    "ci95_acc": 4.43037,
+    "min_acc": 69.29,
+    "max_acc": 77.41,
+    "mean_opt_s": 515.0,
+    "std_opt_s": 287.1,
+    "median_opt_s": 603.2,
+    "min_opt_s": 10.6,
+    "max_opt_s": 730.5,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 69.29,
+      "1337": 72.02,
+      "42": 77.41,
+      "456": 75.44,
+      "789": 77.41
+    },
+    "per_seed_opt_s": {
+      "123": 10.586737155914307,
+      "1337": 594.9658737182617,
+      "42": 730.453122138977,
+      "456": 635.6810114383698,
+      "789": 603.2448980808258
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|gepa_fewshot": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 75.208,
+    "std_acc": 2.14317,
+    "ci95_acc": 2.66067,
+    "min_acc": 72.25,
+    "max_acc": 77.56,
+    "mean_opt_s": 801.6,
+    "std_opt_s": 83.7,
+    "median_opt_s": 760.9,
+    "min_opt_s": 706.8,
+    "max_opt_s": 892.9,
+    "mean_demos": 2.6,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 75.59,
+      "1337": 72.25,
+      "42": 77.56,
+      "456": 73.92,
+      "789": 76.72
+    },
+    "per_seed_opt_s": {
+      "123": 892.8988311290741,
+      "1337": 760.9470825195312,
+      "42": 706.7897412776947,
+      "456": 759.9253494739532,
+      "789": 887.2560398578644
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Llama-3.2-3B-Instruct|gepa_merge": {
+    "dataset": "gsm8k",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 72.692,
+    "std_acc": 1.95583,
+    "ci95_acc": 2.42809,
+    "min_acc": 70.74,
+    "max_acc": 75.36,
+    "mean_opt_s": 482.2,
+    "std_opt_s": 206.5,
+    "median_opt_s": 412.5,
+    "min_opt_s": 364.4,
+    "max_opt_s": 848.6,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 70.74,
+      "1337": 72.02,
+      "42": 75.36,
+      "456": 74.07,
+      "789": 71.27
+    },
+    "per_seed_opt_s": {
+      "123": 420.5543587207794,
+      "1337": 364.3981249332428,
+      "42": 364.99694895744324,
+      "456": 412.51207637786865,
+      "789": 848.6069622039795
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|baseline": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 74.0,
+    "std_acc": 0.0,
+    "ci95_acc": 0.0,
+    "min_acc": 74.0,
+    "max_acc": 74.0,
+    "mean_opt_s": 0.0,
+    "std_opt_s": 0.0,
+    "median_opt_s": 0.0,
+    "min_opt_s": 0.0,
+    "max_opt_s": 0.0,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 74.0,
+      "1337": 74.0,
+      "42": 74.0,
+      "456": 74.0,
+      "789": 74.0
+    },
+    "per_seed_opt_s": {
+      "123": 0.0,
+      "1337": 0.0,
+      "42": 0.0,
+      "456": 0.0,
+      "789": 0.0
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|gepa": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 83.866,
+    "std_acc": 2.94915,
+    "ci95_acc": 3.66127,
+    "min_acc": 81.43,
+    "max_acc": 88.1,
+    "mean_opt_s": 3511.2,
+    "std_opt_s": 4856.2,
+    "median_opt_s": 1401.9,
+    "min_opt_s": 1210.9,
+    "max_opt_s": 12197.0,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 88.1,
+      "1337": 85.82,
+      "42": 81.43,
+      "456": 81.8,
+      "789": 82.18
+    },
+    "per_seed_opt_s": {
+      "123": 1334.098866701126,
+      "1337": 12197.028614759445,
+      "42": 1411.827758550644,
+      "456": 1401.911093711853,
+      "789": 1210.889771938324
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|gepa_fewshot": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 84.854,
+    "std_acc": 2.06111,
+    "ci95_acc": 2.5588,
+    "min_acc": 82.79,
+    "max_acc": 87.04,
+    "mean_opt_s": 1353.6,
+    "std_opt_s": 96.7,
+    "median_opt_s": 1361.3,
+    "min_opt_s": 1227.5,
+    "max_opt_s": 1483.6,
+    "mean_demos": 2.6,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 87.04,
+      "1337": 82.79,
+      "42": 86.96,
+      "456": 84.46,
+      "789": 83.02
+    },
+    "per_seed_opt_s": {
+      "123": 1227.5086557865143,
+      "1337": 1300.4729931354523,
+      "42": 1483.5543231964111,
+      "456": 1395.312554359436,
+      "789": 1361.3439118862152
+    },
+    "per_seed_metric_calls": {}
+  },
+  "gsm8k|Qwen2.5-7B-Instruct|gepa_merge": {
+    "dataset": "gsm8k",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 84.596,
+    "std_acc": 3.91652,
+    "ci95_acc": 4.86222,
+    "min_acc": 79.08,
+    "max_acc": 89.31,
+    "mean_opt_s": 1212.3,
+    "std_opt_s": 427.9,
+    "median_opt_s": 1298.6,
+    "min_opt_s": 634.0,
+    "max_opt_s": 1645.4,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 89.31,
+      "1337": 82.49,
+      "42": 86.2,
+      "456": 85.9,
+      "789": 79.08
+    },
+    "per_seed_opt_s": {
+      "123": 1645.380851984024,
+      "1337": 1298.611225605011,
+      "42": 634.022463798523,
+      "456": 924.5950126647949,
+      "789": 1558.7855014801025
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Llama-3.2-3B-Instruct|baseline": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 36.0,
+    "std_acc": 0.0,
+    "ci95_acc": 0.0,
+    "min_acc": 36.0,
+    "max_acc": 36.0,
+    "mean_opt_s": 0.0,
+    "std_opt_s": 0.0,
+    "median_opt_s": 0.0,
+    "min_opt_s": 0.0,
+    "max_opt_s": 0.0,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 36.0,
+      "1337": 36.0,
+      "42": 36.0,
+      "456": 36.0,
+      "789": 36.0
+    },
+    "per_seed_opt_s": {
+      "123": 0.0,
+      "1337": 0.0,
+      "42": 0.0,
+      "456": 0.0,
+      "789": 0.0
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Llama-3.2-3B-Instruct|gepa": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 42.4,
+    "std_acc": 3.84708,
+    "ci95_acc": 4.77601,
+    "min_acc": 38.0,
+    "max_acc": 48.0,
+    "mean_opt_s": 191.1,
+    "std_opt_s": 26.5,
+    "median_opt_s": 190.0,
+    "min_opt_s": 164.5,
+    "max_opt_s": 233.6,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 42.0,
+      "1337": 44.0,
+      "42": 40.0,
+      "456": 38.0,
+      "789": 48.0
+    },
+    "per_seed_opt_s": {
+      "123": 174.21551823616028,
+      "1337": 233.62471318244934,
+      "42": 190.03043270111084,
+      "456": 192.95118618011475,
+      "789": 164.51838564872742
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Llama-3.2-3B-Instruct|gepa_fewshot": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 57.2,
+    "std_acc": 14.73771,
+    "ci95_acc": 18.29635,
+    "min_acc": 36.0,
+    "max_acc": 74.0,
+    "mean_opt_s": 188.5,
+    "std_opt_s": 45.6,
+    "median_opt_s": 175.7,
+    "min_opt_s": 150.4,
+    "max_opt_s": 266.9,
+    "mean_demos": 2.6,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 36.0,
+      "1337": 66.0,
+      "42": 60.0,
+      "456": 74.0,
+      "789": 50.0
+    },
+    "per_seed_opt_s": {
+      "123": 150.37635493278503,
+      "1337": 266.9263792037964,
+      "42": 165.93748378753662,
+      "456": 183.6600317955017,
+      "789": 175.72571516036987
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Llama-3.2-3B-Instruct|gepa_merge": {
+    "dataset": "iris",
+    "model": "Llama-3.2-3B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 46.4,
+    "std_acc": 2.96648,
+    "ci95_acc": 3.68278,
+    "min_acc": 42.0,
+    "max_acc": 50.0,
+    "mean_opt_s": 176.8,
+    "std_opt_s": 58.4,
+    "median_opt_s": 151.0,
+    "min_opt_s": 108.6,
+    "max_opt_s": 247.9,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 50.0,
+      "1337": 48.0,
+      "42": 46.0,
+      "456": 42.0,
+      "789": 46.0
+    },
+    "per_seed_opt_s": {
+      "123": 108.58285093307495,
+      "1337": 227.1830656528473,
+      "42": 247.87561631202698,
+      "456": 149.38356471061707,
+      "789": 151.00278735160828
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Qwen2.5-7B-Instruct|baseline": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "baseline",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 48.0,
+    "std_acc": 0.0,
+    "ci95_acc": 0.0,
+    "min_acc": 48.0,
+    "max_acc": 48.0,
+    "mean_opt_s": 0.0,
+    "std_opt_s": 0.0,
+    "median_opt_s": 0.0,
+    "min_opt_s": 0.0,
+    "max_opt_s": 0.0,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 48.0,
+      "1337": 48.0,
+      "42": 48.0,
+      "456": 48.0,
+      "789": 48.0
+    },
+    "per_seed_opt_s": {
+      "123": 0.0,
+      "1337": 0.0,
+      "42": 0.0,
+      "456": 0.0,
+      "789": 0.0
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Qwen2.5-7B-Instruct|gepa": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 84.0,
+    "std_acc": 7.74597,
+    "ci95_acc": 9.61635,
+    "min_acc": 76.0,
+    "max_acc": 94.0,
+    "mean_opt_s": 569.9,
+    "std_opt_s": 108.8,
+    "median_opt_s": 533.9,
+    "min_opt_s": 468.5,
+    "max_opt_s": 740.5,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 90.0,
+      "1337": 78.0,
+      "42": 94.0,
+      "456": 82.0,
+      "789": 76.0
+    },
+    "per_seed_opt_s": {
+      "123": 608.5371127128601,
+      "1337": 533.947172164917,
+      "42": 468.4822897911072,
+      "456": 740.5369157791138,
+      "789": 497.83150577545166
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Qwen2.5-7B-Instruct|gepa_fewshot": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_fewshot",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 85.2,
+    "std_acc": 6.26099,
+    "ci95_acc": 7.7728,
+    "min_acc": 76.0,
+    "max_acc": 92.0,
+    "mean_opt_s": 409.3,
+    "std_opt_s": 129.2,
+    "median_opt_s": 457.1,
+    "min_opt_s": 193.2,
+    "max_opt_s": 520.7,
+    "mean_demos": 2.8,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 88.0,
+      "1337": 82.0,
+      "42": 88.0,
+      "456": 92.0,
+      "789": 76.0
+    },
+    "per_seed_opt_s": {
+      "123": 193.23702335357666,
+      "1337": 481.3444435596466,
+      "42": 394.3358054161072,
+      "456": 457.080274105072,
+      "789": 520.6760909557343
+    },
+    "per_seed_metric_calls": {}
+  },
+  "iris|Qwen2.5-7B-Instruct|gepa_merge": {
+    "dataset": "iris",
+    "model": "Qwen2.5-7B-Instruct",
+    "optimizer": "gepa_merge",
+    "seeds_run": [
+      42,
+      123,
+      456,
+      789,
+      1337
+    ],
+    "n": 5,
+    "mean_acc": 82.4,
+    "std_acc": 4.97996,
+    "ci95_acc": 6.18245,
+    "min_acc": 78.0,
+    "max_acc": 90.0,
+    "mean_opt_s": 499.5,
+    "std_opt_s": 52.1,
+    "median_opt_s": 493.1,
+    "min_opt_s": 445.8,
+    "max_opt_s": 556.1,
+    "mean_demos": 0.0,
+    "mean_metric_calls": null,
+    "std_metric_calls": null,
+    "per_seed_scores": {
+      "123": 90.0,
+      "1337": 78.0,
+      "42": 84.0,
+      "456": 82.0,
+      "789": 78.0
+    },
+    "per_seed_opt_s": {
+      "123": 445.8420898914337,
+      "1337": 452.4432406425476,
+      "42": 493.14909863471985,
+      "456": 549.9077718257904,
+      "789": 556.0538976192474
+    },
+    "per_seed_metric_calls": {}
+  }
+}

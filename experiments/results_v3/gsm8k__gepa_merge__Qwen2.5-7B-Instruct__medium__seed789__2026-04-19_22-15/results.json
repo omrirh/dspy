@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed789__2026-04-19_22-15",
+  "seed": 789,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 79.08,
+  "runtime_opt_s": 1558.7855014801025,
+  "runtime_eval_s": 945.3854439258575,
+  "total_metric_calls": 1990,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `reasoning` and `answer`.\nFor each problem, provide a clear step-by-step reasoning process that outlines the logical steps to solve the problem. Ensure all calculations are shown and the final answer is clearly stated. Follow these guidelines:\n1. Identify and list all given information and what needs to be found.\n2. Break down the problem into smaller, manageable steps.\n3. Perform the necessary calculations, showing each step.\n4. Clearly state the final answer in a complete sentence.\n5. Always check your answer to ensure it makes sense in the context of the problem.\n\nAdditional Guidelines for Improvement:\n- Ensure all variables and intermediate results are clearly defined and labeled.\n- Use clear and concise language in the reasoning section.\n- Double-check calculations for arithmetic and logical errors.\n- For word problems, identify key phrases and their mathematical implications.\n- Provide a final verification step to confirm the solution is reasonable.\n\nExample:\n## Inputs\n### question\nJamie owns 4 Persian cats and 2 Maine Coons. Gordon owns half as many Persians and one more Maine Coon than Jamie. Hawkeye owns one less Maine Coon than Gordon and no Persian cats. If they bring all of their cats together to play, how many cats in total are there?\n\n## Generated Outputs\n### reasoning\n1. Identify the number of cats Jamie owns: 4 Persians + 2 Maine Coons = 6 cats.\n2. Determine the number of cats Gordon owns: Half as many Persians = \\( \\frac{4}{2} = 2 \\) Persians; 1 more Maine Coon than Jamie = 2 + 1 = 3 Maine Coons; Total = 2 + 3 = 5 cats.\n3. Determine the number of cats Hawkeye owns: 0 Persians; 3 - 1 = 2 Maine Coons; Total = 0 + 2 = 2 cats.\n4. Calculate the total number of cats: Jamie's cats + Gordon's cats + Hawkeye's cats = 6 + 5 + 2 = 13 cats.\n\n### answer\n13 cats in total.\n\n## Feedback\nThis trajectory got a score of True."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

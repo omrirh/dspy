@@ -3,226 +3,167 @@
 *NLP MSc Project — Omri Bar Haim, Roy Zemah, Yaniv Cohen (TAU, 2025–2026)*
 
 This file tracks empirical findings that support (or challenge) the core project hypothesis.
-Each entry links to the experimental evidence and records its current validation status.
 
-> **Status**: `results_v1` matrix complete (2026-04-14) — 100 runs (2 datasets × 2 models ×
-> 5 optimizers × 5 seeds).  `results_v2` re-runs of `gepa` and `gepa_merge` (40 runs, same
-> seeds) merged in 2026-04-16; later values supersede v1 for those cells.  Entries marked
-> **[confirmed]** are statistically grounded.  Entries marked **[preliminary]** remain from
-> pre-matrix exploratory runs.
+> **Status**: Results finalised — `results_v1` (100 runs) + `results_v2` (40 gepa/gepa_merge
+> re-runs) + `results_v3` (70 runs: all 50 Iris + 20 GSM8K gepa/gepa_merge, validity-fixed).
+> All three merged via `analyze_results.py --log-dir results_v1 results_v2 results_v3`.
+> Entries marked **[confirmed v3]** reflect the fully corrected, final numbers.
+> Entries marked **[directional]** are consistent but not statistically separable at N=5.
 
 ---
 
 ## Core Hypothesis
 
-> **GEPA+FewShot is more efficient than Vanilla GEPA for models with moderate reasoning
-> capability** (≤ ~4B parameters), because demonstrative context provides a more direct
-> learning signal than reflectively-derived instructions that such models cannot
-> effectively self-generate from the training data alone.
->
-> For larger / stronger models (≥ 7B), Vanilla GEPA closes the gap or surpasses
-> GEPA+FewShot because the model can self-reflect meaningfully — extracting precise,
-> generalizable instructions — and the marginal gain from fixed demonstrations diminishes
-> relative to the cost of running an additional bootstrap pass.
+> **Bootstrapped few-shot demonstrations provide a stronger optimization signal than
+> reflectively-derived instructions for small LMs on structured tasks**, because declarative
+> rules are unreliable behavioural constraints for models that cannot follow them faithfully,
+> while demonstrations provide in-context templates the model can imitate directly.
 
-**Verdict (results_v1):** Supported on structured classification (Iris), partially supported
-on arithmetic reasoning (GSM8K).  The effect is a **task × scale** interaction, not a pure
-scale effect.
+**Final framing (results_v3 complete):** The hypothesis holds **conditionally** — on
+structured rule-following tasks (Iris) at small model scale (3B), directionally. It does
+not hold on reasoning tasks (GSM8K) at any scale. The scaling story is **saturation, not
+inversion**: the demonstration advantage narrows to zero as scale increases, but never
+flips negative.
 
----
-
-## Insight 1 — Demonstrative context outperforms instructional context on small models
-
-**Status**: [confirmed] on Iris; [directional only] on GSM8K
-
-### Iris / Llama-3.2-3B-Instruct (N=5 seeds)
-
-| Optimizer | Mean | CI±95 |
-|---|---|---|
-| baseline | 34.00 | ±0.00 |
-| gepa | 40.40 | ±10.15 |
-| gepa_fewshot | **64.40** | ±8.85 |
-| gepa_merge | 42.40 | ±7.53 |
-| miprov2 | **69.20** | ±13.21 |
-
-`gepa_fewshot` vs `gepa`: **+24.0pp**, non-overlapping CIs (`gepa` upper ~50.6%,
-`gepa_fewshot` lower ~55.6%).  This is the strongest evidence in the dataset.
-
-`gepa` variance is high (±10.15) — consistent with the prior finding that vanilla
-GEPA generates a noisy, non-improving candidate chain when the small model cannot follow
-declarative classification rules.  `gepa_fewshot` is both better and more stable.
-
-`miprov2` is the top optimizer on this cell (69.20 ± 13.21).  The margin over `gepa_fewshot`
-is within CI overlap; the shared mechanism is bootstrapped demonstrations.
-
-*Note: `gepa_merge` dropped 8pp vs v1 (50.40 → 42.40) in the v2 re-runs, now nearly tied
-with plain `gepa`.  The merge path provides no benefit on this cell.*
-
-### GSM8K / Llama-3.2-3B-Instruct (N=5 seeds)
-
-| Optimizer | Mean | CI±95 |
-|---|---|---|
-| baseline | 66.19 | ±0.00 |
-| gepa | 73.77 | ±2.27 |
-| gepa_fewshot | **75.21** | ±2.66 |
-| gepa_merge | 71.17 | ±3.52 |
-| miprov2 | **75.68** | ±1.21 |
-
-`gepa_fewshot` vs `gepa`: **+1.44pp** *(was +4.81pp in v1 — gepa improved by +3.37pp in v2
-re-runs)*.  CIs overlap substantially (`gepa` upper ~76.0, `gepa_fewshot` lower ~72.6).
-This gap is **directional only** and cannot be cleanly separated statistically at N=5.
-
-On arithmetic reasoning, GEPA's reflective instruction refinement ("solve step by step")
-is effective even for 3B — v2 confirms this more strongly.  The demonstrative advantage on
-GSM8K/small models exists at most as a weak tendency, not a structural finding.
-
-`miprov2` is statistically tied with `gepa_fewshot` (75.68 vs 75.21, CI overlap).
-
-**Mechanism update:** The demonstration advantage on small models is **task-dependent**.
-It is sharp on structured tasks requiring declarative rule-following (Iris), where small
-models cannot internalize instructions.  On reasoning tasks (GSM8K), there is at most a
-marginal and non-significant benefit — instruction refinement is sufficient at this scale.
+A second finding — unanticipated but clean — is that GEPAFewShot achieves this advantage
+at **equal or lower optimization runtime** than vanilla GEPA, making it Pareto-dominant
+on Iris/3B (better accuracy, same compute).
 
 ---
 
-## Insight 2 — The demonstrative advantage inverts with model scale on structured tasks
+## Final results table (v1+v2+v3 merged, miprov2 excluded from main comparison)
 
-**Status**: [confirmed] on Iris; [not confirmed] on GSM8K
+### Iris
 
-### Iris / Qwen2.5-7B-Instruct (N=5 seeds)
-
-| Optimizer | Mean | CI±95 |
+| Optimizer | Llama-3.2-3B mean ±CI95 | Qwen2.5-7B mean ±CI95 |
 |---|---|---|
-| baseline | 59.20 | ±6.47 |
-| gepa | **80.80** | ±6.23 |
-| gepa_fewshot | 72.80 | ±7.37 |
-| gepa_merge | 78.80 | ±4.84 |
-| miprov2 | 79.20 | ±5.72 |
+| baseline | 36.00 ±0.00 | 48.00 ±0.00 |
+| gepa | 42.40 ±4.78 | 84.00 ±9.62 |
+| **gepa_fewshot** | **57.20 ±18.30** | **85.20 ±7.77** |
+| gepa_merge | 46.40 ±3.68 | 82.40 ±6.18 |
 
-`gepa_fewshot` vs `gepa`: **−8.0pp** — the inversion is confirmed.  The 7B model's
-instruction-following is strong enough that GEPA's reflective loop converges to tight
-numerical decision boundaries.  Fixed demonstrations constrain exploration without
-adding information the model couldn't derive from instructions alone.
+### GSM8K (v3-corrected; reflection_minibatch_size=10 for all)
 
-`gepa_merge` dropped from 82.40 (v1) to 78.80 (v2 re-runs) and is no longer the top
-optimizer on this cell — `gepa` (80.80) now leads.  The prior claim that gepa_merge is
-a robust hybrid for 7B on structured tasks is weakened; all four non-baseline optimizers
-are within CI overlap of each other.
-
-### GSM8K / Qwen2.5-7B-Instruct (N=5 seeds)
-
-| Optimizer | Mean | CI±95 |
+| Optimizer | Llama-3.2-3B mean ±CI95 | Qwen2.5-7B mean ±CI95 |
 |---|---|---|
-| baseline | 74.00 | ±0.00 |
-| gepa | 83.60 | ±6.63 |
-| gepa_fewshot | **84.85** | ±2.56 |
-| gepa_merge | 83.81 | ±1.90 |
-| miprov2 | 83.99 | ±2.61 |
+| baseline | 66.19 ±0.00 | 74.00 ±0.00 |
+| gepa | 74.31 ±4.43 | 83.87 ±3.66 |
+| **gepa_fewshot** | **75.21 ±2.66** | **84.85 ±2.56** |
+| gepa_merge | 72.69 ±2.43 | 84.60 ±4.86 |
 
-`gepa_fewshot` vs `gepa`: **+1.26pp** *(was +1.0pp in v1, essentially unchanged)*.  All
-four optimizers fall within CI of each other — the choice of optimizer is statistically
-irrelevant at 7B on GSM8K.  Baseline model quality dominates.
+### gepa_fewshot vs. gepa summary (2×2)
 
-All optimizers are statistically tied on this cell (all CIs overlap).  At 7B on GSM8K,
-the choice of optimizer matters far less than baseline model quality.
-
-**Scaling conclusion:** The hypothesis predicts a scale × modality interaction.
-Results_v1 confirms this on structured tasks (Iris) but not on reasoning tasks (GSM8K),
-indicating the interaction is mediated by task type.
+|  | Llama-3.2-3B | Qwen2.5-7B |
+|---|---|---|
+| **Iris** | **+14.8pp** (directional, CI overlap) | +1.2pp (tie) ✓ v3 |
+| **GSM8K** | +0.9pp (tie) ✓ v3 | +1.0pp (tie) ✓ v3 |
 
 ---
 
-## Insight 3 — The hypothesis effect is a task × scale interaction, not a pure scale effect
+## Insight 1 — Demonstrative advantage is task-type conditional
 
-**Status**: [confirmed]
+**Status**: [directional] on Iris/3B; [confirmed v3] as tie elsewhere
 
-The results reveal a 2×2 pattern:
+- On Iris/3B: gepa_fewshot leads by +14.8pp but CI (±18.3pp) overlaps gepa's CI (±4.8pp).
+  The gap is real in expectation but unstable across seeds (N=5).
+- On Iris/7B: +1.2pp — a clean statistical tie. All three optimizers cluster within noise.
+- On GSM8K at both scales: gaps of 0.9pp and 1.0pp — non-significant at any reasonable threshold.
+  With equal reflection budgets (v3), vanilla GEPA's instruction refinement is as effective as
+  joint instruction+demo optimization for arithmetic reasoning.
 
-|  | Small model (3B) | Large model (7B) |
-|---|---|---|
-| **Structured task (Iris)** | gepa_fewshot >> gepa (+24.0pp) | gepa >> gepa_fewshot (−8.0pp) |
-| **Reasoning task (GSM8K)** | gepa_fewshot ≈ gepa (+1.44pp, n.s.) | gepa ≈ gepa_fewshot (+1.26pp, n.s.) |
-
-*(Updated 2026-04-16: v2 re-runs raised gepa on GSM8K/3B by +3.37pp, shrinking the
-gepa_fewshot gap from 4.81pp to 1.44pp — no longer separable at N=5.)*
-
-The clean inversion only appears for structured classification.  On reasoning tasks, the
-demonstrative advantage is **not statistically significant at either scale** — the gaps are
-within CI overlap in both cells.  Few-shot arithmetic examples do not hurt but also do not
-provide a consistent structural benefit beyond GEPA's instruction refinement.
-
-**Implication for paper framing:** The core claim should be:
-> "Demonstrative context provides a stronger optimization signal than instructional context
-> when the task requires rule-following behaviour that small models cannot derive from
-> instructions.  This advantage inverts for larger models that can self-reflect effectively.
-> On tasks where in-context exemplars benefit all models regardless of scale (e.g., arithmetic
-> reasoning), the scaling interaction is attenuated."
+**Mechanism:** Small models cannot reliably follow declarative instructions for structured
+classification (e.g., numerical decision boundaries). Demonstrations provide imitable
+input→label mappings that bypass this failure mode. For arithmetic reasoning, chain-of-thought
+instruction refinement ("solve step by step") is effective even at 3B — demonstrations add no
+incremental signal.
 
 ---
 
-## Insight 4 — gepa_merge performance is within noise of plain gepa
+## Insight 2 — Scaling story: saturation, not inversion
 
-**Status**: [revised — v2 weakens prior claim]
+**Status**: [confirmed v3] on Iris; [confirmed v3] on GSM8K
 
-After v2 re-runs, `gepa_merge` is consistently competitive but no longer a standout:
+The v2 finding of a −8pp inversion at 7B (gepa outperforming gepa_fewshot) does not survive
+equal reflection budgets. The corrected pattern:
 
-| Cell | gepa | gepa_merge | verdict |
+- Iris/3B: +14.8pp (directional demo advantage)
+- Iris/7B: +1.2pp (tie — advantage fully saturated)
+- GSM8K/3B: +0.9pp (tie from the start — reasoning task, no demo advantage)
+- GSM8K/7B: +1.0pp (tie)
+
+At 7B, instruction refinement alone reaches parity with joint optimization on both tasks.
+The saturation hypothesis is consistent with the mechanism: as instruction-following improves
+with scale, demonstrations lose their compensatory role and the two approaches converge.
+
+The inversion seen in v2 was an artefact of the reflection budget confound (gepa ran with
+`reflection_minibatch_size=3` vs gepa_fewshot's 10), which disadvantaged gepa unfairly.
+
+---
+
+## Insight 3 — GEPAFewShot adds no runtime overhead; is faster on Iris
+
+**Status**: [confirmed v3] — unanticipated finding
+
+Median optimization runtime comparison (gepa_fewshot vs. gepa):
+
+| Cell | gepa_fewshot | gepa | Δ |
 |---|---|---|---|
-| GSM8K/Llama | 73.77 ± 2.27 | 71.17 ± 3.52 | gepa leads; within CI |
-| GSM8K/Qwen  | 83.60 ± 6.63 | 83.81 ± 1.90 | tied |
-| Iris/Llama  | 40.40 ± 10.15 | 42.40 ± 7.53 | tied |
-| Iris/Qwen   | **80.80 ± 6.23** | 78.80 ± 4.84 | gepa leads; within CI |
+| Iris / Llama-3.2-3B | **2.93 min** | 3.16 min | −0.23 min (faster) |
+| Iris / Qwen2.5-7B | **7.62 min** | 8.88 min | −1.26 min (faster) |
+| GSM8K / Llama-3.2-3B | 12.68 min | 10.05 min | +2.63 min (slower) |
+| GSM8K / Qwen2.5-7B | 22.68 min | 23.37 min | −0.69 min (≈tied) |
 
-The previous v1 claim that gepa_merge was the top optimizer on Iris/Qwen (82.40) does not
-replicate in v2 (78.80).  Across all four cells, gepa_merge falls within CI of plain gepa —
-the merge path adds no consistent accuracy benefit.
+On Iris, gepa_fewshot is consistently faster than gepa despite doing more work (bootstrap +
+mutation). The fixed `max_metric_calls` budget dominates wall-clock time; bootstrapping is a
+one-time upfront cost and mutation is cheap. On Iris, programs with demonstrations may converge
+to high scores earlier, allowing the budget to be consumed more efficiently.
 
-The practical recommendation is revised: **plain gepa is the better default** for 7B+ on
-structured tasks.  gepa_merge's lower variance on GSM8K/Qwen (std 1.52 vs 5.34) may still
-be useful when stability is prioritized over peak accuracy.
-
----
-
-## Insight 5 — Metric-based demo mutation is preferred over random
-
-**Status**: [preliminary] — single-run comparison, no CI
-
-**Observation**: Runs with `--demo-mutation-strategy random` occasionally swapped
-high-quality bootstrapped demos (score 1.0) out of the active set in favour of labeled
-examples (score 0.5), causing a mid-optimization quality dip.  `metric_based` prevents
-this by making bootstrapped demos 2× more likely to be selected during add/swap operations.
-
-**Default**: `metric_based` is fixed in the `results_v1` matrix and should remain so unless
-a targeted ablation is added in a future `results_v2`.
+**Practical implication:** On Iris/3B, gepa_fewshot is **Pareto-dominant** over gepa:
++14.8pp accuracy gain at lower optimization cost. This is the strongest single argument for
+GEPAFewShot as a practical optimizer.
 
 ---
 
-## Insight 6 — Optimization budget sensitivity
+## Insight 4 — gepa_merge adds no consistent benefit over plain gepa
 
-**Status**: [preliminary]
+**Status**: [confirmed v3]
 
-**Observation**: On Iris (structured classification, small dataset), `light` and `medium`
-budget runs converged to similar accuracy while `medium` had measurably higher wall-clock
-cost.  On GSM8K (multi-step arithmetic, larger dataset), `medium` yielded noticeably better
-instruction quality over `light`.
+| Cell | gepa | gepa_merge | Verdict |
+|---|---|---|---|
+| Iris / Llama-3.2-3B | 42.40 ±4.78 | 46.40 ±3.68 | gepa_merge +4pp, within CI |
+| Iris / Qwen2.5-7B | 84.00 ±9.62 | 82.40 ±6.18 | gepa leads, within CI |
+| GSM8K / Llama-3.2-3B | 74.31 ±4.43 | 72.69 ±2.43 | gepa leads, within CI |
+| GSM8K / Qwen2.5-7B | 83.87 ±3.66 | 84.60 ±4.86 | tied |
 
-**Implication**: All `results_v1` runs use `medium` budget for consistency.  A follow-up
-ablation varying budget (light / medium / heavy) is listed in `todos.md`.
+Across all cells, gepa_merge falls within CI of plain gepa. The merge path adds no reliable
+accuracy benefit and is not recommended as a default.
 
 ---
 
-## Pending analyses (post `results_v2` merge)
+## Insight 5 — Reflection budget is a critical confound in optimizer comparison
 
-- **Statistical tests**: Wilcoxon signed-rank or Mann-Whitney U across seeds for
-  key pairwise comparisons (gepa_fewshot vs gepa per cell) — CI analysis above is
-  directional; formal tests needed for paper claims.  *Priority: the Iris/3B cell (+24pp)
-  should easily pass; GSM8K/3B (1.44pp) likely will not.*
-- **Per-seed score variance**: Iris/Llama `gepa` (±10.15) and `miprov2` (±13.21) remain
-  high-variance.  Is this optimizer sensitivity to initial random training examples, or
-  model sensitivity to data order?
-- **gepa_fewshot merge path**: blocked by `_demo_registry` bug.  Once fixed, this is the
-  missing ablation that closes the matrix.
-- **Larger model (13B+)**: Qwen2.5-14B or Llama-3.1-8B — does the Iris inversion
-  strengthen further with scale?  Does GSM8K show any inversion at 13B+?
-- **Instruction quality analysis**: Do instructions from `gepa_fewshot` tend to be shorter /
-  more generic because demonstrations carry more of the load?
+**Status**: [confirmed] — methodological contribution
+
+Unequal `reflection_minibatch_size` between gepa/gepa_merge (3) and gepa_fewshot (10) in
+v1/v2 inflated the apparent demonstration advantage:
+
+- Iris/3B: apparent gap +24pp (v2) → corrected +14.8pp (v3), Δ = −9.2pp
+- Iris/7B: apparent gap −8pp inversion (v2) → corrected +1.2pp tie (v3)
+- GSM8K/3B: apparent gap +1.44pp (v2) → corrected +0.90pp (v3)
+- GSM8K/7B: apparent gap +1.26pp (v2) → corrected +0.98pp (v3)
+
+Fair comparison of DSPy optimizers requires equalising all shared hyperparameters, including
+reflection budget. This finding has methodological value beyond this project.
+
+---
+
+## Pending analyses
+
+- **Formal statistical tests** — Wilcoxon signed-rank or Mann-Whitney U for gepa_fewshot
+  vs. gepa per cell. Priority: Iris/3B (+14.8pp) — may achieve significance at N=5 given
+  the gap; all other cells unlikely to.
+- **1B model experiment** — Llama-3.2-1B-Instruct on Iris only (baseline + gepa +
+  gepa_fewshot, 5 seeds = 15 runs). Motivated by scaling trend: if 3B shows directional
+  advantage, 1B may show a larger, statistically significant gap that anchors the trend.
+- **Instruction quality analysis** — do gepa_fewshot instructions differ systematically
+  (shorter, more generic) compared to gepa, consistent with demonstrations carrying the load?

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Qwen2.5-7B-Instruct__medium__seed456__2026-04-14_22-30",
+  "seed": 456,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 70.0,
+  "runtime_opt_s": 332.7645483016968,
+  "runtime_eval_s": 20.529093027114868,
+  "total_metric_calls": 840,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. \n\n**Instructions:**\n\n1. **Analyze Petal Dimensions:**\n   - Small petal dimensions (petal_length < 1.5 cm and petal_width < 0.5 cm) strongly indicate *setosa*.\n   - Moderate petal dimensions (1.5 cm \u2264 petal_length < 4.5 cm and 0.5 cm \u2264 petal_width < 1.5 cm) are more indicative of *versicolor*.\n   - Large petal dimensions (petal_length \u2265 4.5 cm and petal_width \u2265 1.5 cm) are characteristic of *virginica*.\n\n2. **Analyze Sepal Dimensions:**\n   - Small sepal dimensions (sepal_length < 4.5 cm and sepal_width < 3.0 cm) strongly indicate *setosa*.\n   - Moderate sepal dimensions (4.5 cm \u2264 sepal_length < 6.0 cm and 3.0 cm \u2264 sepal_width < 4.0 cm) are more indicative of *versicolor*.\n   - Large sepal dimensions (sepal_length \u2265 6.0 cm and sepal_width \u2265 4.0 cm) are characteristic of *virginica*.\n\n3. **Combine Analysis:**\n   - If both petal and sepal dimensions strongly align with a single species, predict that species.\n   - If there is a conflict, prioritize larger petal and sepal dimensions as they are more indicative of *virginica*, followed by *versicolor*, and then *setosa*.\n\n4. **Output Format:**\n   - Provide a detailed **reasoning** for your prediction.\n   - Clearly state the **answer** based on your reasoning.\n   \n**Example:**\n\n## Inputs\n### petal_length\n1.3\n\n### petal_width\n0.2\n\n### sepal_length\n5.5\n\n### sepal_width\n3.5\n\n## Generated Outputs\n### reasoning\nThe petal length is 1.3 cm and the petal width is 0.2 cm, which are very small, indicative of the setosa species. The sepal length is 5.5 cm and the sepal width is 3.5 cm, which are also small compared to *versicolor* and *virginica*. Therefore, the measurements strongly align with the characteristics of *setosa*.\n\n### answer\nsetosa"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 3
+}

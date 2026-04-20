@@ -1,0 +1,72 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.2,
+        "petal_width": 0.2,
+        "sepal_length": 5.8,
+        "sepal_width": 4.0,
+        "reasoning": "The iris species was classified based on the measurements of the sepal and petal dimensions.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.7,
+        "petal_width": 0.5,
+        "sepal_length": 5.1,
+        "sepal_width": 3.3,
+        "reasoning": "The iris species can be identified based on the given petal and sepal dimensions. After analyzing the data, it appears that the measurements are consistent with the species Iris setosa.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+        "sepal_length": 4.6,
+        "sepal_width": 3.2,
+        "reasoning": "This prediction is based on the Iris dataset, where sepal length and width are more indicative of the species than petal dimensions.",
+        "answer": "setosa"
+      }
+    ],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\nfloat\n\n### petal_width\nfloat\n\n### sepal_length\nfloat\n\n### sepal_width\nfloat\n\n### labels\nchoice(['setosa', 'versicolor', 'virginica'])\n\n## Generate Prediction\n### reasoning\n1. Calculate the ratio of petal length to sepal length (petal_sepal_ratio).\n2. Compare petal_sepal_ratio to a threshold value (e.g., 0.5).\n3. Compare sepal length to a third threshold value (e.g., 5.5).\n4. Based on the combinations of these comparisons, assign a score (0, 1, or 2) to the input data.\n5. Use the scores to predict the Iris species.\n\n### answer\nchoice(['setosa', 'versicolor', 'virginica'])",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

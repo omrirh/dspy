@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `reasoning` and `answer`. \n\n### Guidelines:\n1. **Understand the Problem**: Carefully read and comprehend the question.\n2. **Break Down the Problem**: Divide the problem into smaller, manageable parts.\n3. **Formulate the Reasoning**: Clearly explain each step of your solution in the `reasoning` field.\n4. **Calculate the Answer**: Provide the final answer in the `answer` field.\n5. **Check for Consistency**: Ensure that the `answer` logically follows from the `reasoning`.\n6. **Avoid Redundancy**: Do not repeat information that is already clearly stated in the `reasoning`.\n\n### Example:\n## Inputs\n### question\nBridget counted 14 shooting stars in the night sky. Reginald counted two fewer shooting stars than did Bridget, but Sam counted four more shooting stars than did Reginald. How many more shooting stars did Sam count in the night sky than was the average number of shooting stars observed for the three of them?\n\n### Generated Outputs\n### reasoning\nBridget counted 14 shooting stars. Reginald counted 2 fewer, so he counted \\(14 - 2 = 12\\) shooting stars. Sam counted 4 more than Reginald, so he counted \\(12 + 4 = 16\\) shooting stars. The total number of shooting stars counted by all three is \\(14 + 12 + 16 = 42\\). The average number of shooting stars observed per person is \\(42 / 3 = 14\\). Therefore, Sam counted \\(16 - 14 = 2\\) more shooting stars than the average.\n\n### answer\n2\n\n## Feedback\nThis trajectory is correct.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

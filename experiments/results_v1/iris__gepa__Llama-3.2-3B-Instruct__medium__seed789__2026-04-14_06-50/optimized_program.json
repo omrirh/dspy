@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## DIAGNOSE and IMPROVE Iris Classification\n### petal_length\n### petal_width\n### sepal_length\n### sepal_width\n\n## OUTPUT\n### answer\n### reasoning\n\n## OUTPUT FORMAT\n- answer: one of 'setosa', 'versicolor', or 'virginica'\n- reasoning:\n    1. Compare petal lengths and widths:\n        - if both petal length and width are above 5.0, classify as 'virginica'\n        - if both petal length and width are below 3.0, classify as 'setosa'\n        - otherwise, assign petal length as the primary factor and width as secondary\n    2. Compare sepal lengths and widths:\n        - if both sepal length and width are above 5.5, classify as 'virginica'\n        - if both sepal length and width are below 2.0, classify as 'setosa'\n        - otherwise, assign sepal length as the primary factor and width as secondary\n    3. Evaluate petal and sepal length consistency:\n        - if primary factor (petal or sepal) is above 3.0 and secondary factor is below 2.0, reclassify\n    4. Verify sepal length and width consistency:\n        - if primary factor (petal or sepal) is above 3.0 and secondary factor is above 5.5, reclassify\n\n## FEEDBACK RULES\n- True: if the classification matches the expected outcome based on the provided reasoning.\n- False: if the classification does not match the expected outcome, and the provided reasoning contains at least one incorrect assumption or inconsistency.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

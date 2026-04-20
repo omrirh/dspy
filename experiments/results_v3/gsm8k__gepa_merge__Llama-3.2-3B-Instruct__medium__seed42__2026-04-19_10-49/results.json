@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Llama-3.2-3B-Instruct__medium__seed42__2026-04-19_10-49",
+  "seed": 42,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 75.36,
+  "runtime_opt_s": 364.99694895744324,
+  "runtime_eval_s": 793.0963270664215,
+  "total_metric_calls": 1940,
+  "optimized_instructions": {
+    "prog.predict": "## Instructions\n## Inputs\n### question\nProduce the field `answer` with the following format: an integer or a string based on the type of calculation performed.\n\n### reasoning\nProvide a clear and concise step-by-step reasoning for the calculation, including any relevant formulas, conversions, or assumptions made.\n\n### answer\nOutput the final answer as an integer or string, following the specified format.\n\n### Example Input/Output\nFor example:\n\"Given the fields `question` with `x + 3 = 5`, produce the fields `answer` with the solution `x = 2`.\"\n\nThis instruction aims to improve the assistant's performance by providing more detailed and structured reasoning for calculations, ensuring that the output is accurate and follows a consistent format."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

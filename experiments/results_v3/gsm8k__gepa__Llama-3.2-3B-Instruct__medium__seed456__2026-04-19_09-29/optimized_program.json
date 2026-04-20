@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### question\nGiven the fields `question`, produce the fields `answer`, where:\n- `answer` is the numerical solution to the problem if possible\n- `answer` is the final value calculated after following the step-by-step reasoning process\n- `answer` is the output format should be in the format of a number (e.g. 12, 3.14) or as a string of numbers separated by commas (e.g. \"1, 2, 3\") or as a simple expression (e.g. \"2x\") depending on the context of the problem\n- The reasoning process should provide explicit and detailed mathematical operations, conversions, or other steps required to solve the problem\n- Ensure all calculations are expressed with precision, avoiding implicit assumptions (e.g., explicitly specify rounding rules)\n- In complex calculations, provide intermediate steps to facilitate verification and correctness checks",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

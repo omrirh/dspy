@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__miprov2__Llama-3.2-3B-Instruct__medium__seed789__2026-04-13_23-18",
+  "seed": 789,
+  "dataset": "gsm8k",
+  "optimizer": "miprov2",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 76.95,
+  "runtime_opt_s": 566.8315522670746,
+  "runtime_eval_s": 467.23768734931946,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, provide a step-by-step reasoning for solving the problem by articulating the process of evaluation, calculation, and deduction, and then output the corresponding `answer`."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 5
+  },
+  "n_demos_total": 5,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1500,
+  "k_demos": 0
+}

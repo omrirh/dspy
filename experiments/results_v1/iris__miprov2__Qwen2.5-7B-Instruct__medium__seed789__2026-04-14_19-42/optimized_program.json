@@ -1,0 +1,79 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "petal_length": 1.4,
+        "petal_width": 0.1,
+        "sepal_length": 4.9,
+        "sepal_width": 3.6,
+        "reasoning": "The petal length and petal width are very small, indicating setosa. The sepal length and sepal width also support this classification.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 1.5,
+        "petal_width": 0.4,
+        "sepal_length": 5.1,
+        "sepal_width": 3.7,
+        "reasoning": "The petal length and petal width are relatively small, indicating it could be *setosa*. The sepal length and sepal width also support this classification, as these dimensions align more closely with the characteristics of *setosa* iris.",
+        "answer": "setosa"
+      },
+      {
+        "augmented": true,
+        "petal_length": 5.7,
+        "petal_width": 2.1,
+        "sepal_length": 6.7,
+        "sepal_width": 3.3,
+        "reasoning": "The petal length and petal width are relatively large, indicating a species with larger petals. The sepal length and sepal width also suggest a larger sepal, which is characteristic of the Iris virginica species.",
+        "answer": "virginica"
+      },
+      {
+        "sepal_length": 6.4,
+        "sepal_width": 2.8,
+        "petal_length": 5.6,
+        "petal_width": 2.2,
+        "answer": "virginica"
+      }
+    ],
+    "signature": {
+      "instructions": "As a botanist facing a critical extinction case, you must identify a rare but endangered Iris species from a set of floral specimens using only the petal and sepal dimensions provided. Given petal and sepal dimensions in cm, predict the iris species. Provide a step-by-step rationale for your prediction.\n\nThe petal length is [Petal Length (cm)].\nThe petal width is [Petal Width (cm)].\nThe sepal length is [Sepal Length (cm)].\nThe sepal width is [Sepal Width (cm)].\n\nReasoning: Let's think step by step in order to predict the iris species based on these critical measurements. Your reasoning should highlight any distinguishing features and provide a clear, logically sound justification for your prediction.\n\nAnswer: [Iris Species (setosa, versicolor, or virginica)]",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

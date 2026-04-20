@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_merge__Qwen2.5-7B-Instruct__medium__seed123__2026-04-14_21-26",
+  "seed": 123,
+  "dataset": "iris",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 82.0,
+  "runtime_opt_s": 581.0776634216309,
+  "runtime_eval_s": 24.030893087387085,
+  "total_metric_calls": 817,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. Ensure that the reasoning clearly indicates how each dimension contributes to the classification. Pay special attention to the following:\n\n1. The petal dimensions (length and width) should be the primary indicators for species classification, as they are more discriminative for Iris setosa and Iris versicolor.\n2. For Iris virginica, both petal and sepal dimensions should be considered, with a higher emphasis on petal characteristics due to their larger variance.\n3. If the petal dimensions clearly suggest a species, but the sepal dimensions suggest a different species, prioritize the petal measurements.\n4. Provide a clear and concise reasoning for the classification, including a summary of how each dimension influenced the decision.\n\n### Example\n## Inputs\n### petal_length\n1.5\n\n### petal_width\n0.2\n\n### sepal_length\n5.3\n\n### sepal_width\n3.7\n\n## Generated Outputs\n### reasoning\nThe petal length and petal width are relatively small, strongly suggesting Iris setosa. Although the sepal length and sepal width are indicative of Iris virginica, the petal measurements are much more specific and align closely with the characteristics of Iris setosa. The combination of a very small petal width and length, with a longer sepal, aligns closely with the characteristics of Iris setosa.\n\n### answer\nsetosa"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

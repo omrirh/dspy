@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\n{float}\n\n### petal_width\n{float}\n\n### sepal_length\n{float}\n\n### sepal_width\n{float}\n\n## Rules to Calculate Species\n- Calculate mean of petal length and width\n- Calculate mean of sepal length and width\n- Compare the mean petal length to the mean sepal length to determine if the sample is likely setosa or not\n- Compare the mean petal width to the mean sepal width to determine if the sample is likely setosa or not\n- If both means are less than the respective means of setosa, predict the sample is setosa\n- If both means are greater than the respective means of setosa, predict the sample is not setosa\n- If the sample's petal dimensions are smaller than its sepal dimensions, predict the sample is virginica if not setosa\n- Otherwise, predict the sample is versicolor\n\n## Output Format\n- Setosa: If the sample is predicted to be setosa, output: \"setosa\"\n- Virginica: If the sample is predicted to be virginica, output: \"virginica\"\n- Versicolor: If the sample is predicted to be versicolor, output: \"versicolor\"\n\n## Notes\n- If the sample's petal length or width is not provided, the algorithm may not work correctly. Provide both petal dimensions.\n- If the sample's sepal length and width are not provided, the algorithm may not work correctly. Provide both sepal dimensions.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Qwen2.5-7B-Instruct__medium__seed42__2026-04-18_22-00",
+  "seed": 42,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 88.0,
+  "runtime_opt_s": 394.3358054161072,
+  "runtime_eval_s": 21.13645911216736,
+  "total_metric_calls": 815,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species. Follow these steps for accurate classification:\n\n1. **Analyze Petal Dimensions**: Compare the petal length and width against the known ranges for Iris-setosa, Iris-versicolor, and Iris-virginica.\n    - Iris-setosa: Petal length \u2264 1.4 cm, Petal width \u2264 0.2 cm\n    - Iris-versicolor: Petal length \u2248 4.7-5.0 cm, Petal width \u2248 1.4-1.8 cm\n    - Iris-virginica: Petal length \u2265 4.9 cm, Petal width \u2265 1.8 cm\n\n2. **Analyze Sepal Dimensions**: Compare the sepal length and width against the known ranges for the species.\n    - Iris-setosa: Sepal length \u2264 5.0 cm, Sepal width \u2264 2.0 cm\n    - Iris-versicolor: Sepal length \u2248 5.8-6.6 cm, Sepal width \u2248 3.0-3.4 cm\n    - Iris-virginica: Sepal length \u2265 6.5 cm, Sepal width \u2265 3.0 cm\n\n3. **Combine Information**: Use the combined information from both petal and sepal dimensions to determine the most likely species. If the dimensions suggest multiple species, prioritize the species with the most distinctive features. When in doubt, favor the species that matches the majority of features more precisely.\n\n4. **Reasoning and Output**: Provide a detailed reasoning for your prediction, and clearly state the predicted iris species in the \"answer\" section.\n\n### Example Format\n```\n### reasoning\nDetailed reasoning for the prediction...\n\n### answer\npredicted_species\n```\n\n### Example Usage\n```python\n## Inputs\n### petal_length\n4.7\n\n### petal_width\n1.4\n\n### sepal_length\n7.0\n\n### sepal_width\n3.2\n\n## Generated Outputs\n### reasoning\nThe petal length of 4.7 cm and petal width of 1.4 cm align closely with the measurements of Iris-versicolor. The sepal length of 7.0 cm and sepal width of 3.2 cm also align more closely with Iris-virginica. However, given the slight overlap, the dimensions most closely match Iris-versicolor, especially considering the petal width of 1.4 cm, which is a more distinctive feature for Iris-versicolor than Iris-virginica.\n\n### answer\nversicolor\n```"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 3
+}

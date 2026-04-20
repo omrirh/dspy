@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\n### petal_width\n### sepal_length\n### sepal_width\n\n## Reasoning Steps\n1. Calculate the petal length to sepal length ratio (PLSLR) by dividing petal length by sepal length.\n2. Calculate the petal width to sepal width ratio (PWSWR) by dividing petal width by sepal width.\n3. Compare PLSLR and PWSWR to the known thresholds for each iris species:\n   - Setosa: PLSLR < 0.5, PWSWR < 0.5\n   - Versicolor: 0.5 <= PLSLR < 1.2, 0.5 <= PWSWR < 1.2\n   - Virginica: PLSLR >= 1.2, PWSWR >= 1.2\n\n## Output Format\nThe answer should be one of the three iris species: setosa, versicolor, or virginica.\n\n## Scoring\nThe task is scored as follows:\n- True: The generated answer matches the expected answer.\n- False: The generated answer does not match the expected answer.\n\n## Hints\n- Use `math` module to ensure precise division calculations.\n- Consider adding error handling for edge cases (e.g., division by zero).",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa__Qwen2.5-7B-Instruct__medium__seed789__2026-04-15_14-47",
+  "seed": 789,
+  "dataset": "gsm8k",
+  "optimizer": "gepa",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 74.45,
+  "runtime_opt_s": 1427.3071019649506,
+  "runtime_eval_s": 1075.791225194931,
+  "total_metric_calls": 2100,
+  "optimized_instructions": {
+    "prog.predict": "Given the fields `question`, produce the fields `reasoning` and `answer`. Ensure that the reasoning is clear and step-by-step, and the answer is presented clearly. Pay special attention to:\n1. Correctly interpreting the problem and identifying all necessary calculations.\n2. Clearly showing all calculations and intermediate steps.\n3. Providing the final answer in a well-formatted manner.\n4. Breaking down multi-step problems and explaining each step clearly.\n5. Verifying the logic and calculations to ensure each step logically follows from the previous one.\n\nIf the problem involves multiple steps, break them down and explain each step clearly. For each step, show the calculation and the result, and justify why the next step follows from the current one.\n\nFor feedback that indicates a mistake, re-examine the reasoning and calculations, and ensure each step logically follows from the previous one. Pay attention to units, proportions, and the context of the problem to avoid common errors."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa__Llama-3.2-3B-Instruct__medium__seed123__2026-04-15_08-55",
+  "seed": 123,
+  "dataset": "gsm8k",
+  "optimizer": "gepa",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 74.0,
+  "runtime_opt_s": 690.3930330276489,
+  "runtime_eval_s": 648.1815023422241,
+  "total_metric_calls": 1970,
+  "optimized_instructions": {
+    "prog.predict": "## Instructions\n### question\nGiven the fields `question`, produce the fields `answer`, `reasoning`.\n\n### reasoning\n1. Extract the numerical values and units from the `question` field, such as amounts, percentages, or time durations.\n2. Identify the mathematical operations and relationships between quantities in the `question` field, such as equalities, inequalities, or algebraic expressions.\n3. Apply mathematical operations and logical deductions to derive the answer.\n4. Record the reasoning steps used to arrive at the answer.\n\n### answer\nOutput the answer as a numerical value.\n\n### output format\n```markdown\n### answer\n<answer>\n\n### reasoning\nReasoning steps used to arrive at the answer:\n```"
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1319,
+  "k_demos": 0
+}

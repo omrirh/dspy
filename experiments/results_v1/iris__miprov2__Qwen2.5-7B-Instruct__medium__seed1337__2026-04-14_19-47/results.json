@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__miprov2__Qwen2.5-7B-Instruct__medium__seed1337__2026-04-14_19-47",
+  "seed": 1337,
+  "dataset": "iris",
+  "optimizer": "miprov2",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 72.0,
+  "runtime_opt_s": 220.40588402748108,
+  "runtime_eval_s": 12.168620586395264,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in centimeters, predict the species of the iris flower by providing a step-by-step reasoning process and the final answer."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 5
+  },
+  "n_demos_total": 5,
+  "train_size": 15,
+  "val_size": 35,
+  "test_size": 50,
+  "k_demos": 0
+}

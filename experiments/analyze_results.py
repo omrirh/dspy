@@ -301,12 +301,16 @@ def plot_score_comparison(records: list[dict], plot_dir: str, aggregate: bool = 
         )
         ax.set_title(f"Test Accuracy — {dataset} / {model}")
         ax.set_ylabel("Accuracy (%)")
-        top = min(105, max(scores) + max(stds or [0]) * 3 + 5)
-        ax.set_ylim(0, top)
+        # Zoom y-axis to data range to surface deltas between optimizers
+        max_err = max(stds) if stds else 0
+        padding = max(3.0, (max(scores) - min(scores)) * 0.4 + max_err)
+        bottom = max(0.0, min(scores) - padding)
+        top    = min(100.0, max(scores) + max_err * 1.5 + padding * 0.5)
+        ax.set_ylim(bottom, top)
         for bar, score in zip(bars, scores):
             ax.text(
                 bar.get_x() + bar.get_width() / 2,
-                bar.get_height() + max(stds or [0]) * 0.1 + 0.5,
+                bar.get_height() + max_err * 0.1 + 0.3,
                 f"{score:.1f}%",
                 ha="center", va="bottom", fontsize=8,
             )
@@ -317,24 +321,117 @@ def plot_score_comparison(records: list[dict], plot_dir: str, aggregate: bool = 
         print(f"Saved: {out}")
         plt.close(fig)
 
-    # Scatter: optimization runtime vs. accuracy
-    fig, ax = plt.subplots(figsize=(8, 5))
+    # Per-(dataset, model) accuracy vs. runtime line plots.
+    # Runtime = median across seeds (robust to slow-seed outliers).
+    # Each optimizer is a labeled point with a 95% CI error bar on accuracy.
+    # Points are connected left-to-right by runtime. One file per panel.
     markers = {"gepa": "o", "gepa_merge": "D", "gepa_fewshot": "s", "miprov2": "^", "baseline": "x"}
-    for opt, grp in df.groupby("optimizer"):
-        ax.scatter(
-            grp["runtime_opt_s"], grp["test_score"],
-            label=opt, marker=markers.get(opt, "o"),
-            color=optimizer_colors.get(opt, "gray"), s=80, alpha=0.8,
-        )
-    ax.set_xlabel("Optimization runtime (s)")
-    ax.set_ylabel("Test accuracy (%)")
-    ax.set_title("Accuracy vs. Optimization Cost")
-    ax.legend()
-    fig.tight_layout()
-    out = os.path.join(plot_dir, "accuracy_vs_runtime.png")
-    fig.savefig(out, dpi=150)
-    print(f"Saved: {out}")
-    plt.close(fig)
+
+    def _median(xs):
+        s = sorted(xs)
+        return s[len(s) // 2] if s else 0.0
+
+    # Collect per-panel stats for the gain plot below.
+    panel_opt_stats: dict[tuple, list] = {}
+
+    for (dataset, model), grp in df.groupby(["dataset", "model"]):
+        opt_stats = []
+        for opt, og in grp.groupby("optimizer"):
+            scores_opt = og["test_score"].dropna().tolist()
+            runtimes   = og["runtime_opt_s"].dropna().tolist()
+            if not scores_opt:
+                continue
+            mean_s  = _mean(scores_opt)
+            ci      = _ci95(scores_opt)
+            med_rt  = _median(runtimes) / 60.0 if runtimes else 0.0
+            opt_stats.append((med_rt, mean_s, ci, opt))
+
+        opt_stats.sort(key=lambda t: t[0])
+        panel_opt_stats[(dataset, model)] = opt_stats
+
+        fig, ax = plt.subplots(figsize=(7, 5))
+        rts  = [t[0] for t in opt_stats]
+        accs = [t[1] for t in opt_stats]
+        cis  = [t[2] for t in opt_stats]
+
+        ax.plot(rts, accs, color="#cccccc", linewidth=1.2, zorder=1)
+        for rt, acc, ci, opt in opt_stats:
+            ax.errorbar(
+                rt, acc, yerr=ci,
+                fmt=markers.get(opt, "o"),
+                color=optimizer_colors.get(opt, "gray"),
+                markersize=9, capsize=5, linewidth=1.5,
+                label=opt, zorder=2,
+            )
+
+        if accs:
+            pad = max(2.0, (max(accs) - min(accs)) * 0.4)
+            ax.set_ylim(max(0, min(accs) - pad - max(cis or [0])),
+                        min(100, max(accs) + pad + max(cis or [0])))
+
+        ax.set_xlabel("Median optimization runtime (min)")
+        ax.set_ylabel("Mean test accuracy (%)")
+        ax.set_title(f"Accuracy vs. Optimization Cost — {dataset} / {model}")
+        ax.grid(axis="y", linestyle="--", alpha=0.4)
+        ax.legend(loc="lower right", fontsize=9)
+        fig.tight_layout()
+        model_slug = model.replace("/", "_").replace("-", "_")
+        out = os.path.join(plot_dir, f"accuracy_vs_runtime_{dataset}_{model_slug}.png")
+        fig.savefig(out, dpi=150)
+        print(f"Saved: {out}")
+        plt.close(fig)
+
+    # Accuracy gain over baseline vs. runtime — one file per (dataset, model).
+    # X = median optimization runtime (min); Y = mean accuracy − baseline accuracy.
+    # Gain value annotated above each error bar; legend identifies optimizer by shape/colour.
+    for (dataset, model) in sorted(panel_opt_stats.keys()):
+        opt_stats    = panel_opt_stats[(dataset, model)]
+        baseline_acc = next((s for _, s, _, o in opt_stats if o == "baseline"), None)
+        if baseline_acc is None:
+            continue
+
+        gain_stats = [(rt, acc - baseline_acc, ci, opt)
+                      for rt, acc, ci, opt in opt_stats if opt != "baseline"]
+        gain_stats.sort(key=lambda t: t[0])
+
+        fig, ax = plt.subplots(figsize=(7, 5))
+
+        rts   = [t[0] for t in gain_stats]
+        gains = [t[1] for t in gain_stats]
+        cis   = [t[2] for t in gain_stats]
+
+        ax.axhline(0, color="#888888", linewidth=0.9, linestyle="--", label="baseline (0 pp)")
+        ax.plot(rts, gains, color="#cccccc", linewidth=1.2, zorder=1)
+
+        for rt, gain, ci, opt in gain_stats:
+            ax.errorbar(
+                rt, gain, yerr=ci,
+                fmt=markers.get(opt, "o"),
+                color=optimizer_colors.get(opt, "gray"),
+                markersize=10, capsize=5, linewidth=1.5,
+                label=f"{opt} (+{gain:.1f} pp)", zorder=2,
+            )
+            # Gain label placed just above the upper CI whisker, centred on the point
+            ax.text(rt, gain + ci + 0.8, f"+{gain:.1f}pp",
+                    ha="center", va="bottom", fontsize=8,
+                    color=optimizer_colors.get(opt, "gray"), fontweight="bold")
+
+        if gains:
+            pad = max(3.0, (max(gains) - min(gains)) * 0.4)
+            ax.set_ylim(min(gains) - pad - max(cis or [0]),
+                        max(gains) + pad + max(cis or [0]) + 4)
+
+        ax.set_xlabel("Median optimization runtime (min)")
+        ax.set_ylabel("Accuracy gain over baseline (pp)")
+        ax.set_title(f"Accuracy Gain over Baseline vs. Optimization Cost\n{dataset} / {model}")
+        ax.grid(axis="y", linestyle="--", alpha=0.4)
+        ax.legend(loc="lower right", fontsize=8)
+        fig.tight_layout()
+        model_slug = model.replace("/", "_").replace("-", "_")
+        out = os.path.join(plot_dir, f"accuracy_gain_vs_runtime_{dataset}_{model_slug}.png")
+        fig.savefig(out, dpi=150)
+        print(f"Saved: {out}")
+        plt.close(fig)
 
 
 # ---------------------------------------------------------------------------
@@ -350,6 +447,12 @@ def main(args):
         print(f"Loaded from {len(log_dirs)} directories (later dirs override earlier for same cell):")
         for d in log_dirs:
             print(f"  {d}")
+
+    if args.without:
+        exclude = {o.strip() for o in args.without.split(",")}
+        before = len(records)
+        records = [r for r in records if r["optimizer"] not in exclude]
+        print(f"Excluded optimizers {exclude}: {before - len(records)} runs dropped, {len(records)} remaining.")
 
     if args.aggregate:
         stats = aggregate_by_group(records)
@@ -398,5 +501,8 @@ if __name__ == "__main__":
                         help="Directory to save comparison plots.")
     parser.add_argument("--show-instructions", action="store_true",
                         help="Print optimized instructions for each run.")
+    parser.add_argument("--without", default=None, metavar="OPTS",
+                        help="Comma-separated optimizer names to exclude from all output "
+                             "(table, stats, plots). E.g. 'miprov2' or 'miprov2,gepa_merge'.")
     args = parser.parse_args()
     main(args)

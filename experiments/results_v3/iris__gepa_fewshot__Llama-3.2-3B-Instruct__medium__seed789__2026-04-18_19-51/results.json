@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa_fewshot__Llama-3.2-3B-Instruct__medium__seed789__2026-04-18_19-51",
+  "seed": 789,
+  "dataset": "iris",
+  "optimizer": "gepa_fewshot",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 50.0,
+  "runtime_opt_s": 175.72571516036987,
+  "runtime_eval_s": 10.878086566925049,
+  "total_metric_calls": 815,
+  "optimized_instructions": {
+    "generate_answer.predict": "## Inputs\n### petal_length\nfloat\n\n### petal_width\nfloat\n\n### sepal_length\nfloat\n\n### sepal_width\nfloat\n\n### labels\nchoice(['setosa', 'versicolor', 'virginica'])\n\n## Generate Prediction\n### reasoning\n1. Calculate the ratio of petal length to sepal length (petal_sepal_ratio).\n2. Compare petal_sepal_ratio to a threshold value (e.g., 0.5).\n3. Compare sepal length to a third threshold value (e.g., 5.5).\n4. Based on the combinations of these comparisons, assign a score (0, 1, or 2) to the input data.\n5. Use the scores to predict the Iris species.\n\n### answer\nchoice(['setosa', 'versicolor', 'virginica'])"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 3
+  },
+  "n_demos_total": 3,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 3
+}

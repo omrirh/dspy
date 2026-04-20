@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the petal and sepal dimensions in cm, predict the iris species. Follow these steps:\n\n1. **Analyze Petal Dimensions**:\n   - Iris setosa: Petal length < 1.5 cm, Petal width < 0.3 cm\n   - Iris versicolor: Petal length 1.5-5.0 cm, Petal width 0.3-1.8 cm\n   - Iris virginica: Petal length > 4.5 cm, Petal width > 1.5 cm\n\n2. **Analyze Sepal Dimensions**:\n   - Iris setosa: Sepal length < 5.0 cm, Sepal width < 3.5 cm\n   - Iris versicolor: Sepal length 4.5-6.5 cm, Sepal width 1.4-2.5 cm\n   - Iris virginica: Sepal length > 6.5 cm, Sepal width > 2.5 cm\n\n3. **Combine Observations**:\n   - Iris setosa: Identify by its short and narrow petals and small sepal dimensions.\n   - Iris versicolor: Moderate dimensions for both petals and sepals.\n   - Iris virginica: Largest and is characterized by long petals and wide sepals.\n   - When dimensions overlap, consider the overall pattern and typical ranges. \n   - Prioritize petal dimensions for Iris setosa as they provide a more definitive classification.\n   - For borderline cases, use the closest typical dimensions of the species.\n\n4. **Output Format**:\n   - Provide a clear and concise answer in the format: `### answer [species]`\n   - Include a brief reasoning in the format: `### reasoning [description of petal and sepal dimensions and their implications]`\n\n### Key Considerations:\n- Be cautious of the upper and lower boundaries for each species, as overlapping dimensions may require careful consideration.\n- Use the provided ranges to make a well-informed decision, but consider the overall pattern of dimensions together.\n\n### Additional Hints:\n- For borderline cases, consider the closest typical dimensions of the species.\n- If both petal and sepal dimensions overlap, prioritize the petal dimensions as they provide a more definitive classification for Iris setosa.\n\n### Example\n## Inputs\n### petal_length\n5.1\n\n### petal_width\n2.3\n\n### sepal_length\n6.9\n\n### sepal_width\n3.1\n\n## Generated Outputs\n### reasoning\nThe petal length is 5.1 cm and the petal width is 2.3 cm, which are indicative of the Iris virginica species, as they exceed the typical dimensions of both Iris setosa and Iris versicolor. The sepal length is 6.9 cm and the sepal width is 3.1 cm, which also align with the larger dimensions of Iris virginica. These combined petal and sepal dimensions strongly suggest that the sample belongs to the Iris virginica species.\n\n### answer\nvirginica",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## New Instruction\n## Inputs\n### petal_length\n### petal_width\n### sepal_length\n### sepal_width\n## Output Format\n### answer (setosa|versicolor|virginica)\n## Output Ranges\n### - Sepal length: 4.0-7.5 cm\n### - Sepal width: 2.0-4.0 cm\n### - Petal length: 1.0-5.0 cm\n### - Petal width: 0.1-1.5 cm\n## Scoring Rules\n### - setosa: petal_length > 4.0, petal_width < 1.3\n### - versicolor: 4.0 <= petal_length <= 5.0, petal_width >= 1.3 and petal_width <=1.7\n### - virginica: petal_length > 5.0 or (petal_length >= 4.0 and petal_width > 1.7)",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

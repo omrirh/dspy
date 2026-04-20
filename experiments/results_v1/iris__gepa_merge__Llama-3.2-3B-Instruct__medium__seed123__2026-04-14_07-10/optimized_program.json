@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Diagnose and Improve Iris Classification\n\n## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Generate Classification\n1. Compare the average petal length and width to thresholds for each species:\n   - Setosa: average petal length < 1.2, average petal width < 0.6\n   - Versicolor: average petal length < 2.5, average petal width < 1.8\n   - Virginica: average petal length < 4.0, average petal width < 2.2\n2. Calculate the sepal length and width ratios to Iris Versicolor and Virginica:\n   - Versicolor: sepal length < 5.5, sepal width < 4.0\n   - Virginica: sepal length < 6.3, sepal width < 4.3\n3. Classify the iris species based on the calculated thresholds and ratios.\n\n## Reasoning\n- **Calculate average petal dimensions**: (petal_length + petal_width) / 2\n- **Check petal length and width thresholds**: If average petal dimensions meet Setosa, Versicolor, or Virginica thresholds, assign species accordingly.\n- **Calculate sepal length and width ratios**: sepal_length / 5.5, sepal_width / 4.0 for Versicolor, and sepal_length / 6.3, sepal_width / 4.3 for Virginica.\n- **Determine predicted iris species**: Based on petal and sepal ratio comparisons.\n\n## Format Output\nThe output will be a string indicating the predicted iris species.\n\n## Feedback\nPlease provide the new classification results with a score of True or False to assess the performance of this instruction.",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

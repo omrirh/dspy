@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__gepa__Qwen2.5-7B-Instruct__medium__seed123__2026-04-15_19-00",
+  "seed": 123,
+  "dataset": "iris",
+  "optimizer": "gepa",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 86.0,
+  "runtime_opt_s": 583.769775390625,
+  "runtime_eval_s": 26.634315967559814,
+  "total_metric_calls": 835,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species.\n\n## Guidelines:\n1. Use the provided dimensions to determine the species of the iris.\n2. **Preserve** the strategy of comparing measurements to known ranges for Iris setosa, versicolor, and virginica.\n3. **Specify** the following steps:\n   - **Petal Length and Width**: Iris setosa has petal lengths less than 1.5 cm and widths less than 0.3 cm. Iris versicolor has petal lengths between 4.5-5.5 cm and widths between 1.4-1.8 cm. Iris virginica has petal lengths greater than 5 cm and widths greater than 1.8 cm.\n   - **Sepal Length and Width**: Iris setosa has sepal lengths less than 5 cm and widths less than 3 cm. Iris versicolor has sepal lengths between 5-6 cm and widths between 2.5-3.5 cm. Iris virginica has sepal lengths greater than 6 cm and widths greater than 3 cm.\n4. **Output Format**: Provide a clear `reasoning` section explaining your conclusion and an `answer` indicating the predicted species (setosa, versicolor, or virginica).\n\n## Example\n\n## Inputs\n### petal_length\n5.8\n\n### petal_width\n1.8\n\n### sepal_length\n6.7\n\n### sepal_width\n2.5\n\n## Generated Outputs\n### reasoning\nBased on the provided measurements, the petal length is 5.8 cm, the petal width is 1.8 cm, the sepal length is 6.7 cm, and the sepal width is 2.5 cm. These dimensions are characteristic of the Iris virginica species, as the petal length and width exceed the typical ranges for setosa and versicolor, and the sepal length and width are notably larger than those of setosa and versicolor but smaller than those of virginica.\n\n### answer\nvirginica"
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

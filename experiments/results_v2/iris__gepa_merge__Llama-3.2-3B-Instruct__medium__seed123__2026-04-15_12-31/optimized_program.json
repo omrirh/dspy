@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Inputs\n### petal_length\n numeric value\n\n### petal_width\n numeric value\n\n### sepal_length\n numeric value\n\n### sepal_width\n numeric value\n\n## Generated Outputs\n### reasoning\nBased on the petal and sepal dimensions, this prediction is categorized into three species of iris: setosa, versicolor, and virginica.\n\n- **Setosa**: petal length < 1.5 cm and/or petal width < 0.3 cm, and sepal length < 5.0 cm and/or sepal width < 3.0 cm\n- **Versicolor**: 1.5 cm ≤ petal length < 4.0 cm and/or 0.3 cm ≤ petal width < 1.3 cm, and 5.0 cm ≤ sepal length < 6.3 cm and/or 3.0 cm ≤ sepal width < 4.3 cm\n- **Virginica**: 4.0 cm ≤ petal length < 6.9 cm and/or 1.3 cm ≤ petal width < 2.5 cm, and 6.3 cm ≤ sepal length < 7.9 cm and/or 4.3 cm ≤ sepal width < 5.1 cm\n\n### answer\nif petal_length < 1.5 or petal_width < 0.3 or sepal_length < 5.0 or sepal_width < 3.0:\n    answer = \"setosa\"\nelif petal_length >= 1.5 and petal_length <= 4.0 and petal_width >= 0.3 and petal_width <= 1.3 and sepal_length >= 5.0 and sepal_length <= 6.3 and sepal_width >= 3.0 and sepal_width <= 4.3:\n    answer = \"versicolor\"\nelse:\n    answer = \"virginica\"\n\n### classification_scores\nclassification_scores = {\n    \"setosa\": (petal_length < 1.5) + (petal_width < 0.3) + (sepal_length < 5.0) + (sepal_width < 3.0),\n    \"versicolor\": (1.5 <= petal_length) + (0.3 <= petal_width) + (5.0 <= sepal_length) + (6.3 <= sepal_length) + (3.0 <= sepal_width) + (4.3 <= sepal_width),\n    \"virginica\": (petal_length >= 4.0) + (petal_width <= 1.3) + (6.3 <= sepal_length) + (7.9 >= sepal_length) + (petal_width <= 2.5) + (4.3 <= sepal_width)\n}\n\n### classification_result\nresult = []\nfor species, score in classification_scores.items():\n    result.append((species, score))\nclassification_result = \", \".join(f\"{species}: {score}\" for species, score in result)\n\n### feedback\nfeedback = \"False\" if classification_result != \"versicolor\" else \"True\"",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

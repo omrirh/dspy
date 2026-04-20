@@ -1,0 +1,23 @@
+{
+  "run_tag": "gsm8k__gepa_merge__Qwen2.5-7B-Instruct__medium__seed42__2026-04-14_14-25",
+  "seed": 42,
+  "dataset": "gsm8k",
+  "optimizer": "gepa_merge",
+  "model": "Qwen2.5-7B-Instruct",
+  "auto": "medium",
+  "test_score": 83.62,
+  "runtime_opt_s": 814.2863736152649,
+  "runtime_eval_s": 914.9703099727631,
+  "total_metric_calls": 2102,
+  "optimized_instructions": {
+    "prog.predict": "## Instruction for the Assistant\n\nWhen performing calculations, ensure that you:\n1. Clearly state the formula or method you are using.\n2. Perform calculations step-by-step, showing the intermediate results.\n3. Double-check your arithmetic and unit consistency.\n4. Provide a final answer in a clear and concise manner.\n\n### Examples to Follow\n\n#### Example 1: Contestants at a Singing Competition\n\n**Inputs:**\n- Question: A third of the contestants at a singing competition are female, and the rest are male. If there are 18 contestants in total, how many of them are male?\n\n**Reasoning:**\n1. Calculate the number of female contestants: \\(\\frac{1}{3} \\times 18 = 6\\).\n2. Calculate the number of male contestants: \\(18 - 6 = 12\\).\n\n**Answer:**\n- Number of male contestants: 12.\n\n#### Example 2: Soup Donation\n\n**Inputs:**\n- Question: Mark donates soup to the 6 homeless shelters. Each one services 30 people, and he decides to buy 10 cans of soup per person. How many cans of soup does Mark donate?\n\n**Reasoning:**\n1. Calculate the total number of people: \\(6 \\times 30 = 180\\).\n2. Calculate the total number of cans: \\(180 \\times 10 = 1800\\).\n\n**Answer:**\n- Total cans of soup donated: 1800.\n\n#### Example 3: Spanish Test Scores\n\n**Inputs:**\n- Question: The average score on last week's Spanish test was 90. Marco scored 10% less than the average test score, and Margaret received 5 more points than Marco. What score did Margaret receive on her test?\n\n**Reasoning:**\n1. Calculate Marco's score: \\(90 - (0.10 \\times 90) = 90 - 9 = 81\\).\n2. Calculate Margaret's score: \\(81 + 5 = 86\\).\n\n**Answer:**\n- Margaret's score: 86.\n\n### Feedback Improvement\n\n1. **Time Calculation Errors:**\n   - Ensure you correctly interpret the time units and conversions.\n   - Double-check the arithmetic in time-related problems.\n\n2. **Commuting Problem Analysis:**\n   - Break down the problem into smaller, manageable parts.\n   - Verify the time reductions and additions correctly.\n\n### New Guidelines\n\n1. **Time Units:**\n   - Always verify the unit consistency, especially when dealing with time.\n   - Ensure all time calculations are correctly converted and added/subtracted.\n\n2. **Commuting Problem Steps:**\n   - Calculate each commute type separately.\n   - Sum up the weekly commute times accurately.\n\n3. **General Steps:**\n   - Clearly outline the method or formula for each step.\n   - Show all intermediate results.\n   - Double-check each calculation for accuracy.\n\n4. **Output:**\n   - Present the final answer clearly and concisely.\n   - Include all relevant steps for transparency and clarity.\n\n### Example: Biking and Bus Commute\n\n**Inputs:**\n- Question: To get to work, Ryan bikes one day a week, takes the bus three times a week, and gets a ride from a friend once a week. It takes him thirty minutes to bike to work. The bus takes ten minutes longer since it stops at every bus stop for other passengers. His friend driving him is the fastest and cuts two-thirds off his biking time. How many minutes does he spend every week commuting to work?\n\n**Reasoning:**\n1. Calculate the time it takes to bike: \\(30 \\, \\text{minutes}\\).\n2. Calculate the time it takes to take the bus: \\(30 \\, \\text{minutes} + 10 \\, \\text{minutes} = 40 \\, \\text{minutes}\\).\n3. Calculate the time it takes to get a ride from his friend: \\(30 \\, \\text{minutes} \\times \\left(1 - \\frac{2}{3}\\right) = 30 \\, \\text{minutes} \\times \\frac{1}{3} = 10 \\, \\text{minutes}\\).\n4. Calculate the total weekly commute time: \n   - Bike commute: \\(30 \\, \\text{minutes} \\times 1 \\, \\text{day/week} = 30 \\, \\text{minutes/week}\\)\n   - Bus commute: \\(40 \\, \\text{minutes/ride} \\times 3 \\, \\text{rides/week} = 120 \\, \\text{minutes/week}\\)\n   - Friend's ride: \\(10 \\, \\text{minutes/ride} \\times 1 \\, \\text{ride/week} = 10 \\, \\text{minutes/week}\\)\n   - Total: \\(30 + 120 + 10 = 160 \\, \\text{minutes/week}\\).\n\n**Answer:**\n- Total weekly commuting time: 160 minutes."
+  },
+  "demos_per_predictor": {
+    "prog.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 100,
+  "val_size": 250,
+  "test_size": 1500,
+  "k_demos": 0
+}

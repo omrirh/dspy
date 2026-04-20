@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__baseline__Llama-3.2-3B-Instruct__medium__seed456__2026-04-18_18-56",
+  "seed": 456,
+  "dataset": "iris",
+  "optimizer": "baseline",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 36.0,
+  "runtime_opt_s": 0.0,
+  "runtime_eval_s": 0.45629286766052246,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "generate_answer.predict": "Given the petal and sepal dimensions in cm, predict the iris species."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 0
+  },
+  "n_demos_total": 0,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

@@ -1,0 +1,23 @@
+{
+  "run_tag": "iris__miprov2__Llama-3.2-3B-Instruct__medium__seed42__2026-04-18_18-56",
+  "seed": 42,
+  "dataset": "iris",
+  "optimizer": "miprov2",
+  "model": "Llama-3.2-3B-Instruct",
+  "auto": "medium",
+  "test_score": 64.0,
+  "runtime_opt_s": 128.9267179965973,
+  "runtime_eval_s": 7.011035442352295,
+  "total_metric_calls": null,
+  "optimized_instructions": {
+    "generate_answer.predict": "Please provide the petal and sepal dimensions in cm, and the language model will predict the iris species (setosa, versicolor, or virginica) based on these measurements."
+  },
+  "demos_per_predictor": {
+    "generate_answer.predict": 5
+  },
+  "n_demos_total": 5,
+  "train_size": 15,
+  "val_size": 25,
+  "test_size": 50,
+  "k_demos": 0
+}

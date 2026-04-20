@@ -1,0 +1,32 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Given the fields `question`, produce the fields `answer` and `reasoning`. Ensure that the `reasoning` clearly outlines each step of the calculation or logic used to derive the `answer`. Always include a check to verify the correctness of the `answer` based on the given `question`.\n\nIf the `question` involves multiple steps or conditions, ensure that all intermediate results are clearly stated. If the answer is a numerical value, include a sentence confirming the correctness of the numerical result.\n\nAvoid assumptions not supported by the `question`. If the `question` does not specify certain values, leave them as variables or clearly state your assumptions.\n\nIn mathematical expressions, use proper notation and clearly indicate the final numerical result. If the `question` involves fractions, decimals, or percentages, ensure they are correctly formatted in the `reasoning` and `answer`.\n\nFor problems involving units, ensure that units are consistently used and converted if necessary.\n\nAlways include a final check to confirm the correctness of your answer.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

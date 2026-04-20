@@ -1,0 +1,51 @@
+{
+  "prog.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "question": "Betty and Dora started making some cupcakes at the same time. Betty makes 10 cupcakes every hour and Dora makes 8 every hour. If Betty took a two-hour break, what is the difference between the number of cupcakes they made after 5 hours?",
+        "reasoning": "To find the difference between the number of cupcakes they made, we first need to calculate the number of cupcakes each made in 5 hours. Since Betty took a 2-hour break, she worked for 5 - 2 = 3 hours. Dora worked for 5 hours without any breaks. \n\nWe can calculate the total number of cupcakes Betty makes in 3 hours by multiplying the number of cupcakes she makes per hour by the number of hours she worked: 10 cupcakes/hour * 3 hours = 30 cupcakes.\n\nSimilarly, we can calculate the total number of cupcakes Dora makes in 5 hours by multiplying the number of cupcakes she makes per hour by the number of hours she worked: 8 cupcakes/hour * 5 hours = 40 cupcakes.\n\nNow, we can find the difference between the number of cupcakes they made: 40 cupcakes - 30 cupcakes = 10 cupcakes.",
+        "answer": "10 cupcakes"
+      },
+      {
+        "augmented": true,
+        "question": "Betty and Dora started making some cupcakes at the same time. Betty makes 10 cupcakes every hour and Dora makes 8 every hour. If Betty took a two-hour break, what is the difference between the number of cupcakes they made after 5 hours?",
+        "reasoning": "To find the difference between the number of cupcakes they made, we first need to calculate the number of cupcakes each made in 5 hours. Since Betty took a 2-hour break, she worked for 5 - 2 = 3 hours. Dora worked for 5 hours without any breaks. \n\nWe can calculate the total number of cupcakes Betty makes in 3 hours by multiplying the number of cupcakes she makes per hour by the number of hours she worked: 10 cupcakes/hour * 3 hours = 30 cupcakes.\n\nSimilarly, we can calculate the total number of cupcakes Dora makes in 5 hours by multiplying the number of cupcakes she makes per hour by the number of hours she worked: 8 cupcakes/hour * 5 hours = 40 cupcakes.\n\nNow, we can find the difference between the number of cupcakes they made: 40 cupcakes - 30 cupcakes = 10 cupcakes.",
+        "answer": "10 cupcakes"
+      },
+      {
+        "augmented": true,
+        "question": "James splits 4 packs of stickers that have 30 stickers each.  Each sticker cost $.10.  If his friend pays for half how much did James pay?",
+        "reasoning": "To find out how much James paid, we first need to calculate the total number of stickers he received. Since he got 4 packs of 30 stickers each, the total number of stickers is 4 * 30 = 120. \n\nNext, we calculate the total cost of the stickers, which is the number of stickers multiplied by the cost per sticker: 120 * $.10 = $12. \n\nSince James' friend paid for half, we divide the total cost by 2 to find out how much James paid: $12 / 2 = $6.",
+        "answer": "$6"
+      }
+    ],
+    "signature": {
+      "instructions": "## Inputs\n### question\nGiven a set of values representing a number of days off per week, hours streamed per day, hourly wage, total money available, number of items, and respective quantities, produce a set of values representing the total money earned per week.\n\n### reasoning\nTo calculate the total money earned per week, we need to follow these steps:\n1. Calculate the number of days streamed per week by subtracting days off per week from 7.\n2. Calculate the total hours streamed per week by multiplying the number of hours streamed per day by the number of days streamed per week.\n3. Calculate the total amount earned per week by multiplying the total hours streamed per week by the hourly wage.\n4. If applicable, subtract the cost of goods and any other expenses from the total amount earned.\n\n### answer\nThe total money earned per week.\n\n### constraints\n- Ensure all calculations are performed with precision, avoiding approximation errors.\n- Verify that all inputs are valid and consistent (e.g., days off per week should be less than or equal to 7).\n- Consider the domain-specific rules for calculating total money earned per week, such as applying taxes or other deductions.\n\n### output format\n- Provide the total money earned per week as a single numeric value.\n- Consider including a range of possible values or an estimated margin of error if the inputs are uncertain.",
+      "fields": [
+        {
+          "prefix": "Question:",
+          "description": "${question}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "${answer}"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

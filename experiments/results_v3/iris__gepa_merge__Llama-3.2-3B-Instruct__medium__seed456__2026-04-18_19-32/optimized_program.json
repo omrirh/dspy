@@ -1,0 +1,44 @@
+{
+  "generate_answer.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "## Given the petal and sepal dimensions in cm, predict the iris species.\n## Inputs\n### petal_length\nnumeric\n\n### petal_width\nnumeric\n\n### sepal_length\nnumeric\n\n### sepal_width\nnumeric\n\n## Outputs\n### answer\none of setosa, versicolor, virginica\n\n## Reasoning\n### if petal_length is less than 1.5 and petal_width is less than 0.3, answer is setosa.\n### if petal_length is between 1.5 and 4.0 and petal_width is between 0.3 and 1.2, answer is versicolor.\n### if petal_length is greater than or equal to 4.0 and petal_width is greater than or equal to 1.2, answer is virginica.\n### if sepal_length is greater than or equal to 5.0 and sepal_width is greater than or equal to 3.0, answer is virginica.\n### if none of the above conditions are met, answer is setosa or versicolor.\n\n## Output Format\n- setosa\n- versicolor\n- virginica\n- Unknown",
+      "fields": [
+        {
+          "prefix": "Petal Length:",
+          "description": "${petal_length}"
+        },
+        {
+          "prefix": "Petal Width:",
+          "description": "${petal_width}"
+        },
+        {
+          "prefix": "Sepal Length:",
+          "description": "${sepal_length}"
+        },
+        {
+          "prefix": "Sepal Width:",
+          "description": "${sepal_width}"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Answer:",
+          "description": "setosa, versicolor, or virginica"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.11",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}
