@@ -68,6 +68,7 @@ test_before_pypi/
 .github/.internal_dspyai/dist/
 experiments/logs/
 experiments/plots/
+experiments/__pycache__/
 vm_vars.env
 sglang_*.log
 dspy_venv/
