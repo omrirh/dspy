@@ -533,7 +533,7 @@ def sample_one_shot_evaluation_set(
         List of examples selected for one-shot evaluation
     """
     os_test = []
-    samples_per_cluster = 3
+    samples_per_cluster = 8
 
     for cluster_id, examples in validation_clusters.items():
         sample_size = min(samples_per_cluster, len(examples))

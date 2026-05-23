@@ -21,13 +21,11 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_SAMPLING_STRATEGIES = ["top_n", "best_in_cluster"]
 
+# All task samplings are driven by hybrid, diversity-first approach
 TASK_2_SAMPLINGS = {
-    "arithmetic": ["top_n", "best_in_cluster"],
-    "multihop": ["top_n", "best_in_cluster"],
-    "classification": ["top_n", "best_in_cluster"],
-    # Agentic tasks use diversity-first ordering: best_in_cluster ensures each semantic
-    # cluster of question types contributes at least one demonstration, preventing the
-    # agent from over-fitting to the most common question pattern in the training set.
+    "arithmetic": ["best_in_cluster", "top_n"],
+    "multihop": ["best_in_cluster", "top_n"],
+    "classification": ["best_in_cluster", "top_n"],
     "agentic": ["best_in_cluster", "top_n"],
 }
 

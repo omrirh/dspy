@@ -136,8 +136,8 @@ class BetterTogether(Teleprompter):
             num_train = 15
             num_val = 35
         elif len(trainset) >= 850:
-            num_train = 500
-            num_val = 350
+            num_train = 100
+            num_val = 250
         else:
             # Proportional split (~60/40) when trainset is between 50 and 850
             num_train = int(len(trainset) * 0.6)
