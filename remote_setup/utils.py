@@ -169,11 +169,26 @@ def stop_server_and_clean_resources(port: int, cuda_device: int = 0, retry_attem
 # Keys are matched as substrings of model_path.
 # ---------------------------------------------------------------------------
 _SGLANG_MODEL_EXTRA_ARGS: dict[str, str] = {
+    # 14B BF16 on A100 80 GB: weights ~28 GB, leaves ~16 GB KV cache.
+    "Qwen2.5-14B-Instruct": (
+        "--dtype bfloat16 "
+        "--mem-fraction-static 0.80 "
+        "--context-length 16384 "
+        "--enable-torch-compile"
+    ),
     # 32B BF16 on A100 80 GB: weights ~64 GB, leaves ~9.6 GB KV cache.
     "Qwen2.5-32B-Instruct": (
         "--dtype bfloat16 "
         "--mem-fraction-static 0.88 "
-        "--context-length 4096 "
+        "--context-length 8192 "
+        "--enable-torch-compile"
+    ),
+    # 32B AWQ 4-bit on A100 80 GB: weights ~20 GB, leaves ~48 GB KV cache.
+    "Qwen2.5-32B-Instruct-AWQ": (
+        "--quantization awq "
+        "--dtype float16 "
+        "--mem-fraction-static 0.85 "
+        "--context-length 16384 "
         "--enable-torch-compile"
     ),
     # 70B requires FP8 to fit in 80 GB.

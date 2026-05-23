@@ -46,6 +46,7 @@ _HF_MODELS = [
     "microsoft/Phi-4",                   # 14B — strong structured output for its size
     "Qwen/Qwen2.5-14B-Instruct",
     "Qwen/Qwen2.5-32B-Instruct",         # 32B — excellent tool-call compliance
+    "Qwen/Qwen2.5-32B-Instruct-AWQ",    # 32B AWQ 4-bit — fits A100 80GB with generous KV cache
     "Qwen/Qwen3-32B",                    # 32B — latest Qwen, strong reasoning
     # 70B class — requires FP8 quantization on A100 80GB (sglang --quantization fp8)
     "meta-llama/Llama-3.3-70B-Instruct", # 70B — best Llama for tool-calling

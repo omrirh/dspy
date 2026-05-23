@@ -57,6 +57,15 @@ elif [[ "$MODEL_NAME" == "Qwen/Qwen2.5-32B-Instruct" ]]; then
   # --enable-torch-compile     : ~15 % throughput gain on A100, +60 s warm-up.
   echo -e "Applying A100 80GB memory settings for $MODEL_NAME"
   SERVER_CMD+=" --dtype bfloat16 --mem-fraction-static 0.88 --context-length 8192 --enable-torch-compile"
+elif [[ "$MODEL_NAME" == "Qwen/Qwen2.5-32B-Instruct-AWQ" ]]; then
+  # 32B AWQ 4-bit weights ~20 GB on A100 80 GB.
+  # --quantization awq         : load pre-quantized AWQ weights.
+  # --dtype float16            : AWQ dequantizes to fp16 for computation.
+  # --mem-fraction-static 0.85 : 68 GB allocated; ~48 GB available for KV cache after ~20 GB weights.
+  # --context-length 16384     : generous context headroom given large KV cache budget.
+  # --enable-torch-compile     : ~15 % throughput gain on A100, +60 s warm-up.
+  echo -e "Applying AWQ 4-bit settings for $MODEL_NAME"
+  SERVER_CMD+=" --quantization awq --dtype float16 --mem-fraction-static 0.85 --context-length 16384 --enable-torch-compile"
 elif [[ "$MODEL_NAME" == "meta-llama/Llama-3.3-70B-Instruct" ]]; then
   # 70B requires FP8 quantization to fit in 80 GB.
   echo -e "Applying FP8 quantization + A100 80GB memory settings for $MODEL_NAME"
