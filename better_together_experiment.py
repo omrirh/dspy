@@ -1,5 +1,12 @@
+import json
+import os
+import random
+import subprocess
 import time
+from datetime import datetime, timezone
+
 import dspy
+from dspy.clients.base_lm import GLOBAL_HISTORY
 from dspy.evaluate import Evaluate
 from programs import (
     CoT,
@@ -35,11 +42,72 @@ import logging
 logger = logging.getLogger(__name__)
 
 dspy.settings.experimental = True
-RANDOM_SEED = int(time.time())
 QA_DATASETS = ["gsm8k", "hotpotqa"]
 
 
-def main(dataset, prompt_optimizer, strategy, model, baseline=False):
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _get_git_sha():
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            stderr=subprocess.DEVNULL, text=True,
+        ).strip()
+    except Exception:
+        return "unknown"
+
+
+def _sum_tokens(history_slice):
+    """Sum prompt/completion/total tokens across a GLOBAL_HISTORY slice."""
+    prompt, completion = 0, 0
+    for entry in history_slice:
+        usage = entry.get("usage", {})
+        prompt += usage.get("prompt_tokens", 0) or 0
+        completion += usage.get("completion_tokens", 0) or 0
+    return {"prompt_tokens": prompt, "completion_tokens": completion, "total_tokens": prompt + completion}
+
+
+def _print_token_budget(label, counts):
+    p, c, t = counts["prompt_tokens"], counts["completion_tokens"], counts["total_tokens"]
+    print(f"  {label:<28} prompt={p:>10,}  completion={c:>8,}  total={t:>10,}")
+
+
+def _build_per_example_results(eval_results):
+    results = []
+    for idx, (example, prediction, score) in enumerate(eval_results):
+        gold = example.get("answer", example.get("variety", ""))
+        results.append({
+            "idx": idx,
+            "gold": gold,
+            "predicted": getattr(prediction, "answer", None),
+            "score": float(score) if score is not None else 0.0,
+        })
+    return results
+
+
+def _load_baseline_score(results_dir, dataset_name, model_basename, canonical_seed=100):
+    """Load baseline score from the canonical baseline JSON if it exists."""
+    if not results_dir:
+        return None
+    bl_path = os.path.join(results_dir, dataset_name, model_basename, "baseline", f"{canonical_seed}.json")
+    if os.path.exists(bl_path):
+        with open(bl_path) as f:
+            return json.load(f)["scores"].get("baseline")
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main(dataset, prompt_optimizer, strategy, model, baseline=False, count_total_tokens=False, seed=None, results_dir=None):
+    if seed is None:
+        seed = int(time.time())
+    random.seed(seed)
+    model_basename = model.split("/")[-1]
+
     test_size = 0
     train_size = 1000
     dev_size = 500
@@ -106,8 +174,6 @@ def main(dataset, prompt_optimizer, strategy, model, baseline=False):
             provider=HFProvider(validation_set=devset, validation_metric=metric)
         )
     else:  # Currently supports Gemini via API
-        import os
-
         lm = dspy.LM(model, api_key=os.getenv("GEMINI_API_KEY"))
         dspy.configure(lm=lm)
 
@@ -195,51 +261,164 @@ def main(dataset, prompt_optimizer, strategy, model, baseline=False):
             num_threads=6,
         )
 
-    # Run baseline mode or BetterTogether optimization
+    # -----------------------------------------------------------------------
+    # Baseline mode — evaluate student directly, save results, return
+    # -----------------------------------------------------------------------
     if baseline:
-        # Baseline mode: skip optimization and evaluate student program directly
-        start_time = time.time()
-        optimized_program = student
         experiment_header = f"[BASELINE x {dataset_name} x {model}]"
-
         print(f"{experiment_header}\nRunning baseline evaluation (no optimization)...")
+        eval_start = time.time()
+        history_before_eval = len(GLOBAL_HISTORY)
+        accuracy_test, eval_results = evaluate_test(student, return_outputs=True)
+        eval_runtime = time.time() - eval_start
+        history_after_eval = len(GLOBAL_HISTORY)
 
-    else:
-        # Standard BetterTogether optimization
-        better_together = BetterTogether(
-            metric=metric,
-            weight_optimizer=weight_optimizer,
-            prompt_optimizer=prompt_optimizer,
-            seed=RANDOM_SEED
+        per_example = _build_per_example_results(eval_results)
+
+        print(f"\nScore:\t{accuracy_test}\nRuntime:\t{eval_runtime:.2f}")
+
+        if count_total_tokens:
+            eval_tok = _sum_tokens(GLOBAL_HISTORY[history_before_eval:history_after_eval])
+            print(f"\nToken budget  [{experiment_header}]")
+            print(f"  {'Phase':<28} {'prompt':>15}  {'completion':>13}  {'total':>15}")
+            print(f"  {'-' * 68}")
+            _print_token_budget("Baseline evaluation", eval_tok)
+            print(f"  {'-' * 68}")
+
+        if results_dir:
+            out_dir = os.path.join(results_dir, dataset_name, model_basename, "baseline")
+            os.makedirs(out_dir, exist_ok=True)
+            eval_tok = _sum_tokens(GLOBAL_HISTORY[history_before_eval:history_after_eval])
+            result_json = {
+                "schema_version": "2.0",
+                "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+                "git_sha": _get_git_sha(),
+                "dspy_version": getattr(dspy, "__version__", "unknown"),
+                "config": {
+                    "model": model,
+                    "dataset": dataset_name,
+                    "optimizer": "baseline",
+                    "strategy": strategy,
+                    "seed": seed,
+                    "train_size": len(trainset),
+                    "dev_size": len(devset),
+                    "test_size": len(testset),
+                },
+                "scores": {"baseline": accuracy_test, "optimized": None, "delta_pp": None},
+                "timing_seconds": {
+                    "compile_total": None,
+                    "eval": round(eval_runtime, 2),
+                    "total": round(eval_runtime, 2),
+                },
+                "token_usage": {"eval": eval_tok},
+                "per_example_results": per_example,
+            }
+            json_path = os.path.join(out_dir, f"{seed}.json")
+            with open(json_path, "w") as f:
+                json.dump(result_json, f, indent=2)
+            print(f"Results saved to: {json_path}")
+        return
+
+    # -----------------------------------------------------------------------
+    # Standard BetterTogether optimization
+    # -----------------------------------------------------------------------
+    better_together = BetterTogether(
+        metric=metric,
+        weight_optimizer=weight_optimizer,
+        prompt_optimizer=prompt_optimizer,
+        seed=seed
+    )
+
+    history_before_compile = len(GLOBAL_HISTORY)
+    compile_start = time.time()
+    with dspy.context(lm=lm, rm=retriever):
+        optimized_program = better_together.compile(
+            student=student,
+            trainset=trainset,
+            strategy=strategy,
+            valset_ratio=0.1
         )
+    compile_runtime = time.time() - compile_start
+    history_after_compile = len(GLOBAL_HISTORY)
 
-        # Run the BetterTogether optimization
-        start_time = time.time()
-        with dspy.context(lm=lm, rm=retriever):
-            optimized_program = better_together.compile(
-                student=student,
-                trainset=trainset,
-                strategy=strategy,
-                valset_ratio=0.1
-            )
+    experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
 
-        experiment_header = f"[BetterTogether x {dataset_name} x {model} x {strategy} x {prompt_optimizer_name.upper()}]"
+    # Report collected demonstrations
+    final_fewshot_size = len(optimized_program.named_predictors()[0][1].demos)
+    num_predictors = len(optimized_program.named_predictors())
+    print(f"{experiment_header}\nDemonstrations collected ({final_fewshot_size} in total for {num_predictors} predictors):\n")
+    for name, predictor in optimized_program.named_predictors():
+        print(f"'{name}' predictor demos: {predictor.demos}\n")
 
-        # Report collected demonstrations
-        final_fewshot_size = len(optimized_program.named_predictors()[0][1].demos)
-        num_predictors = len(optimized_program.named_predictors())
-        print(f"{experiment_header}\nDemonstrations collected ({final_fewshot_size} in total for {num_predictors} predictors):\n")
-        for name, predictor in optimized_program.named_predictors():
-            print(f"'{name}' predictor demos: {predictor.demos}\n")
-
-    # Evaluate accuracy and output the results
+    # Evaluate optimized program
     print(f"{experiment_header}\nCalculating experiment program results...")
-    accuracy_test = evaluate_test(optimized_program)
-    end_time = time.time()
-    runtime = end_time - start_time
+    eval_start = time.time()
+    history_before_eval = len(GLOBAL_HISTORY)
+    accuracy_test, eval_results = evaluate_test(optimized_program, return_outputs=True)
+    eval_runtime = time.time() - eval_start
+    history_after_eval = len(GLOBAL_HISTORY)
+    total_runtime = compile_runtime + eval_runtime
 
-    print(f"\nScore:\t{accuracy_test}\n"
-          f"Runtime:\t{runtime:.2f}")
+    per_example = _build_per_example_results(eval_results)
+
+    # Load baseline score for delta (canonical seed 100)
+    baseline_score = _load_baseline_score(results_dir, dataset_name, model_basename)
+    delta = round(accuracy_test - baseline_score, 2) if baseline_score is not None else None
+    sign = "+" if delta is not None and delta >= 0 else ""
+
+    print(f"\nScore:\t{accuracy_test}\nRuntime:\t{total_runtime:.2f}")
+    if delta is not None:
+        print(f"Delta vs baseline:\t{sign}{delta:.2f}pp")
+
+    if count_total_tokens:
+        opt_tok = _sum_tokens(GLOBAL_HISTORY[history_before_compile:history_after_compile])
+        eval_tok = _sum_tokens(GLOBAL_HISTORY[history_before_eval:history_after_eval])
+        all_tok = _sum_tokens(GLOBAL_HISTORY[history_before_compile:history_after_eval])
+        print(f"\nToken budget  [{experiment_header}]")
+        print(f"  {'Phase':<28} {'prompt':>15}  {'completion':>13}  {'total':>15}")
+        print(f"  {'-' * 68}")
+        _print_token_budget("Optimization", opt_tok)
+        _print_token_budget("Final evaluation", eval_tok)
+        _print_token_budget("Total e2e", all_tok)
+        print(f"  {'-' * 68}")
+
+    if results_dir:
+        out_dir = os.path.join(results_dir, dataset_name, model_basename, prompt_optimizer_name)
+        os.makedirs(out_dir, exist_ok=True)
+        compile_tok = _sum_tokens(GLOBAL_HISTORY[history_before_compile:history_after_compile])
+        eval_tok = _sum_tokens(GLOBAL_HISTORY[history_before_eval:history_after_eval])
+        result_json = {
+            "schema_version": "2.0",
+            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "git_sha": _get_git_sha(),
+            "dspy_version": getattr(dspy, "__version__", "unknown"),
+            "config": {
+                "model": model,
+                "dataset": dataset_name,
+                "optimizer": prompt_optimizer_name,
+                "strategy": strategy,
+                "seed": seed,
+                "train_size": len(trainset),
+                "dev_size": len(devset),
+                "test_size": len(testset),
+            },
+            "scores": {
+                "baseline": baseline_score,
+                "optimized": accuracy_test,
+                "delta_pp": delta,
+            },
+            "timing_seconds": {
+                "compile_total": round(compile_runtime, 2),
+                "eval": round(eval_runtime, 2),
+                "total": round(total_runtime, 2),
+            },
+            "token_usage": {"compile": compile_tok, "eval": eval_tok},
+            "per_example_results": per_example,
+        }
+        json_path = os.path.join(out_dir, f"{seed}.json")
+        with open(json_path, "w") as f:
+            json.dump(result_json, f, indent=2)
+        print(f"Results saved to: {json_path}")
 
 
 if __name__ == "__main__":
@@ -251,14 +430,9 @@ if __name__ == "__main__":
     parser.add_argument("--strategy", type=str, required=True, help="Desired optimization strategy (e.g. p -> w -> p)")
     parser.add_argument("--model", type=str, required=True, help="Name of Language Model")
     parser.add_argument("--baseline", action="store_true", help="Run in baseline mode (skip optimization, evaluate student program directly)")
+    parser.add_argument("--count-total-tokens", action="store_true", help="Print a per-phase token budget summary at the end of the run")
+    parser.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility (default: derived from current time)")
+    parser.add_argument("--results-dir", type=str, default=None, help="Base directory for structured JSON result files (e.g. results_bt)")
     args = parser.parse_args()
 
-    main(args.dataset, args.prompt_optimizer, args.strategy, args.model, args.baseline)
-
-    # # for debugging
-    # dataset = "gsm8k"
-    # prompt_optimizer = "clusterfs"
-    # strategy = "p"
-    # model = "Qwen/Qwen2.5-7B-Instruct"
-
-    # main(dataset, prompt_optimizer, strategy, model)
+    main(args.dataset, args.prompt_optimizer, args.strategy, args.model, args.baseline, args.count_total_tokens, args.seed, args.results_dir)

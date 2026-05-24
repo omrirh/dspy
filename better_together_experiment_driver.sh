@@ -10,6 +10,7 @@ PROMPT_OPTIMIZER="clusterfs"
 STRATEGY="p"
 MODEL="meta-llama/Meta-Llama-3-8B-Instruct"
 BASELINE=false
+COUNT_TOTAL_TOKENS=false
 
 # Supported values
 VALID_DATASETS=("hotpotqa" "gsm8k" "iris" "crop_recommendation")
@@ -42,6 +43,7 @@ while [[ "$#" -gt 0 ]]; do
         --strategy) STRATEGY="$2"; shift ;;
         --model) MODEL="$2"; shift ;;
         --baseline) BASELINE=true ;;
+        --count-total-tokens) COUNT_TOTAL_TOKENS=true ;;
         -h|--help)
             echo "Usage: $0 [--dataset <dataset name>] [--prompt-optimizer <optimizer>] [--strategy <strategy>] [--model <model name>] [--baseline]"
             echo "  --dataset           Specify the dataset to use. Options: hotpotqa, gsm8k, iris, crop_recommendation"
@@ -49,6 +51,7 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --strategy          Specify the strategy. Default: p. Options: 'p', 'w', 'p -> p', 'p -> p -> p', 'p -> w', 'w -> p', 'p -> w -> p'"
             echo "  --model             Specify the model to use. Default: meta-llama/Meta-Llama-3-8B-Instruct"
             echo "  --baseline          Run in baseline mode (skip optimization, evaluate student program directly)"
+            echo "  --count-total-tokens  Print per-phase token budget (optimization / eval / total e2e)"
             exit 0
             ;;
         *) echo "Unknown parameter: $1"; exit 1 ;;
@@ -117,6 +120,11 @@ if [[ "$BASELINE" == "true" ]]; then
     CMD_ARGS+=(--baseline)
 fi
 
+# Add token-counting flag if enabled
+if [[ "$COUNT_TOTAL_TOKENS" == "true" ]]; then
+    CMD_ARGS+=(--count-total-tokens)
+fi
+
 # Run experiment
 nohup python3.11 better_together_experiment.py "${CMD_ARGS[@]}" 2>&1 | tee "$EXPERIMENT_LOG_FILE" &
 
@@ -127,4 +135,5 @@ echo "Prompt Optimizer: $PROMPT_OPTIMIZER"
 echo "Strategy: $STRATEGY"
 echo "Model: $MODEL"
 echo "Baseline Mode: $BASELINE"
+echo "Count Tokens: $COUNT_TOTAL_TOKENS"
 echo -e "Log file: $EXPERIMENT_LOG_FILE\n\n"
