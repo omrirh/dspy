@@ -3,21 +3,21 @@
 # run_bt_matrix.sh — Run the BetterTogether prompt-optimizer matrix for the paper.
 #
 # Matrix: 1 model x 2 datasets x 3 optimizers x 1 seed + 2 baselines = 8 runs
-#   Model:      Qwen/Qwen2.5-32B-Instruct-AWQ
-#   Datasets:   hotpotqa, iris
+#   Model:      Qwen/Qwen2.5-32B-Instruct-AWQ  (override with --model)
+#   Datasets:   hotpotqa, iris, gsm8k
 #   Optimizers: clusterfs, miprov2, bfrs
 #   Seeds:      100
 #   Baselines:  1 per dataset (seed 100)
 #   Strategy:   p (prompt-only, no finetuning)
 #
 # Usage:
-#   ./run_bt_matrix.sh                           # run all 20 experiments
-#   ./run_bt_matrix.sh --dry-run                 # preview commands only
-#   ./run_bt_matrix.sh --resume                  # skip runs with existing JSON
-#   ./run_bt_matrix.sh --sglang-port 7501        # override sglang port (for LM)
-#   ./run_bt_matrix.sh --results-dir my_results  # override results directory
-#   ./run_bt_matrix.sh --datasets hotpotqa       # run only specified dataset(s)
-#   ./run_bt_matrix.sh --optimizers clusterfs bfrs  # run only specified optimizers
+#   ./run_bt_matrix.sh                                          # run all experiments (default model)
+#   ./run_bt_matrix.sh --model Qwen/Qwen2.5-14B-Instruct       # run with a different model
+#   ./run_bt_matrix.sh --dry-run                                # preview commands only
+#   ./run_bt_matrix.sh --resume                                 # skip runs with existing JSON
+#   ./run_bt_matrix.sh --results-dir my_results                 # override results directory
+#   ./run_bt_matrix.sh --datasets hotpotqa                      # run only specified dataset(s)
+#   ./run_bt_matrix.sh --optimizers clusterfs bfrs              # run only specified optimizers
 
 set -euo pipefail
 
@@ -28,19 +28,19 @@ source ../dspy_venv/bin/activate
 # Configuration
 # ---------------------------------------------------------------------------
 MODEL="Qwen/Qwen2.5-32B-Instruct-AWQ"
-DATASETS=("hotpotqa" "iris")
+DATASETS=("hotpotqa" "iris" "gsm8k")
 OPTIMIZERS=("clusterfs" "miprov2" "bfrs")
 SEEDS=(100)
 BASELINE_SEED=100
 STRATEGY="p"
 
-SGLANG_PORT="7501"
 RESULTS_DIR="results_bt"
 
 DRY_RUN=false
 RESUME=false
 DATASETS_OVERRIDE=()
 OPTIMIZERS_OVERRIDE=()
+MODEL_OVERRIDE=""
 
 # ---------------------------------------------------------------------------
 # Parse arguments
@@ -49,7 +49,7 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
         --dry-run)        DRY_RUN=true ;;
         --resume)         RESUME=true ;;
-        --sglang-port)    SGLANG_PORT="$2"; shift ;;
+        --model)          MODEL_OVERRIDE="$2"; shift ;;
         --results-dir)    RESULTS_DIR="$2"; shift ;;
         --datasets)       shift; while [[ "$#" -gt 0 && "$1" != --* ]]; do DATASETS_OVERRIDE+=("$1"); shift; done; continue ;;
         --optimizers)     shift; while [[ "$#" -gt 0 && "$1" != --* ]]; do OPTIMIZERS_OVERRIDE+=("$1"); shift; done; continue ;;
@@ -57,9 +57,10 @@ while [[ "$#" -gt 0 ]]; do
             echo "Usage: $0 [OPTIONS]"
             echo ""
             echo "Options:"
+            echo "  --model           Model to run (default: Qwen/Qwen2.5-32B-Instruct-AWQ)"
+            echo "                    e.g. --model Qwen/Qwen2.5-14B-Instruct"
             echo "  --dry-run         Preview commands without running"
             echo "  --resume          Skip runs where result JSON already exists"
-            echo "  --sglang-port     sglang server port (default: 7501)"
             echo "  --results-dir     Output directory (default: results_bt)"
             echo "  --datasets        Space-separated dataset names (default: hotpotqa iris)"
             echo "                    e.g. --datasets hotpotqa"
@@ -72,7 +73,8 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-[[ ${#DATASETS_OVERRIDE[@]} -gt 0 ]] && DATASETS=("${DATASETS_OVERRIDE[@]}")
+[[ -n "$MODEL_OVERRIDE" ]]            && MODEL="$MODEL_OVERRIDE"
+[[ ${#DATASETS_OVERRIDE[@]} -gt 0 ]]  && DATASETS=("${DATASETS_OVERRIDE[@]}")
 [[ ${#OPTIMIZERS_OVERRIDE[@]} -gt 0 ]] && OPTIMIZERS=("${OPTIMIZERS_OVERRIDE[@]}")
 
 MODEL_BASENAME=$(basename "$MODEL")

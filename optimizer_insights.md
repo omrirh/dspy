@@ -327,6 +327,31 @@ The regime ordering (format → termination → reasoning) does not follow model
 
 ---
 
+## Compilation Token Cost (BT Matrix, Qwen2.5-7B-Instruct, seed 100)
+
+> **Note:** Token reduction is inconsistent across tasks — not strong enough for a paper claim. Tracked here for reference only.
+
+| Task | Optimizer | Compile Tokens | Compile Time | Score Δ | Tok / Δpp |
+|------|-----------|---------------|-------------|---------|----------|
+| Iris | BFRS | 259K | 1.3 min | +36pp | 7,186 |
+| Iris | ClusterFS | 226K | 0.8 min | +46pp | 4,922 |
+| Iris | MIPROv2 | 910K | 5.2 min | +46pp | 19,791 |
+| GSM8K | BFRS | 2.11M | 15.6 min | +1.0pp | 2,135K |
+| GSM8K | ClusterFS | 2.21M | 14.7 min | +7.5pp | 295K |
+| GSM8K | MIPROv2 | 1.91M | 16.5 min | +7.7pp | 249K |
+| HotPotQA | BFRS | 8.75M | 31.3 min | +13.9pp | 628K |
+| HotPotQA | ClusterFS | 6.31M | 13.3 min | +19.1pp | 330K |
+| HotPotQA | MIPROv2 | 7.19M | 25.5 min | +13.9pp | 519K |
+
+**ClusterFS vs baselines:**
+- HotPotQA: −28% tokens vs BFRS, −12% vs MIPROv2 — clearest reduction, but driven by fewer bootstrap trials on a complex task, not a structural property.
+- Iris: −12% vs BFRS, −75% vs MIPROv2 — large saving vs MIPROv2 but MIPROv2 is an outlier (instruction search overhead dominates on simple tasks).
+- GSM8K: +5% vs BFRS, +16% vs MIPROv2 — ClusterFS uses *more* tokens here. MIPROv2 marginally wins on tok/Δpp (249K vs 295K) with essentially the same score.
+
+**Why no paper claim:** The token reduction is real on HotPotQA and Iris but absent on GSM8K. The compile time advantage is more consistent (1.1–6.1× faster) but varies too much by task to support a clean efficiency narrative without additional seeds and tasks.
+
+---
+
 ## Methodology
 
 - Models: `Qwen/Qwen2.5-7B-Instruct`, `Qwen/Qwen2.5-14B-Instruct`, `meta-llama/Llama-3.1-8B-Instruct`; SGLang on A100 80GB
