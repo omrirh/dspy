@@ -189,6 +189,115 @@ def _fmt_compile(v):
     return f"{v:.1f}" if v is not None else "—"
 
 
+# ---------------------------------------------------------------------------
+# Hardcoded GSM8K results (Qwen2.5-32B-Instruct-AWQ, reported in paper)
+# ---------------------------------------------------------------------------
+_GSM8K_RESULTS = {
+    "Baseline":      {"acc": 86.72, "compile_min": None},
+    "BFRS":          {"acc": 94.46, "compile_min": 194.7},
+    "MIPROv2":       {"acc": 93.40, "compile_min": 143.8},
+    "ClusterFewshot":{"acc": 94.80, "compile_min": 112.2},
+}
+
+
+def print_cross_dataset_table(rows: list[dict], baseline_scores: dict):
+    """
+    Single summary table: optimizer rows × dataset columns.
+    Columns per dataset: Accuracy (%), Compile (min).
+    GSM8K column is injected from hardcoded paper results.
+    """
+    all_datasets = sorted({r["dataset"] for r in rows})
+    all_models   = sorted({r["model"]   for r in rows})
+
+    index = {
+        (r["dataset"], r["model"], OPTIMIZER_DISPLAY.get(r["optimizer"], r["optimizer"])): r
+        for r in rows
+    }
+
+    # Collect all numeric values per dataset column for winner detection.
+    # col_key: "gsm8k" | dataset name.  value: {opt_display: (acc, compile_min)}
+    col_data: dict[str, dict[str, tuple]] = {}
+
+    gsm8k_col: dict[str, tuple] = {}
+    for row_name, v in _GSM8K_RESULTS.items():
+        gsm8k_col[row_name] = (v["acc"], v["compile_min"])
+    col_data["gsm8k"] = gsm8k_col
+
+    for d in all_datasets:
+        dcol: dict[str, tuple] = {}
+        for m in all_models:
+            bl = baseline_scores.get((d, m))
+            if bl is not None:
+                dcol["Baseline"] = (bl, None)
+            for opt in OPTIMIZER_ORDER:
+                r = index.get((d, m, opt))
+                if r and r["mean_opt"] is not None:
+                    dcol[opt] = (r["mean_opt"], r["mean_compile_min"])
+        col_data[d] = dcol
+
+    def _best_acc(col_key):
+        vals = {k: v[0] for k, v in col_data[col_key].items() if v[0] is not None}
+        return max(vals, key=vals.get) if vals else None
+
+    def _best_compile(col_key):
+        vals = {k: v[1] for k, v in col_data[col_key].items()
+                if k != "Baseline" and v[1] is not None}
+        return min(vals, key=vals.get) if vals else None
+
+    col_keys   = ["gsm8k"] + list(all_datasets)
+    best_acc     = {ck: _best_acc(ck)     for ck in col_keys}
+    best_compile = {ck: _best_compile(ck) for ck in col_keys}
+
+    def _b(val_str, is_winner):
+        return f"**{val_str}**" if is_winner else val_str
+
+    # Header
+    gsm8k_label = f"**{DATASET_DISPLAY.get('gsm8k', 'GSM8K')}**"
+    dyn_labels  = [f"**{DATASET_DISPLAY.get(d, d)}**" for d in all_datasets]
+    all_labels  = [gsm8k_label] + dyn_labels
+
+    col_headers = " | ".join(f"{lbl} Acc (%) | Compile (min)" for lbl in all_labels)
+    sep         = " | ".join(["--- | ---"] * len(all_labels))
+    print(f"| Optimizer | {col_headers} |")
+    print(f"| --- | {sep} |")
+
+    # Baseline row
+    gsm8k_bl  = _GSM8K_RESULTS["Baseline"]
+    gsm8k_acc = _b(f"{gsm8k_bl['acc']:.2f}%", best_acc["gsm8k"] == "Baseline")
+    bl_cells  = [f"{gsm8k_acc} | —"]
+    for d in all_datasets:
+        for m in all_models:
+            bl = baseline_scores.get((d, m))
+            if bl is None:
+                bl_cells.append("— | —")
+            else:
+                bl_cells.append(f"{_b(f'{bl:.2f}%', best_acc[d] == 'Baseline')} | —")
+    print(f"| Baseline | " + " | ".join(bl_cells) + " |")
+
+    # Optimizer rows
+    for opt in OPTIMIZER_ORDER:
+        gsm8k_r = _GSM8K_RESULTS.get(opt)
+        if gsm8k_r:
+            acc_str  = _b(f"{gsm8k_r['acc']:.2f}%",      best_acc["gsm8k"]     == opt)
+            comp_str = _b(f"{gsm8k_r['compile_min']:.1f}", best_compile["gsm8k"] == opt)
+            gsm8k_cell = f"{acc_str} | {comp_str}"
+        else:
+            gsm8k_cell = "— | —"
+        cells = [gsm8k_cell]
+
+        for d in all_datasets:
+            for m in all_models:
+                r = index.get((d, m, opt))
+                if r is None or r["mean_opt"] is None:
+                    cells.append("— | —")
+                    continue
+                acc_str  = _b(f"{r['mean_opt']:.2f}%",               best_acc[d]     == opt)
+                comp_str = _b(_fmt_compile(r["mean_compile_min"]),    best_compile[d] == opt)
+                cells.append(f"{acc_str} | {comp_str}")
+
+        print(f"| {opt} | " + " | ".join(cells) + " |")
+
+
 def print_markdown_tables(rows: list[dict], baseline_scores: dict):
     """
     Print paper-ready Markdown tables.
@@ -295,6 +404,8 @@ def main():
                         help="Filter to specific dataset names (e.g. hotpotqa iris).")
     parser.add_argument("--models", nargs="+", default=None, metavar="MODEL",
                         help="Filter to specific model directory names (e.g. Qwen2.5-32B-Instruct-AWQ).")
+    parser.add_argument("--cross-dataset", action="store_true",
+                        help="Print a single summary table: optimizer rows × dataset columns.")
     parser.add_argument("--write-json", action="store_true",
                         help="Write aggregate.json alongside the tables.")
     args = parser.parse_args()
@@ -326,7 +437,10 @@ def main():
                 d = json.loads(bl_path.read_text())
                 baseline_scores[(dataset, model)] = d["scores"].get("baseline")
 
-    print_markdown_tables(rows, baseline_scores)
+    if args.cross_dataset:
+        print_cross_dataset_table(rows, baseline_scores)
+    else:
+        print_markdown_tables(rows, baseline_scores)
 
     if args.write_json:
         out = Path(args.results_dir) / "aggregate.json"

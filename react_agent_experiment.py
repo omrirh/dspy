@@ -71,6 +71,7 @@ from collections import Counter
 from datetime import datetime, timezone
 
 import dspy
+from dspy.clients.base_lm import GLOBAL_HISTORY
 from dspy.evaluate import Evaluate
 from dspy.datasets import HotPotQA
 from programs import ReactAgentMH
@@ -265,6 +266,21 @@ def _get_git_sha():
         ).strip()
     except Exception:
         return "unknown"
+
+
+def _sum_tokens(history_slice):
+    """Sum prompt/completion/total tokens across a GLOBAL_HISTORY slice."""
+    prompt, completion = 0, 0
+    for entry in history_slice:
+        usage = entry.get("usage", {})
+        prompt += usage.get("prompt_tokens", 0) or 0
+        completion += usage.get("completion_tokens", 0) or 0
+    return {"prompt_tokens": prompt, "completion_tokens": completion, "total_tokens": prompt + completion}
+
+
+def _print_token_budget(label, counts):
+    p, c, t = counts["prompt_tokens"], counts["completion_tokens"], counts["total_tokens"]
+    print(f"  {label:<28} prompt={p:>10,}  completion={c:>8,}  total={t:>10,}")
 
 
 # ---------------------------------------------------------------------------
@@ -491,6 +507,7 @@ def main(
     sample_trajectory: bool,
     seed: int,
     results_dir: str,
+    count_total_tokens: bool = False,
 ):
     script_start = time.time()
     random.seed(seed)
@@ -528,7 +545,9 @@ def main(
 
     logger.info("Evaluating zero-shot baseline (no demonstrations)...")
     baseline_start = time.time()
+    history_before_baseline = len(GLOBAL_HISTORY)
     baseline_score, baseline_results = evaluate(student, return_outputs=True)
+    history_after_baseline = len(GLOBAL_HISTORY)
     baseline_runtime = time.time() - baseline_start
     logger.info(f"Baseline score: {baseline_score:.2f}%  ({baseline_runtime:.1f}s)")
 
@@ -538,6 +557,7 @@ def main(
 
     if baseline:
         total_runtime = time.time() - script_start
+        baseline_tokens = _sum_tokens(GLOBAL_HISTORY[history_before_baseline:history_after_baseline])
         out_dir = os.path.join(results_dir, model_basename, "baseline")
         os.makedirs(out_dir, exist_ok=True)
         result_json = {
@@ -569,6 +589,12 @@ def main(
                 "optimized_eval": None,
                 "total": round(total_runtime, 2),
             },
+            "token_usage": {
+                "baseline_eval": baseline_tokens,
+                "compile": None,
+                "optimized_eval": None,
+                "total": baseline_tokens,
+            },
             "optimizer_meta": None,
             "parse_failures": {
                 "baseline_eval": baseline_parse_summary,
@@ -587,6 +613,11 @@ def main(
         print(f"  Parse failures     : {baseline_parse_summary['total']} ({baseline_parse_summary['rate']:.1%})")
         print(f"  Runtime            : {baseline_runtime:.1f}s")
         print(f"  Results saved to   : {json_path}")
+        if count_total_tokens:
+            print(f"\n  Token budget  [BASELINE | {model}]")
+            print(f"  {'Phase':<28} {'prompt':>15}  {'completion':>13}  {'total':>15}")
+            print(f"  {'-' * 68}")
+            _print_token_budget("Baseline evaluation", baseline_tokens)
         return
 
     # -----------------------------------------------------------------------
@@ -594,6 +625,7 @@ def main(
     # -----------------------------------------------------------------------
     logger.info(f"Starting {optimizer.upper()} compilation...")
     compile_start = time.time()
+    history_before_compile = len(GLOBAL_HISTORY)
 
     if optimizer == "clusterfs":
         optimized_program, optimizer_obj = _run_clusterfs(
@@ -611,6 +643,7 @@ def main(
         raise ValueError(f"Unknown optimizer: {optimizer!r}")
 
     compile_runtime = time.time() - compile_start
+    history_after_compile = len(GLOBAL_HISTORY)
     logger.info(f"Compilation finished in {compile_runtime:.1f}s")
 
     # Optimizer-specific summary header
@@ -628,7 +661,9 @@ def main(
     # -----------------------------------------------------------------------
     logger.info("Evaluating optimized agent...")
     optimized_start = time.time()
+    history_before_opt_eval = len(GLOBAL_HISTORY)
     optimized_score, optimized_results = evaluate(optimized_program, return_outputs=True)
+    history_after_opt_eval = len(GLOBAL_HISTORY)
     optimized_runtime = time.time() - optimized_start
 
     optimized_per_example = _build_per_example_results(optimized_results, max_iters)
@@ -655,6 +690,10 @@ def main(
     # 8. Save structured results JSON + program state
     # -----------------------------------------------------------------------
     total_runtime = time.time() - script_start
+    compile_tokens = _sum_tokens(GLOBAL_HISTORY[history_before_compile:history_after_compile])
+    opt_eval_tokens = _sum_tokens(GLOBAL_HISTORY[history_before_opt_eval:history_after_opt_eval])
+    baseline_tokens = _sum_tokens(GLOBAL_HISTORY[history_before_baseline:history_after_baseline])
+    total_tokens = _sum_tokens(GLOBAL_HISTORY[history_before_baseline:history_after_opt_eval])
     out_dir = os.path.join(results_dir, model_basename, optimizer)
     os.makedirs(out_dir, exist_ok=True)
 
@@ -696,6 +735,12 @@ def main(
             "optimized_eval": round(optimized_runtime, 2),
             "total": round(total_runtime, 2),
         },
+        "token_usage": {
+            "baseline_eval": baseline_tokens,
+            "compile": compile_tokens,
+            "optimized_eval": opt_eval_tokens,
+            "total": total_tokens,
+        },
         "optimizer_meta": _collect_optimizer_meta(optimizer, optimizer_obj, train_size),
         "parse_failures": {
             "baseline_eval": baseline_parse_summary,
@@ -709,6 +754,15 @@ def main(
         json.dump(result_json, f, indent=2)
 
     print(f"  Results saved to   : {json_path}")
+    if count_total_tokens:
+        print(f"\n  Token budget  [{optimizer.upper()} | {model}]")
+        print(f"  {'Phase':<28} {'prompt':>15}  {'completion':>13}  {'total':>15}")
+        print(f"  {'-' * 68}")
+        _print_token_budget("Baseline evaluation", baseline_tokens)
+        _print_token_budget("Compilation", compile_tokens)
+        _print_token_budget("Optimized evaluation", opt_eval_tokens)
+        print(f"  {'-' * 68}")
+        _print_token_budget("Total e2e", total_tokens)
     print(f"{'=' * 55}\n")
 
     # -----------------------------------------------------------------------
@@ -783,6 +837,8 @@ if __name__ == "__main__":
                         help="Random seed for reproducibility (default: derived from current time)")
     parser.add_argument("--results-dir", type=str, default="results",
                         help="Base directory for structured JSON result files")
+    parser.add_argument("--count-total-tokens", action="store_true",
+                        help="Print per-phase token budget (compile / eval / total e2e) and include in results JSON")
     args = parser.parse_args()
 
     seed = args.seed if args.seed is not None else int(time.time())
@@ -802,4 +858,5 @@ if __name__ == "__main__":
         sample_trajectory=args.sample_trajectory,
         seed=seed,
         results_dir=args.results_dir,
+        count_total_tokens=args.count_total_tokens,
     )

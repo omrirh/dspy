@@ -17,6 +17,8 @@ Usage
 -----
   python aggregate_react_results.py                              # default: results_v2/
   python aggregate_react_results.py --results-dir results_v2    # explicit dir
+  python aggregate_react_results.py --models Qwen2.5-7B-Instruct Qwen2.5-14B-Instruct
+  python aggregate_react_results.py --cross-model               # single cross-model table
   python aggregate_react_results.py --write-json                # also save aggregate.json
 """
 
@@ -109,7 +111,7 @@ def _trajectory_metrics(examples: list[dict]) -> dict:
     }
 
 
-def load_results(results_dir: str) -> dict:
+def load_results(results_dir: str, models: list[str] | None = None) -> dict:
     """
     Walk results_dir/<model>/<optimizer>/<seed>.json.
     Returns { (model, optimizer): [run_dict, ...] }
@@ -122,6 +124,8 @@ def load_results(results_dir: str) -> dict:
         if not model_dir.is_dir():
             continue
         model = model_dir.name
+        if models and model not in models:
+            continue
 
         # Standalone baseline
         bl_path = model_dir / "baseline" / "100.json"
@@ -210,12 +214,6 @@ def aggregate(groups: dict) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 OPTIMIZER_ORDER = ["ClusterFewshot", "BFRS", "MIPROv2"]
-
-
-def _pct(v, digits=2):
-    if v is None:
-        return "—"
-    return f"{v:.{digits}f}%"
 
 
 def _pp(v):
@@ -327,6 +325,70 @@ def print_markdown_tables(rows: list[dict], baseline_scores: dict):
 
 
 # ---------------------------------------------------------------------------
+# Cross-model table (optimizer rows × model columns, 3 metrics each)
+# ---------------------------------------------------------------------------
+
+PAPER_MODELS = ["Qwen2.5-7B-Instruct", "Qwen2.5-14B-Instruct"]
+PAPER_MODEL_LABELS = {"Qwen2.5-7B-Instruct": "Qwen2.5-7B", "Qwen2.5-14B-Instruct": "Qwen2.5-14B"}
+
+
+def print_cross_model_table(rows: list[dict], baseline_data: dict, models: list[str]):
+    """
+    Single table: rows = optimizers, columns = models × {Acc, acc@3, acc@≤2}.
+    baseline_data: { model_name: {"score": float, "acc_3": float, "acc_le2": float} }
+    """
+    # Index aggregated rows by (model, optimizer display name)
+    index: dict[tuple, dict] = {}
+    for r in rows:
+        key = (r["model"], OPTIMIZER_DISPLAY.get(r["optimizer"], r["optimizer"]))
+        index[key] = r
+
+    n_models = len(models)
+    model_labels = [PAPER_MODEL_LABELS.get(m, m) for m in models]
+
+    # Header — two-level: model name spanning 3 cols, then metric names
+    header1 = "| Optimizer | " + " | ".join(
+        f" **{lbl}** | | " for lbl in model_labels
+    ) + " |"
+    header2 = "| --- | " + " | ".join(
+        ["Acc (mean±std) | acc@≤2 | Compile (min)"] * n_models
+    ) + " |"
+    divider = "| --- | " + " | ".join(["--- | --- | ---"] * n_models) + " |"
+
+    print(header1)
+    print(header2)
+    print(divider)
+
+    def _acc(r):
+        if r is None or r.get("mean_opt") is None:
+            return "—"
+        return f"{r['mean_opt']:.2f}±{r['std_opt']:.2f}%"
+
+    def _le2(v):
+        return f"{100*v:.2f}%" if v is not None else "—"
+
+    def _compile(v):
+        return f"{v:.1f}" if v is not None else "—"
+
+    # Baseline row (no compile time)
+    bl_cells = []
+    for m in models:
+        bl = baseline_data.get(m, {})
+        bl_cells.append(f"{bl.get('score', 0):.2f}% | {_le2(bl.get('acc_le2'))} | —")
+    print(f"| Baseline | " + " | ".join(bl_cells) + " |")
+
+    # Optimizer rows
+    for opt in OPTIMIZER_ORDER:
+        cells = []
+        for m in models:
+            r = index.get((m, opt))
+            cells.append(
+                f"{_acc(r)} | {_le2(r['acc_le2'] if r else None)} | {_compile(r['mean_compile_min'] if r else None)}"
+            )
+        print(f"| {opt} | " + " | ".join(cells) + " |")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -334,27 +396,43 @@ def main():
     parser = argparse.ArgumentParser(description="Aggregate ReAct experiment results for paper tables.")
     parser.add_argument("--results-dir", default="results_v2",
                         help="Root directory containing <model>/<optimizer>/<seed>.json files.")
+    parser.add_argument("--models", nargs="+", default=None, metavar="MODEL",
+                        help="Filter to specific model directory names (e.g. Qwen2.5-7B-Instruct).")
+    parser.add_argument("--cross-model", action="store_true",
+                        help="Print single cross-model table (optimizer rows × model columns).")
     parser.add_argument("--write-json", action="store_true",
                         help="Write aggregate.json alongside the tables.")
     args = parser.parse_args()
 
-    groups = load_results(args.results_dir)
+    groups = load_results(args.results_dir, models=args.models)
     if not groups:
         print(f"No results found in {args.results_dir}", file=sys.stderr)
         sys.exit(1)
 
     rows = aggregate(groups)
 
-    # Standalone baseline scores keyed by model name
+    # Standalone baseline scores + trajectory metrics keyed by model name
     baseline_scores = {}
+    baseline_data = {}
     root = Path(args.results_dir)
-    for model_dir in root.iterdir():
+    for model_dir in sorted(root.iterdir()):
+        if not model_dir.is_dir():
+            continue
+        if args.models and model_dir.name not in args.models:
+            continue
         bl_path = model_dir / "baseline" / "100.json"
         if bl_path.exists():
             d = json.loads(bl_path.read_text())
-            baseline_scores[model_dir.name] = d["scores"].get("baseline")
+            score = d["scores"].get("baseline")
+            baseline_scores[model_dir.name] = score
+            traj = _trajectory_metrics(d.get("per_example_results", []))
+            baseline_data[model_dir.name] = {"score": score, **traj}
 
-    print_markdown_tables(rows, baseline_scores)
+    if args.cross_model:
+        models = args.models or PAPER_MODELS
+        print_cross_model_table(rows, baseline_data, models)
+    else:
+        print_markdown_tables(rows, baseline_scores)
 
     if args.write_json:
         out = Path(args.results_dir) / "aggregate.json"

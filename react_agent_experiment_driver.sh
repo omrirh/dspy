@@ -18,6 +18,7 @@ BASELINE=false
 NO_VISUALS=false
 SAMPLE_TRAJECTORY=false
 SEED=""
+COUNT_TOTAL_TOKENS=false
 
 # Supported models
 VALID_MODELS=(
@@ -56,6 +57,7 @@ while [[ "$#" -gt 0 ]]; do
         --no-visuals)       NO_VISUALS=true ;;
         --sample-trajectory) SAMPLE_TRAJECTORY=true ;;
         --seed)             SEED="$2"; shift ;;
+        --count-total-tokens) COUNT_TOTAL_TOKENS=true ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
@@ -73,6 +75,7 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --no-visuals        Disable matplotlib cluster plots"
             echo "  --sample-trajectory Print a qualitative trajectory comparison at the end"
             echo "  --seed              Random seed for reproducibility"
+            echo "  --count-total-tokens  Print per-phase token budget (compile / eval / total e2e)"
             echo ""
             echo "Supported models:"
             for m in "${VALID_MODELS[@]}"; do echo "  $m"; done
@@ -123,6 +126,7 @@ CMD_ARGS=(
 [[ "$NO_VISUALS" == "true" ]] && CMD_ARGS+=(--no-visuals)
 [[ "$SAMPLE_TRAJECTORY" == "true" ]] && CMD_ARGS+=(--sample-trajectory)
 [[ -n "$SEED" ]] && CMD_ARGS+=(--seed "$SEED")
+[[ "$COUNT_TOTAL_TOKENS" == "true" ]] && CMD_ARGS+=(--count-total-tokens)
 
 # PATCH: raise open-file limit to avoid LiteLLM sqlite issues
 ulimit -n 65535

@@ -282,6 +282,10 @@ The optimized instruction for Llama-3.1-8B MIPROv2 s100 contains a hardcoded Hot
 
 ClusterFS s300 improves accuracy by +5.7pp yet produces **more** exhausted trajectories than the zero-shot baseline (1247 vs 980). All 4 selected demos have `next_tool_name=search` — zero finish-teaching examples. Diversity-first selection chose the 4 most semantically distinct non-terminating trajectories in the cluster pool. The accuracy gain is entirely attributable to the 16.9% of examples that happened to terminate early scoring at 52.6%; the remaining 83.1% loop to step 20. This is a silent regression: raw accuracy goes up while the underlying trajectory quality degrades.
 
+### ClusterFS eval token inflation (BetterTogether/CoT, 32B-AWQ, HotPotQA, seed 100)
+
+ClusterFS eval token count (~11.3M) was nearly 2× BFRS (5.6M) and 1.6× MIPROv2 (7.1M), despite identical `max_bootstrapped_demos=4`. Compile tokens were comparable across all three (~6–8.7M). The inflated eval cost implies ClusterFS selected substantially longer demonstrations — in a HotPotQA CoT setting, this means longer chain-of-thought traces. Diversity-first selection may be biased toward semantically distinct examples that are also more verbose (more reasoning steps required). Not investigated further; flagged for future token cost / eval latency debugging.
+
 ### Bootstrap metric blindness to termination (systematic, all models)
 
 The `answer_exact_match` bootstrap filter assigns equal weight to a 20-step looping trajectory that guesses correctly and a 2-step clean trajectory. For Llama-3.1-8B, ~31% of exhausted trajectories score correctly (acc@exhaust = 0.310 baseline), so non-terminating traces are well-represented in the bootstrap candidate pool. Neither ClusterFS's diversity selection nor MIPROv2's metric ranking has a mechanism to prefer finish-containing demos when the pool is dominated by non-terminators. This is the root cause of all termination regressions in the Llama results.
