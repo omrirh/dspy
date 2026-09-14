@@ -750,106 +750,128 @@ def soft_select_examples(
     ranked_examples: Dict,
     examples2embeddings: Dict,
     N: int,
+    lambda_grid: Optional[List[float]] = None,
     steps: int = 1000,
     log_step: int = 100,
     lr: float = 1e-1,
     device: str = "cpu",
     verbose: bool = True,
-    min_lambda: float = 10,
-    max_lambda: float = np.inf,
+    tau: float = 0.05,
+    eps: float = 1e-12,
     apply_visuals: bool = True
-) -> List:
+) -> Dict[str, List]:
     """
-    Performs differentiable soft selection of few-shot examples.
+    Performs differentiable soft selection of few-shot examples across a grid of
+    diversity-penalty coefficients (lambda).
 
-    Uses gradient-based optimization to select N examples that balance two objectives:
+    For each lambda in lambda_grid, optimizes selection probabilities that balance:
     1. High one-shot demonstration quality (maximize impact)
-    2. Low semantic redundancy (maximize diversity)
+    2. Low semantic redundancy (minimize pairwise similarity among selected examples)
+    3. Entropy regularization, scaled with lambda, to prevent early collapse of the
+       selection distribution when the diversity penalty dominates
 
-    The diversity penalty is controlled by a learnable lambda parameter that is
-    optimized jointly with the selection probabilities.
+    Unlike jointly learning a single lambda via gradient descent, sweeping a fixed grid
+    and returning one candidate subset per lambda lets the caller evaluate every candidate
+    against a validation set — the same way non-soft sampling strategies are compared —
+    and pick whichever lambda actually performs best, rather than trusting the optimizer's
+    internal (unsupervised) diversity/impact trade-off.
 
     Args:
         trainset: List of all training examples
-        ranked_examples: Dictionary mapping example hashes to one-shot scores
+        ranked_examples: Dictionary mapping example objects to their one-shot scores
         examples2embeddings: Dictionary mapping example hashes to embeddings
-        N: Number of examples to select
-        steps: Number of optimization steps
+        N: Number of examples to select per candidate
+        lambda_grid: Diversity penalty coefficients to sweep. Defaults to [0.1, 0.3, 1.0, 3.0, 10.0]
+        steps: Number of optimization steps per lambda
         log_step: How often to log progress
         lr: Learning rate for optimization
         device: Device to run optimization on ('cpu' or 'cuda')
         verbose: Whether to log detailed progress
-        min_lambda: Minimum diversity penalty coefficient
-        max_lambda: Maximum diversity penalty coefficient
-        apply_visuals: Whether to generate and save visualizations
+        tau: Base entropy regularization strength
+        eps: Numerical stability constant for entropy computation
+        apply_visuals: Whether to generate and save a visualization per lambda
 
     Returns:
-        List of N selected examples optimized for both quality and diversity
+        Dict mapping 'soft_select_lambda_<value>' to a list of N selected examples,
+        one entry per lambda_grid value — shaped like collect_fewshot_subsets()'s
+        output so pick_best_fewshot_subset() can evaluate soft-select candidates
+        the same way as any other sampling strategy.
     """
-    import math
+    if lambda_grid is None:
+        lambda_grid = [0.1, 0.3, 1.0, 3.0, 10.0]
 
-    M = len(trainset)
+    candidate_examples = list(ranked_examples)
+    M = len(candidate_examples)
 
     one_shot_scores = torch.tensor(
-        [score for _, score in ranked_examples.items()],
+        [ranked_examples[ex] for ex in candidate_examples],
         dtype=torch.float32,
         device=device
     )  # shape (M,)
+    s_min, s_max = one_shot_scores.min(), one_shot_scores.max()
+    one_shot_scores = (one_shot_scores - s_min) / (s_max - s_min + 1e-8)
 
-    # Build embedding matrix
+    # Build embedding matrix and cosine-similarity matrix (redundancy), self-similarity excluded
     embs = torch.stack([
         torch.tensor(examples2embeddings[get_example_hash(ex)], device=device, dtype=torch.float32)
-        for ex, _ in ranked_examples.items()
+        for ex in candidate_examples
     ]).to(device)  # shape (M, D)
-
-    # Build cosine-similarity matrix
     embs = embs / (embs.norm(dim=1, keepdim=True).clamp(min=1e-8))
     S = embs @ embs.t()  # shape (M, M)
+    S.fill_diagonal_(0.0)
 
-    # Initialize learnable logits and diversity log-lambda
-    logits = torch.zeros(M, device=device, requires_grad=True)
-    log_lambda = torch.zeros(1, device=device, requires_grad=True)
+    logger.info(
+        f"Learning {N} potential few-shot candidates from {M} examples "
+        f"across {len(lambda_grid)} lambda values"
+    )
 
-    optimizer = torch.optim.Adam([logits, log_lambda], lr=lr)
+    lambda_to_fewshot: Dict[str, List] = {}
 
-    logger.info(f"Learning {N} potential few-shot candidates from {M} examples")
+    for lambda_val in lambda_grid:
+        lambda_val = float(lambda_val)
+        # Scale entropy strength with lambda so it doesn't get crushed by a large diversity penalty
+        tau_eff = tau * (1.0 + lambda_val)
 
-    for step in range(steps):
-        p = F.softmax(logits, dim=0)
-        lambda_ = log_lambda.exp()
+        logits = torch.zeros(M, device=device, requires_grad=True)
+        optimizer = torch.optim.Adam([logits], lr=lr)
 
-        # Loss: negative impact + diversity penalty
-        loss = - (p * one_shot_scores).sum() + lambda_ * (p @ S @ p)
-        loss_val = loss.item()
-        lambda_val = lambda_.item()
+        logger.info(f"Starting soft-select optimization with λ={lambda_val} (tau={tau:.4f}, tau_eff={tau_eff:.4f})")
 
-        if verbose and step % log_step == 0:
-            logger.info(f"loss: {loss_val:.4f}, λ: {lambda_val:.4f}, step: {step}")
+        for step in range(steps):
+            p = F.softmax(logits, dim=0)
+            reward = (p * one_shot_scores).sum()  # maximize
+            div = (p @ S @ p)  # minimize redundancy
+            entropy = -(p * (p.clamp_min(eps)).log()).sum()  # maximize entropy
 
-        optimizer.zero_grad()
-        loss.backward()
-        with torch.no_grad():
-            # clip λ to [min, max] for diversity control
-            log_lambda.clamp_(math.log(min_lambda), math.log(max_lambda))
-        optimizer.step()
+            loss = -reward + lambda_val * div - tau_eff * entropy
 
-    # Pick top-N examples by final p probabilities
-    soft_scores = F.softmax(logits, dim=0)
-    topn = torch.topk(soft_scores, N).indices.tolist()
-    candidate_examples = list(ranked_examples)
-    final_fewshot_subset = [candidate_examples[i] for i in topn]
+            if verbose and step % log_step == 0:
+                logger.info(
+                    f"λ={lambda_val:.3f} step={step:04d} loss={loss.item():.4f} "
+                    f"reward={reward.item():.4f} div={div.item():.6f} H={entropy.item():.4f}"
+                )
 
-    div_lambda = log_lambda.exp().item()
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-    if apply_visuals:
-        visualize_soft_selection(
-            ranked_examples=ranked_examples,
-            examples2embeddings=examples2embeddings,
-            final_fewshot_subset=final_fewshot_subset,
-            div_lambda=div_lambda
-        )
+        soft_scores = F.softmax(logits, dim=0)
+        topn = torch.topk(soft_scores, N).indices.tolist()
+        fewshot_subset = [candidate_examples[i] for i in topn]
 
-    return final_fewshot_subset
+        label = f"soft_select_lambda_{lambda_val}"
+        lambda_to_fewshot[label] = fewshot_subset
+
+        if apply_visuals:
+            visualize_soft_selection(
+                ranked_examples=ranked_examples,
+                examples2embeddings=examples2embeddings,
+                final_fewshot_subset=fewshot_subset,
+                div_lambda=lambda_val,
+                save_path=f"fewshot_lambda_{lambda_val}.png"
+            )
+
+    return lambda_to_fewshot
 
 
 # ============================================================================

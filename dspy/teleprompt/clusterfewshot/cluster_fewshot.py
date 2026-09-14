@@ -62,8 +62,12 @@ class ClusterFewshot(Teleprompter):
                 sampling strategies. When None, uses default strategies (top_n + best_in_cluster).
                 Known task types: 'arithmetic', 'multihop', 'classification', 'agentic'
             soft_select: bool
-                If True, uses differentiable soft selection to balance one-shot impact
-                with semantic diversity via gradient descent optimization.
+                If True, replaces the sampling-strategy candidates with a differentiable
+                soft-selection sweep: for each lambda in a fixed grid, gradient descent
+                learns selection probabilities balancing one-shot impact against semantic
+                diversity, producing one candidate demo set per lambda. Candidates are then
+                evaluated on the validation set exactly like any other sampling strategy,
+                and the best-performing lambda is kept.
                 Default: False
             apply_visuals: bool
                 If True, generates matplotlib visualizations (PCA plots, score distributions)
@@ -214,16 +218,18 @@ class ClusterFewshot(Teleprompter):
         }
 
         if self._soft_select:
-            self.final_fewshot_subset = soft_select_examples(
+            self.candidate_fewshot_subsets = soft_select_examples(
                 trainset=self.trainset,
                 ranked_examples=self.ranked_examples,
                 examples2embeddings=self.examples2embeddings,
                 N=self.N,
                 apply_visuals=self.apply_visuals
             )
+            self.sampling_strategies = list(self.candidate_fewshot_subsets.keys())
         else:
             self.collect_fewshot_subsets()
-            self.pick_best_fewshot_subset()
+
+        self.pick_best_fewshot_subset()
 
         # Update student LM predictors with optimized few-shot subset
         for name, predictor in self.student.named_predictors():
