@@ -7,8 +7,10 @@ task-tuned LLMs, numeric encoders, etc.).
 """
 
 import logging
+from typing import Any, Callable
+
 import numpy as np
-from typing import List, Callable, Any, Optional
+
 from dspy.primitives import Example
 
 logger = logging.getLogger(__name__)
@@ -50,8 +52,8 @@ class SemanticEncoder:
     def __init__(
         self,
         encoder: Any,
-        transform_fn: Callable[[Any, List[Example]], np.ndarray],
-        name: Optional[str] = None
+        transform_fn: Callable[[Any, list[Example]], np.ndarray],
+        name: str | None = None
     ):
         """
         Initialize a SemanticEncoder.
@@ -69,13 +71,13 @@ class SemanticEncoder:
         """Infer encoder name from the encoder object if not explicitly provided."""
         if self.encoder is None:
             return "CustomEncoder"
-        if hasattr(self.encoder, 'model_name'):
+        if hasattr(self.encoder, "model_name"):
             return str(self.encoder.model_name)
-        if hasattr(self.encoder, '__class__'):
+        if hasattr(self.encoder, "__class__"):
             return self.encoder.__class__.__name__
         return str(self.encoder)
 
-    def encode(self, examples: List[Example]) -> np.ndarray:
+    def encode(self, examples: list[Example]) -> np.ndarray:
         """
         Encode a list of examples into latent embedding vectors.
 
@@ -110,7 +112,7 @@ class SemanticEncoder:
 # COMMON TRANSFORM FUNCTIONS
 # ============================================================================
 
-def sentence_transformer_transform(encoder, examples: List[Example]) -> np.ndarray:
+def sentence_transformer_transform(encoder, examples: list[Example]) -> np.ndarray:
     """
     Default transform for SentenceTransformer encoders.
 
@@ -127,7 +129,7 @@ def sentence_transformer_transform(encoder, examples: List[Example]) -> np.ndarr
     return encoder.encode(texts, convert_to_numpy=True)
 
 
-def numeric_transform(encoder, examples: List[Example]) -> np.ndarray:
+def numeric_transform(encoder, examples: list[Example]) -> np.ndarray:
     """
     Transform for numeric/classification tasks using input features directly.
 
@@ -151,7 +153,7 @@ def numeric_transform(encoder, examples: List[Example]) -> np.ndarray:
 # ENCODER FACTORY HELPERS
 # ============================================================================
 
-def create_sentence_transformer_encoder(model_name: str, device: str = 'cpu') -> SemanticEncoder:
+def create_sentence_transformer_encoder(model_name: str, device: str = "cpu") -> SemanticEncoder:
     """
     Factory function to create a SemanticEncoder from a SentenceTransformer model.
 

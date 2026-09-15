@@ -1,20 +1,21 @@
 import logging
-from typing import List, Callable, Optional
+from typing import Callable
 
-from dspy.primitives import Program, Example
-from dspy.teleprompt.teleprompt import Teleprompter
 from dspy.evaluate import Evaluate
-from .semantic_encoder import SemanticEncoder
+from dspy.primitives import Example, Module
+from dspy.teleprompt.teleprompt import Teleprompter
+
 from .clusterfewshot_utils import (
+    bootstrap_examples,
     cluster_examples,
+    generate_embedding_clusters_with_semantic_encoders,
+    get_example_hash,
+    sample_examples_from_cluster,
     sample_one_shot_evaluation_set,
     sort_examples_as_demos,
-    sample_examples_from_cluster,
-    bootstrap_examples,
-    get_example_hash,
     visualize_os_test,
-    generate_embedding_clusters_with_semantic_encoders,
 )
+from .semantic_encoder import SemanticEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -30,11 +31,11 @@ TASK_2_SAMPLINGS = {
 class ClusterFewshot(Teleprompter):
     def __init__(
             self,
-            metric: Optional[Callable] = None,
-            metric_threshold: Optional[float] = None,
-            task_type: Optional[str] = None,
+            metric: Callable | None = None,
+            metric_threshold: float | None = None,
+            task_type: str | None = None,
             apply_visuals: bool = True,
-            semantic_encoders: Optional[List[SemanticEncoder]] = None
+            semantic_encoders: list[SemanticEncoder] | None = None
     ):
         """
         ClusterFewshot: Task-adaptive few-shot selection with Bring-Your-Own-Encoder support.
@@ -132,7 +133,7 @@ class ClusterFewshot(Teleprompter):
         self.candidate_fewshot_subsets = None
         self.final_fewshot_subset = None
 
-    def compile(self, student: Program, trainset: List[Example], *, valset):
+    def compile(self, student: Module, trainset: list[Example], *, valset):
         """
         Compiles the ClusterFewshot optimizer to produce an optimized student program.
 
@@ -145,7 +146,7 @@ class ClusterFewshot(Teleprompter):
         6. Updates the student program with the selected demonstrations
 
         Args:
-            student: Program
+            student: Module
                 The student program to optimize
             trainset: List[Example]
                 Training examples for bootstrapping and clustering
@@ -153,7 +154,7 @@ class ClusterFewshot(Teleprompter):
                 Validation examples for evaluation and clustering
 
         Returns:
-            Program: The optimized student program with selected few-shot demonstrations
+            Module: The optimized student program with selected few-shot demonstrations
         """
         self.student = student.deepcopy()
 
@@ -247,7 +248,7 @@ class ClusterFewshot(Teleprompter):
 
         encoder_name = str(self.selected_encoder)
 
-        clusters, encoder_name, N = cluster_examples(
+        clusters, encoder_name, n = cluster_examples(
             data=data,
             task_type=self.task_type,
             trainset=self.trainset,
@@ -264,8 +265,8 @@ class ClusterFewshot(Teleprompter):
             apply_visuals=self.apply_visuals
         )
 
-        if train and N is not None:
-            self.N = N  # Used as hyperparameter for few-shot sampling
+        if train and n is not None:
+            self.N = n  # Used as hyperparameter for few-shot sampling
 
         return clusters
 
@@ -296,7 +297,7 @@ class ClusterFewshot(Teleprompter):
                         cluster_id=cluster_id,
                         training_clusters=self.training_clusters,
                         sampling_strategy=sampling_strategy,
-                        N=self.N,
+                        n=self.N,
                         global_sorted_examples=self.global_sorted_examples,
                         trainset=self.trainset,
                         examples2embeddings=self.examples2embeddings
@@ -338,7 +339,7 @@ class ClusterFewshot(Teleprompter):
                     ex for demo in fewshot_subset for ex in demo[name]
                 ]
 
-            fewshot_subset_score = evaluator(student)
+            fewshot_subset_score = evaluator(student).score
             ranked_sampling_strategies[sampling_strategy] = fewshot_subset_score
             logger.info(f"'{sampling_strategy}' few-shot subset scored {fewshot_subset_score:.2f}% "
                         f"on the validation set with {len(fewshot_subset)} demonstrations.")

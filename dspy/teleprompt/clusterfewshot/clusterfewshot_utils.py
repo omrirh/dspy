@@ -1,17 +1,18 @@
 import json
-import random
 import logging
-import numpy as np
-from typing import List, Tuple, Dict, Any, Optional
+import random
+from typing import Any
+
 import matplotlib.pyplot as plt
+import numpy as np
+from datasets.fingerprint import Hasher
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from datasets.fingerprint import Hasher
-from dspy.primitives import Example
 from sklearn.metrics import silhouette_score
-from dspy.utils.parallelizer import ParallelExecutor
 
 from dspy.evaluate import Evaluate
+from dspy.primitives import Example
+from dspy.utils.parallelizer import ParallelExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -24,21 +25,21 @@ MAX_CLUSTERS: int = 4
 # ============================================================================
 
 def cluster_examples(
-    data: List[Example],
+    data: list[Example],
     task_type: str,
-    trainset: List[Dict],
-    examples2embeddings: Dict,
-    embeddings2examples: Dict,
+    trainset: list[dict],
+    examples2embeddings: dict,
+    embeddings2examples: dict,
     embedding_model_name: str,
     pca_2d,
     student,
     embeddings: np.ndarray,
-    cluster_labels: List[int],
+    cluster_labels: list[int],
     k: int,
     data_type: str = "training",
     train: bool = True,
     apply_visuals: bool = True
-) -> Tuple[Dict[int, List], str]:
+) -> tuple[dict[int, list], str]:
     """
     Clusters examples into semantic groups using pre-computed embeddings and labels.
 
@@ -65,13 +66,13 @@ def cluster_examples(
     """
     examples_embeddings = embeddings
 
-    for ex, emb in zip(trainset if train else data, examples_embeddings):
+    for ex, emb in zip(trainset if train else data, examples_embeddings, strict=False):
         examples2embeddings[get_example_hash(ex)] = np.array(emb)
 
-    for emb, ex in zip(examples_embeddings, trainset if train else data):
+    for emb, ex in zip(examples_embeddings, trainset if train else data, strict=False):
         embeddings2examples[str(emb)] = ex
 
-    N = k if train else None
+    n = k if train else None
 
     clusters = {i: [] for i in range(k)}
     for idx, label in enumerate(cluster_labels):
@@ -92,13 +93,13 @@ def cluster_examples(
 
     logger.info(f"{data_type} clustering completed with K={k}.")
 
-    return clusters, embedding_model_name, N
+    return clusters, embedding_model_name, n
 
 
 def generate_embedding_clusters_with_semantic_encoders(
-    examples: List[Example],
-    semantic_encoders: List,
-    selected_encoder: Optional[Any] = None
+    examples: list[Example],
+    semantic_encoders: list,
+    selected_encoder: Any | None = None
 ):
     """
     Generates embeddings and finds optimal clusters using semantic encoders.
@@ -170,7 +171,7 @@ def generate_embedding_clusters_with_semantic_encoders(
     return best_embeddings, best_labels, best_k, best_encoder
 
 
-def get_central_examples(examples: List, examples2embeddings: Dict, sample_size: int):
+def get_central_examples(examples: list, examples2embeddings: dict, sample_size: int):
     """
     Selects the most central examples from a cluster based on their proximity to the cluster center.
 
@@ -316,7 +317,7 @@ def visualize_examples(
     return pca_2d
 
 
-def visualize_one_shot_scores_distribution(ranked_examples: Dict, save_path="one_shot_scores_distribution.png"):
+def visualize_one_shot_scores_distribution(ranked_examples: dict, save_path="one_shot_scores_distribution.png"):
     """
     Creates a bar chart showing the distribution of one-shot evaluation scores.
 
@@ -337,14 +338,14 @@ def visualize_one_shot_scores_distribution(ranked_examples: Dict, save_path="one
     score_counts = Counter(ranked_examples.values())
 
     sorted_scores = sorted(score_counts.items())
-    scores, counts = zip(*sorted_scores)
+    scores, counts = zip(*sorted_scores, strict=False)
 
     plt.figure(figsize=(10, 7))
-    plt.bar(scores, counts, color='skyblue', edgecolor='black')
+    plt.bar(scores, counts, color="skyblue", edgecolor="black")
     plt.xlabel("One-shot Evaluation Score")
     plt.ylabel("Score frequency")
     plt.title("Distribution of One-shot Scores")
-    plt.grid(axis='y', linestyle='--', alpha=0.6)
+    plt.grid(axis="y", linestyle="--", alpha=0.6)
     plt.tight_layout()
     plt.savefig(save_path)
     plt.close()
@@ -353,9 +354,9 @@ def visualize_one_shot_scores_distribution(ranked_examples: Dict, save_path="one
 
 
 def visualize_os_test(
-    valset: List[Example],
-    os_test: List[Example],
-    examples2embeddings: Dict,
+    valset: list[Example],
+    os_test: list[Example],
+    examples2embeddings: dict,
     save_path="one_shot_test.png"
 ):
     """
@@ -381,11 +382,11 @@ def visualize_os_test(
     pca = PCA(n_components=2)
     reduced = pca.fit_transform(embs)
 
-    colors = ['red' if ex in selected_set else 'gray' for ex in all_examples]
+    colors = ["red" if ex in selected_set else "gray" for ex in all_examples]
 
     plt.figure(figsize=(10, 7))
-    plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor='k')
-    plt.title(f"PCA of Validation Embeddings with Selected One-shot test questions (Red)")
+    plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor="k")
+    plt.title("PCA of Validation Embeddings with Selected One-shot test questions (Red)")
     plt.xlabel("PCA Dimension 1")
     plt.ylabel("PCA Dimension 2")
     plt.tight_layout()
@@ -400,9 +401,9 @@ def visualize_os_test(
 # ============================================================================
 
 def sample_one_shot_evaluation_set(
-    validation_clusters: Dict[int, List],
-    examples2embeddings: Dict
-) -> List[Example]:
+    validation_clusters: dict[int, list],
+    examples2embeddings: dict
+) -> list[Example]:
     """
     Creates a balanced one-shot evaluation set by sampling from each validation cluster.
 
@@ -439,16 +440,16 @@ def sample_one_shot_evaluation_set(
 
 
 def sort_examples_as_demos(
-    trainset: List[Dict],
-    os_test: List[Example],
+    trainset: list[dict],
+    os_test: list[Example],
     student,
     metric,
-    trainset_by_hash: Dict,
-    examples2embeddings: Dict,
+    trainset_by_hash: dict,
+    examples2embeddings: dict,
     embedding_model_name: str,
     pca_2d,
     apply_visuals: bool = True
-) -> Tuple[Dict, List, Dict]:
+) -> tuple[dict, list, dict]:
     """
     Ranks training examples by their effectiveness as one-shot demonstrations.
 
@@ -521,7 +522,7 @@ def sort_examples_as_demos(
     return ranked_examples, global_sorted_examples, pca_2d
 
 
-def evaluate_example_as_demo(example: Dict, evaluator, student, os_test: List[Example]) -> float:
+def evaluate_example_as_demo(example: dict, evaluator, student, os_test: list[Example]) -> float:
     """
     Evaluates a single example's quality as a demonstration.
 
@@ -538,9 +539,9 @@ def evaluate_example_as_demo(example: Dict, evaluator, student, os_test: List[Ex
     Returns:
         Score indicating demonstration quality (higher is better)
     """
-    raw = example['raw']
-    inputs_str = ', '.join(f'{k}: {v}' for k, v in dict(raw.inputs()).items())
-    labels_str = ', '.join(f'{k}: {v}' for k, v in dict(raw.labels()).items())
+    raw = example["raw"]
+    inputs_str = ", ".join(f"{k}: {v}" for k, v in dict(raw.inputs()).items())
+    labels_str = ", ".join(f"{k}: {v}" for k, v in dict(raw.labels()).items())
     example_visual = f"{inputs_str} --> {labels_str}"
 
     logger.info(
@@ -554,9 +555,9 @@ def evaluate_example_as_demo(example: Dict, evaluator, student, os_test: List[Ex
     for name, predictor in student.named_predictors():
         predictor.demos = example[name]  # Test as one-shot demonstration
 
-    student_score = evaluator(program=student)
+    student_score = evaluator(program=student).score
 
-    for (_, predictor), demos in zip(student.named_predictors(), cached_demos):
+    for (_, predictor), demos in zip(student.named_predictors(), cached_demos, strict=False):
         predictor.demos = demos
 
     return student_score
@@ -564,13 +565,13 @@ def evaluate_example_as_demo(example: Dict, evaluator, student, os_test: List[Ex
 
 def sample_examples_from_cluster(
     cluster_id: int,
-    training_clusters: Dict[int, List],
+    training_clusters: dict[int, list],
     sampling_strategy: str,
-    N: int,
-    global_sorted_examples: List,
-    trainset: List,
-    examples2embeddings: Dict
-) -> List:
+    n: int,
+    global_sorted_examples: list,
+    trainset: list,
+    examples2embeddings: dict
+) -> list:
     """
     Samples examples from a specific cluster using one of several strategies.
 
@@ -584,7 +585,7 @@ def sample_examples_from_cluster(
         cluster_id: ID of the cluster to sample from
         training_clusters: Dictionary mapping cluster IDs to example lists
         sampling_strategy: Strategy to use ("top_n", "best_in_cluster", "popularity", "central")
-        N: Target number of examples to select
+        n: Target number of examples to select
         global_sorted_examples: All examples sorted by one-shot score
         trainset: Complete training dataset
         examples2embeddings: Dictionary mapping example hashes to embeddings
@@ -600,7 +601,7 @@ def sample_examples_from_cluster(
             return sampled_examples
 
         if sampling_strategy == "top_n":
-            top_global_n = global_sorted_examples[:N]
+            top_global_n = global_sorted_examples[:n]
             sampled_examples.extend([ex for ex in cluster_examples if ex in top_global_n])
 
         elif sampling_strategy == "best_in_cluster":
@@ -609,7 +610,7 @@ def sample_examples_from_cluster(
         elif sampling_strategy == "popularity":
             total_examples = len(trainset)
             proportion = len(cluster_examples) / total_examples
-            sample_size = min(len(cluster_examples), round(proportion * N))
+            sample_size = min(len(cluster_examples), round(proportion * n))
             sampled_examples = cluster_examples[:sample_size]
 
         elif sampling_strategy == "central":
@@ -620,7 +621,7 @@ def sample_examples_from_cluster(
             )
 
     logger.info(
-        f"{len(sampled_examples)}/{N} slots given to cluster {cluster_id + 1} (size={len(training_clusters[cluster_id])})"
+        f"{len(sampled_examples)}/{n} slots given to cluster {cluster_id + 1} (size={len(training_clusters[cluster_id])})"
     )
 
     return sampled_examples
@@ -631,12 +632,12 @@ def sample_examples_from_cluster(
 # ============================================================================
 
 def bootstrap_examples(
-    examples: List[Example],
+    examples: list[Example],
     student,
     metric,
     metric_threshold,
-    trainset_by_hash: Dict
-) -> List[Dict]:
+    trainset_by_hash: dict
+) -> list[dict]:
     """
     Bootstraps training examples by generating predictions and filtering by quality.
 
@@ -687,7 +688,7 @@ def bootstrap_examples(
                             success = metric_val
                     else:
                         success = True
-        except Exception as e:
+        except Exception:
             # Handling as failed bootstrapping attempt (ignored example)
             return None
 
@@ -706,7 +707,7 @@ def bootstrap_examples(
                         demos = [demos[-1]]
                 name2traces[name] = demos
 
-            bootstrapped = {'raw': example}
+            bootstrapped = {"raw": example}
             bootstrapped.update(name2traces)
             return bootstrapped
 
