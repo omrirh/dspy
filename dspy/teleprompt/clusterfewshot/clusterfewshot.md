@@ -257,19 +257,19 @@ optimizer = ClusterFewshot(
 
 ### Example 1: GSM8K (Arithmetic)
 
+Runnable version: [`examples/clusterfewshot/quickstart_gsm8k.py`](../../../examples/clusterfewshot/quickstart_gsm8k.py) (small subset, cheap first run against an API model).
+
 ```python
 import dspy
 from dspy.teleprompt.clusterfewshot import ClusterFewshot, create_sentence_transformer_encoder
 from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 
-dspy.settings.experimental = True
-lm = dspy.LM("openai/gpt-4o-mini")
-dspy.configure(lm=lm)
+dspy.configure(lm=dspy.LM("openai/gpt-4o-mini"))
 
-# Prepare data
+# Prepare data (full splits: 200 train / 300 dev)
 dataset = GSM8K()
-trainset = [x.with_inputs('question') for x in dataset.train[:1000]]
-valset = [x.with_inputs('question') for x in dataset.dev[:500]]
+trainset = dataset.train
+valset = dataset.dev
 
 # Define program
 class CoT(dspy.Module):
