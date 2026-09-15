@@ -688,7 +688,8 @@ def bootstrap_examples(
                             success = metric_val
                     else:
                         success = True
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Bootstrapping failed for an example: {type(e).__name__}: {e}")
             # Handling as failed bootstrapping attempt (ignored example)
             return None
 
