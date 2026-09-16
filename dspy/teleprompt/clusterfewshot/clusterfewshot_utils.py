@@ -3,11 +3,9 @@ import logging
 import random
 from typing import Any
 
-import matplotlib.pyplot as plt
 import numpy as np
 from datasets.fingerprint import Hasher
 from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 
 from dspy.evaluate import Evaluate
@@ -31,14 +29,11 @@ def cluster_examples(
     examples2embeddings: dict,
     embeddings2examples: dict,
     embedding_model_name: str,
-    pca_2d,
-    student,
     embeddings: np.ndarray,
     cluster_labels: list[int],
     k: int,
     data_type: str = "training",
     train: bool = True,
-    apply_visuals: bool = True
 ) -> tuple[dict[int, list], str]:
     """
     Clusters examples into semantic groups using pre-computed embeddings and labels.
@@ -50,14 +45,11 @@ def cluster_examples(
         examples2embeddings: Dictionary mapping example hashes to embeddings
         embeddings2examples: Dictionary mapping embedding strings to examples
         embedding_model_name: Name of the embedding model used
-        pca_2d: Pre-fitted PCA model for 2D visualization (or None)
-        student: The student model being trained
         embeddings: Pre-computed embeddings for the examples
         cluster_labels: Pre-computed cluster labels for each example
         k: Number of clusters
         data_type: Type of data being clustered (e.g., "training", "validation")
         train: Whether this is training data
-        apply_visuals: Whether to generate and save visualizations
 
     Returns:
         Tuple of (clusters dictionary mapping cluster IDs to examples,
@@ -77,19 +69,6 @@ def cluster_examples(
     clusters = {i: [] for i in range(k)}
     for idx, label in enumerate(cluster_labels):
         clusters[label].append(trainset[idx] if train else data[idx])
-
-    if apply_visuals:
-        visualize_examples(
-            embeddings=examples_embeddings,
-            embedding_model=embedding_model_name,
-            cluster_labels=cluster_labels,
-            num_clusters=k,
-            data_type=data_type,
-            save_path=f"{data_type}_clusters.png",
-            silhouette=silhouette_score(examples_embeddings, cluster_labels) if len(set(cluster_labels)) > 1 else 0,
-            pca_2d=pca_2d,
-            student=student,
-        )
 
     logger.info(f"{data_type} clustering completed with K={k}.")
 
@@ -195,206 +174,6 @@ def get_central_examples(examples: list, examples2embeddings: dict, sample_size:
     return sampled_examples
 
 
-# ============================================================================
-# VISUALIZATION UTILITIES
-# ============================================================================
-
-def visualize_examples(
-    embeddings,
-    embedding_model,
-    cluster_labels=None,
-    num_clusters=None,
-    data_type=None,
-    save_path=None,
-    silhouette=None,
-    show_ranks=False,
-    examples=None,
-    ranked_examples=None,
-    pca_2d=None,
-    student=None,
-):
-    """
-    Visualizes high-dimensional embeddings in 2D space using PCA projection.
-
-    Creates scatter plots of embeddings colored either by cluster labels or by
-    one-shot performance scores. Useful for understanding the semantic structure
-    of the data and the relationship between embedding space and performance.
-
-    Args:
-        embeddings: Array of embedding vectors to visualize
-        embedding_model: Name of the embedding model used
-        cluster_labels: Cluster assignment for each embedding (for cluster visualization)
-        num_clusters: Total number of clusters
-        data_type: Type of data being visualized (e.g., "training", "validation")
-        save_path: Path to save the visualization image
-        silhouette: Silhouette score for cluster quality assessment
-        show_ranks: If True, color by one-shot scores instead of clusters
-        examples: List of Example objects aligned with embeddings
-        ranked_examples: Dictionary mapping example hashes to one-shot scores
-        pca_2d: Pre-fitted PCA model (or None to fit a new one)
-        student: The student model being trained
-
-    Returns:
-        The PCA model used for dimensionality reduction
-    """
-    logger.info("Performing PCA dimensionality reduction for visualization...")
-    if not pca_2d:
-        pca_2d = PCA(n_components=2)
-        embeddings_2d = pca_2d.fit_transform(embeddings)
-    else:
-        embeddings_2d = pca_2d.transform(embeddings)
-
-    if show_ranks:
-        if examples is None:
-            raise ValueError(
-                "When show_ranks=True, you must pass `examples` aligned with `embeddings`."
-            )
-        if len(examples) != len(embeddings):
-            raise ValueError(
-                f"`examples` and `embeddings` must have the same length "
-                f"(got {len(examples)} vs {len(embeddings)})."
-            )
-
-        scores = [ranked_examples.get(get_example_hash(ex), 0) for ex in examples]
-        np_scores = np.array(scores, dtype=np.float32)
-
-        color_values = np_scores
-        color_label = "One-shot Score"
-
-        # Choose a colormap that works well with continuous values
-        cmap = "coolwarm" if len(set(scores)) <= 5 else "viridis"
-    else:
-        color_values = np.array(cluster_labels)
-        color_label = "Cluster Labels"
-        cmap = "tab10"
-
-    # Ensure color_values is valid
-    if color_values is None or len(color_values) == 0:
-        raise ValueError("Color values are empty, cannot plot scatter with cmap.")
-
-    plt.figure(figsize=(10, 7))
-    scatter = plt.scatter(
-        embeddings_2d[:, 0],
-        embeddings_2d[:, 1],
-        c=color_values,
-        cmap=cmap,
-        alpha=0.8,
-        s=10,
-    )
-
-    cbar = plt.colorbar(scatter)
-    cbar.set_label(color_label)
-
-    if show_ranks:
-        logger.info(f"Unique one-shot scores: {set(scores)}")
-        plt.title(
-            f"PCA of {data_type.title()} One-shot Ranks\n"
-            f"Rank mean={np.mean(np_scores):.2f}\n"
-            f"Rank std={np.std(np_scores):.2f}"
-        )
-    else:
-        plt.title(
-            f"PCA of {data_type.title()} Embeddings Clusters\n"
-            f"K={num_clusters}\n"
-            f"Size={len(embeddings)}\n"
-            f"Silhouette={silhouette:.3f}\n"
-            f"Embedding Model={embedding_model}\n"
-            # TODO: derive dataset name without coupling to specific program classes
-            f"Dataset={type(student).__name__}"
-        )
-
-    plt.xlabel("PCA Dimension 1", fontsize=12, labelpad=8)
-    plt.ylabel("PCA Dimension 2", fontsize=12, labelpad=8)
-
-    plt.grid(True)
-    plt.tight_layout()
-
-    plt.savefig(save_path)
-    plt.close()
-
-    logger.info(f"Cluster visualization saved to {save_path}.")
-
-    return pca_2d
-
-
-def visualize_one_shot_scores_distribution(ranked_examples: dict, save_path="one_shot_scores_distribution.png"):
-    """
-    Creates a bar chart showing the distribution of one-shot evaluation scores.
-
-    Visualizes how frequently each score value appears across all evaluated examples.
-    This helps understand the overall quality distribution of potential demonstrations
-    and identify clusters of similar-performing examples.
-
-    Args:
-        ranked_examples: Dictionary mapping example hashes to one-shot scores
-        save_path: Path to save the distribution plot
-    """
-    from collections import Counter
-
-    if not ranked_examples:
-        logger.warning("No ranked examples found. Skipping one-shot score visualization.")
-        return
-
-    score_counts = Counter(ranked_examples.values())
-
-    sorted_scores = sorted(score_counts.items())
-    scores, counts = zip(*sorted_scores, strict=False)
-
-    plt.figure(figsize=(10, 7))
-    plt.bar(scores, counts, color="skyblue", edgecolor="black")
-    plt.xlabel("One-shot Evaluation Score")
-    plt.ylabel("Score frequency")
-    plt.title("Distribution of One-shot Scores")
-    plt.grid(axis="y", linestyle="--", alpha=0.6)
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
-
-    logger.info(f"One-shot scores distribution saved to {save_path}")
-
-
-def visualize_os_test(
-    valset: list[Example],
-    os_test: list[Example],
-    examples2embeddings: dict,
-    save_path="one_shot_test.png"
-):
-    """
-    Visualizes the one-shot test set selection from validation data.
-
-    Creates a 2D PCA plot highlighting which validation examples were selected
-    for one-shot evaluation. Selected examples are shown in red against all
-    validation examples in gray.
-
-    Args:
-        valset: Complete validation dataset
-        os_test: Subset of validation examples selected for one-shot testing
-        examples2embeddings: Dictionary mapping example hashes to embeddings
-        save_path: Path to save the visualization
-    """
-    all_examples = list(valset)
-    embs = np.stack([
-        examples2embeddings[get_example_hash(ex)]
-        for ex in all_examples
-    ])
-    selected_set = set(os_test)
-
-    pca = PCA(n_components=2)
-    reduced = pca.fit_transform(embs)
-
-    colors = ["red" if ex in selected_set else "gray" for ex in all_examples]
-
-    plt.figure(figsize=(10, 7))
-    plt.scatter(reduced[:, 0], reduced[:, 1], c=colors, alpha=0.75, edgecolor="k")
-    plt.title("PCA of Validation Embeddings with Selected One-shot test questions (Red)")
-    plt.xlabel("PCA Dimension 1")
-    plt.ylabel("PCA Dimension 2")
-    plt.tight_layout()
-    plt.savefig(save_path)
-    plt.close()
-
-    logger.info(f"One-shot test set PCA plot saved to {save_path}")
-
 
 # ============================================================================
 # SAMPLING AND EVALUATION UTILITIES
@@ -445,11 +224,7 @@ def sort_examples_as_demos(
     student,
     metric,
     trainset_by_hash: dict,
-    examples2embeddings: dict,
-    embedding_model_name: str,
-    pca_2d,
-    apply_visuals: bool = True
-) -> tuple[dict, list, dict]:
+) -> tuple[dict, list]:
     """
     Ranks training examples by their effectiveness as one-shot demonstrations.
 
@@ -463,15 +238,10 @@ def sort_examples_as_demos(
         student: The student model being trained
         metric: Evaluation metric function
         trainset_by_hash: Dictionary mapping example hashes to training examples
-        examples2embeddings: Dictionary mapping example hashes to embeddings
-        embedding_model_name: Name of the embedding model used
-        pca_2d: Pre-fitted PCA model for visualization
-        apply_visuals: Whether to generate and save visualizations
 
     Returns:
         Tuple of (ranked_examples dictionary mapping hashes to scores,
-                  globally sorted examples list,
-                  updated PCA model)
+                  globally sorted examples list)
     """
     evaluator = Evaluate(
         devset=os_test,
@@ -503,23 +273,9 @@ def sort_examples_as_demos(
         )
     ]
 
-    if apply_visuals:
-        visualize_one_shot_scores_distribution(ranked_examples)
-        pca_2d = visualize_examples(
-            embeddings=[examples2embeddings[get_example_hash(ex)] for ex in trainset],
-            examples=list(trainset),
-            embedding_model=embedding_model_name,
-            save_path="embeddings_to_one_shot_ranks.png",
-            data_type="training",
-            show_ranks=True,
-            ranked_examples=ranked_examples,
-            pca_2d=pca_2d,
-            student=student,
-        )
-
     logger.info("Demonstrations are sorted in descending order of empirical contribution.")
 
-    return ranked_examples, global_sorted_examples, pca_2d
+    return ranked_examples, global_sorted_examples
 
 
 def evaluate_example_as_demo(example: dict, evaluator, student, os_test: list[Example]) -> float:

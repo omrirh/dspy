@@ -13,7 +13,6 @@ from .clusterfewshot_utils import (
     sample_examples_from_cluster,
     sample_one_shot_evaluation_set,
     sort_examples_as_demos,
-    visualize_os_test,
 )
 from .semantic_encoder import SemanticEncoder
 
@@ -34,7 +33,6 @@ class ClusterFewshot(Teleprompter):
             metric: Callable | None = None,
             metric_threshold: float | None = None,
             task_type: str | None = None,
-            apply_visuals: bool = True,
             semantic_encoders: list[SemanticEncoder] | None = None
     ):
         """
@@ -58,10 +56,6 @@ class ClusterFewshot(Teleprompter):
                 Optional task type label. When provided and recognized, uses task-specific
                 sampling strategies. When None, uses default strategies (top_n + best_in_cluster).
                 Known task types: 'arithmetic', 'multihop', 'classification'
-            apply_visuals: bool
-                If True, generates matplotlib visualizations (PCA plots, score distributions)
-                throughout the optimization process.
-                Default: True
             semantic_encoders: Optional[List[SemanticEncoder]]
                 List of SemanticEncoder instances to use for embedding examples.
                 ClusterFewshot will evaluate each encoder and select the best one.
@@ -102,7 +96,6 @@ class ClusterFewshot(Teleprompter):
             logger.info(
                 f"Unknown task_type '{task_type}' — using default sampling strategies: {DEFAULT_SAMPLING_STRATEGIES}"
             )
-        self.apply_visuals = apply_visuals
         self.semantic_encoders = semantic_encoders
 
         if semantic_encoders is None:
@@ -128,7 +121,6 @@ class ClusterFewshot(Teleprompter):
         self.global_sorted_examples = None
         self._sum_of_clusters_strength = None
         self.trainset_by_hash = {}
-        self.pca_2d = None
 
         self.candidate_fewshot_subsets = None
         self.final_fewshot_subset = None
@@ -176,23 +168,12 @@ class ClusterFewshot(Teleprompter):
             examples2embeddings=self.examples2embeddings
         )
 
-        if self.apply_visuals:
-            visualize_os_test(
-                valset=self.valset,
-                os_test=self.os_test,
-                examples2embeddings=self.examples2embeddings
-            )
-
-        self.ranked_examples, self.global_sorted_examples, self.pca_2d = sort_examples_as_demos(
+        self.ranked_examples, self.global_sorted_examples = sort_examples_as_demos(
             trainset=self.trainset,
             os_test=self.os_test,
             student=self.student,
             metric=self.metric,
             trainset_by_hash=self.trainset_by_hash,
-            examples2embeddings=self.examples2embeddings,
-            embedding_model_name=str(self.selected_encoder),
-            pca_2d=self.pca_2d,
-            apply_visuals=self.apply_visuals
         )
 
         # Sort training clusters by ranked examples (descending order)
@@ -255,14 +236,11 @@ class ClusterFewshot(Teleprompter):
             examples2embeddings=self.examples2embeddings,
             embeddings2examples=self.embeddings2examples,
             embedding_model_name=encoder_name,
-            pca_2d=self.pca_2d,
-            student=self.student,
             embeddings=embeddings,
             cluster_labels=labels,
             k=k,
             data_type=data_type,
             train=train,
-            apply_visuals=self.apply_visuals
         )
 
         if train and n is not None:
