@@ -151,6 +151,7 @@ nav:
             - BootstrapFewShotWithRandomSearch: api/optimizers/BootstrapFewShotWithRandomSearch.md
             - BootstrapFinetune: api/optimizers/BootstrapFinetune.md
             - BootstrapRS: api/optimizers/BootstrapRS.md
+            - ClusterFewshot: api/optimizers/ClusterFewshot.md
             - COPRO: api/optimizers/COPRO.md
             - Ensemble: api/optimizers/Ensemble.md
             - InferRules: api/optimizers/InferRules.md
