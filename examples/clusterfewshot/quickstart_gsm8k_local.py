@@ -20,7 +20,7 @@ from dspy.datasets.gsm8k import GSM8K, gsm8k_metric
 from dspy.teleprompt.clusterfewshot import ClusterFewshot, create_sentence_transformer_encoder
 
 model = os.environ.get("LOCAL_LM_MODEL", "Qwen/Qwen3.5-9B")
-api_base = os.environ.get("LOCAL_LM_API_BASE", "http://localhost:30000/v1")
+api_base = os.environ.get("LOCAL_LM_API_BASE", "http://localhost:7501/v1")
 api_key = os.environ.get("LOCAL_LM_API_KEY", "EMPTY")
 
 lm = dspy.LM(f"openai/{model}", api_base=api_base, api_key=api_key)
