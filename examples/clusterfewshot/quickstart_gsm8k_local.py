@@ -55,7 +55,8 @@ evaluate = dspy.Evaluate(devset=testset, metric=gsm8k_metric, display_progress=T
 baseline_score = evaluate(CoT()).score
 optimized_score = evaluate(optimized).score
 
+num_demos = sum(len(predictor.demos) for _, predictor in optimized.named_predictors())
 print(f"\nModel: {model} @ {api_base}")
-print(f"Demos selected: {len(optimized.predict.demos)}")
+print(f"Demos selected: {num_demos}")
 print(f"Baseline (no demos) test accuracy:  {baseline_score:.1f}%")
 print(f"ClusterFewshot test accuracy:       {optimized_score:.1f}%")
