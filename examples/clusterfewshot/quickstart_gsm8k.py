@@ -39,7 +39,6 @@ testset = dataset.test[:20]
 optimizer = ClusterFewshot(
     task_type="arithmetic",
     metric=gsm8k_metric,
-    apply_visuals=False,
     semantic_encoders=[create_sentence_transformer_encoder("all-mpnet-base-v2")],
 )
 
